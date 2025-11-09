@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-commercetools",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Commercetools", "Integration", "middleware"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": ""
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://docs.commercetools.com/api"
+			}
+		]
+	}
+}
