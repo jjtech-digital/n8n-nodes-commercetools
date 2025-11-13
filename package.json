@@ -1,11 +1,13 @@
 {
 	"name": "n8n-nodes-commercetools",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "",
 	"license": "MIT",
 	"homepage": "",
 	"keywords": [
-		 "commercetools", "integrations", "middleware"
+		"commercetools",
+		"integrations",
+		"middleware"
 	],
 	"author": {
 		"name": "",
