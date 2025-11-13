@@ -28,6 +28,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayName: 'Resource',
 			name: 'resource',
 			type: 'options',
+			noDataExpression: true,
 			options: [
 				{
 					name: 'Product',
@@ -40,6 +41,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayName: 'Operation',
 			name: 'operation',
 			type: 'options',
+			noDataExpression: true,
 			options: [
 				{
 					name: 'Create',
@@ -179,8 +181,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					operation: ['create'],
 				},
 			},
-			description:
-				'JSON representation of the product draft to create, e.g. <code>{"productType":{"typeId":"product-type","id":"..."},"name":{"en":"Product"},"slug":{"en":"product"}}</code>',
+			description: 'JSON representation of the product draft to create, e.g. <code>{"productType":{"typeId":"product-type","ID":"..."},"name":{"en":"Product"},"slug":{"en":"product"}}</code>',
 		},
 		{
 			displayName: 'Version',
@@ -470,14 +471,13 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					operation: ['query'],
 				},
 			},
-			description:
-				'Whether to return all results or limit the number of items. When true, retrieves up to 500 products per request until all results are fetched.',
+			description: 'Whether to return all results or only up to a given limit',
 		},
 		{
 			displayName: 'Limit',
 			name: 'limit',
 			type: 'number',
-			default: 20,
+			default: 50,
 			typeOptions: {
 				minValue: 1,
 				maxValue: 500,
@@ -489,7 +489,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					returnAll: [false],
 				},
 			},
-			description: 'Maximum number of products to return per request',
+			description: 'Max number of results to return',
 		},
 		{
 			displayName: 'Offset',
@@ -1189,12 +1189,12 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					displayName: 'Limit',
 					name: 'limit',
 					type: 'number',
-					default: 20,
+					default: 50,
 					typeOptions: {
 						minValue: 1,
 						maxValue: 500,
 					},
-					description: 'Maximum number of product selections to return',
+					description: 'Max number of results to return',
 				},
 				{
 					displayName: 'Offset',
