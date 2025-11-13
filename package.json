@@ -34,7 +34,7 @@
 			"dist/credentials/CommerceToolsOAuth2Api.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/CommerceTools/CommerceTools.node.js"
+			"dist/nodes/Commercetools/Commercetools.node.js"
 		]
 	},
 	"devDependencies": {
