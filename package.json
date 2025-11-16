@@ -1,17 +1,18 @@
 {
 	"name": "n8n-nodes-commercetools",
 	"version": "0.1.2",
-	"description": "",
+	"description": "Custom n8n node for Commercetools integration",
 	"license": "MIT",
 	"homepage": "",
 	"keywords": [
+		"n8n-community-node-package",
 		"commercetools",
 		"integrations",
 		"middleware"
 	],
 	"author": {
-		"name": "",
-		"email": ""
+		"name": "Koteswara Rao Mudila",
+		"email": "koteswara@compose.co.in"
 	},
 	"repository": {
 		"type": "git",

@@ -167,7 +167,7 @@ export const coerceActions = (context: IExecuteFunctions, rawActions: unknown, i
 	if (typeof actions === 'string') {
 		try {
 			actions = JSON.parse(actions);
-		} catch (error) {
+		} catch {
 			throw new NodeOperationError(
 				context.getNode(),
 				'Actions must be valid JSON when provided as a string',
@@ -204,7 +204,7 @@ export const coerceJsonInput = (
 	if (typeof value === 'string') {
 		try {
 			value = JSON.parse(value);
-		} catch (error) {
+		} catch {
 			throw new NodeOperationError(
 				context.getNode(),
 				`${label} must be valid JSON when provided as a string`,

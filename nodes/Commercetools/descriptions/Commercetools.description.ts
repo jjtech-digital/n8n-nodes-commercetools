@@ -4,10 +4,7 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 export const commercetoolsDescription: INodeTypeDescription = {
 	displayName: 'Commercetools',
 	name: 'Commercetools',
-	icon: {
-		light: 'file:Commercetools_Logo.svg',
-		dark: 'file:Commercetools_Logo.svg',
-	},
+	icon: 'file:Commercetools.svg',
 	group: ['transform'],
 	version: 1,
 	description: 'Interact with the Commercetools Products API',
@@ -44,24 +41,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			noDataExpression: true,
 			options: [
 				{
-					name: 'Create',
-					value: 'create',
-					action: 'Create product',
-					description: 'Create a product draft',
-				},
-				{
-					name: 'Get',
-					value: 'get',
-					action: 'Get product',
-					description: 'Retrieve a product by ID',
-				},
-				{
-					name: 'Get By Key',
-					value: 'getByKey',
-					action: 'Get product by key',
-					description: 'Retrieve a product using its key',
-				},
-				{
 					name: 'Check Existence',
 					value: 'head',
 					action: 'Check if product exists',
@@ -80,10 +59,52 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					description: 'Send a HEAD request with query predicates to check for matches',
 				},
 				{
+					name: 'Create',
+					value: 'create',
+					action: 'Create product',
+					description: 'Create a product draft',
+				},
+				{
+					name: 'Delete',
+					value: 'delete',
+					action: 'Delete product',
+					description: 'Delete a product by ID',
+				},
+				{
+					name: 'Delete By Key',
+					value: 'deleteByKey',
+					action: 'Delete product by key',
+					description: 'Delete a product using its key',
+				},
+				{
+					name: 'Get',
+					value: 'get',
+					action: 'Get product',
+					description: 'Retrieve a product by ID',
+				},
+				{
+					name: 'Get By Key',
+					value: 'getByKey',
+					action: 'Get product by key',
+					description: 'Retrieve a product using its key',
+				},
+				{
 					name: 'Query',
 					value: 'query',
 					action: 'Query products',
 					description: 'Retrieve products using the Composable Commerce Products endpoint',
+				},
+				{
+					name: 'Query Product Selections',
+					value: 'querySelections',
+					action: 'Query product selections by product ID',
+					description: 'List product selections assigned to a product by ID',
+				},
+				{
+					name: 'Query Product Selections By Key',
+					value: 'querySelectionsByKey',
+					action: 'Query product selections by product key',
+					description: 'List product selections assigned to a product by key',
 				},
 				{
 					name: 'Search',
@@ -102,30 +123,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					value: 'updateByKey',
 					action: 'Update product by key',
 					description: 'Perform update actions on a product by key',
-				},
-				{
-					name: 'Delete',
-					value: 'delete',
-					action: 'Delete product',
-					description: 'Delete a product by ID',
-				},
-				{
-					name: 'Delete By Key',
-					value: 'deleteByKey',
-					action: 'Delete product by key',
-					description: 'Delete a product using its key',
-				},
-				{
-					name: 'Query Product Selections',
-					value: 'querySelections',
-					action: 'Query product selections by product ID',
-					description: 'List product selections assigned to a product by ID',
-				},
-				{
-					name: 'Query Product Selections By Key',
-					value: 'querySelectionsByKey',
-					action: 'Query product selections by product key',
-					description: 'List product selections assigned to a product by key',
 				},
 				{
 					name: 'Upload Image',
@@ -316,6 +313,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			placeholder: 'Add Field',
 			options: [
 				{
+					displayName: 'Custom Query Parameters',
+					name: 'customParameters',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Parameter',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'parameter',
+							displayName: 'Parameter',
+							values: [
+								{
+									displayName: 'Key',
+									name: 'key',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
+				},
+				{
 					displayName: 'Expand',
 					name: 'expand',
 					type: 'string',
@@ -328,6 +355,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					type: 'string',
 					default: '',
 					description: 'Select locales for returned localized fields',
+				},
+				{
+					displayName: 'Predicate Variables',
+					name: 'predicateVariables',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Predicate Variable',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'variable',
+							displayName: 'Variable',
+							values: [
+								{
+									displayName: 'Name',
+									name: 'name',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
 				},
 				{
 					displayName: 'Price Channel',
@@ -362,14 +419,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'sort',
 					type: 'string',
 					default: '',
-					description: 'Sorting expression for query results, e.g. <code>createdAt desc</code>',
-				},
-				{
-					displayName: 'Store Projection',
-					name: 'storeProjection',
-					type: 'string',
-					default: '',
-					description: 'Store in which the results are projected',
+					description:
+						'Sorting expression for query results, e.g. <code>createdAt desc</code>',
 				},
 				{
 					displayName: 'Staged',
@@ -377,6 +428,13 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					type: 'boolean',
 					default: false,
 					description: 'Whether to retrieve the staged projection',
+				},
+				{
+					displayName: 'Store Projection',
+					name: 'storeProjection',
+					type: 'string',
+					default: '',
+					description: 'Store in which the results are projected',
 				},
 				{
 					displayName: 'Where',
@@ -390,67 +448,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'withTotal',
 					type: 'boolean',
 					default: true,
-					description: 'Whether the query should calculate the total number of matching products',
-				},
-				{
-					displayName: 'Predicate Variables',
-					name: 'predicateVariables',
-					type: 'fixedCollection',
-					default: {},
-					placeholder: 'Add Predicate Variable',
-					typeOptions: {
-						multipleValues: true,
-					},
-					options: [
-						{
-							name: 'variable',
-							displayName: 'Variable',
-							values: [
-								{
-									displayName: 'Name',
-									name: 'name',
-									type: 'string',
-									default: '',
-								},
-								{
-									displayName: 'Value',
-									name: 'value',
-									type: 'string',
-									default: '',
-								},
-							],
-						},
-					],
-				},
-				{
-					displayName: 'Custom Query Parameters',
-					name: 'customParameters',
-					type: 'fixedCollection',
-					default: {},
-					placeholder: 'Add Parameter',
-					typeOptions: {
-						multipleValues: true,
-					},
-					options: [
-						{
-							name: 'parameter',
-							displayName: 'Parameter',
-							values: [
-								{
-									displayName: 'Key',
-									name: 'key',
-									type: 'string',
-									default: '',
-								},
-								{
-									displayName: 'Value',
-									name: 'value',
-									type: 'string',
-									default: '',
-								},
-							],
-						},
-					],
+					description:
+						'Whether the query should calculate the total number of matching products',
 				},
 			],
 			displayOptions: {
@@ -515,6 +514,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			placeholder: 'Add Field',
 			options: [
 				{
+					displayName: 'Custom Query Parameters',
+					name: 'customParameters',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Parameter',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'parameter',
+							displayName: 'Parameter',
+							values: [
+								{
+									displayName: 'Key',
+									name: 'key',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
+				},
+				{
 					displayName: 'Expand',
 					name: 'expand',
 					type: 'string',
@@ -557,19 +586,34 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					description: 'Customer group to select prices for',
 				},
 				{
-					displayName: 'Store Projection',
-					name: 'storeProjection',
-					type: 'string',
-					default: '',
-					description: 'Store in which the results are projected',
-				},
-				{
 					displayName: 'Staged',
 					name: 'staged',
 					type: 'boolean',
 					default: false,
 					description: 'Whether to retrieve the staged projection',
 				},
+				{
+					displayName: 'Store Projection',
+					name: 'storeProjection',
+					type: 'string',
+					default: '',
+					description: 'Store in which the results are projected',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['product'],
+					operation: ['get', 'getByKey'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsSearch',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
 				{
 					displayName: 'Custom Query Parameters',
 					name: 'customParameters',
@@ -600,21 +644,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						},
 					],
 				},
-			],
-			displayOptions: {
-				show: {
-					resource: ['product'],
-					operation: ['get', 'getByKey'],
-				},
-			},
-		},
-		{
-			displayName: 'Additional Fields',
-			name: 'additionalFieldsSearch',
-			type: 'collection',
-			default: {},
-			placeholder: 'Add Field',
-			options: [
 				{
 					displayName: 'Expand',
 					name: 'expand',
@@ -665,13 +694,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					description: 'Customer group to select prices for',
 				},
 				{
-					displayName: 'Store Projection',
-					name: 'storeProjection',
-					type: 'string',
-					default: '',
-					description: 'Store in which the results are projected',
-				},
-				{
 					displayName: 'Staged',
 					name: 'staged',
 					type: 'boolean',
@@ -679,41 +701,18 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					description: 'Whether to retrieve the staged projection',
 				},
 				{
+					displayName: 'Store Projection',
+					name: 'storeProjection',
+					type: 'string',
+					default: '',
+					description: 'Store in which the results are projected',
+				},
+				{
 					displayName: 'With Total',
 					name: 'withTotal',
 					type: 'boolean',
 					default: true,
 					description: 'Whether the search should calculate the total number of matching products',
-				},
-				{
-					displayName: 'Custom Query Parameters',
-					name: 'customParameters',
-					type: 'fixedCollection',
-					default: {},
-					placeholder: 'Add Parameter',
-					typeOptions: {
-						multipleValues: true,
-					},
-					options: [
-						{
-							name: 'parameter',
-							displayName: 'Parameter',
-							values: [
-								{
-									displayName: 'Key',
-									name: 'key',
-									type: 'string',
-									default: '',
-								},
-								{
-									displayName: 'Value',
-									name: 'value',
-									type: 'string',
-									default: '',
-								},
-							],
-						},
-					],
 				},
 			],
 			displayOptions: {
@@ -731,6 +730,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			placeholder: 'Add Field',
 			options: [
 				{
+					displayName: 'Custom Query Parameters',
+					name: 'customParameters',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Parameter',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'parameter',
+							displayName: 'Parameter',
+							values: [
+								{
+									displayName: 'Key',
+									name: 'key',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
+				},
+				{
 					displayName: 'Expand',
 					name: 'expand',
 					type: 'string',
@@ -773,19 +802,34 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					description: 'Customer group to select prices for',
 				},
 				{
-					displayName: 'Store Projection',
-					name: 'storeProjection',
-					type: 'string',
-					default: '',
-					description: 'Store in which the results are projected',
-				},
-				{
 					displayName: 'Staged',
 					name: 'staged',
 					type: 'boolean',
 					default: true,
 					description: 'Whether to create the product in the staged state',
 				},
+				{
+					displayName: 'Store Projection',
+					name: 'storeProjection',
+					type: 'string',
+					default: '',
+					description: 'Store in which the results are projected',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['product'],
+					operation: ['create'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsUpdate',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
 				{
 					displayName: 'Custom Query Parameters',
 					name: 'customParameters',
@@ -816,21 +860,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						},
 					],
 				},
-			],
-			displayOptions: {
-				show: {
-					resource: ['product'],
-					operation: ['create'],
-				},
-			},
-		},
-		{
-			displayName: 'Additional Fields',
-			name: 'additionalFieldsUpdate',
-			type: 'collection',
-			default: {},
-			placeholder: 'Add Field',
-			options: [
 				{
 					displayName: 'Data Erasure',
 					name: 'dataErasure',
@@ -843,7 +872,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'dryRun',
 					type: 'boolean',
 					default: false,
-					description: 'Simulate the update without persisting changes',
+					description: 'Whether to simulate the update without persisting changes',
 				},
 				{
 					displayName: 'Expand',
@@ -858,48 +887,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					type: 'string',
 					default: '',
 					description: 'Select locales for returned localized fields',
-				},
-				{
-					displayName: 'Price Channel',
-					name: 'priceChannel',
-					type: 'string',
-					default: '',
-					description: 'Channel to select prices for',
-				},
-				{
-					displayName: 'Price Country',
-					name: 'priceCountry',
-					type: 'string',
-					default: '',
-					description: 'Country to select prices for',
-				},
-				{
-					displayName: 'Price Currency',
-					name: 'priceCurrency',
-					type: 'string',
-					default: '',
-					description: 'Currency code for price selection',
-				},
-				{
-					displayName: 'Price Customer Group',
-					name: 'priceCustomerGroup',
-					type: 'string',
-					default: '',
-					description: 'Customer group to select prices for',
-				},
-				{
-					displayName: 'Store Projection',
-					name: 'storeProjection',
-					type: 'string',
-					default: '',
-					description: 'Store in which the results are projected',
-				},
-				{
-					displayName: 'Staged',
-					name: 'staged',
-					type: 'boolean',
-					default: false,
-					description: 'Whether the update should affect the staged product data',
 				},
 				{
 					displayName: 'Predicate Variables',
@@ -932,6 +919,63 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					],
 				},
 				{
+					displayName: 'Price Channel',
+					name: 'priceChannel',
+					type: 'string',
+					default: '',
+					description: 'Channel to select prices for',
+				},
+				{
+					displayName: 'Price Country',
+					name: 'priceCountry',
+					type: 'string',
+					default: '',
+					description: 'Country to select prices for',
+				},
+				{
+					displayName: 'Price Currency',
+					name: 'priceCurrency',
+					type: 'string',
+					default: '',
+					description: 'Currency code for price selection',
+				},
+				{
+					displayName: 'Price Customer Group',
+					name: 'priceCustomerGroup',
+					type: 'string',
+					default: '',
+					description: 'Customer group to select prices for',
+				},
+				{
+					displayName: 'Staged',
+					name: 'staged',
+					type: 'boolean',
+					default: false,
+					description: 'Whether the update should affect the staged product data',
+				},
+				{
+					displayName: 'Store Projection',
+					name: 'storeProjection',
+					type: 'string',
+					default: '',
+					description: 'Store in which the results are projected',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['product'],
+					operation: ['update', 'updateByKey'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsDelete',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
+				{
 					displayName: 'Custom Query Parameters',
 					name: 'customParameters',
 					type: 'fixedCollection',
@@ -961,21 +1005,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						},
 					],
 				},
-			],
-			displayOptions: {
-				show: {
-					resource: ['product'],
-					operation: ['update', 'updateByKey'],
-				},
-			},
-		},
-		{
-			displayName: 'Additional Fields',
-			name: 'additionalFieldsDelete',
-			type: 'collection',
-			default: {},
-			placeholder: 'Add Field',
-			options: [
 				{
 					displayName: 'Data Erasure',
 					name: 'dataErasure',
@@ -1032,6 +1061,21 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					default: false,
 					description: 'Whether to delete the staged projection',
 				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['product'],
+					operation: ['delete', 'deleteByKey'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsHead',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
 				{
 					displayName: 'Custom Query Parameters',
 					name: 'customParameters',
@@ -1062,21 +1106,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						},
 					],
 				},
-			],
-			displayOptions: {
-				show: {
-					resource: ['product'],
-					operation: ['delete', 'deleteByKey'],
-				},
-			},
-		},
-		{
-			displayName: 'Additional Fields',
-			name: 'additionalFieldsHead',
-			type: 'collection',
-			default: {},
-			placeholder: 'Add Field',
-			options: [
 				{
 					displayName: 'Expand',
 					name: 'expand',
@@ -1120,19 +1149,34 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					description: 'Customer group to select prices for',
 				},
 				{
-					displayName: 'Store Projection',
-					name: 'storeProjection',
-					type: 'string',
-					default: '',
-					description: 'Store in which the results are projected',
-				},
-				{
 					displayName: 'Staged',
 					name: 'staged',
 					type: 'boolean',
 					default: false,
 					description: 'Whether to inspect the staged projection',
 				},
+				{
+					displayName: 'Store Projection',
+					name: 'storeProjection',
+					type: 'string',
+					default: '',
+					description: 'Store in which the results are projected',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['product'],
+					operation: ['head', 'headByKey'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsSelections',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
 				{
 					displayName: 'Custom Query Parameters',
 					name: 'customParameters',
@@ -1163,21 +1207,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						},
 					],
 				},
-			],
-			displayOptions: {
-				show: {
-					resource: ['product'],
-					operation: ['head', 'headByKey'],
-				},
-			},
-		},
-		{
-			displayName: 'Additional Fields',
-			name: 'additionalFieldsSelections',
-			type: 'collection',
-			default: {},
-			placeholder: 'Add Field',
-			options: [
 				{
 					displayName: 'Expand',
 					name: 'expand',
@@ -1213,36 +1242,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					default: true,
 					description: 'Whether the query should calculate the total number of matching product selections',
 				},
-				{
-					displayName: 'Custom Query Parameters',
-					name: 'customParameters',
-					type: 'fixedCollection',
-					default: {},
-					placeholder: 'Add Parameter',
-					typeOptions: {
-						multipleValues: true,
-					},
-					options: [
-						{
-							name: 'parameter',
-							displayName: 'Parameter',
-							values: [
-								{
-									displayName: 'Key',
-									name: 'key',
-									type: 'string',
-									default: '',
-								},
-								{
-									displayName: 'Value',
-									name: 'value',
-									type: 'string',
-									default: '',
-								},
-							],
-						},
-					],
-				},
 			],
 			displayOptions: {
 				show: {
@@ -1272,51 +1271,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			placeholder: 'Add Field',
 			options: [
 				{
-					displayName: 'Filename',
-					name: 'filename',
-					type: 'string',
-					default: '',
-					description: 'Filename to store with the uploaded image',
-				},
-				{
-					displayName: 'Variant ID',
-					name: 'variantId',
-					type: 'number',
-					typeOptions: {
-						minValue: 0,
-					},
-					default: 0,
-					description: 'Variant ID the image belongs to',
-				},
-				{
-					displayName: 'SKU',
-					name: 'sku',
-					type: 'string',
-					default: '',
-					description: 'SKU the image belongs to',
-				},
-				{
-					displayName: 'Staged',
-					name: 'staged',
-					type: 'boolean',
-					default: true,
-					description: 'Whether to add the image to the staged version',
-				},
-				{
-					displayName: 'External URL',
-					name: 'externalUrl',
-					type: 'string',
-					default: '',
-					description: 'If set, treats the image as an external URL instead of uploading binary content',
-				},
-				{
-					displayName: 'Label',
-					name: 'label',
-					type: 'string',
-					default: '',
-					description: 'Localized label for the image, e.g. <code>{"en":"Front"}</code>',
-				},
-				{
 					displayName: 'Custom Query Parameters',
 					name: 'customParameters',
 					type: 'fixedCollection',
@@ -1345,6 +1299,51 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							],
 						},
 					],
+				},
+				{
+					displayName: 'External URL',
+					name: 'externalUrl',
+					type: 'string',
+					default: '',
+					description: 'If set, treats the image as an external URL instead of uploading binary content',
+				},
+				{
+					displayName: 'Filename',
+					name: 'filename',
+					type: 'string',
+					default: '',
+					description: 'Filename to store with the uploaded image',
+				},
+				{
+					displayName: 'Label',
+					name: 'label',
+					type: 'string',
+					default: '',
+					description: 'Localized label for the image, e.g. <code>{"en":"Front"}</code>',
+				},
+				{
+					displayName: 'SKU',
+					name: 'sku',
+					type: 'string',
+					default: '',
+					description: 'SKU the image belongs to',
+				},
+				{
+					displayName: 'Staged',
+					name: 'staged',
+					type: 'boolean',
+					default: true,
+					description: 'Whether to add the image to the staged version',
+				},
+				{
+					displayName: 'Variant ID',
+					name: 'variantId',
+					type: 'number',
+					typeOptions: {
+						minValue: 0,
+					},
+					default: 0,
+					description: 'Variant ID the image belongs to',
 				},
 			],
 			displayOptions: {

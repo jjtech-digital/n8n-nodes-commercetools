@@ -1,4 +1,4 @@
-import type { ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { ICredentialType, INodeProperties, Icon } from 'n8n-workflow';
 
 export class CommerceToolsOAuth2Api implements ICredentialType {
 	name = 'commerceToolsOAuth2Api';
@@ -6,6 +6,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 	extends = ['oAuth2Api'];
 
 	displayName = 'CommerceTools OAuth2 API';
+
+	icon : Icon = 'file:icons/Commercetools.svg';
 
 	documentationUrl = 'https://docs.commercetools.com/api/authorization';
 
