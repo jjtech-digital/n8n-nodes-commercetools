@@ -8,8 +8,7 @@
 		"n8n-community-node-package",
 		"commercetools",
 		"integrations",
-		"middleware",
-		"automation"
+		"middleware"
 	],
 	"author": {
 		"name": "Koteswara Rao Mudila",
