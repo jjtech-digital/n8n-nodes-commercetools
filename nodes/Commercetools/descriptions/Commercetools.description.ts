@@ -1,11 +1,15 @@
 import type { INodeTypeDescription } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
 
+const nodeGroup: Pick<INodeTypeDescription, 'group'> = {
+	group: ['transform'],
+};
+
 export const commercetoolsDescription: INodeTypeDescription = {
 	displayName: 'Commercetools',
 	name: 'Commercetools',
 	icon: 'file:Commercetools.svg',
-	group: ['transform'],
+	...nodeGroup,
 	version: 1,
 	description: 'Interact with the Commercetools Products API',
 	defaults: {

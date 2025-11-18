@@ -7,7 +7,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 
 	displayName = 'CommerceTools OAuth2 API';
 
-	icon : Icon = 'file:icons/Commercetools.svg';
+	icon: Icon = 'file:../icons/Commercetools.svg';
 
 	documentationUrl = 'https://docs.commercetools.com/api/authorization';
 

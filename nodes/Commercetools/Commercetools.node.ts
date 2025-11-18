@@ -4,7 +4,6 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	IDataObject,
-	Icon,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
@@ -12,8 +11,11 @@ import { commercetoolsDescription } from './descriptions/Commercetools.descripti
 import { executeProductOperation } from './operations/product.operations';
 
 export class Commercetools implements INodeType {
-	description: INodeTypeDescription = commercetoolsDescription;
-	icon: Icon = 'file:icons/Commercetools.svg';
+	description: INodeTypeDescription = {
+		...commercetoolsDescription,
+		icon: 'file:Commercetools.svg',
+		usableAsTool: true,
+	};
 
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
