@@ -19,6 +19,37 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 
 
+
+## Credential Setup
+
+To use the Commercetools node, you must configure OAuth2 credentials for your Commercetools project in n8n. Follow these steps:
+
+1. **Obtain Commercetools API credentials:**
+  - Log in to your Commercetools Merchant Center.
+  - Go to the API Clients section and create a new API client.
+  - Note the following values:
+    - `Client ID`
+    - `Client Secret`
+    - `Project Key`
+    - `Scopes` (ensure you have the required scopes for product operations)
+    - `Region` (e.g., `australia-southeast1.gcp`)
+
+2. **Add credentials in n8n:**
+  - In n8n, go to **Credentials** > **Create New**.
+  - Search for and select **Commercetools OAuth2 API**.
+  - Fill in the required fields:
+    - **Client ID**
+    - **Client Secret**
+    - **Project Key**
+    - **Region**
+    - **Scopes**
+  - Save the credentials.
+
+3. **Use credentials in your workflow:**
+  - When adding the Commercetools node to your workflow, select the credentials you just created from the credentials dropdown.
+
+Your Commercetools node is now authenticated and ready to use in n8n workflows.
+
 ## Features & Supported Operations
 
 The Commercetools node for n8n enables you to interact with the Commercetools API for product management. The following operations are supported:
