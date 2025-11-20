@@ -21,7 +21,58 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 
 
-## Usage Example
+
+## Configuration Options
+
+Below are the main configuration options and parameters available for the Commercetools node (resource: product):
+
+### Common Parameters
+- **resource**: Select 'product' to access product operations.
+- **operation**: Choose the desired product operation (e.g., create, query, get, update, delete, etc.).
+- **Credentials**: Select your configured Commercetools OAuth2 credentials.
+
+### Operation-Specific Parameters
+
+#### Create Product
+- **productDraft**: JSON object with product details (name, slug, productType, masterVariant, etc.).
+- **additionalFieldsCreate**: Optional fields for additional product properties.
+
+#### Query Products
+- **returnAll**: Boolean to return all products (up to 500 per request).
+- **limit**: Number of products to return per request.
+- **offset**: Pagination offset.
+- **additionalFields**: Optional filters, sorting, and predicate variables.
+
+#### Search Products
+- **searchRequest**: JSON object for advanced search queries.
+- **additionalFieldsSearch**: Optional search parameters (limit, offset, staged, etc.).
+
+#### Get Product / Get By Key
+- **productId** or **productKey**: ID or key of the product to retrieve.
+- **additionalFieldsGet**: Optional fields for expanded data.
+
+#### Update Product / Update By Key
+- **productId** or **productKey**: ID or key of the product to update.
+- **version**: Product version (required for updates).
+- **actions**: Array of update actions (JSON).
+- **actionsUi**: UI-based update actions.
+- **additionalFieldsUpdate**: Optional fields (dataErasure, dryRun, etc.).
+
+#### Delete Product / Delete By Key
+- **productId** or **productKey**: ID or key of the product to delete.
+- **version**: Product version (required for deletion).
+- **additionalFieldsDelete**: Optional fields (dataErasure, etc.).
+
+#### Query Product Selections
+- **productId** or **productKey**: ID or key of the product.
+- **additionalFieldsSelections**: Optional fields (expand, limit, offset, withTotal, customParameters).
+
+#### Upload Product Image
+- **productId**: ID of the product to upload the image to.
+- **binaryPropertyName**: Name of the binary property containing the image.
+- **additionalFieldsUpload**: Optional fields (variantId, sku, staged, filename, externalUrl, label, customParameters).
+
+Refer to the node UI in n8n for detailed descriptions and validation for each parameter.
 
 Below is a sample workflow using the Commercetools node in n8n to create and query a product.
 
@@ -99,6 +150,7 @@ To use the Commercetools node, you must configure OAuth2 credentials for your Co
 
 Your Commercetools node is now authenticated and ready to use in n8n workflows.
 
+
 ## Features & Supported Operations
 
 The Commercetools node for n8n enables you to interact with the Commercetools API for product management. The following operations are supported:
@@ -111,9 +163,6 @@ The Commercetools node for n8n enables you to interact with the Commercetools AP
 
 - **Search Products**  
   Perform advanced product searches using the Commercetools search endpoint.
-
-- **Check Product Existence (HEAD by Query, ID, or Key)**  
-  Check if a product exists by query, product ID, or product key.
 
 - **Get Product (by ID or Key)**  
   Retrieve detailed information for a specific product by its ID or key.
@@ -129,6 +178,12 @@ The Commercetools node for n8n enables you to interact with the Commercetools AP
 
 - **Upload Product Image**  
   Upload an image to a product, either from binary data or an external URL.
+
+### Check Product Existence
+
+- **By ID:** Use the "HEAD" operation with a product ID to check if a product exists.
+- **By Key:** Use the "HEAD by Key" operation with a product key.
+- **By Query:** Use the "HEAD by Query" operation to check if any product matches a specific query.
 
 Each operation supports additional parameters for fine-tuned control, such as staged changes, data erasure, dry run, and more.
 
