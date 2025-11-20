@@ -20,6 +20,55 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 
 
+
+## Usage Example
+
+Below is a sample workflow using the Commercetools node in n8n to create and query a product.
+
+### Example: Create a Product
+
+1. Add the **Commercetools** node to your workflow.
+2. Select the **Create Product** operation.
+3. Fill in the required product draft fields (e.g., name, slug, product type, etc.).
+4. Select your configured Commercetools credentials.
+5. Run the workflow to create a new product in your Commercetools project.
+
+**Sample Input (Product Draft):**
+```json
+{
+  "name": { "en": "Sample Product" },
+  "slug": { "en": "sample-product" },
+  "productType": { "id": "your-product-type-id" },
+  "masterVariant": {
+    "sku": "SKU123",
+    "prices": [ { "value": { "currencyCode": "USD", "centAmount": 1000 } } ]
+  }
+}
+```
+
+### Example: Query Products
+
+1. Add the **Commercetools** node to your workflow.
+2. Select the **Query Products** operation.
+3. Optionally set filters, sorting, and pagination parameters.
+4. Select your configured Commercetools credentials.
+5. Run the workflow to retrieve products from your Commercetools project.
+
+**Sample Output:**
+```json
+[
+  {
+    "id": "product-id-1",
+    "name": { "en": "Sample Product" },
+    "slug": { "en": "sample-product" },
+    // ...other product fields
+  },
+  // ...more products
+]
+```
+
+You can chain Commercetools node operations with other n8n nodes to build advanced workflows for product management, automation, and integration.
+
 ## Credential Setup
 
 To use the Commercetools node, you must configure OAuth2 credentials for your Commercetools project in n8n. Follow these steps:
