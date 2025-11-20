@@ -284,6 +284,23 @@ For linting or TypeScript errors, use the provided scripts or consult the [n8n n
 Contributions and suggestions for improving the Commercetools node are welcome. Please open an issue or submit a pull request.
 
 
+
+## Changelog
+
+All notable changes to this project will be documented in the `CHANGELOG.md` file. Below is a summary of recent updates:
+
+### [Unreleased]
+- Documentation improvements and structure updates
+- Added detailed usage examples and troubleshooting section
+- Enhanced configuration options and parameter documentation
+
+### v1.0.0
+- Initial release of the Commercetools node for n8n
+- Supports product management operations: create, query, search, get, update, delete, product selections, image upload, and existence checks
+- OAuth2 credential integration
+
+Refer to `CHANGELOG.md` for a complete version history and details.
+
 ## License
 
 [MIT](LICENSE.md)
