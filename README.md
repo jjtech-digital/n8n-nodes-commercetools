@@ -239,15 +239,37 @@ Each operation supports additional parameters for fine-tuned control, such as st
 | `npm run release`     | Create a new release                                             |
 
 
-## Troubleshooting
 
-- If the Commercetools node does not appear in n8n:
-  1. Ensure dependencies are installed (`npm install`).
-  2. Confirm the node is registered in `package.json` under `n8n.nodes`.
-  3. Restart the dev server (`npm run dev`).
-  4. Check the console for errors.
+## Error Handling & Troubleshooting
 
-- For linting or TypeScript errors, use the provided scripts or consult the [n8n node development guidelines](https://docs.n8n.io/integrations/creating-nodes/).
+Here are common errors and troubleshooting tips for the Commercetools node:
+
+- **Authentication Errors:**
+  - Ensure your OAuth2 credentials (Client ID, Client Secret, Project Key, Region, Scopes) are correct and have the required permissions.
+  - If you see an authentication error, re-authorize or recreate your credentials in n8n.
+
+- **Missing or Invalid Parameters:**
+  - Double-check required fields for each operation (e.g., productDraft for create, productId/productKey for get/update/delete, version for update/delete).
+  - The node will display a clear error if a required parameter is missing or invalid.
+
+- **API Errors:**
+  - Errors from the Commercetools API (e.g., 404 Not Found, 400 Bad Request) will be shown in the node output or n8n error panel.
+  - Review the error message for details and check your input data.
+
+- **Product Not Found:**
+  - For get, update, delete, or existence checks, ensure the productId or productKey is correct and the product exists in your project.
+
+- **Version Mismatch:**
+  - For update and delete operations, the product version must match the current version in Commercetools. Retrieve the latest version before updating or deleting.
+
+- **Binary Data Issues (Image Upload):**
+  - Ensure the binary property name matches the uploaded file and the file is present in the workflow.
+
+- **General Node Issues:**
+  - If the node does not appear in n8n, ensure dependencies are installed, the node is registered in `package.json`, and the dev server is running.
+  - Check the n8n console and logs for error details.
+
+For linting or TypeScript errors, use the provided scripts or consult the [n8n node development guidelines](https://docs.n8n.io/integrations/creating-nodes/).
 
 
 ## Resources
