@@ -18,6 +18,40 @@ npm run dev
 This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 
+
+## Features & Supported Operations
+
+The Commercetools node for n8n enables you to interact with the Commercetools API for product management. The following operations are supported:
+
+- **Create Product**  
+  Create a new product in your Commercetools project.
+
+- **Query Products**  
+  Retrieve a list of products with support for pagination, sorting, filtering, and predicate variables.
+
+- **Search Products**  
+  Perform advanced product searches using the Commercetools search endpoint.
+
+- **Check Product Existence (HEAD by Query, ID, or Key)**  
+  Check if a product exists by query, product ID, or product key.
+
+- **Get Product (by ID or Key)**  
+  Retrieve detailed information for a specific product by its ID or key.
+
+- **Update Product (by ID or Key)**  
+  Update an existing product using one or more update actions.
+
+- **Delete Product (by ID or Key)**  
+  Delete a product from your project.
+
+- **Query Product Selections (by ID or Key)**  
+  Retrieve product selection assignments for a product.
+
+- **Upload Product Image**  
+  Upload an image to a product, either from binary data or an external URL.
+
+Each operation supports additional parameters for fine-tuned control, such as staged changes, data erasure, dry run, and more.
+
 ## What's Included
 
 - **Commercetools Node**: Located in `nodes/Commercetools/`, this node provides operations for interacting with the Commercetools API, including product management and authentication via OAuth2.
