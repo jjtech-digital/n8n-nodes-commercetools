@@ -377,7 +377,10 @@ Contributions and suggestions for improving the Commercetools node are welcome. 
 
 All notable changes to this project will be documented in the `CHANGELOG.md` file. Below is a summary of recent updates:
 
+
 ### [Unreleased]
+- Added category-related APIs to Commercetools node (create, query, get, update, delete, existence checks)
+- Updated documentation to include category operations in features, configuration, usage examples, credential setup, and troubleshooting
 - Documentation improvements and structure updates
 - Added detailed usage examples and troubleshooting section
 - Enhanced configuration options and parameter documentation
