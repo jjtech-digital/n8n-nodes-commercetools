@@ -126,6 +126,7 @@ Below is a sample workflow using the Commercetools node in n8n to create and que
 }
 ```
 
+
 ### Example: Query Products
 
 1. Add the **Commercetools** node to your workflow.
@@ -140,14 +141,52 @@ Below is a sample workflow using the Commercetools node in n8n to create and que
   {
     "id": "product-id-1",
     "name": { "en": "Sample Product" },
-    "slug": { "en": "sample-product" },
+    "slug": { "en": "sample-product" }
     // ...other product fields
-  },
+  }
   // ...more products
 ]
 ```
 
-You can chain Commercetools node operations with other n8n nodes to build advanced workflows for product management, automation, and integration.
+### Example: Create a Category
+
+1. Add the **Commercetools** node to your workflow.
+2. Select the **Create Category** operation.
+3. Fill in the required category draft fields (e.g., name, slug, parent, orderHint, etc.).
+4. Select your configured Commercetools credentials.
+5. Run the workflow to create a new category in your Commercetools project.
+
+**Sample Input (Category Draft):**
+```json
+{
+  "name": { "en": "Sample Category" },
+  "slug": { "en": "sample-category" },
+  "orderHint": "0.1"
+}
+```
+
+### Example: Query Categories
+
+1. Add the **Commercetools** node to your workflow.
+2. Select the **Query Categories** operation.
+3. Optionally set filters, sorting, and pagination parameters.
+4. Select your configured Commercetools credentials.
+5. Run the workflow to retrieve categories from your Commercetools project.
+
+**Sample Output:**
+```json
+[
+  {
+    "id": "category-id-1",
+    "name": { "en": "Sample Category" },
+    "slug": { "en": "sample-category" }
+    // ...other category fields
+  }
+  // ...more categories
+]
+```
+
+You can chain Commercetools node operations with other n8n nodes to build advanced workflows for product and category management, automation, and integration.
 
 ## Credential Setup
 
