@@ -188,35 +188,36 @@ Below is a sample workflow using the Commercetools node in n8n to create and que
 
 You can chain Commercetools node operations with other n8n nodes to build advanced workflows for product and category management, automation, and integration.
 
+
 ## Credential Setup
 
-To use the Commercetools node, you must configure OAuth2 credentials for your Commercetools project in n8n. Follow these steps:
+To use the Commercetools node for both product and category operations, you must configure OAuth2 credentials for your Commercetools project in n8n. Follow these steps:
 
 1. **Obtain Commercetools API credentials:**
-  - Log in to your Commercetools Merchant Center.
-  - Go to the API Clients section and create a new API client.
-  - Note the following values:
-    - `Client ID`
-    - `Client Secret`
-    - `Project Key`
-    - `Scopes` (ensure you have the required scopes for product operations)
-    - `Region` (e.g., `australia-southeast1.gcp`)
+   - Log in to your Commercetools Merchant Center.
+   - Go to the API Clients section and create a new API client.
+   - Note the following values:
+     - `Client ID`
+     - `Client Secret`
+     - `Project Key`
+     - `Scopes` (ensure you have the required scopes for product and category operations)
+     - `Region` (e.g., `australia-southeast1.gcp`)
 
 2. **Add credentials in n8n:**
-  - In n8n, go to **Credentials** > **Create New**.
-  - Search for and select **Commercetools OAuth2 API**.
-  - Fill in the required fields:
-    - **Client ID**
-    - **Client Secret**
-    - **Project Key**
-    - **Region**
-    - **Scopes**
-  - Save the credentials.
+   - In n8n, go to **Credentials** > **Create New**.
+   - Search for and select **Commercetools OAuth2 API**.
+   - Fill in the required fields:
+     - **Client ID**
+     - **Client Secret**
+     - **Project Key**
+     - **Region**
+     - **Scopes**
+   - Save the credentials.
 
 3. **Use credentials in your workflow:**
-  - When adding the Commercetools node to your workflow, select the credentials you just created from the credentials dropdown.
+   - When adding the Commercetools node to your workflow, select the credentials you just created from the credentials dropdown.
 
-Your Commercetools node is now authenticated and ready to use in n8n workflows.
+Your Commercetools node is now authenticated and ready to use for both product and category operations in n8n workflows.
 
 
 ## Features & Supported Operations
