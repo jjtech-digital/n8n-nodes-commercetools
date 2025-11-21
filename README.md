@@ -325,30 +325,33 @@ Each operation supports additional parameters for fine-tuned control, such as st
 
 
 
+
 ## Error Handling & Troubleshooting
 
-Here are common errors and troubleshooting tips for the Commercetools node:
+Here are common errors and troubleshooting tips for the Commercetools node (products and categories):
 
 - **Authentication Errors:**
   - Ensure your OAuth2 credentials (Client ID, Client Secret, Project Key, Region, Scopes) are correct and have the required permissions.
   - If you see an authentication error, re-authorize or recreate your credentials in n8n.
 
 - **Missing or Invalid Parameters:**
-  - Double-check required fields for each operation (e.g., productDraft for create, productId/productKey for get/update/delete, version for update/delete).
+  - Double-check required fields for each operation:
+    - For products: productDraft, productId/productKey, version, etc.
+    - For categories: categoryDraft, categoryId/categoryKey, version, etc.
   - The node will display a clear error if a required parameter is missing or invalid.
 
 - **API Errors:**
   - Errors from the Commercetools API (e.g., 404 Not Found, 400 Bad Request) will be shown in the node output or n8n error panel.
   - Review the error message for details and check your input data.
 
-- **Product Not Found:**
-  - For get, update, delete, or existence checks, ensure the productId or productKey is correct and the product exists in your project.
+- **Not Found (Product/Category):**
+  - For get, update, delete, or existence checks, ensure the productId/productKey or categoryId/categoryKey is correct and the item exists in your project.
 
 - **Version Mismatch:**
-  - For update and delete operations, the product version must match the current version in Commercetools. Retrieve the latest version before updating or deleting.
+  - For update and delete operations, the version must match the current version in Commercetools. Retrieve the latest version before updating or deleting (applies to both products and categories).
 
 - **Binary Data Issues (Image Upload):**
-  - Ensure the binary property name matches the uploaded file and the file is present in the workflow.
+  - Ensure the binary property name matches the uploaded file and the file is present in the workflow (product image upload only).
 
 - **General Node Issues:**
   - If the node does not appear in n8n, ensure dependencies are installed, the node is registered in `package.json`, and the dev server is running.
