@@ -22,16 +22,17 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 
 
+
 ## Configuration Options
 
-Below are the main configuration options and parameters available for the Commercetools node (resource: product):
+Below are the main configuration options and parameters available for the Commercetools node (resource: product or category):
 
 ### Common Parameters
-- **resource**: Select 'product' to access product operations.
-- **operation**: Choose the desired product operation (e.g., create, query, get, update, delete, etc.).
+- **resource**: Select 'product' or 'category' to access respective operations.
+- **operation**: Choose the desired operation (e.g., create, query, get, update, delete, etc.).
 - **Credentials**: Select your configured Commercetools OAuth2 credentials.
 
-### Operation-Specific Parameters
+### Product Operation-Specific Parameters
 
 #### Create Product
 - **productDraft**: JSON object with product details (name, slug, productType, masterVariant, etc.).
@@ -71,6 +72,34 @@ Below are the main configuration options and parameters available for the Commer
 - **productId**: ID of the product to upload the image to.
 - **binaryPropertyName**: Name of the binary property containing the image.
 - **additionalFieldsUpload**: Optional fields (variantId, sku, staged, filename, externalUrl, label, customParameters).
+
+### Category Operation-Specific Parameters
+
+#### Create Category
+- **categoryDraft**: JSON object with category details (name, slug, parent, orderHint, etc.).
+- **additionalFieldsCreate**: Optional fields for additional category properties.
+
+#### Query Categories
+- **returnAll**: Boolean to return all categories (up to 500 per request).
+- **limit**: Number of categories to return per request.
+- **offset**: Pagination offset.
+- **additionalFields**: Optional filters, sorting, and predicate variables.
+
+#### Get Category / Get By Key
+- **categoryId** or **categoryKey**: ID or key of the category to retrieve.
+- **additionalFieldsGet**: Optional fields for expanded data.
+
+#### Update Category / Update By Key
+- **categoryId** or **categoryKey**: ID or key of the category to update.
+- **version**: Category version (required for updates).
+- **actions**: Array of update actions (JSON).
+- **actionsUi**: UI-based update actions.
+- **additionalFieldsUpdate**: Optional fields (dataErasure, dryRun, etc.).
+
+#### Delete Category / Delete By Key
+- **categoryId** or **categoryKey**: ID or key of the category to delete.
+- **version**: Category version (required for deletion).
+- **additionalFieldsDelete**: Optional fields (dataErasure, etc.).
 
 Refer to the node UI in n8n for detailed descriptions and validation for each parameter.
 
