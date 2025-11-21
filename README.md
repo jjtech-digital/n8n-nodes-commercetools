@@ -153,8 +153,9 @@ Your Commercetools node is now authenticated and ready to use in n8n workflows.
 
 ## Features & Supported Operations
 
-The Commercetools node for n8n enables you to interact with the Commercetools API for product management. The following operations are supported:
+The Commercetools node for n8n enables you to interact with the Commercetools API for product and category management. The following operations are supported:
 
+### Product Operations
 - **Create Product**  
   Create a new product in your Commercetools project.
 
@@ -179,11 +180,26 @@ The Commercetools node for n8n enables you to interact with the Commercetools AP
 - **Upload Product Image**  
   Upload an image to a product, either from binary data or an external URL.
 
-### Check Product Existence
+### Category Operations
+- **Create Category**  
+  Create a new category in your Commercetools project.
 
-- **By ID:** Use the "HEAD" operation with a product ID to check if a product exists.
-- **By Key:** Use the "HEAD by Key" operation with a product key.
-- **By Query:** Use the "HEAD by Query" operation to check if any product matches a specific query.
+- **Query Categories**  
+  Retrieve a list of categories with support for pagination, sorting, and filtering.
+
+- **Get Category (by ID or Key)**  
+  Retrieve detailed information for a specific category by its ID or key.
+
+- **Update Category (by ID or Key)**  
+  Update an existing category using one or more update actions.
+
+- **Delete Category (by ID or Key)**  
+  Delete a category from your project.
+
+### Check Product & Category Existence
+- **By ID:** Use the "HEAD" operation with a product or category ID to check if it exists.
+- **By Key:** Use the "HEAD by Key" operation with a product or category key.
+- **By Query:** Use the "HEAD by Query" operation to check if any product or category matches a specific query.
 
 Each operation supports additional parameters for fine-tuned control, such as staged changes, data erasure, dry run, and more.
 
