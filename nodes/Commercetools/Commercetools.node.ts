@@ -8,6 +8,7 @@ import type {
 import { NodeOperationError } from 'n8n-workflow';
 
 import { commercetoolsDescription } from './descriptions/Commercetools.description';
+import { executeCategoryOperation } from './operations/category.operations';
 import { executeProductOperation } from './operations/product.operations';
 
 export class Commercetools implements INodeType {
@@ -27,12 +28,6 @@ export class Commercetools implements INodeType {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
 
-				if (resource !== 'product') {
-					throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`, {
-						itemIndex,
-					});
-				}
-
 				const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
 				const projectKey = credentials.projectKey as string;
 				const region = (credentials.region as string) || 'australia-southeast1.gcp';
@@ -45,12 +40,26 @@ export class Commercetools implements INodeType {
 
 				const baseUrl = `https://api.${region}.commercetools.com/${projectKey}`;
 
-				const results = await executeProductOperation.call(this, {
-					operation,
-					itemIndex,
-					baseUrl,
-					items,
-				});
+				let results: INodeExecutionData[] = [];
+
+				if (resource === 'product') {
+					results = await executeProductOperation.call(this, {
+						operation,
+						itemIndex,
+						baseUrl,
+						items,
+					});
+				} else if (resource === 'category') {
+					results = await executeCategoryOperation.call(this, {
+						operation,
+						itemIndex,
+						baseUrl,
+					});
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`, {
+						itemIndex,
+					});
+				}
 
 				returnData.push(...results);
 			} catch (error) {
