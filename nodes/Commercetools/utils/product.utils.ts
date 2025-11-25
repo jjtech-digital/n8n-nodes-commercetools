@@ -65,71 +65,6 @@ export const applyCommonParameters = (
 	}
 };
 
-
-function autoMapDeep(input: IDataObject[]) {
-	if (Array.isArray(input)) {
-		// Try mapping this array
-		const mapped = tryMapArray(input);
-		if (mapped !== null) return mapped;
-
-		// Otherwise recursively process each item
-		return input.map(autoMapDeep);
-	}
-
-	if (input !== null && typeof input === "object") {
-		const result = {};
-		for (const key in input) {
-			result[key] = autoMapDeep(input[key]);
-		}
-		return result;
-	}
-
-	return input; // primitive -> return as is
-}
-
-function tryMapArray(items: IDataObject[]) {
-	if (!Array.isArray(items) || items.length === 0) {
-		return null;
-	}
-
-	const first = items[0];
-
-	// Detect key & value fields
-	const keyField =
-		first.locale !== undefined
-			? "locale"
-			: first.key !== undefined
-				? "key"
-				: null;
-
-	const valueField =
-		first.name !== undefined
-			? "name"
-			: first.value !== undefined
-				? "value"
-				: null;
-
-	// Not a mappable array
-	if (!keyField || !valueField) return null;
-
-	// Validate entire array
-	const allValid = items.every(
-		(item) =>
-			item &&
-			item[keyField] !== undefined &&
-			item[valueField] !== undefined
-	);
-
-	if (!allValid) return null;
-
-	// Map array → object
-	const obj = {};
-	for (const item of items) {
-		obj[item[keyField]] = item[valueField];
-	}
-	return obj;
-}
-
 export const buildActionsFromUi = (
 	context: IExecuteFunctions,
 	actionsUi: IDataObject,
@@ -140,92 +75,88 @@ export const buildActionsFromUi = (
 	const actionEntries = Array.isArray(rawActionEntries)
 		? (rawActionEntries as IDataObject[])
 		: rawActionEntries
-			? [rawActionEntries as IDataObject]
-			: [];
-	console.log(actionEntries, 'actionEntries');
+		? [rawActionEntries as IDataObject]
+		: [];
 
-	const mappedActions = autoMapDeep(actionEntries)
+	for (const actionEntry of actionEntries) {
+		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setProductKey')) {
+			const setProductKey = actionEntry.setProductKey as IDataObject;
+			const removeKey = Boolean(setProductKey.removeKey);
+			const rawKey = (setProductKey.key as string | undefined)?.trim();
 
-	builtActions.push(...mappedActions);
-	// for (const actionEntry of actionEntries) {
-	// 	if (Object.prototype.hasOwnProperty.call(actionEntry, 'setProductKey')) {
-	// 		const setProductKey = actionEntry.setProductKey as IDataObject;
-	// 		const removeKey = Boolean(setProductKey.removeKey);
-	// 		const rawKey = (setProductKey.key as string | undefined)?.trim();
+			const action: IDataObject = { action: 'setKey' };
 
-	// 		const action: IDataObject = { action: 'setKey' };
+			if (removeKey) {
+				action.key = null;
+			} else {
+				if (!rawKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'New product key is required when Remove Key is not enabled',
+						{ itemIndex },
+					);
+				}
 
-	// 		if (removeKey) {
-	// 			action.key = null;
-	// 		} else {
-	// 			if (!rawKey) {
-	// 				throw new NodeOperationError(
-	// 					context.getNode(),
-	// 					'New product key is required when Remove Key is not enabled',
-	// 					{ itemIndex },
-	// 				);
-	// 			}
+				action.key = rawKey;
+			}
 
-	// 			action.key = rawKey;
-	// 		}
+			builtActions.push(action);
+			continue;
+		}
 
-	// 		builtActions.push(action);
-	// 		continue;
-	// 	}
+		if (Object.prototype.hasOwnProperty.call(actionEntry, 'changeProductName')) {
+			const changeProductName = actionEntry.changeProductName as IDataObject;
+			const localizedNamesRaw = (changeProductName.localizedNames as IDataObject) ?? {};
+			const localizedValuesRaw = localizedNamesRaw.value;
+			const localizedValues = Array.isArray(localizedValuesRaw)
+				? (localizedValuesRaw as IDataObject[])
+				: localizedValuesRaw
+				? [localizedValuesRaw as IDataObject]
+				: [];
 
-	// 	if (Object.prototype.hasOwnProperty.call(actionEntry, 'changeProductName')) {
-	// 		const changeProductName = actionEntry.changeProductName as IDataObject;
-	// 		const localizedNamesRaw = (changeProductName.localizedNames as IDataObject) ?? {};
-	// 		const localizedValuesRaw = localizedNamesRaw.value;
-	// 		const localizedValues = Array.isArray(localizedValuesRaw)
-	// 			? (localizedValuesRaw as IDataObject[])
-	// 			: localizedValuesRaw
-	// 			? [localizedValuesRaw as IDataObject]
-	// 			: [];
+			if (localizedValues.length === 0) {
+				throw new NodeOperationError(
+					context.getNode(),
+					'At least one localized name is required for Change Product Name',
+					{ itemIndex },
+				);
+			}
 
-	// 		if (localizedValues.length === 0) {
-	// 			throw new NodeOperationError(
-	// 				context.getNode(),
-	// 				'At least one localized name is required for Change Product Name',
-	// 				{ itemIndex },
-	// 			);
-	// 		}
+			const name: IDataObject = {};
 
-	// 		const name: IDataObject = {};
+			for (const localized of localizedValues) {
+				const locale = (localized.locale as string | undefined)?.trim();
+				const value = localized.value as string | undefined;
 
-	// 		for (const localized of localizedValues) {
-	// 			const locale = (localized.locale as string | undefined)?.trim();
-	// 			const value = localized.value as string | undefined;
+				if (!locale) {
+					throw new NodeOperationError(context.getNode(), 'Locale is required for each localized product name', {
+						itemIndex,
+					});
+				}
 
-	// 			if (!locale) {
-	// 				throw new NodeOperationError(context.getNode(), 'Locale is required for each localized product name', {
-	// 					itemIndex,
-	// 				});
-	// 			}
+				if (value === undefined || value === '') {
+					throw new NodeOperationError(
+						context.getNode(),
+						`Name value is required for locale "${locale}"`,
+						{ itemIndex },
+					);
+				}
 
-	// 			if (value === undefined || value === '') {
-	// 				throw new NodeOperationError(
-	// 					context.getNode(),
-	// 					`Name value is required for locale "${locale}"`,
-	// 					{ itemIndex },
-	// 				);
-	// 			}
+				name[locale] = value;
+			}
 
-	// 			name[locale] = value;
-	// 		}
+			const action: IDataObject = {
+				action: 'changeName',
+				name,
+			};
 
-	// 		const action: IDataObject = {
-	// 			action: 'changeName',
-	// 			name,
-	// 		};
+			if (Object.prototype.hasOwnProperty.call(changeProductName, 'staged')) {
+				action.staged = changeProductName.staged as boolean;
+			}
 
-	// 		if (Object.prototype.hasOwnProperty.call(changeProductName, 'staged')) {
-	// 			action.staged = changeProductName.staged as boolean;
-	// 		}
-
-	// 		builtActions.push(action);
-	// 	}
-	// }
+			builtActions.push(action);
+		}
+	}
 
 	return builtActions;
 };

@@ -20,7 +20,6 @@ export async function executeProductOperation(
 	{ operation, itemIndex, baseUrl, items }: ProductOperationArgs,
 ): Promise<INodeExecutionData[]> {
 	const results: INodeExecutionData[] = [];
-console.log("operation -->", operation);
 
 	if (operation === 'create') {
 		const additionalFieldsCreate = this.getNodeParameter('additionalFieldsCreate', itemIndex, {}) as IDataObject;
@@ -235,7 +234,6 @@ console.log("operation -->", operation);
 	}
 
 	if (operation === 'update' || operation === 'updateByKey') {
-		
 		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsUpdate);
@@ -249,7 +247,7 @@ console.log("operation -->", operation);
 
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const rawActions = this.getNodeParameter('actions', itemIndex);
-		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
+		const actionsUi = this.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
 		const actionsFromUi = buildActionsFromUi(this, actionsUi, itemIndex);
 		const actions = [...actionsFromJson, ...actionsFromUi];
@@ -266,7 +264,6 @@ console.log("operation -->", operation);
 			version,
 			actions,
 		};
-console.log(body, "body");
 
 		if (operation === 'update') {
 			const productId = this.getNodeParameter('productId', itemIndex) as string;
@@ -276,7 +273,6 @@ console.log(body, "body");
 				body,
 				qs,
 			})) as IDataObject;
-console.log("response from the helper update function", response);
 
 			results.push({ json: response });
 			return results;
