@@ -2278,11 +2278,43 @@ description: 'Interact with the Commercetools Products, Categories, and Customer
 			description: 'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
 		},
 		{
+			displayName: 'Actions Input Mode',
+			name: 'actionsInputMode',
+			type: 'options',
+			options: [
+				{
+					name: 'UI',
+					value: 'ui',
+					description: 'Build actions using the user interface',
+				},
+				{
+					name: 'JSON',
+					value: 'json',
+					description: 'Provide actions as JSON array',
+				},
+			],
+			default: 'ui',
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
+				},
+			},
+			description: 'Choose how to specify the update actions',
+		},
+		{
 			displayName: 'Actions (UI)',
 			name: 'actionsUi',
 			type: 'fixedCollection',
 			default: {},
 			placeholder: 'Add Action',
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
+					actionsInputMode: ['ui'],
+				},
+			},
 			typeOptions: {
 				multipleValues: true,
 			},
@@ -2905,12 +2937,6 @@ description: 'Interact with the Commercetools Products, Categories, and Customer
 				],
 				},
 			],
-			displayOptions: {
-				show: {
-					resource: ['customer'],
-					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
-				},
-			},
 		},
 		{
 			displayName: 'Actions (JSON)',
@@ -2922,6 +2948,7 @@ description: 'Interact with the Commercetools Products, Categories, and Customer
 				show: {
 					resource: ['customer'],
 					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
+					actionsInputMode: ['json'],
 				},
 			},
 			description: 'JSON array of update actions to perform on the customer. Alternative to Actions (UI).'
