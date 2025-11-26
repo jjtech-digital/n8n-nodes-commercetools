@@ -43,6 +43,6 @@ _By the time users are looking for community nodes, they probably already know n
 
 ## Version history
 
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact.
 
 
