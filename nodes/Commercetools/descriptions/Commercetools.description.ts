@@ -11,7 +11,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 	icon: 'file:Commercetools.svg',
 	...nodeGroup,
 	version: 1,
-description: 'Interact with the Commercetools Products and Categories API',
+description: 'Interact with the Commercetools Products, Categories, and Customers API',
 	defaults: {
 		name: 'Commercetools',
 	},
@@ -38,6 +38,10 @@ description: 'Interact with the Commercetools Products and Categories API',
 				{
 					name: 'Category',
 					value: 'category',
+				},
+				{
+					name: 'Customer',
+					value: 'customer',
 				},
 			],
 			default: 'product',
@@ -205,6 +209,248 @@ description: 'Interact with the Commercetools Products and Categories API',
 			displayOptions: {
 				show: {
 					resource: ['category'],
+				},
+			},
+		},
+		{
+			displayName: 'Operation',
+			name: 'operation',
+			type: 'options',
+			noDataExpression: true,
+			options: [
+				{
+					name: 'Authenticate (Sign In)',
+					value: 'authenticate',
+					action: 'Authenticate customer',
+					description: 'Sign in a customer with email and password',
+				},
+				{
+					name: 'Authenticate in Store',
+					value: 'authenticateInStore',
+					action: 'Authenticate customer in store',
+					description: 'Sign in a customer with email and password in a specific store',
+				},
+				{
+					name: 'Change Password',
+					value: 'changePassword',
+					action: 'Change customer password',
+					description: 'Change password of a customer',
+				},
+				{
+					name: 'Change Password in Store',
+					value: 'changePasswordInStore',
+					action: 'Change customer password in store',
+					description: 'Change password of a customer in a specific store',
+				},
+				{
+					name: 'Check Existence',
+					value: 'head',
+					action: 'Check if customer exists',
+					description: 'Check whether a customer exists by ID',
+				},
+				{
+					name: 'Check Existence By Key',
+					value: 'headByKey',
+					action: 'Check if customer exists by key',
+					description: 'Check whether a customer exists using its key',
+				},
+				{
+					name: 'Check Existence By Query',
+					value: 'headByQuery',
+					action: 'Check if any customer matches the query',
+					description: 'Send a HEAD request with query predicates to check for matches',
+				},
+				{
+					name: 'Check Existence in Store',
+					value: 'headInStore',
+					action: 'Check if customer exists in store',
+					description: 'Check whether a customer exists by ID in a specific store',
+				},
+				{
+					name: 'Check Existence in Store By Key',
+					value: 'headInStoreByKey',
+					action: 'Check if customer exists in store by key',
+					description: 'Check whether a customer exists by key in a specific store',
+				},
+				{
+					name: 'Check Existence in Store By Query',
+					value: 'headInStoreByQuery',
+					action: 'Check if any customer matches the query in store',
+					description: 'Send a HEAD request with query predicates in a specific store',
+				},
+				{
+					name: 'Create (Sign Up)',
+					value: 'create',
+					action: 'Create customer',
+					description: 'Create a new customer (sign up)',
+				},
+				{
+					name: 'Create Email Token',
+					value: 'createEmailToken',
+					action: 'Create email verification token',
+					description: 'Create an email verification token for a customer',
+				},
+				{
+					name: 'Create Email Token in Store',
+					value: 'createEmailTokenInStore',
+					action: 'Create email verification token in store',
+					description: 'Create an email verification token for a customer in a specific store',
+				},
+				{
+					name: 'Create in Store (Sign Up)',
+					value: 'createInStore',
+					action: 'Create customer in store',
+					description: 'Create a new customer in a specific store',
+				},
+				{
+					name: 'Create Password Reset Token',
+					value: 'createPasswordResetToken',
+					action: 'Create password reset token',
+					description: 'Create a password reset token for a customer',
+				},
+				{
+					name: 'Create Password Reset Token in Store',
+					value: 'createPasswordResetTokenInStore',
+					action: 'Create password reset token in store',
+					description: 'Create a password reset token for a customer in a specific store',
+				},
+				{
+					name: 'Delete',
+					value: 'delete',
+					action: 'Delete customer',
+					description: 'Delete a customer by ID',
+				},
+				{
+					name: 'Delete By Key',
+					value: 'deleteByKey',
+					action: 'Delete customer by key',
+					description: 'Delete a customer using its key',
+				},
+				{
+					name: 'Delete in Store',
+					value: 'deleteInStore',
+					action: 'Delete customer in store',
+					description: 'Delete a customer by ID in a specific store',
+				},
+				{
+					name: 'Delete in Store By Key',
+					value: 'deleteInStoreByKey',
+					action: 'Delete customer in store by key',
+					description: 'Delete a customer by key in a specific store',
+				},
+				{
+					name: 'Get',
+					value: 'get',
+					action: 'Get customer',
+					description: 'Retrieve a customer by ID',
+				},
+				{
+					name: 'Get By Email Token',
+					value: 'getByEmailToken',
+					action: 'Get customer by email token',
+					description: 'Retrieve a customer using an email verification token',
+				},
+				{
+					name: 'Get By Key',
+					value: 'getByKey',
+					action: 'Get customer by key',
+					description: 'Retrieve a customer using its key',
+				},
+				{
+					name: 'Get By Password Token',
+					value: 'getByPasswordToken',
+					action: 'Get customer by password token',
+					description: 'Retrieve a customer using a password reset token',
+				},
+				{
+					name: 'Get in Store',
+					value: 'getInStore',
+					action: 'Get customer in store',
+					description: 'Retrieve a customer by ID in a specific store',
+				},
+				{
+					name: 'Get in Store By Email Token',
+					value: 'getInStoreByEmailToken',
+					action: 'Get customer in store by email token',
+					description: 'Retrieve a customer by email token in a specific store',
+				},
+				{
+					name: 'Get in Store By Key',
+					value: 'getInStoreByKey',
+					action: 'Get customer in store by key',
+					description: 'Retrieve a customer by key in a specific store',
+				},
+				{
+					name: 'Get in Store By Password Token',
+					value: 'getInStoreByPasswordToken',
+					action: 'Get customer in store by password token',
+					description: 'Retrieve a customer by password token in a specific store',
+				},
+				{
+					name: 'Query',
+					value: 'query',
+					action: 'Query customers',
+					description: 'List customers using query parameters',
+				},
+				{
+					name: 'Query in Store',
+					value: 'queryInStore',
+					action: 'Query customers in store',
+					description: 'List customers in a specific store using query parameters',
+				},
+				{
+					name: 'Reset Password',
+					value: 'resetPassword',
+					action: 'Reset customer password',
+					description: 'Reset password of a customer using a reset token',
+				},
+				{
+					name: 'Reset Password in Store',
+					value: 'resetPasswordInStore',
+					action: 'Reset customer password in store',
+					description: 'Reset password of a customer in a specific store using a reset token',
+				},
+				{
+					name: 'Update',
+					value: 'update',
+					action: 'Update customer',
+					description: 'Perform update actions on a customer by ID',
+				},
+				{
+					name: 'Update By Key',
+					value: 'updateByKey',
+					action: 'Update customer by key',
+					description: 'Perform update actions on a customer by key',
+				},
+				{
+					name: 'Update in Store',
+					value: 'updateInStore',
+					action: 'Update customer in store',
+					description: 'Perform update actions on a customer by ID in a specific store',
+				},
+				{
+					name: 'Update in Store By Key',
+					value: 'updateInStoreByKey',
+					action: 'Update customer in store by key',
+					description: 'Perform update actions on a customer by key in a specific store',
+				},
+				{
+					name: 'Verify Email',
+					value: 'verifyEmail',
+					action: 'Verify customer email',
+					description: 'Verify email address of a customer using a verification token',
+				},
+				{
+					name: 'Verify Email in Store',
+					value: 'verifyEmailInStore',
+					action: 'Verify customer email in store',
+					description: 'Verify email address of a customer in a specific store',
+				},
+			],
+			default: 'query',
+			displayOptions: {
+				show: {
+					resource: ['customer'],
 				},
 			},
 		},
@@ -1840,6 +2086,1134 @@ description: 'Interact with the Commercetools Products and Categories API',
 				show: {
 					resource: ['category'],
 					operation: ['delete', 'deleteByKey'],
+				},
+			},
+		},
+		
+		{
+			displayName: 'Customer ID',
+			name: 'customerId',
+			type: 'string',
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['get', 'update', 'delete', 'head', 'changePassword', 'getInStore', 'updateInStore', 'deleteInStore', 'headInStore', 'createEmailToken'],
+				},
+			},
+			description: 'The unique ID of the customer',
+		},
+		{
+			displayName: 'Customer Key',
+			name: 'customerKey',
+			type: 'string',
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['getByKey', 'updateByKey', 'deleteByKey', 'headByKey', 'getInStoreByKey', 'updateInStoreByKey', 'deleteInStoreByKey', 'headInStoreByKey'],
+				},
+			},
+			description: 'The unique key of the customer',
+		},
+		{
+			displayName: 'Store Key',
+			name: 'storeKey',
+			type: 'string',
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['authenticateInStore', 'changePasswordInStore', 'createInStore', 'getInStore', 'getInStoreByKey', 'getInStoreByEmailToken', 'getInStoreByPasswordToken', 'updateInStore', 'updateInStoreByKey', 'deleteInStore', 'deleteInStoreByKey', 'headInStore', 'headInStoreByKey', 'headInStoreByQuery', 'queryInStore', 'resetPasswordInStore', 'createPasswordResetTokenInStore', 'createEmailTokenInStore', 'verifyEmailInStore'],
+				},
+			},
+			description: 'The key of the store',
+		},
+		{
+			displayName: 'Email',
+			name: 'email',
+			type: 'string',
+			placeholder: 'name@email.com',
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['authenticate', 'authenticateInStore', 'createPasswordResetToken', 'createPasswordResetTokenInStore'],
+				},
+			},
+			description: 'The email address of the customer',
+		},
+		{
+			displayName: 'Password',
+			name: 'password',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['authenticate', 'authenticateInStore'],
+				},
+			},
+			description: 'The password of the customer',
+		},
+		{
+			displayName: 'Current Password',
+			name: 'currentPassword',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['changePassword', 'changePasswordInStore'],
+				},
+			},
+			description: 'The current password of the customer',
+		},
+		{
+			displayName: 'New Password',
+			name: 'newPassword',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['changePassword', 'changePasswordInStore', 'resetPassword', 'resetPasswordInStore'],
+				},
+			},
+			description: 'The new password for the customer',
+		},
+		{
+			displayName: 'Password Token',
+			name: 'passwordToken',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['getByPasswordToken', 'getInStoreByPasswordToken'],
+				},
+			},
+			description: 'The password reset token',
+		},
+		{
+			displayName: 'Email Token',
+			name: 'emailToken',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['getByEmailToken', 'getInStoreByEmailToken'],
+				},
+			},
+			description: 'The email verification token',
+		},
+		{
+			displayName: 'Token Value',
+			name: 'tokenValue',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['resetPassword', 'resetPasswordInStore', 'verifyEmail', 'verifyEmailInStore'],
+				},
+			},
+			description: 'The token value for password reset or email verification',
+		},
+		{
+			displayName: 'Version',
+			name: 'version',
+			type: 'number',
+			default: 1,
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey', 'delete', 'deleteByKey', 'deleteInStore', 'deleteInStoreByKey', 'changePassword', 'changePasswordInStore', 'createEmailToken', 'createEmailTokenInStore'],
+				},
+			},
+			description: 'The current version of the customer for optimistic concurrency control',
+		},
+		{
+			displayName: 'Customer Draft (JSON)',
+			name: 'customerDraft',
+			type: 'json',
+			default: '{}',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['create', 'createInStore'],
+				},
+			},
+			description: 'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
+		},
+		{
+			displayName: 'Actions (UI)',
+			name: 'actionsUi',
+			type: 'fixedCollection',
+			default: {},
+			placeholder: 'Add Action',
+			typeOptions: {
+				multipleValues: true,
+			},
+			description: 'Update actions built via UI for ease of use',
+			options: [
+				{
+					displayName: 'Action',
+					name: 'action',
+					values: [
+						{
+							displayName: 'Add Address',
+							name: 'addAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Add Address Action',
+							options: [
+								{
+									displayName: 'Address',
+									name: 'address',
+									type: 'json',
+									default: '{}',
+									description: 'Address object to add',
+								},
+					]
+						},
+						{
+							displayName: 'Add Billing Address ID',
+							name: 'addBillingAddressId',
+							type: 'collection',
+							default: {},
+							placeholder: 'Add Billing Address ID Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address to add as billing address',
+								},
+						]
+						},
+						{
+							displayName: 'Add CustomerGroupAssignment',
+							name: 'addCustomerGroupAssignment',
+							type: 'collection',
+							default: {},
+							placeholder: 'Add CustomerGroupAssignment Action',
+							options: [
+								{
+									displayName: 'Customer Group',
+									name: 'customerGroup',
+									type: 'json',
+									default: '{}',
+									description: 'Customer group reference',
+								},
+						]
+						},
+						{
+							displayName: 'Add Shipping Address ID',
+							name: 'addShippingAddressId',
+							type: 'collection',
+							default: {},
+							placeholder: 'Add Shipping Address ID Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address to add as shipping address',
+								},
+						]
+						},
+						{
+							displayName: 'Add Store',
+							name: 'addStore',
+							type: 'collection',
+							default: {},
+							placeholder: 'Add Store Action',
+							options: [
+								{
+									displayName: 'Store',
+									name: 'store',
+									type: 'json',
+									default: '{}',
+									description: 'Store reference',
+								},
+						]
+						},
+						{
+							displayName: 'Change Address',
+							name: 'changeAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Change Address Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address to change',
+								},
+								{
+									displayName: 'Address',
+									name: 'address',
+									type: 'json',
+									default: '{}',
+									description: 'New address object',
+								},
+						]
+						},
+						{
+							displayName: 'Change Email',
+							name: 'changeEmail',
+							type: 'collection',
+							default: {},
+							placeholder: 'Change Email Action',
+							options: [
+								{
+									displayName: 'Email',
+									name: 'email',
+									type: 'string',
+									default: '',
+									placeholder: 'name@email.com',
+									description: 'New email address',
+								},
+						]
+						},
+						{
+							displayName: 'Remove Address',
+							name: 'removeAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Remove Address Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address to remove',
+								},
+						]
+						},
+						{
+							displayName: 'Remove Billing Address ID',
+							name: 'removeBillingAddressId',
+							type: 'collection',
+							default: {},
+							placeholder: 'Remove Billing Address ID Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the billing address to remove',
+								},
+						]
+						},
+						{
+							displayName: 'Remove CustomerGroupAssignment',
+							name: 'removeCustomerGroupAssignment',
+							type: 'collection',
+							default: {},
+							placeholder: 'Remove CustomerGroupAssignment Action',
+							options: [
+								{
+									displayName: 'Customer Group',
+									name: 'customerGroup',
+									type: 'json',
+									default: '{}',
+									description: 'Customer group reference to remove',
+								},
+						]
+						},
+						{
+							displayName: 'Remove Shipping Address ID',
+							name: 'removeShippingAddressId',
+							type: 'collection',
+							default: {},
+							placeholder: 'Remove Shipping Address ID Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the shipping address to remove',
+								},
+						]
+						},
+						{
+							displayName: 'Remove Store',
+							name: 'removeStore',
+							type: 'collection',
+							default: {},
+							placeholder: 'Remove Store Action',
+							options: [
+								{
+									displayName: 'Store',
+									name: 'store',
+									type: 'json',
+									default: '{}',
+									description: 'Store reference to remove',
+								},
+						]
+						},
+						{
+							displayName: 'Set AuthenticationMode',
+							name: 'setAuthenticationMode',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set AuthenticationMode Action',
+							options: [
+								{
+									displayName: 'Authentication Mode',
+									name: 'authMode',
+									type: 'options',
+									options: [
+												{
+													name: 'Password',
+													value: 'Password',
+												},
+												{
+													name: 'External Auth',
+													value: 'ExternalAuth',
+												},
+										],
+									default: 'Password',
+									description: 'Authentication mode for the customer',
+								},
+								{
+									displayName: 'Password',
+									name: 'password',
+									type: 'string',
+									typeOptions: { password: true },
+									default: '',
+									description: 'Password (required when setting to Password mode)',
+								},
+						]
+						},
+						{
+							displayName: 'Set Company Name',
+							name: 'setCompanyName',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Company Name Action',
+							options: [
+								{
+									displayName: 'Company Name',
+									name: 'companyName',
+									type: 'string',
+									default: '',
+									description: 'Company name for the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set Custom Type',
+							name: 'setCustomType',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Custom Type Action',
+							options: [
+								{
+									displayName: 'Type',
+									name: 'type',
+									type: 'json',
+									default: '{}',
+									description: 'Type reference',
+								},
+								{
+									displayName: 'Fields',
+									name: 'fields',
+									type: 'json',
+									default: '{}',
+									description: 'Custom fields object',
+								},
+						]
+						},
+						{
+							displayName: 'Set Custom Type in Address',
+							name: 'setCustomTypeInAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Custom Type in Address Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address',
+								},
+								{
+									displayName: 'Type',
+									name: 'type',
+									type: 'json',
+									default: '{}',
+									description: 'Type reference',
+								},
+								{
+									displayName: 'Fields',
+									name: 'fields',
+									type: 'json',
+									default: '{}',
+									description: 'Custom fields object',
+								},
+						]
+						},
+						{
+							displayName: 'Set Customer Number',
+							name: 'setCustomerNumber',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Customer Number Action',
+							options: [
+								{
+									displayName: 'Customer Number',
+									name: 'customerNumber',
+									type: 'string',
+									default: '',
+								},
+						]
+						},
+						{
+							displayName: 'Set CustomerGroup',
+							name: 'setCustomerGroup',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set CustomerGroup Action',
+							options: [
+								{
+									displayName: 'Customer Group',
+									name: 'customerGroup',
+									type: 'json',
+									default: '{}',
+									description: 'Customer group reference',
+								},
+						]
+						},
+						{
+							displayName: 'Set CustomerGroupAssignments',
+							name: 'setCustomerGroupAssignments',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set CustomerGroupAssignments Action',
+							options: [
+								{
+									displayName: 'Customer Group Assignments',
+									name: 'customerGroupAssignments',
+									type: 'json',
+									default: '[]',
+									description: 'Array of customer group assignments',
+								},
+						]
+						},
+						{
+							displayName: 'Set CustomField',
+							name: 'setCustomField',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set CustomField Action',
+							options: [
+								{
+									displayName: 'Field Name',
+									name: 'name',
+									type: 'string',
+									default: '',
+									description: 'Name of the custom field',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'json',
+									default: '',
+									description: 'Value for the custom field',
+								},
+						]
+						},
+						{
+							displayName: 'Set CustomField in Address',
+							name: 'setCustomFieldInAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set CustomField in Address Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address',
+								},
+								{
+									displayName: 'Field Name',
+									name: 'name',
+									type: 'string',
+									default: '',
+									description: 'Name of the custom field',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'json',
+									default: '',
+									description: 'Value for the custom field',
+								},
+						]
+						},
+						{
+							displayName: 'Set Date of Birth',
+							name: 'setDateOfBirth',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Date of Birth Action',
+							options: [
+								{
+									displayName: 'Date of Birth',
+									name: 'dateOfBirth',
+									type: 'dateTime',
+									default: '',
+								},
+						]
+						},
+						{
+							displayName: 'Set Default Billing Address',
+							name: 'setDefaultBillingAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Default Billing Address Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address to set as default billing address',
+								},
+						]
+						},
+						{
+							displayName: 'Set Default Shipping Address',
+							name: 'setDefaultShippingAddress',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Default Shipping Address Action',
+							options: [
+								{
+									displayName: 'Address ID',
+									name: 'addressId',
+									type: 'string',
+									default: '',
+									description: 'ID of the address to set as default shipping address',
+								},
+						]
+						},
+						{
+							displayName: 'Set External ID',
+							name: 'setExternalId',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set External ID Action',
+							options: [
+								{
+									displayName: 'External ID',
+									name: 'externalId',
+									type: 'string',
+									default: '',
+									description: 'External ID for the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set First Name',
+							name: 'setFirstName',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set First Name Action',
+							options: [
+								{
+									displayName: 'First Name',
+									name: 'firstName',
+									type: 'string',
+									default: '',
+									description: 'First name of the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set Key',
+							name: 'setKey',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Key Action',
+							options: [
+								{
+									displayName: 'Key',
+									name: 'key',
+									type: 'string',
+									default: '',
+									description: 'Key for the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set Last Name',
+							name: 'setLastName',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Last Name Action',
+							options: [
+								{
+									displayName: 'Last Name',
+									name: 'lastName',
+									type: 'string',
+									default: '',
+									description: 'Last name of the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set Locale',
+							name: 'setLocale',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Locale Action',
+							options: [
+								{
+									displayName: 'Locale',
+									name: 'locale',
+									type: 'string',
+									default: '',
+									description: 'Locale for the customer (e.g., \'en-US\')',
+								},
+						]
+						},
+						{
+							displayName: 'Set Middle Name',
+							name: 'setMiddleName',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Middle Name Action',
+							options: [
+								{
+									displayName: 'Middle Name',
+									name: 'middleName',
+									type: 'string',
+									default: '',
+									description: 'Middle name of the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set Salutation',
+							name: 'setSalutation',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Salutation Action',
+							options: [
+								{
+									displayName: 'Salutation',
+									name: 'salutation',
+									type: 'string',
+									default: '',
+									description: 'Salutation for the customer (e.g., \'Mr\', \'Ms\')',
+								},
+						]
+						},
+						{
+							displayName: 'Set Stores',
+							name: 'setStores',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Stores Action',
+							options: [
+								{
+									displayName: 'Stores',
+									name: 'stores',
+									type: 'json',
+									default: '[]',
+									description: 'Array of store references',
+								},
+						]
+						},
+						{
+							displayName: 'Set Title',
+							name: 'setTitle',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Title Action',
+							options: [
+								{
+									displayName: 'Title',
+									name: 'title',
+									type: 'string',
+									default: '',
+									description: 'Title for the customer',
+								},
+						]
+						},
+						{
+							displayName: 'Set Vat ID',
+							name: 'setVatId',
+							type: 'collection',
+							default: {},
+							placeholder: 'Set Vat ID Action',
+							options: [
+								{
+									displayName: 'VAT ID',
+									name: 'vatId',
+									type: 'string',
+									default: '',
+									description: 'VAT ID for the customer',
+								},
+						]
+						},
+				],
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
+				},
+			},
+		},
+		{
+			displayName: 'Actions (JSON)',
+			name: 'actions',
+			type: 'json',
+			default: '',
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
+				},
+			},
+			description: 'JSON array of update actions to perform on the customer. Alternative to Actions (UI).'
+		},
+		{
+			displayName: 'Return All',
+			name: 'returnAll',
+			type: 'boolean',
+			default: false,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['query', 'queryInStore'],
+				},
+			},
+			description: 'Whether to return all results or only up to a given limit',
+		},
+		{
+			displayName: 'Limit',
+			name: 'limit',
+			type: 'number',
+			default: 50,
+			typeOptions: {
+				minValue: 1,
+				maxValue: 500,
+			},
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['query', 'queryInStore'],
+					returnAll: [false],
+				},
+			},
+			description: 'Max number of results to return',
+		},
+		{
+			displayName: 'Offset',
+			name: 'offset',
+			type: 'number',
+			default: 0,
+			typeOptions: {
+				minValue: 0,
+			},
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['query', 'queryInStore'],
+				},
+			},
+			description: 'Number of customers to skip before returning results',
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFields',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
+				{
+					displayName: 'Anonymous Cart ID',
+					name: 'anonymousCartId',
+					type: 'string',
+					default: '',
+					description: 'The ID of the anonymous cart to merge with the customer cart',
+				},
+				{
+					displayName: 'Anonymous Cart Sign In Mode',
+					name: 'anonymousCartSignInMode',
+					type: 'options',
+					options: [
+						{
+							name: 'Merge With Existing Customer Cart',
+							value: 'MergeWithExistingCustomerCart',
+						},
+						{
+							name: 'Use As New Active Customer Cart',
+							value: 'UseAsNewActiveCustomerCart',
+						},
+					],
+					default: 'MergeWithExistingCustomerCart',
+					description: 'How to handle the anonymous cart when signing in',
+				},
+				{
+					displayName: 'Anonymous ID',
+					name: 'anonymousId',
+					type: 'string',
+					default: '',
+					description: 'The ID of the anonymous session',
+				},
+				{
+					displayName: 'Custom Query Parameters',
+					name: 'customParameters',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Parameter',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'parameter',
+							displayName: 'Parameter',
+							values: [
+								{
+									displayName: 'Key',
+									name: 'key',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
+				},
+				{
+					displayName: 'Expand',
+					name: 'expand',
+					type: 'string',
+					default: '',
+					description: 'Include additional resources by reference expansion',
+				},
+				{
+					displayName: 'Predicate Variables',
+					name: 'predicateVariables',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Variable',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'variable',
+							displayName: 'Variable',
+							values: [
+								{
+									displayName: 'Name',
+									name: 'name',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
+				},
+				{
+					displayName: 'Sort',
+					name: 'sort',
+					type: 'string',
+					default: '',
+					description: 'Sort customers by specific fields',
+				},
+				{
+					displayName: 'TTL Minutes',
+					name: 'ttlMinutes',
+					type: 'number',
+					default: 10080,
+					description: 'Time to live for tokens in minutes (default: 7 days)',
+				},
+				{
+					displayName: 'Update Product Data',
+					name: 'updateProductData',
+					type: 'boolean',
+					default: false,
+					description: 'Whether to update product data in the cart',
+				},
+				{
+					displayName: 'Where',
+					name: 'where',
+					type: 'string',
+					default: '',
+					description: 'Query predicate to filter customers',
+				},
+				{
+					displayName: 'With Total',
+					name: 'withTotal',
+					type: 'boolean',
+					default: false,
+					description: 'Whether to include total count in the response',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['authenticate', 'authenticateInStore', 'query', 'queryInStore', 'headByQuery', 'headInStoreByQuery', 'createPasswordResetToken', 'createPasswordResetTokenInStore', 'createEmailToken', 'createEmailTokenInStore'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsGet',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
+				{
+					displayName: 'Expand',
+					name: 'expand',
+					type: 'string',
+					default: '',
+					description: 'Include additional resources by reference expansion',
+				},
+				{
+					displayName: 'Custom Query Parameters',
+					name: 'customParameters',
+					type: 'fixedCollection',
+					default: {},
+					placeholder: 'Add Parameter',
+					typeOptions: {
+						multipleValues: true,
+					},
+					options: [
+						{
+							name: 'parameter',
+							displayName: 'Parameter',
+							values: [
+								{
+									displayName: 'Key',
+									name: 'key',
+									type: 'string',
+									default: '',
+								},
+								{
+									displayName: 'Value',
+									name: 'value',
+									type: 'string',
+									default: '',
+								},
+							],
+						},
+					],
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['get', 'getByKey', 'getByEmailToken', 'getByPasswordToken', 'getInStore', 'getInStoreByKey', 'getInStoreByEmailToken', 'getInStoreByPasswordToken'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsCreate',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
+				{
+					displayName: 'Expand',
+					name: 'expand',
+					type: 'string',
+					default: '',
+					description: 'Include additional resources by reference expansion',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['create', 'createInStore'],
+				},
+			},
+		},
+		{
+			displayName: 'Additional Fields',
+			name: 'additionalFieldsUpdate',
+			type: 'collection',
+			default: {},
+			placeholder: 'Add Field',
+			options: [
+				{
+					displayName: 'Expand',
+					name: 'expand',
+					type: 'string',
+					default: '',
+					description: 'Include additional resources by reference expansion',
+				},
+			],
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
 				},
 			},
 		},
