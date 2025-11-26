@@ -71,8 +71,7 @@ async function getActionsForUpdate(
 
 async function handleHeadOperation(
 	executeFunctions: IExecuteFunctions,
-	url: string,
-	itemIndex: number
+	url: string
 ): Promise<{ exists: boolean }> {
 	try {
 		await executeFunctions.helpers.httpRequestWithAuthentication.call(
@@ -325,8 +324,7 @@ export async function executeCustomerOperation(
 
 		const result = await handleHeadOperation(
 			this,
-			`${baseUrl}/customers/${customerId}`,
-			itemIndex
+			`${baseUrl}/customers/${customerId}`
 		);
 		results.push({ json: result });
 		return results;
@@ -341,8 +339,7 @@ export async function executeCustomerOperation(
 
 		const result = await handleHeadOperation(
 			this,
-			`${baseUrl}/customers/key=${encodeURIComponent(customerKey)}`,
-			itemIndex
+			`${baseUrl}/customers/key=${encodeURIComponent(customerKey)}`
 		);
 		results.push({ json: result });
 		return results;
