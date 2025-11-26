@@ -25,11 +25,11 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 ## Configuration Options
 
-Below are the main configuration options and parameters available for the Commercetools node (resource: product or category):
+Below are the main configuration options and parameters available for the Commercetools node (resource: product or category)
 
 ### Common Parameters
 - **resource**: Select 'product' or 'category' to access respective operations.
-- **operation**: Choose the desired operation (e.g., create, query, get, update, delete, etc.).
+- **operation**: Choose the desired operation (example: create, query, get, update, delete, etc.).
 - **Credentials**: Select your configured Commercetools OAuth2 credentials.
 
 ### Product Operation-Specific Parameters
