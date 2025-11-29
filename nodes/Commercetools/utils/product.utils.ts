@@ -235,7 +235,7 @@ export const buildActionsFromUi = (
 				image: {
 					url: imageDetails?.url,
 					label: imageDetails?.label,
-					dimension: dimensions
+					dimensions: dimensions
 				}
 			}
 		}
