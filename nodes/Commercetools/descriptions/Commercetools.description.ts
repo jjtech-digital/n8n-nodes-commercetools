@@ -698,7 +698,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							name: 'value',
 							type: 'string',
 							default: '',
-							description: 'Value of the attribute (can be JSON for complex types)',
+							description: 'Value of the attribute',
+							typeOptions: {
+								alwaysOpenEditWindow: true,
+							},
+							displayOptions: {
+								show: {
+									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
+								},
+							},
+						},
+						{
+							displayName: 'Attribute Value Type',
+							name: 'valueType',
+							type: 'options',
+							options: [
+								{
+									name: 'String',
+									value: 'string',
+								},
+								{
+									name: 'Number',
+									value: 'number',
+								},
+								{
+									name: 'Boolean',
+									value: 'boolean',
+								}
+							],
+							default: 'string',
+							description: 'The type of value you are entering',
 							displayOptions: {
 								show: {
 									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
@@ -1496,6 +1525,30 @@ export const commercetoolsDescription: INodeTypeDescription = {
 
 						// ==================== ADD PRICE ====================
 						{
+							displayName: 'Update Variant By',
+							name: 'identifyBy',
+							type: 'options',
+							doNotInherit: true,
+							options: [
+								{
+									name: 'Variant ID',
+									value: 'variantId',
+								},
+								{
+									name: 'SKU',
+									value: 'sku',
+								},
+							],
+							default: 'variantId',
+							description: 'Choose how to identify the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+								},
+								
+							},
+						},
+						{
 							displayName: 'Variant ID',
 							name: 'variantId',
 							type: 'number',
@@ -1504,6 +1557,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							displayOptions: {
 								show: {
 									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+									identifyBy: ['variantId'],
+								},
+							},
+						},
+						{
+							displayName: 'SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'SKU of the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+									identifyBy: ['sku'],
 								},
 							},
 						},

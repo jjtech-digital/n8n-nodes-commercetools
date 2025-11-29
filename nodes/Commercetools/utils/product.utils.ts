@@ -150,6 +150,35 @@ function transformFlatCategoryId(actionObj: IDataObject): IDataObject {
 	return actionObj;
 }
 
+// Helper function to parse value based on type
+function parseAttributeValue(value: string, type: string): any {
+	try {
+		switch (type) {
+			case 'string':
+				return value;
+
+			case 'number':
+				const num = Number(value);
+				if (isNaN(num)) {
+					throw new Error(`Cannot convert "${value}" to number`);
+				}
+				return num;
+
+			case 'boolean':
+				const lowerValue = value.toLowerCase().trim();
+				if (lowerValue === 'true' || lowerValue === '1') return true;
+				if (lowerValue === 'false' || lowerValue === '0') return false;
+				throw new Error(`Cannot convert "${value}" to boolean. Use: true, false, 1, or 0`);
+
+			default:
+				return value;
+		}
+	} catch (error) {
+		throw new Error(`Failed to parse value as ${type}: ${error.message}`);
+	}
+}
+
+// Now attributeValue has the correct type!
 export const buildActionsFromUi = (
 	context: IExecuteFunctions,
 	actionsUi: IDataObject,
@@ -164,10 +193,38 @@ export const buildActionsFromUi = (
 	} else if (rawActionEntries) {
 		actionEntries = [rawActionEntries as IDataObject];
 	}
-
+	const attributesActions = ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'];
 	for (const action of actionEntries) {
 		const localized = preprocessLocalizedFields(action);
-		const finalAction = transformFlatCategoryId(localized);
+		let finalAction = transformFlatCategoryId(localized);
+		// setting attribute to any type like attribute can be number, string and boolaean
+		if (attributesActions.includes(action?.action as string)){
+			const attributeValue = parseAttributeValue(action?.value as string, action?.valueType as string);
+			finalAction = {
+				...action,
+				value: attributeValue
+			}
+			delete finalAction?.valueType;
+		}
+		// if setPrices, map the values correctly
+		if (action?.action === 'setPrices') {
+			const pricesData = (action?.prices as IDataObject)?.price as IDataObject[] || [];
+			// Transform the fixedCollection format to your required format
+			const modifiedPrices = pricesData?.map((price) => ({
+				value: {
+					currencyCode: price.currencyCode as string,
+					centAmount: price.centAmount as number,
+				},
+			}));
+			finalAction = {
+				...action,
+				prices: modifiedPrices,
+			};
+		}
+
+		if (finalAction?.identifyBy){
+			delete finalAction?.identifyBy;
+		}
 		builtActions.push(finalAction);
 	}
 	return builtActions;
