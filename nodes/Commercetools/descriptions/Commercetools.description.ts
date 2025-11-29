@@ -875,10 +875,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
 
 						// ==================== EXTERNAL IMAGE ====================
 						{
-							displayName: 'Image URL',
+							displayName: 'Image',
 							name: 'image',
 							type: 'fixedCollection',
 							default: {},
+							placeholder: 'Add Image Details',
 							description: 'External image details',
 							displayOptions: {
 								show: {
@@ -887,48 +888,60 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 							options: [
 								{
-									displayName: 'URL',
-									name: 'url',
-									type: 'string',
-									default: '',
-									required: true,
-									description: 'URL of the external image',
-								},
-								{
-									displayName: 'Dimensions',
-									name: 'dimensions',
-									type: 'fixedCollection',
-									default: {},
-									description: 'Image dimensions',
-									options: [
+									name: 'imageDetails',
+									displayName: 'Image Details',
+									values: [
 										{
-											displayName: 'Size',
+											displayName: 'URL',
+											name: 'url',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '//myimage.jpg',
+											description: 'URL of the external image',
+										},
+										{
+											displayName: 'Label',
+											name: 'label',
+											type: 'string',
+											default: '',
+											placeholder: 'myImage',
+											description: 'Image label (optional)',
+										},
+										{
+											displayName: 'Dimensions',
 											name: 'dimensions',
-											values: [
+											type: 'fixedCollection',
+											default: {},
+											placeholder: 'Add Dimensions',
+											description: 'Image dimensions (optional)',
+											options: [
 												{
-													displayName: 'Width',
-													name: 'w',
-													type: 'number',
-													default: 0,
-												},
-												{
-													displayName: 'Height',
-													name: 'h',
-													type: 'number',
-													default: 0,
+													name: 'size',
+													displayName: 'Size',
+													values: [
+														{
+															displayName: 'Width',
+															name: 'w',
+															type: 'number',
+															default: 0,
+															placeholder: '1400',
+															description: 'Image width in pixels',
+														},
+														{
+															displayName: 'Height',
+															name: 'h',
+															type: 'number',
+															default: 0,
+															placeholder: '1400',
+															description: 'Image height in pixels',
+														},
+													],
 												},
 											],
 										},
 									],
 								},
-								{
-									displayName: 'Label',
-									name: 'label',
-									type: 'string',
-									default: '',
-									description: 'Image label',
-								},
-
 							],
 						},
 
@@ -945,10 +958,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
-
-						// ==================== LABEL ====================
-
-
+						
 						// ==================== DESCRIPTION ====================
 						{
 							displayName: 'Localized Descriptions',

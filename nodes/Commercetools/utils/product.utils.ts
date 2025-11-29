@@ -206,6 +206,7 @@ export const buildActionsFromUi = (
 			}
 			delete finalAction?.valueType;
 		}
+		
 		// if setPrices, map the values correctly
 		if (action?.action === 'setPrices') {
 			const pricesData = (action?.prices as IDataObject)?.price as IDataObject[] || [];
@@ -222,6 +223,23 @@ export const buildActionsFromUi = (
 			};
 		}
 
+		if (action?.action === 'addExternalImage') {
+			const imageDetails = (action?.image as IDataObject)?.imageDetails as IDataObject
+			const sizeData = (imageDetails?.dimensions as IDataObject)?.size as IDataObject
+			const dimensions = {
+				h: sizeData?.h as number || null,
+				w: sizeData?.w as number || null
+			}
+			finalAction = {
+				...action,
+				image: {
+					url: imageDetails?.url,
+					label: imageDetails?.label,
+					dimension: dimensions
+				}
+			}
+		}
+		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy){
 			delete finalAction?.identifyBy;
 		}
