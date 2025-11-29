@@ -1306,7 +1306,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									values: [
 										{
 											displayName: 'Currency',
-											name: 'currency',
+											name: 'currencyCode',
 											type: 'string',
 											default: 'EUR',
 										},
