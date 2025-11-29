@@ -232,8 +232,11 @@ export async function executeProductOperation(
 		results.push({ json: response });
 		return results;
 	}
+	console.log("before update", operation);
 
 	if (operation === 'update' || operation === 'updateByKey') {
+		console.log("from update block");
+
 		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsUpdate);
@@ -247,7 +250,7 @@ export async function executeProductOperation(
 
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const rawActions = this.getNodeParameter('actions', itemIndex);
-		const actionsUi = this.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
+		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
 		const actionsFromUi = buildActionsFromUi(this, actionsUi, itemIndex);
 		const actions = [...actionsFromJson, ...actionsFromUi];
@@ -265,6 +268,10 @@ export async function executeProductOperation(
 			actions,
 		};
 
+		console.log("body sent to api call", body);
+		console.log("->>>>>",body.actions[0]?.image );
+		
+
 		if (operation === 'update') {
 			const productId = this.getNodeParameter('productId', itemIndex) as string;
 			const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
@@ -273,6 +280,7 @@ export async function executeProductOperation(
 				body,
 				qs,
 			})) as IDataObject;
+console.log("response after api call", response);
 
 			results.push({ json: response });
 			return results;

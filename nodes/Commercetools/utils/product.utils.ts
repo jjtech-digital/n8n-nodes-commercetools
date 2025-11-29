@@ -65,6 +65,91 @@ export const applyCommonParameters = (
 	}
 };
 
+
+/**
+ * Recursively transforms any property named 'name', 'description', 'slug', etc. containing a localizedField array into a locale-keyed object.
+ */
+export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
+	function transform(value: IDataObject): IDataObject {
+		// Only process objects (not arrays or primitives)
+		if (value && typeof value === 'object' && !Array.isArray(value)) {
+			const newObj: IDataObject = {};
+			for (const key of Object.keys(value)) {
+				const currentValue = value[key] as IDataObject;
+
+				// Handle localizedField property
+				if (currentValue && typeof currentValue === 'object' && 'localizedField' in currentValue) {
+					const localizedArr = currentValue.localizedField;
+					if (Array.isArray(localizedArr)) {
+						newObj[key] = {};
+						for (const loc of localizedArr) {
+							if (loc && typeof loc === 'object') {
+								const locale = typeof loc.locale === 'string' ? loc.locale.trim() : '';
+								const val = loc.value;
+								if (locale && val !== undefined && val !== '') {
+									(newObj[key] as IDataObject)[locale] = val;
+								}
+							}
+						}
+					} else {
+						newObj[key] = currentValue;
+					}
+				} else {
+					// Recursively transform nested values
+					newObj[key] = transform(currentValue);
+				}
+			}
+			return newObj;
+		}
+		// Return primitives and arrays as-is
+		return value;
+	}
+	return transform(obj) as IDataObject;
+
+
+}
+/**
+ * Transforms categoryId and categoryReference fields to nested category object for specific actions
+ */
+function transformFlatCategoryId(actionObj: IDataObject): IDataObject {
+	// Handle flat categoryId for addToCategory, removeFromCategory
+	if (
+		actionObj && typeof actionObj === 'object' &&
+		typeof actionObj.categoryId === 'string' && actionObj.categoryId !== '' &&
+		typeof actionObj.action === 'string' && ['addToCategory', 'removeFromCategory'].includes(actionObj.action)
+	) {
+		return {
+			...actionObj,
+			category: {
+				typeId: 'category',
+				id: actionObj.categoryId,
+			},
+		};
+	}
+
+	// Handle categoryReference array for addToCategory
+	if (
+		actionObj && typeof actionObj === 'object' &&
+		actionObj.category && typeof actionObj.category === 'object'
+	) {
+		const categoryObj = actionObj.category as IDataObject;
+		if (Array.isArray(categoryObj.categoryReference) && categoryObj.categoryReference.length > 0) {
+			const ref = categoryObj.categoryReference[0] as IDataObject | undefined;
+			if (ref && typeof ref === 'object' && ref.typeId && (ref.id || ref.key)) {
+				return {
+					...actionObj,
+					category: {
+						typeId: ref.typeId,
+						...(ref.id ? { id: ref.id } : {}),
+						...(ref.key ? { key: ref.key } : {}),
+					},
+				};
+			}
+		}
+	}
+	return actionObj;
+}
+
 export const buildActionsFromUi = (
 	context: IExecuteFunctions,
 	actionsUi: IDataObject,
@@ -72,94 +157,21 @@ export const buildActionsFromUi = (
 ): IDataObject[] => {
 	const builtActions: IDataObject[] = [];
 	const rawActionEntries = actionsUi.action;
-	const actionEntries = Array.isArray(rawActionEntries)
-		? (rawActionEntries as IDataObject[])
-		: rawActionEntries
-		? [rawActionEntries as IDataObject]
-		: [];
+	let actionEntries: IDataObject[] = [];
 
-	for (const actionEntry of actionEntries) {
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setProductKey')) {
-			const setProductKey = actionEntry.setProductKey as IDataObject;
-			const removeKey = Boolean(setProductKey.removeKey);
-			const rawKey = (setProductKey.key as string | undefined)?.trim();
-
-			const action: IDataObject = { action: 'setKey' };
-
-			if (removeKey) {
-				action.key = null;
-			} else {
-				if (!rawKey) {
-					throw new NodeOperationError(
-						context.getNode(),
-						'New product key is required when Remove Key is not enabled',
-						{ itemIndex },
-					);
-				}
-
-				action.key = rawKey;
-			}
-
-			builtActions.push(action);
-			continue;
-		}
-
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'changeProductName')) {
-			const changeProductName = actionEntry.changeProductName as IDataObject;
-			const localizedNamesRaw = (changeProductName.localizedNames as IDataObject) ?? {};
-			const localizedValuesRaw = localizedNamesRaw.value;
-			const localizedValues = Array.isArray(localizedValuesRaw)
-				? (localizedValuesRaw as IDataObject[])
-				: localizedValuesRaw
-				? [localizedValuesRaw as IDataObject]
-				: [];
-
-			if (localizedValues.length === 0) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'At least one localized name is required for Change Product Name',
-					{ itemIndex },
-				);
-			}
-
-			const name: IDataObject = {};
-
-			for (const localized of localizedValues) {
-				const locale = (localized.locale as string | undefined)?.trim();
-				const value = localized.value as string | undefined;
-
-				if (!locale) {
-					throw new NodeOperationError(context.getNode(), 'Locale is required for each localized product name', {
-						itemIndex,
-					});
-				}
-
-				if (value === undefined || value === '') {
-					throw new NodeOperationError(
-						context.getNode(),
-						`Name value is required for locale "${locale}"`,
-						{ itemIndex },
-					);
-				}
-
-				name[locale] = value;
-			}
-
-			const action: IDataObject = {
-				action: 'changeName',
-				name,
-			};
-
-			if (Object.prototype.hasOwnProperty.call(changeProductName, 'staged')) {
-				action.staged = changeProductName.staged as boolean;
-			}
-
-			builtActions.push(action);
-		}
+	if (Array.isArray(rawActionEntries)) {
+		actionEntries = rawActionEntries as IDataObject[];
+	} else if (rawActionEntries) {
+		actionEntries = [rawActionEntries as IDataObject];
 	}
 
+	for (const action of actionEntries) {
+		const localized = preprocessLocalizedFields(action);
+		const finalAction = transformFlatCategoryId(localized);
+		builtActions.push(finalAction);
+	}
 	return builtActions;
-};
+}
 
 export const coerceActions = (context: IExecuteFunctions, rawActions: unknown, itemIndex: number): IDataObject[] => {
 	let actions = rawActions;

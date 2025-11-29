@@ -11,7 +11,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 	icon: 'file:Commercetools.svg',
 	...nodeGroup,
 	version: 1,
-description: 'Interact with the Commercetools Products and Categories API',
+	description: 'Interact with the Commercetools Products and Categories API',
 	defaults: {
 		name: 'Commercetools',
 	},
@@ -325,98 +325,1208 @@ description: 'Interact with the Commercetools Products and Categories API',
 		},
 		{
 			displayName: 'Actions (UI)',
-			name: 'actionsUi',
+			name: 'updateActions',
 			type: 'fixedCollection',
 			default: {},
 			placeholder: 'Add Action',
 			typeOptions: {
 				multipleValues: true,
 			},
-			description: 'Update actions built via UI for ease of use',
-			options: [
-				{
-					displayName: 'Action',
-					name: 'action',
-					values: [
-						{
-							displayName: 'Change Product Name',
-							name: 'changeProductName',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Change Name Action',
-							options: [
-								{
-									displayName: 'Localized Names',
-									name: 'localizedNames',
-									type: 'fixedCollection',
-									default: {},
-									typeOptions: {
-										multipleValues: true,
-									},
-									options: [
-										{
-											name: 'value',
-											displayName: 'Value',
-											values: [
-												{
-													displayName: 'Locale',
-													name: 'locale',
-													type: 'string',
-													default: '',
-													description: 'Locale identifier, e.g. "en-US"',
-												},
-												{
-													displayName: 'Name',
-													name: 'value',
-													type: 'string',
-													default: '',
-													description: 'Localized product name for the locale',
-												},
-											],
-										},
-									],
-								},
-								{
-									displayName: 'Apply to Staged Version',
-									name: 'staged',
-									type: 'boolean',
-									default: false,
-									description: 'Whether the name change should apply to the staged product data',
-								},
-							],
-						},
-						{
-							displayName: 'Set Product Key',
-							name: 'setProductKey',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Set Product Key Action',
-							options: [
-								{
-									displayName: 'New Key',
-									name: 'key',
-									type: 'string',
-									default: '',
-									description: 'New product key to set',
-								},
-								{
-									displayName: 'Remove Key',
-									name: 'removeKey',
-									type: 'boolean',
-									default: false,
-									description: 'Whether to remove the product key instead of setting a new one',
-								},
-							],
-						},
-					],
-				},
-			],
+			description: 'Define multiple update actions to perform on the product',
 			displayOptions: {
 				show: {
 					resource: ['product'],
 					operation: ['update', 'updateByKey'],
 				},
 			},
+			options: [
+				{
+					displayName: 'Action',
+					name: 'action',
+					values: [
+						// Action Type Selector
+						{
+							displayName: 'Action Type',
+							name: 'action',
+							type: 'options',
+							required: true,
+							default: 'publish',
+							// description: 'Select the type of action to perform',
+							options: [
+								{
+									name: 'Add Asset',
+									value: 'addAsset',
+								},
+								{
+									name: 'Add External Image',
+									value: 'addExternalImage',
+								},
+								{
+									name: 'Add Price',
+									value: 'addPrice',
+								},
+								{
+									name: 'Add Product Variant',
+									value: 'addVariant',
+								},
+								{
+									name: 'Add To Category',
+									value: 'addToCategory',
+								},
+								{
+									name: 'Change Asset Name',
+									value: 'changeAssetName',
+								},
+								{
+									name: 'Change Asset Order',
+									value: 'changeAssetOrder',
+								},
+								{
+									name: 'Change Master Variant',
+									value: 'changeMasterVariant',
+								},
+								{
+									name: 'Change Name',
+									value: 'changeName',
+								},
+								{
+									name: 'Change Price',
+									value: 'changePrice',
+								},
+								{
+									name: 'Change Slug',
+									value: 'changeSlug',
+								},
+								{
+									name: 'Move Image To Position',
+									value: 'moveImageToPosition',
+								},
+								{
+									name: 'Publish',
+									value: 'publish',
+								},
+								{
+									name: 'Remove Asset',
+									value: 'removeAsset',
+								},
+								{
+									name: 'Remove From Category',
+									value: 'removeFromCategory',
+								},
+								{
+									name: 'Remove Image',
+									value: 'removeImage',
+								},
+								{
+									name: 'Remove Price',
+									value: 'removePrice',
+								},
+								{
+									name: 'Remove Variant',
+									value: 'removeVariant',
+								},
+								{
+									name: 'Revert Staged Changes',
+									value: 'revertStagedChanges',
+								},
+								{
+									name: 'Set Asset Custom Field',
+									value: 'setAssetCustomField',
+								},
+								{
+									name: 'Set Asset Custom Type',
+									value: 'setAssetCustomType',
+								},
+								{
+									name: 'Set Asset Description',
+									value: 'setAssetDescription',
+								},
+								{
+									name: 'Set Asset Key',
+									value: 'setAssetKey',
+								},
+								{
+									name: 'Set Asset Sources',
+									value: 'setAssetSources',
+								},
+								{
+									name: 'Set Asset Tags',
+									value: 'setAssetTags',
+								},
+								{
+									name: 'Set Attribute',
+									value: 'setAttribute',
+								},
+								{
+									name: 'Set Attribute In All Variants',
+									value: 'setAttributeInAllVariants',
+								},
+								{
+									name: 'Set Category Order Hint',
+									value: 'setCategoryOrderHint',
+								},
+								{
+									name: 'Set Description',
+									value: 'setDescription',
+								},
+								{
+									name: 'Set Image Label',
+									value: 'setImageLabel',
+								},
+								{
+									name: 'Set Key',
+									value: 'setKey',
+								},
+								{
+									name: 'Set Meta Description',
+									value: 'setMetaDescription',
+								},
+								{
+									name: 'Set Meta Keywords',
+									value: 'setMetaKeywords',
+								},
+								{
+									name: 'Set Meta Title',
+									value: 'setMetaTitle',
+								},
+								{
+									name: 'Set Price Custom Field',
+									value: 'setPriceCustomField',
+								},
+								{
+									name: 'Set Price Custom Type',
+									value: 'setPriceCustomType',
+								},
+								{
+									name: 'Set Price Key',
+									value: 'setPriceKey',
+								},
+								{
+									name: 'Set Price Mode',
+									value: 'setPriceMode',
+								},
+								{
+									name: 'Set Prices',
+									value: 'setPrices',
+								},
+								{
+									name: 'Set Product Attribute',
+									value: 'setProductAttribute',
+								},
+								{
+									name: 'Set Product Variant Key',
+									value: 'setProductVariantKey',
+								},
+								{
+									name: 'Set Search Keywords',
+									value: 'setSearchKeywords',
+								},
+								{
+									name: 'Set SKU',
+									value: 'setSku',
+								},
+								{
+									name: 'Set Tax Category',
+									value: 'setTaxCategory',
+								},
+								{
+									name: 'Transition State',
+									value: 'transitionState',
+								},
+								{
+									name: 'Unpublish',
+									value: 'unpublish',
+								},
+							],
+						},
+
+						// ==================== ASSET ID FIELD ====================
+						{
+							displayName: 'Asset ID',
+							name: 'assetId',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'ID of the asset',
+							displayOptions: {
+								show: {
+									action: [
+										'changeAssetName',
+										'changeAssetOrder',
+										'removeAsset',
+										'removeImage',
+										'moveImageToPosition',
+										'setAssetCustomField',
+										'setAssetCustomType',
+										'setAssetDescription',
+										'setAssetKey',
+										'setAssetSources',
+										'setAssetTags',
+										'setImageLabel',
+									],
+								},
+							},
+						},
+
+						// ==================== ADD ASSET ====================
+						{
+							displayName: 'Asset Name',
+							name: 'name',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized asset names',
+							displayOptions: {
+								show: {
+									action: ['addAsset'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Name',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Name in this locale',
+										},
+									],
+								},
+							],
+						},
+						{
+							displayName: 'Asset Sources',
+							name: 'asset',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Sources for the asset',
+							displayOptions: {
+								show: {
+									action: ['addAsset', 'setAssetSources'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Source',
+									name: 'sources',
+									values: [
+										{
+											displayName: 'URI',
+											name: 'uri',
+											type: 'string',
+											default: '',
+											required: true,
+											description: 'URI of the asset',
+										},
+										{
+											displayName: 'Key',
+											name: 'key',
+											type: 'string',
+											default: '',
+											description: 'Optional key for the source',
+										},
+										{
+											displayName: 'Content Type',
+											name: 'contentType',
+											type: 'string',
+											default: '',
+											description: 'MIME type (e.g., image/jpeg)',
+										},
+										{
+											displayName: 'Dimensions',
+											name: 'dimensions',
+											type: 'fixedCollection',
+											default: {},
+											description: 'Image dimensions',
+											options: [
+												{
+													displayName: 'Size',
+													name: 'size',
+													values: [
+														{
+															displayName: 'Width',
+															name: 'w',
+															type: 'number',
+															default: 0,
+														},
+														{
+															displayName: 'Height',
+															name: 'h',
+															type: 'number',
+															default: 0,
+														},
+													],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== ATTRIBUTES ====================
+						{
+							displayName: 'Attribute Name',
+							name: 'name',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'Name of the attribute',
+							displayOptions: {
+								show: {
+									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
+								},
+							},
+						},
+						{
+							displayName: 'Attribute Value',
+							name: 'value',
+							type: 'string',
+							default: '',
+							description: 'Value of the attribute (can be JSON for complex types)',
+							displayOptions: {
+								show: {
+									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
+								},
+							},
+						},
+						// ==================== CATEGORY ID ====================
+						{
+							displayName: 'Category ID',
+							name: 'categoryId',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'ID of the category',
+							displayOptions: {
+								show: {
+									action: ['addToCategory', 'removeFromCategory', 'setCategoryOrderHint'],
+								},
+							},
+						},
+
+
+						{
+							displayName: 'Custom Fields',
+							name: 'fields',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Custom field values',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomType', 'setPriceCustomType'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Field',
+									name: 'field',
+									values: [
+										{
+											displayName: 'Name',
+											name: 'name',
+											type: 'string',
+											default: '',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== CUSTOM TYPE ====================
+						{
+							displayName: 'Custom Type',
+							name: 'type',
+							type: 'fixedCollection',
+							default: {},
+							description: 'Custom type reference',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomType', 'setPriceCustomType'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Type Reference',
+									name: 'typeReference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'options',
+											default: 'type',
+											options: [
+												{
+													name: 'Type',
+													value: 'type',
+												},
+											],
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											description: 'ID of the custom type',
+										},
+										{
+											displayName: 'Key',
+											name: 'key',
+											type: 'string',
+											default: '',
+											description: 'Key of the custom type',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== CUSTOM FIELD ====================
+						{
+							displayName: 'Field Name',
+							name: 'fieldName',
+							type: 'string',
+							default: '',
+							description: 'Name of the custom field',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomField', 'setPriceCustomField'],
+								},
+							},
+						},
+						{
+							displayName: 'Field Value',
+							name: 'fieldValue',
+							type: 'string',
+							default: '',
+							description: 'Value of the custom field',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomField', 'setPriceCustomField'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Force',
+							name: 'force',
+							type: 'boolean',
+							default: false,
+							// description: 'Force transition even if not valid',
+							displayOptions: {
+								show: {
+									action: ['transitionState'],
+								},
+							},
+						},
+
+						// ==================== EXTERNAL IMAGE ====================
+						{
+							displayName: 'Image URL',
+							name: 'image',
+							type: 'fixedCollection',
+							default: {},
+							description: 'External image details',
+							displayOptions: {
+								show: {
+									action: ['addExternalImage'],
+								},
+							},
+							options: [
+								{
+									displayName: 'URL',
+									name: 'url',
+									type: 'string',
+									default: '',
+									required: true,
+									description: 'URL of the external image',
+								},
+								{
+									displayName: 'Dimensions',
+									name: 'dimensions',
+									type: 'fixedCollection',
+									default: {},
+									description: 'Image dimensions',
+									options: [
+										{
+											displayName: 'Size',
+											name: 'dimensions',
+											values: [
+												{
+													displayName: 'Width',
+													name: 'w',
+													type: 'number',
+													default: 0,
+												},
+												{
+													displayName: 'Height',
+													name: 'h',
+													type: 'number',
+													default: 0,
+												},
+											],
+										},
+									],
+								},
+								{
+									displayName: 'Label',
+									name: 'label',
+									type: 'string',
+									default: '',
+									description: 'Image label',
+								},
+
+							],
+						},
+
+						// ==================== KEY ====================
+						{
+							displayName: 'Key',
+							name: 'key',
+							type: 'string',
+							default: '',
+							description: 'Unique key',
+							displayOptions: {
+								show: {
+									action: ['setKey', 'setAssetKey', 'setPriceKey', 'setProductVariantKey', 'addVariant'],
+								},
+							},
+						},
+
+						// ==================== LABEL ====================
+
+
+						// ==================== DESCRIPTION ====================
+						{
+							displayName: 'Localized Descriptions',
+							name: 'description',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							// description: 'Localized descriptions',
+							displayOptions: {
+								show: {
+									action: ['setDescription', 'setAssetDescription'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Description',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Description in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== CHANGE NAME ====================
+						{
+							displayName: 'Localized Names',
+							name: 'name',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized product names',
+							displayOptions: {
+								show: {
+									action: ['changeName'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Name',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Name in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== CHANGE SLUG ====================
+						{
+							displayName: 'Localized Slugs',
+							name: 'slug',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized product slugs',
+							displayOptions: {
+								show: {
+									action: ['changeSlug'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Slug',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Slug in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== META FIELDS ====================
+						{
+							displayName: 'Meta Description',
+							name: 'metaDescription',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized meta descriptions',
+							displayOptions: {
+								show: {
+									action: ['setMetaDescription'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Value',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Meta Keywords',
+							name: 'metaKeywords',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized meta keywords',
+							displayOptions: {
+								show: {
+									action: ['setMetaKeywords'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Value',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Meta Title',
+							name: 'metaTitle',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized meta titles',
+							displayOptions: {
+								show: {
+									action: ['setMetaTitle'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Value',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Order Hint',
+							name: 'orderHint',
+							type: 'string',
+							default: '',
+							description: 'Order hint value',
+							displayOptions: {
+								show: {
+									action: ['setCategoryOrderHint'],
+								},
+							},
+						},
+
+						// ==================== POSITION ====================
+						{
+							displayName: 'Position',
+							name: 'position',
+							type: 'number',
+							default: 0,
+							description: 'New position (0-based index)',
+							displayOptions: {
+								show: {
+									action: ['changeAssetOrder', 'moveImageToPosition'],
+								},
+							},
+						},
+
+						// ==================== CHANGE PRICE ====================
+						{
+							displayName: 'Price ID',
+							name: 'priceId',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'The ID of the price to change',
+							displayOptions: {
+								show: {
+									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey'],
+								},
+							},
+						},
+
+						// ==================== PRICE MODE ====================
+						{
+							displayName: 'Price Mode',
+							name: 'priceMode',
+							type: 'options',
+							default: 'Platform',
+							// description: 'Price mode',
+							displayOptions: {
+								show: {
+									action: ['setPriceMode'],
+								},
+							},
+							options: [
+								{
+									name: 'Platform',
+									value: 'Platform',
+								},
+								{
+									name: 'Embedded',
+									value: 'Embedded',
+								},
+							],
+						},
+
+						{
+							displayName: 'Price Value',
+							name: 'price',
+							type: 'fixedCollection',
+							default: {},
+							description: 'New price value',
+							displayOptions: {
+								show: {
+									action: ['changePrice', "addPrice"],
+								},
+							},
+							options: [
+								{
+									displayName: 'Value',
+									name: 'value',
+									values: [
+										{
+											displayName: 'Currency Code',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'EUR',
+											description: 'Currency code (e.g., EUR, USD)',
+										},
+										{
+											displayName: 'Cent Amount',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+											description: 'Price in cents (e.g., 4000 = 40.00)',
+										},
+										{
+											displayName: 'Country',
+											name: 'country',
+											type: 'string',
+											default: '',
+											description: 'Optional country code',
+
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== SET PRICES ====================
+						{
+							displayName: 'Prices',
+							name: 'prices',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'List of prices',
+							displayOptions: {
+								show: {
+									action: ['setPrices'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Price',
+									name: 'price',
+									values: [
+										{
+											displayName: 'Currency',
+											name: 'currency',
+											type: 'string',
+											default: 'EUR',
+										},
+										{
+											displayName: 'Cent Amount',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+										},
+										{
+											displayName: 'Country',
+											name: 'country',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== SEARCH KEYWORDS ====================
+						{
+							displayName: 'Search Keywords',
+							name: 'searchKeywords',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized search keywords',
+							displayOptions: {
+								show: {
+									action: ['setSearchKeywords'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Keywords',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== SKU ====================
+						{
+							displayName: 'SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'Stock Keeping Unit',
+							displayOptions: {
+								show: {
+									action: ['setSku'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Staged',
+							name: 'staged',
+							type: 'boolean',
+							default: true,
+							description: 'Whether to apply changes to staged version',
+							displayOptions: {
+								show: {
+									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute'],
+								},
+							},
+						},
+
+						// ==================== STATE TRANSITION ====================
+						{
+							displayName: 'State',
+							name: 'state',
+							type: 'fixedCollection',
+							default: {},
+							description: 'State reference',
+							displayOptions: {
+								show: {
+									action: ['transitionState'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Reference',
+									name: 'reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'options',
+											default: 'state',
+											options: [
+												{
+													name: 'State',
+													value: 'state',
+												},
+											],
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											description: 'ID of the target state',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== TAGS ====================
+						{
+							displayName: 'Tags',
+							name: 'tags',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated tags',
+							displayOptions: {
+								show: {
+									action: ['setAssetTags'],
+								},
+							},
+						},
+
+						// ==================== TAX CATEGORY ====================
+						{
+							displayName: 'Tax Category',
+							name: 'taxCategory',
+							type: 'fixedCollection',
+							default: {},
+							description: 'Tax category reference',
+							displayOptions: {
+								show: {
+									action: ['setTaxCategory'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Reference',
+									name: 'reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'options',
+											default: 'tax-category',
+											options: [
+												{
+													name: 'Tax Category',
+													value: 'tax-category',
+												},
+											],
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											description: 'ID of the tax category',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Variant Attributes',
+							name: 'attributes',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Attributes for the variant',
+							displayOptions: {
+								show: {
+									action: [],
+								},
+							},
+							options: [
+								{
+									displayName: 'Attribute',
+									name: 'attribute',
+									values: [
+										{
+											displayName: 'Name',
+											name: 'name',
+											type: 'string',
+											default: '',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== ADD PRICE ====================
+						{
+							displayName: 'Variant ID',
+							name: 'variantId',
+							type: 'number',
+							default: 1,
+							description: 'ID of the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+								},
+							},
+						},
+
+						// ==================== ADD VARIANT ====================
+						{
+							displayName: 'Variant SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'SKU for the new variant',
+							displayOptions: {
+								show: {
+									action: ['addVariant'],
+								},
+							},
+						},
+
+
+
+					],
+				},
+			],
 		},
 		{
 			displayName: 'Additional Fields',
