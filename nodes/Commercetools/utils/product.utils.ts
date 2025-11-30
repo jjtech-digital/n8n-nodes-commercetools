@@ -239,6 +239,28 @@ export const buildActionsFromUi = (
 				}
 			}
 		}
+
+		if (action?.action === 'setProductPriceCustomType'){
+			const type = (action?.type as IDataObject)?.typeDetails as IDataObject;
+			delete type?.identifyBy;
+			const fieldsArray = (action?.fields as IDataObject)?.fieldValues as IDataObject[];
+			const fields: IDataObject = {};
+			fieldsArray?.forEach((field: IDataObject) => {
+				const fieldName = field.name as string;
+				const fieldValue = field.value as string;
+				const valueType = field.valueType as string;
+
+				fields[fieldName] = parseAttributeValue(fieldValue, valueType);
+			});
+			finalAction = {
+				...action,
+				type: {
+					...type,
+					typeId: "type",
+				},
+				fields: fields
+			}
+		}
 		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy){
 			delete finalAction?.identifyBy;

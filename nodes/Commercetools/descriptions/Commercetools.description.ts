@@ -514,6 +514,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'setProductAttribute',
 								},
 								{
+									name: 'Set Product Price Custom Type',
+									value: 'setProductPriceCustomType',
+								},
+								{
 									name: 'Set Product Variant Key',
 									value: 'setProductVariantKey',
 								},
@@ -1222,7 +1226,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'The ID of the price to change',
 							displayOptions: {
 								show: {
-									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey'],
+									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey', 'setProductPriceCustomType'],
 								},
 							},
 						},
@@ -1250,7 +1254,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Price Value',
 							name: 'price',
@@ -1396,7 +1399,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Whether to apply changes to staged version',
 							displayOptions: {
 								show: {
-									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute'],
+									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute', 'setProductPriceCustomType'],
 								},
 							},
 						},
@@ -1496,7 +1499,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Variant Attributes',
 							name: 'attributes',
@@ -1538,7 +1540,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							displayName: 'Update Variant By',
 							name: 'identifyBy',
 							type: 'options',
-							doNotInherit: true,
 							options: [
 								{
 									name: 'Variant ID',
@@ -1599,8 +1600,135 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 						},
 
-
-
+						// ==================== Set Product Price Custom Type ====================
+						{
+							displayName: 'Type',
+							name: 'type',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Type Details',
+							description: 'Custom type identifier',
+							displayOptions: {
+								show: {
+									action: ['setProductPriceCustomType'],
+								},
+							},
+							options: [
+								{
+									name: 'typeDetails',
+									displayName: 'Type Details',
+									values: [
+										{
+											displayName: 'Identify Type By',
+											name: 'identifyBy',
+											type: 'options',
+											options: [
+												{
+													name: 'ID',
+													value: 'id',
+												},
+												{
+													name: 'Key',
+													value: 'key',
+												},
+											],
+											default: 'id',
+											description: 'Choose how to identify the type',
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											placeholder: '{{type-id}}',
+											description: 'ID of the custom type',
+											displayOptions: {
+												show: {
+													identifyBy: ['id'],
+												},
+											},
+										},
+										{
+											displayName: 'Key',
+											name: 'key',
+											type: 'string',
+											default: '',
+											placeholder: 'my-custom-type',
+											description: 'Key of the custom type',
+											displayOptions: {
+												show: {
+													identifyBy: ['key'],
+												},
+											},
+										},
+									],
+								},
+							],
+						},
+						{
+							displayName: 'Custom Fields',
+							name: 'fields',
+							type: 'fixedCollection',
+							typeOptions: {
+								multipleValues: true,
+							},
+							default: {},
+							placeholder: 'Add Field',
+							description: 'Custom fields for the type',
+							displayOptions: {
+								show: {
+									action: ['setProductPriceCustomType'],
+								},
+							},
+							options: [
+								{
+									name: 'fieldValues',
+									displayName: 'Field',
+									values: [
+										{
+											displayName: 'Field Name',
+											name: 'name',
+											type: 'string',
+											default: '',
+											placeholder: 'exampleStringField',
+											description: 'Name of the custom field',
+										},
+										{
+											displayName: 'Field Value Type',
+											name: 'valueType',
+											type: 'options',
+											options: [
+												{
+													name: 'String',
+													value: 'string',
+												},
+												{
+													name: 'Number',
+													value: 'number',
+												},
+												{
+													name: 'Boolean',
+													value: 'boolean',
+												},
+											],
+											default: 'string',
+											description: 'Type of the field value',
+										},
+										{
+											displayName: 'Field Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											placeholder: 'TextString',
+											description: 'Value of the custom field',
+											typeOptions: {
+												alwaysOpenEditWindow: true,
+											},
+										},
+									],
+								},
+							],
+						},
 					],
 				},
 			],
