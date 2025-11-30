@@ -268,6 +268,14 @@ export const buildActionsFromUi = (
 				category: (action?.category as IDataObject)?.categoryDetails
 			}
 		}
+
+		if (action?.action === 'setTaxCategory'){
+			finalAction = {
+				...action,
+				taxCategory: (action?.taxCategory as IDataObject)?.taxCategoryDetails
+			}
+		}
+		
 		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy){
 			delete finalAction?.identifyBy;

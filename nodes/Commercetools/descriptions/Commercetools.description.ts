@@ -829,6 +829,46 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
+
+						// ==================== Tax CATEGORY ID ====================
+						{
+							displayName: 'Category',
+							name: 'taxCategory',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['setTaxCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'taxCategoryDetails',
+									displayName: 'Tax Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-id}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
+
 						// ==================== CUSTOM TYPE ====================
 						{
 							displayName: 'Custom Type',
@@ -1492,82 +1532,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									action: ['setAssetTags'],
 								},
 							},
-						},
-
-						// ==================== TAX CATEGORY ====================
-						{
-							displayName: 'Tax Category',
-							name: 'taxCategory',
-							type: 'fixedCollection',
-							default: {},
-							description: 'Tax category reference',
-							displayOptions: {
-								show: {
-									action: ['setTaxCategory'],
-								},
-							},
-							options: [
-								{
-									displayName: 'Reference',
-									name: 'reference',
-									values: [
-										{
-											displayName: 'Type ID',
-											name: 'typeId',
-											type: 'options',
-											default: 'tax-category',
-											options: [
-												{
-													name: 'Tax Category',
-													value: 'tax-category',
-												},
-											],
-										},
-										{
-											displayName: 'ID',
-											name: 'id',
-											type: 'string',
-											default: '',
-											description: 'ID of the tax category',
-										},
-									],
-								},
-							],
-						},
-						{
-							displayName: 'Variant Attributes',
-							name: 'attributes',
-							type: 'fixedCollection',
-							default: {},
-							typeOptions: {
-								multipleValues: true,
-							},
-							description: 'Attributes for the variant',
-							displayOptions: {
-								show: {
-									action: [],
-								},
-							},
-							options: [
-								{
-									displayName: 'Attribute',
-									name: 'attribute',
-									values: [
-										{
-											displayName: 'Name',
-											name: 'name',
-											type: 'string',
-											default: '',
-										},
-										{
-											displayName: 'Value',
-											name: 'value',
-											type: 'string',
-											default: '',
-										},
-									],
-								},
-							],
 						},
 
 						// ==================== ADD PRICE ====================
