@@ -261,6 +261,21 @@ export const buildActionsFromUi = (
 				fields: fields
 			}
 		}
+
+		if (action?.action === 'addToCategory' || action?.action === 'removeFromCategory'){
+			finalAction = {
+				...action,
+				category: (action?.category as IDataObject)?.categoryDetails
+			}
+		}
+
+		if (action?.action === 'setTaxCategory'){
+			finalAction = {
+				...action,
+				taxCategory: (action?.taxCategory as IDataObject)?.taxCategoryDetails
+			}
+		}
+		
 		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy){
 			delete finalAction?.identifyBy;

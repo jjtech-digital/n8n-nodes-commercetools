@@ -744,12 +744,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the category',
 							displayOptions: {
 								show: {
-									action: ['addToCategory', 'removeFromCategory', 'setCategoryOrderHint'],
+									action: ['setCategoryOrderHint'],
 								},
 							},
 						},
-
-
 						{
 							displayName: 'Custom Fields',
 							name: 'fields',
@@ -780,6 +778,83 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											name: 'value',
 											type: 'string',
 											default: '',
+										},
+									],
+								},
+							],
+						},
+						// ==================== CATEGORY ID ====================
+						{
+							displayName: 'Category',
+							name: 'category',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['addToCategory', 'removeFromCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'categoryDetails',
+									displayName: 'Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-id}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== Tax CATEGORY ID ====================
+						{
+							displayName: 'Category',
+							name: 'taxCategory',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['setTaxCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'taxCategoryDetails',
+									displayName: 'Tax Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-id}}',
+											description: 'ID of the category',
 										},
 									],
 								},
@@ -1112,7 +1187,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Meta Keywords',
 							name: 'metaKeywords',
@@ -1148,7 +1222,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Meta Title',
 							name: 'metaTitle',
@@ -1184,7 +1257,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Order Hint',
 							name: 'orderHint',
@@ -1193,7 +1265,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Order hint value',
 							displayOptions: {
 								show: {
-									action: ['setCategoryOrderHint'],
+									action: ['setCategoryOrderHint', 'addToCategory'],
 								},
 							},
 						},
@@ -1455,82 +1527,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 						},
 
-						// ==================== TAX CATEGORY ====================
-						{
-							displayName: 'Tax Category',
-							name: 'taxCategory',
-							type: 'fixedCollection',
-							default: {},
-							description: 'Tax category reference',
-							displayOptions: {
-								show: {
-									action: ['setTaxCategory'],
-								},
-							},
-							options: [
-								{
-									displayName: 'Reference',
-									name: 'reference',
-									values: [
-										{
-											displayName: 'Type ID',
-											name: 'typeId',
-											type: 'options',
-											default: 'tax-category',
-											options: [
-												{
-													name: 'Tax Category',
-													value: 'tax-category',
-												},
-											],
-										},
-										{
-											displayName: 'ID',
-											name: 'id',
-											type: 'string',
-											default: '',
-											description: 'ID of the tax category',
-										},
-									],
-								},
-							],
-						},
-						{
-							displayName: 'Variant Attributes',
-							name: 'attributes',
-							type: 'fixedCollection',
-							default: {},
-							typeOptions: {
-								multipleValues: true,
-							},
-							description: 'Attributes for the variant',
-							displayOptions: {
-								show: {
-									action: [],
-								},
-							},
-							options: [
-								{
-									displayName: 'Attribute',
-									name: 'attribute',
-									values: [
-										{
-											displayName: 'Name',
-											name: 'name',
-											type: 'string',
-											default: '',
-										},
-										{
-											displayName: 'Value',
-											name: 'value',
-											type: 'string',
-											default: '',
-										},
-									],
-								},
-							],
-						},
-
 						// ==================== ADD PRICE ====================
 						{
 							displayName: 'Update Variant By',
@@ -1719,6 +1715,69 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											typeOptions: {
 												alwaysOpenEditWindow: true,
 											},
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== Set Discounted Price ====================
+						{
+							displayName: 'Discounted Price',
+							name: 'discounted',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Discounted Price',
+							description: 'Discounted price details',
+							displayOptions: {
+								show: {
+									action: ['setDiscountedPrice'],
+								},
+							},
+							options: [
+								{
+									name: 'value',
+									displayName: 'Price Value',
+									values: [
+										{
+											displayName: 'Currency Code',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'USD',
+											required: true,
+											placeholder: 'EUR',
+											description: 'Currency code (e.g., USD, EUR, GBP)',
+										},
+										{
+											displayName: 'Amount in Cents',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+											required: true,
+											placeholder: '4000',
+											description: 'Discounted price amount in cents (e.g., 4000 = €40.00)',
+										},
+									],
+								},
+								{
+									name: 'discount',
+									displayName: 'Discount Reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'product-discount',
+											description: 'Type identifier (always "product-discount")',
+										},
+										{
+											displayName: 'Product Discount ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{product-discount-id}}',
+											description: 'ID of the product discount',
 										},
 									],
 								},
