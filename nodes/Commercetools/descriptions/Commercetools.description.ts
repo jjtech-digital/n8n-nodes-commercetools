@@ -752,12 +752,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the category',
 							displayOptions: {
 								show: {
-									action: ['addToCategory', 'removeFromCategory', 'setCategoryOrderHint'],
+									action: ['setCategoryOrderHint'],
 								},
 							},
 						},
-
-
 						{
 							displayName: 'Custom Fields',
 							name: 'fields',
@@ -793,7 +791,44 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
+						// ==================== CATEGORY ID ====================
+						{
+							displayName: 'Category',
+							name: 'category',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['addToCategory', 'removeFromCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'categoryDetails',
+									displayName: 'Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-id}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
 						// ==================== CUSTOM TYPE ====================
 						{
 							displayName: 'Custom Type',
@@ -1120,7 +1155,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Meta Keywords',
 							name: 'metaKeywords',
@@ -1156,7 +1190,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Meta Title',
 							name: 'metaTitle',
@@ -1192,7 +1225,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-
 						{
 							displayName: 'Order Hint',
 							name: 'orderHint',
@@ -1201,7 +1233,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Order hint value',
 							displayOptions: {
 								show: {
-									action: ['setCategoryOrderHint'],
+									action: ['setCategoryOrderHint', 'addToCategory'],
 								},
 							},
 						},
@@ -1731,7 +1763,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-						
+
 						// ==================== Set Discounted Price ====================
 						{
 							displayName: 'Discounted Price',

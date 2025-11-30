@@ -261,6 +261,13 @@ export const buildActionsFromUi = (
 				fields: fields
 			}
 		}
+
+		if (action?.action === 'addToCategory' || action?.action === 'removeFromCategory'){
+			finalAction = {
+				...action,
+				category: (action?.category as IDataObject)?.categoryDetails
+			}
+		}
 		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy){
 			delete finalAction?.identifyBy;
