@@ -470,6 +470,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'setDescription',
 								},
 								{
+									name: 'Set Discounted Price',
+									value: 'setDiscountedPrice'
+								},
+								{
 									name: 'Set Image Label',
 									value: 'setImageLabel',
 								},
@@ -962,7 +966,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
-						
+
 						// ==================== DESCRIPTION ====================
 						{
 							displayName: 'Localized Descriptions',
@@ -1226,7 +1230,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'The ID of the price to change',
 							displayOptions: {
 								show: {
-									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey', 'setProductPriceCustomType'],
+									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey', 'setProductPriceCustomType', 'setDiscountedPrice'],
 								},
 							},
 						},
@@ -1390,7 +1394,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
-
 						{
 							displayName: 'Staged',
 							name: 'staged',
@@ -1399,7 +1402,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Whether to apply changes to staged version',
 							displayOptions: {
 								show: {
-									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute', 'setProductPriceCustomType'],
+									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute', 'setProductPriceCustomType', 'setDiscountedPrice'],
 								},
 							},
 						},
@@ -1556,7 +1559,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								show: {
 									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
 								},
-								
 							},
 						},
 						{
@@ -1724,6 +1726,69 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											typeOptions: {
 												alwaysOpenEditWindow: true,
 											},
+										},
+									],
+								},
+							],
+						},
+						
+						// ==================== Set Discounted Price ====================
+						{
+							displayName: 'Discounted Price',
+							name: 'discounted',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Discounted Price',
+							description: 'Discounted price details',
+							displayOptions: {
+								show: {
+									action: ['setDiscountedPrice'],
+								},
+							},
+							options: [
+								{
+									name: 'value',
+									displayName: 'Price Value',
+									values: [
+										{
+											displayName: 'Currency Code',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'USD',
+											required: true,
+											placeholder: 'EUR',
+											description: 'Currency code (e.g., USD, EUR, GBP)',
+										},
+										{
+											displayName: 'Amount in Cents',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+											required: true,
+											placeholder: '4000',
+											description: 'Discounted price amount in cents (e.g., 4000 = €40.00)',
+										},
+									],
+								},
+								{
+									name: 'discount',
+									displayName: 'Discount Reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'product-discount',
+											description: 'Type identifier (always "product-discount")',
+										},
+										{
+											displayName: 'Product Discount ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{product-discount-id}}',
+											description: 'ID of the product discount',
 										},
 									],
 								},
