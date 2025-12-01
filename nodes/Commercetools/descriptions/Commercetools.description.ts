@@ -2452,11 +2452,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Additional address information',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'Additional Street Info',
@@ -2464,11 +2459,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Additional street information',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'Address Email',
@@ -2476,11 +2466,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Email address for this address (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
+						},
+						{
+							displayName: 'Address ID',
+							name: 'addressId',
+							type: 'string',
+							default: '',
+							description: 'ID of the address',
+						},
+						{
+							displayName: 'Address Key',
+							name: 'addressKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the address',
 						},
 						{
 							displayName: 'Address Reference Type',
@@ -2497,40 +2496,9 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference address by key',
 								},
-							],
+						],
 							default: 'id',
 							description: 'Whether to reference the address by ID or key',
-							displayOptions: {
-								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'changeAddress', 'removeAddress', 'setDefaultShippingAddress', 'setDefaultBillingAddress', 'setCustomTypeInAddress'],
-								},
-							},
-						},
-						{
-							displayName: 'Address ID',
-							name: 'addressId',
-							type: 'string',
-							default: '',
-							description: 'ID of the address',
-							displayOptions: {
-								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'changeAddress', 'removeAddress', 'setDefaultShippingAddress', 'setDefaultBillingAddress', 'setCustomTypeInAddress'],
-									addressReferenceType: ['id'],
-								},
-							},
-						},
-						{
-							displayName: 'Address Key',
-							name: 'addressKey',
-							type: 'string',
-							default: '',
-							description: 'Key of the address',
-							displayOptions: {
-								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'changeAddress', 'removeAddress', 'setDefaultShippingAddress', 'setDefaultBillingAddress', 'setCustomTypeInAddress'],
-									addressReferenceType: ['key'],
-								},
-							},
 						},
 						{
 							displayName: 'Apartment',
@@ -2538,11 +2506,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Apartment, suite, unit, etc (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'Authentication Mode',
@@ -2560,11 +2523,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						],
 							default: 'Password',
 							description: 'Authentication mode for the customer',
-							displayOptions: {
-								show: {
-									actionType: ['setAuthenticationMode'], // Only for auth mode changes, not addAddress
-								},
-							},
 						},
 						{
 							displayName: 'Building',
@@ -2572,11 +2530,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Building name or number (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'City',
@@ -2584,11 +2537,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'City name',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress'],
-								},
-							},
 						},
 						{
 							displayName: 'Company Name',
@@ -2596,24 +2544,42 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Company name for the customer',
-							displayOptions: {
-								show: {
-									actionType: ['setCompanyName'],
-								},
-							},
 						},
 						{
 							displayName: 'Country',
 							name: 'country',
 							type: 'string',
-							required: true,
+						required:	true,
 							default: '',
-							description: 'Country code (e.g., DE, US, GB) - Required',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress'],
-								},
-							},
+							description: 'Country code (e.g., DE, US, GB) -	Required',
+						},
+						{
+							displayName: 'Customer Group ID',
+							name: 'customerGroupId',
+							type: 'string',
+							default: '',
+							description: 'ID of the customer group',
+						},
+						{
+							displayName: 'Customer Group IDs',
+							name: 'customerGroupIds',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of customer group IDs',
+						},
+						{
+							displayName: 'Customer Group Key',
+							name: 'customerGroupKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the customer group',
+						},
+						{
+							displayName: 'Customer Group Keys',
+							name: 'customerGroupKeys',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of customer group keys',
 						},
 						{
 							displayName: 'Customer Group Reference Type',
@@ -2630,78 +2596,16 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference customer group by key',
 								},
-							],
+						],
 							default: 'id',
 							description: 'Whether to reference the customer group by ID or key',
-							displayOptions: {
-								show: {
-									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup', 'setCustomerGroupAssignments'],
-								},
-							},
-						},
-						{
-							displayName: 'Customer Group ID',
-							name: 'customerGroupId',
-							type: 'string',
-							default: '',
-							description: 'ID of the customer group',
-							displayOptions: {
-								show: {
-									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
-									customerGroupReferenceType: ['id'],
-								},
-							},
-						},
-						{
-							displayName: 'Customer Group IDs',
-							name: 'customerGroupIds',
-							type: 'string',
-							default: '',
-							description: 'Comma-separated list of customer group IDs',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomerGroupAssignments'],
-									customerGroupReferenceType: ['id'],
-								},
-							},
-						},
-						{
-							displayName: 'Customer Group Key',
-							name: 'customerGroupKey',
-							type: 'string',
-							default: '',
-							description: 'Key of the customer group',
-							displayOptions: {
-								show: {
-									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
-									customerGroupReferenceType: ['key'],
-								},
-							},
-						},
-						{
-							displayName: 'Customer Group Keys',
-							name: 'customerGroupKeys',
-							type: 'string',
-							default: '',
-							description: 'Comma-separated list of customer group keys',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomerGroupAssignments'],
-									customerGroupReferenceType: ['key'],
-								},
-							},
 						},
 						{
 							displayName: 'Customer Number',
 							name: 'customerNumber',
 							type: 'string',
 							default: '',
-	
-							displayOptions: {
-								show: {
-									actionType: ['setCustomerNumber'],
-								},
-							},
+							description: 'Customer number for identification',
 						},
 						{
 							displayName: 'Date of Birth',
@@ -2709,13 +2613,14 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'dateTime',
 							default: '',
 							description: 'Customer date of birth',
-							displayOptions: {
-								show: {
-									actionType: ['setDateOfBirth'],
-								},
-							},
 						},
-
+						{
+							displayName: 'Department',
+							name: 'department',
+							type: 'string',
+							default: '',
+							description: 'Department within building (optional)',
+						},
 						{
 							displayName: 'Email',
 							name: 'email',
@@ -2723,11 +2628,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							default: '',
 							placeholder: 'name@email.com',
 							description: 'New email address',
-							displayOptions: {
-								show: {
-									actionType: ['changeEmail'], // Only for change email action, not addAddress
-								},
-							},
 						},
 						{
 							displayName: 'External ID',
@@ -2735,11 +2635,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'External ID for the customer',
-							displayOptions: {
-								show: {
-									actionType: ['setExternalId'],
-								},
-							},
 						},
 						{
 							displayName: 'Fax',
@@ -2747,11 +2642,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Fax number (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'Field Name',
@@ -2759,24 +2649,27 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Name of the custom field',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomField', 'setCustomFieldInAddress'],
-								},
-							},
 						},
-
+						{
+							displayName: 'Field Value',
+							name: 'value',
+							type: 'string',
+							default: '',
+							description: 'Value for the custom field (text, number, boolean, etc.)',
+						},
+						{
+							displayName: 'Fields (JSON)',
+							name: 'fields',
+							type: 'json',
+							default: '{}',
+							description: 'Custom field values as a JSON object',
+						},
 						{
 							displayName: 'First Name',
 							name: 'firstName',
 							type: 'string',
 							default: '',
 							description: 'First name for the address',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress', 'setFirstName'],
-								},
-							},
 						},
 						{
 							displayName: 'Key',
@@ -2784,11 +2677,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Address key for identification (optional but recommended)',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress', 'setKey'],
-								},
-							},
 						},
 						{
 							displayName: 'Last Name',
@@ -2796,11 +2684,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Last name for the address',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress', 'setLastName'],
-								},
-							},
 						},
 						{
 							displayName: 'Locale',
@@ -2808,11 +2691,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Locale for the customer (e.g., \'en-US\')',
-							displayOptions: {
-								show: {
-									actionType: ['setLocale'],
-								},
-							},
 						},
 						{
 							displayName: 'Middle Name',
@@ -2820,11 +2698,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Middle name of the customer',
-							displayOptions: {
-								show: {
-									actionType: ['setMiddleName'],
-								},
-							},
 						},
 						{
 							displayName: 'Mobile',
@@ -2832,11 +2705,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Mobile phone number (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'P.O. Box',
@@ -2844,11 +2712,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Post office box (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'Password',
@@ -2857,11 +2720,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							typeOptions: { password: true },
 							default: '',
 							description: 'Password (required when setting to Password mode)',
-							displayOptions: {
-								show: {
-									actionType: ['setAuthenticationMode'],
-								},
-							},
 						},
 						{
 							displayName: 'Phone',
@@ -2869,11 +2727,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Phone number (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
 						},
 						{
 							displayName: 'Postal Code',
@@ -2881,11 +2734,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Postal/ZIP code',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress'],
-								},
-							},
 						},
 						{
 							displayName: 'Salutation',
@@ -2893,11 +2741,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Salutation (e.g., Mr., Mrs., Dr.)',
-							displayOptions: {
-								show: {
-									actionType: ['setSalutation'],
-								},
-							},
 						},
 						{
 							displayName: 'State',
@@ -2905,11 +2748,34 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'State or region (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['changeAddress'], // Only for change, not add
-								},
-							},
+						},
+						{
+							displayName: 'Store ID',
+							name: 'storeId',
+							type: 'string',
+							default: '',
+							description: 'ID of the store',
+						},
+						{
+							displayName: 'Store IDs',
+							name: 'storeIds',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of store IDs',
+						},
+						{
+							displayName: 'Store Key',
+							name: 'storeKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the store',
+						},
+						{
+							displayName: 'Store Keys',
+							name: 'storeKeys',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of store keys',
 						},
 						{
 							displayName: 'Store Reference Type',
@@ -2926,90 +2792,21 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference store by key',
 								},
-							],
+						],
 							default: 'id',
 							description: 'Whether to reference the store by ID or key',
-							displayOptions: {
-								show: {
-									actionType: ['addStore', 'removeStore', 'setStores'],
-								},
-							},
-						},
-						{
-							displayName: 'Store ID',
-							name: 'storeId',
-							type: 'string',
-							default: '',
-							description: 'ID of the store',
-							displayOptions: {
-								show: {
-									actionType: ['addStore', 'removeStore'],
-									storeReferenceType: ['id'],
-								},
-							},
-						},
-						{
-							displayName: 'Store IDs',
-							name: 'storeIds',
-							type: 'string',
-							default: '',
-							description: 'Comma-separated list of store IDs',
-							displayOptions: {
-								show: {
-									actionType: ['setStores'],
-									storeReferenceType: ['id'],
-								},
-							},
-						},
-						{
-							displayName: 'Store Key',
-							name: 'storeKey',
-							type: 'string',
-							default: '',
-							description: 'Key of the store',
-							displayOptions: {
-								show: {
-									actionType: ['addStore', 'removeStore'],
-									storeReferenceType: ['key'],
-								},
-							},
-						},
-						{
-							displayName: 'Store Keys',
-							name: 'storeKeys',
-							type: 'string',
-							default: '',
-							description: 'Comma-separated list of store keys',
-							displayOptions: {
-								show: {
-									actionType: ['setStores'],
-									storeReferenceType: ['key'],
-								},
-							},
 						},
 						{
 							displayName: 'Street Name',
 							name: 'streetName',
 							type: 'string',
 							default: '',
-	
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress'],
-								},
-							},
 						},
 						{
 							displayName: 'Street Number',
 							name: 'streetNumber',
 							type: 'string',
 							default: '',
-	
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress'],
-								},
-							},
 						},
 						{
 							displayName: 'Title',
@@ -3017,11 +2814,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'Address title (optional)',
-							displayOptions: {
-								show: {
-									actionType: ['addAddress', 'changeAddress', 'setTitle'], // Keep for addAddress
-								},
-							},
+						},
+						{
+							displayName: 'Type ID',
+							name: 'typeId',
+							type: 'string',
+							default: '',
+							description: 'ID of the custom type',
+						},
+						{
+							displayName: 'Type Key',
+							name: 'typeKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the custom type',
 						},
 						{
 							displayName: 'Type Reference Type',
@@ -3038,52 +2844,9 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference type by key',
 								},
-							],
+						],
 							default: 'key',
 							description: 'Whether to reference the custom type by ID or key',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomType', 'setCustomField', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
-								},
-							},
-						},
-						{
-							displayName: 'Type ID',
-							name: 'typeId',
-							type: 'string',
-							default: '',
-							description: 'ID of the custom type',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomType', 'setCustomField', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
-									typeReferenceType: ['id'],
-								},
-							},
-						},
-						{
-							displayName: 'Type Key',
-							name: 'typeKey',
-							type: 'string',
-							default: '',
-							description: 'Key of the custom type',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomType', 'setCustomField', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
-									typeReferenceType: ['key'],
-								},
-							},
-						},
-						{
-							displayName: 'Field Value',
-							name: 'value',
-							type: 'string',
-							default: '',
-							description: 'Value for the custom field (text, number, boolean, etc.)',
-							displayOptions: {
-								show: {
-									actionType: ['setCustomField', 'setCustomFieldInAddress'],
-								},
-							},
 						},
 						{
 							displayName: 'VAT ID',
@@ -3091,11 +2854,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							type: 'string',
 							default: '',
 							description: 'VAT ID for the customer',
-							displayOptions: {
-								show: {
-									actionType: ['setVatId'],
-								},
-							},
 						},
 				],
 				},

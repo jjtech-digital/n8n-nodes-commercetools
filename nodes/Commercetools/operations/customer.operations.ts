@@ -364,10 +364,7 @@ export async function executeCustomerOperation(
 			return results;
 		} catch (error) {
 			const errorData = error as IDataObject;
-			const statusCode =
-				(errorData.statusCode as number | undefined) ??
-				((errorData.cause as IDataObject)?.statusCode as number | undefined) ??
-				((errorData.response as IDataObject)?.statusCode as number | undefined);
+			const statusCode = getErrorStatusCode(errorData);
 			if (statusCode === 404 || errorData.httpCode === '404') {
 				results.push({ json: { exists: false } });
 				return results;
@@ -390,10 +387,7 @@ export async function executeCustomerOperation(
 			return results;
 		} catch (error) {
 			const errorData = error as IDataObject;
-			const statusCode =
-				(errorData.statusCode as number | undefined) ??
-				((errorData.cause as IDataObject)?.statusCode as number | undefined) ??
-				((errorData.response as IDataObject)?.statusCode as number | undefined);
+			const statusCode = getErrorStatusCode(errorData);
 			if (statusCode === 404 || errorData.httpCode === '404') {
 				results.push({ json: { exists: false } });
 				return results;
@@ -423,10 +417,7 @@ export async function executeCustomerOperation(
 			return results;
 		} catch (error) {
 			const errorData = error as IDataObject;
-			const statusCode =
-				(errorData.statusCode as number | undefined) ??
-				((errorData.cause as IDataObject)?.statusCode as number | undefined) ??
-				((errorData.response as IDataObject)?.statusCode as number | undefined);
+			const statusCode = getErrorStatusCode(errorData);
 			if (statusCode === 404 || errorData.httpCode === '404') {
 				results.push({ json: { exists: false } });
 				return results;
