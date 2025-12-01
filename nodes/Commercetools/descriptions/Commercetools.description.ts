@@ -554,7 +554,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 										'changeAssetName',
 										'changeAssetOrder',
 										'removeAsset',
-										'removeImage',
 										'setAssetCustomField',
 										'setAssetCustomType',
 										'setAssetDescription',
@@ -1453,7 +1452,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							required: true,
 							displayOptions: {
 								show: {
-									action: ['setImageLabel', 'moveImageToPosition'],
+									action: ['setImageLabel', 'moveImageToPosition','removeImage',],
 								},
 							},
 						},
@@ -1574,7 +1573,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Choose how to identify the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition','removeImage','removeAsset','setAssetKey'],
 								},
 							},
 						},
@@ -1586,7 +1585,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel','moveImageToPosition'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel','moveImageToPosition','removeImage','removeAsset', 'setAssetKey'],
 									identifyBy: ['variantId'],
 								},
 							},
