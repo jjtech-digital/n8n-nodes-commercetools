@@ -510,7 +510,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'setProductAttribute',
 								},
 								{
-									name: 'Set Product Price Custom Type',	
+									name: 'Set Product Price Custom Type',
 									value: 'setProductPriceCustomType',
 								},
 								{
@@ -555,14 +555,13 @@ export const commercetoolsDescription: INodeTypeDescription = {
 										'changeAssetOrder',
 										'removeAsset',
 										'removeImage',
-										'moveImageToPosition',
 										'setAssetCustomField',
 										'setAssetCustomType',
 										'setAssetDescription',
 										'setAssetKey',
 										'setAssetSources',
 										'setAssetTags',
-										'setImageLabel',
+
 									],
 								},
 							},
@@ -1294,7 +1293,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'The ID of the price to change',
 							displayOptions: {
 								show: {
-									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey', 'setProductPriceCustomType'],
+									action: ['changePrice', 'removePrice', 'setPriceCustomField', 'setPriceCustomType', 'setPriceKey', 'setProductPriceCustomType', 'setDiscountedPrice'],
 								},
 							},
 						},
@@ -1445,6 +1444,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							],
 						},
 
+						// ==================== SET IMAGE LABEL ====================
+						{
+							displayName: 'Image URL',
+							name: 'imageUrl',
+							type: 'string',
+							default: '',
+							placeholder: '//image.png',
+							required: true,
+							displayOptions: {
+								show: {
+									action: ['setImageLabel', 'moveImageToPosition'],
+								},
+							},
+						},
+						{
+							displayName: 'Label',
+							name: 'label',
+							type: 'string',
+							default: '',
+							placeholder: 'labelString',
+							required: true,
+							displayOptions: {
+								show: {
+									action: ['setImageLabel'],
+								},
+							},
+						},
+
+
+
 						// ==================== SKU ====================
 						{
 							displayName: 'SKU',
@@ -1467,7 +1496,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Whether to apply changes to staged version',
 							displayOptions: {
 								show: {
-									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute', 'setProductPriceCustomType'],
+									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute', 'setProductPriceCustomType', "setImageLabel"],
 								},
 							},
 						},
@@ -1546,7 +1575,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Choose how to identify the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition'],
 								},
 							},
 						},
@@ -1558,7 +1587,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel'],
 									identifyBy: ['variantId'],
 								},
 							},
@@ -1571,7 +1600,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'SKU of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage','setImageLabel'],
 									identifyBy: ['sku'],
 								},
 							},
