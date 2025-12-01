@@ -603,6 +603,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
+
 						{
 							displayName: 'Asset Sources',
 							name: 'asset',
@@ -731,6 +732,86 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
+
+						// ==================== CATEGORY ID ====================
+						{
+							displayName: 'Category',
+							name: 'category',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['addToCategory', 'removeFromCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'categoryDetails',
+									displayName: 'Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-ID}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== Tax CATEGORY ID ====================
+						{
+							displayName: 'Category',
+							name: 'taxCategory',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['setTaxCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'taxCategoryDetails',
+									displayName: 'Tax Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-ID}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
+
+
 						// ==================== CATEGORY ID ====================
 						{
 							displayName: 'Category ID',
@@ -780,78 +861,67 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
-						// ==================== CATEGORY ID ====================
-						{
-							displayName: 'Category',
-							name: 'category',
-							type: 'fixedCollection',
-							default: {},
-							placeholder: 'Add Category',
-							description: 'Category reference',
-							displayOptions: {
-								show: {
-									action: ['addToCategory', 'removeFromCategory'],
-								},
-							},
-							options: [
-								{
-									name: 'categoryDetails',
-									displayName: 'Category Details',
-									values: [
-										{
-											displayName: 'Type ID',
-											name: 'typeId',
-											type: 'hidden',
-											default: 'category',
-											description: 'Type identifier (always "category")',
-										},
-										{
-											displayName: 'Category ID',
-											name: 'id',
-											type: 'string',
-											default: '',
-											required: true,
-											placeholder: '{{category-id}}',
-											description: 'ID of the category',
-										},
-									],
-								},
-							],
-						},
 
-						// ==================== Tax CATEGORY ID ====================
+
 						{
-							displayName: 'Category',
-							name: 'taxCategory',
+							displayName: 'Custom Fields',
+							name: 'fields',
 							type: 'fixedCollection',
+							typeOptions: {
+								multipleValues: true,
+							},
 							default: {},
-							placeholder: 'Add Category',
-							description: 'Category reference',
+							placeholder: 'Add Field',
+							description: 'Custom fields for the type',
 							displayOptions: {
 								show: {
-									action: ['setTaxCategory'],
+									action: ['setProductPriceCustomType'],
 								},
 							},
 							options: [
 								{
-									name: 'taxCategoryDetails',
-									displayName: 'Tax Category Details',
+									name: 'fieldValues',
+									displayName: 'Field',
 									values: [
 										{
-											displayName: 'Type ID',
-											name: 'typeId',
-											type: 'hidden',
-											default: 'category',
-											description: 'Type identifier (always "category")',
-										},
-										{
-											displayName: 'Category ID',
-											name: 'id',
+											displayName: 'Field Name',
+											name: 'name',
 											type: 'string',
 											default: '',
-											required: true,
-											placeholder: '{{category-id}}',
-											description: 'ID of the category',
+											placeholder: 'exampleStringField',
+											description: 'Name of the custom field',
+										},
+										{
+											displayName: 'Field Value Type',
+											name: 'valueType',
+											type: 'options',
+											options: [
+												{
+													name: 'String',
+													value: 'string',
+												},
+												{
+													name: 'Number',
+													value: 'number',
+												},
+												{
+													name: 'Boolean',
+													value: 'boolean',
+												},
+											],
+											default: 'string',
+											description: 'Type of the field value',
+										},
+										{
+											displayName: 'Field Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											placeholder: 'TextString',
+											description: 'Value of the custom field',
+											typeOptions: {
+												alwaysOpenEditWindow: true,
+											},
 										},
 									],
 								},
@@ -906,10 +976,72 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							],
 						},
 
+						// ==================== Set Discounted Price ====================
+						{
+							displayName: 'Discounted Price',
+							name: 'discounted',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Discounted Price',
+							description: 'Discounted price details',
+							displayOptions: {
+								show: {
+									action: ['setDiscountedPrice'],
+								},
+							},
+							options: [
+								{
+									name: 'value',
+									displayName: 'Price Value',
+									values: [
+										{
+											displayName: 'Currency Code',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'USD',
+											required: true,
+											placeholder: 'EUR',
+											description: 'Currency code (e.g., USD, EUR, GBP)',
+										},
+										{
+											displayName: 'Amount in Cents',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+											required: true,
+											placeholder: '4000',
+											description: 'Discounted price amount in cents (e.g., 4000 = €40.00)',
+										},
+									],
+								},
+								{
+									name: 'discount',
+									displayName: 'Discount Reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'product-discount',
+											description: 'Type identifier (always "product-discount")',
+										},
+										{
+											displayName: 'Product Discount ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{product-discount-ID}}',
+											description: 'ID of the product discount',
+										},
+									],
+								},
+							],
+						},
 						// ==================== CUSTOM FIELD ====================
 						{
 							displayName: 'Field Name',
-							name: 'fieldName',
+							name: 'name',
 							type: 'string',
 							default: '',
 							description: 'Name of the custom field',
@@ -921,7 +1053,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 						},
 						{
 							displayName: 'Field Value',
-							name: 'fieldValue',
+							name: 'value',
 							type: 'string',
 							default: '',
 							description: 'Value of the custom field',
@@ -1017,6 +1149,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							],
 						},
 
+						{
+							displayName: 'Image URL',
+							name: 'imageUrl',
+							type: 'string',
+							default: '',
+							placeholder: '//image.png',
+							required: true,
+							displayOptions: {
+								show: {
+									action: ['setImageLabel', 'moveImageToPosition', 'removeImage',],
+								},
+							},
+						},
+
 						// ==================== KEY ====================
 						{
 							displayName: 'Key',
@@ -1030,6 +1176,23 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
+
+						// ==================== SET IMAGE LABEL ====================
+
+						{
+							displayName: 'Label',
+							name: 'label',
+							type: 'string',
+							default: '',
+							placeholder: 'labelString',
+							required: true,
+							displayOptions: {
+								show: {
+									action: ['setImageLabel'],
+								},
+							},
+						},
+
 
 						// ==================== DESCRIPTION ====================
 						{
@@ -1442,33 +1605,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							],
 						},
 
-						// ==================== SET IMAGE LABEL ====================
-						{
-							displayName: 'Image URL',
-							name: 'imageUrl',
-							type: 'string',
-							default: '',
-							placeholder: '//image.png',
-							required: true,
-							displayOptions: {
-								show: {
-									action: ['setImageLabel', 'moveImageToPosition','removeImage',],
-								},
-							},
-						},
-						{
-							displayName: 'Label',
-							name: 'label',
-							type: 'string',
-							default: '',
-							placeholder: 'labelString',
-							required: true,
-							displayOptions: {
-								show: {
-									action: ['setImageLabel'],
-								},
-							},
-						},
 
 
 
@@ -1485,7 +1621,19 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
-
+						{
+							displayName: 'SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'SKU of the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel'],
+									identifyBy: ['sku'],
+								},
+							},
+						},
 						{
 							displayName: 'Staged',
 							name: 'staged',
@@ -1554,70 +1702,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 						},
 
-						// ==================== ADD PRICE ====================
-						{
-							displayName: 'Update Variant By',
-							name: 'identifyBy',
-							type: 'options',
-							options: [
-								{
-									name: 'Variant ID',
-									value: 'variantId',
-								},
-								{
-									name: 'SKU',
-									value: 'sku',
-								},
-							],
-							default: 'variantId',
-							description: 'Choose how to identify the variant',
-							displayOptions: {
-								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition','removeImage','removeAsset','setAssetKey'],
-								},
-							},
-						},
-						{
-							displayName: 'Variant ID',
-							name: 'variantId',
-							type: 'number',
-							default: 1,
-							description: 'ID of the variant',
-							displayOptions: {
-								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel','moveImageToPosition','removeImage','removeAsset', 'setAssetKey'],
-									identifyBy: ['variantId'],
-								},
-							},
-						},
-						{
-							displayName: 'SKU',
-							name: 'sku',
-							type: 'string',
-							default: '',
-							description: 'SKU of the variant',
-							displayOptions: {
-								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage','setImageLabel'],
-									identifyBy: ['sku'],
-								},
-							},
-						},
-
-						// ==================== ADD VARIANT ====================
-						{
-							displayName: 'Variant SKU',
-							name: 'sku',
-							type: 'string',
-							default: '',
-							description: 'SKU for the new variant',
-							displayOptions: {
-								show: {
-									action: ['addVariant'],
-								},
-							},
-						},
-
 						// ==================== Set Product Price Custom Type ====================
 						{
 							displayName: 'Type',
@@ -1658,7 +1742,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											name: 'id',
 											type: 'string',
 											default: '',
-											placeholder: '{{type-id}}',
+											placeholder: '{{type-ID}}',
 											description: 'ID of the custom type',
 											displayOptions: {
 												show: {
@@ -1683,132 +1767,57 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
+
+						// ==================== Update Variant By ====================
 						{
-							displayName: 'Custom Fields',
-							name: 'fields',
-							type: 'fixedCollection',
-							typeOptions: {
-								multipleValues: true,
-							},
-							default: {},
-							placeholder: 'Add Field',
-							description: 'Custom fields for the type',
-							displayOptions: {
-								show: {
-									action: ['setProductPriceCustomType'],
-								},
-							},
+							displayName: 'Update Variant By',
+							name: 'identifyBy',
+							type: 'options',
 							options: [
 								{
-									name: 'fieldValues',
-									displayName: 'Field',
-									values: [
-										{
-											displayName: 'Field Name',
-											name: 'name',
-											type: 'string',
-											default: '',
-											placeholder: 'exampleStringField',
-											description: 'Name of the custom field',
-										},
-										{
-											displayName: 'Field Value Type',
-											name: 'valueType',
-											type: 'options',
-											options: [
-												{
-													name: 'String',
-													value: 'string',
-												},
-												{
-													name: 'Number',
-													value: 'number',
-												},
-												{
-													name: 'Boolean',
-													value: 'boolean',
-												},
-											],
-											default: 'string',
-											description: 'Type of the field value',
-										},
-										{
-											displayName: 'Field Value',
-											name: 'value',
-											type: 'string',
-											default: '',
-											placeholder: 'TextString',
-											description: 'Value of the custom field',
-											typeOptions: {
-												alwaysOpenEditWindow: true,
-											},
-										},
-									],
+									name: 'Variant ID',
+									value: 'variantId',
+								},
+								{
+									name: 'SKU',
+									value: 'sku',
 								},
 							],
+							default: 'variantId',
+							description: 'Choose how to identify the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField'],
+								},
+							},
+						},
+						{
+							displayName: 'Variant ID',
+							name: 'variantId',
+							type: 'number',
+							default: 1,
+							description: 'ID of the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField'],
+									identifyBy: ['variantId'],
+								},
+							},
 						},
 
-						// ==================== Set Discounted Price ====================
+
+						// ==================== ADD VARIANT ====================
 						{
-							displayName: 'Discounted Price',
-							name: 'discounted',
-							type: 'fixedCollection',
-							default: {},
-							placeholder: 'Add Discounted Price',
-							description: 'Discounted price details',
+							displayName: 'Variant SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'SKU for the new variant',
 							displayOptions: {
 								show: {
-									action: ['setDiscountedPrice'],
+									action: ['addVariant'],
 								},
 							},
-							options: [
-								{
-									name: 'value',
-									displayName: 'Price Value',
-									values: [
-										{
-											displayName: 'Currency Code',
-											name: 'currencyCode',
-											type: 'string',
-											default: 'USD',
-											required: true,
-											placeholder: 'EUR',
-											description: 'Currency code (e.g., USD, EUR, GBP)',
-										},
-										{
-											displayName: 'Amount in Cents',
-											name: 'centAmount',
-											type: 'number',
-											default: 0,
-											required: true,
-											placeholder: '4000',
-											description: 'Discounted price amount in cents (e.g., 4000 = €40.00)',
-										},
-									],
-								},
-								{
-									name: 'discount',
-									displayName: 'Discount Reference',
-									values: [
-										{
-											displayName: 'Type ID',
-											name: 'typeId',
-											type: 'hidden',
-											default: 'product-discount',
-											description: 'Type identifier (always "product-discount")',
-										},
-										{
-											displayName: 'Product Discount ID',
-											name: 'id',
-											type: 'string',
-											default: '',
-											required: true,
-											placeholder: '{{product-discount-id}}',
-											description: 'ID of the product discount',
-										},
-									],
-								},
-							],
 						},
 					],
 				},
