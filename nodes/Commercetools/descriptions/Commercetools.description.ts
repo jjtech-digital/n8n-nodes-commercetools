@@ -11,7 +11,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 	icon: 'file:Commercetools.svg',
 	...nodeGroup,
 	version: 1,
-description: 'Interact with the Commercetools Products, Categories, and Customers API',
+	description: 'Interact with the Commercetools Products, Categories, and Customers API',
 	defaults: {
 		name: 'Commercetools',
 	},
@@ -2255,13 +2255,16 @@ description: 'Interact with the Commercetools Products, Categories, and Customer
 			type: 'number',
 			default: 1,
 			required: true,
+			typeOptions: {
+				minValue: 1,
+			},
 			displayOptions: {
 				show: {
 					resource: ['customer'],
 					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey', 'delete', 'deleteByKey', 'deleteInStore', 'deleteInStoreByKey', 'changePassword', 'changePasswordInStore', 'createEmailToken', 'createEmailTokenInStore'],
 				},
 			},
-			description: 'The current version of the customer for optimistic concurrency control',
+			description: 'Current version of the customer for optimistic locking',
 		},
 		{
 			displayName: 'Customer Draft (JSON)',
@@ -2277,33 +2280,9 @@ description: 'Interact with the Commercetools Products, Categories, and Customer
 			},
 			description: 'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
 		},
+
 		{
-			displayName: 'Actions Input Mode',
-			name: 'actionsInputMode',
-			type: 'options',
-			options: [
-				{
-					name: 'UI',
-					value: 'ui',
-					description: 'Build actions using the user interface',
-				},
-				{
-					name: 'JSON',
-					value: 'json',
-					description: 'Provide actions as JSON array',
-				},
-			],
-			default: 'ui',
-			displayOptions: {
-				show: {
-					resource: ['customer'],
-					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
-				},
-			},
-			description: 'Choose how to specify the update actions',
-		},
-		{
-			displayName: 'Actions (UI)',
+			displayName: 'Actions',
 			name: 'actionsUi',
 			type: 'fixedCollection',
 			default: {},
@@ -2312,647 +2291,824 @@ description: 'Interact with the Commercetools Products, Categories, and Customer
 				show: {
 					resource: ['customer'],
 					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
-					actionsInputMode: ['ui'],
 				},
 			},
 			typeOptions: {
 				multipleValues: true,
 			},
-			description: 'Update actions built via UI for ease of use',
+			description: 'Update actions to perform on the customer',
 			options: [
 				{
 					displayName: 'Action',
 					name: 'action',
 					values: [
 						{
-							displayName: 'Add Address',
-							name: 'addAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Address Action',
+							displayName: 'Action Type',
+							name: 'actionType',
+							type: 'options',
 							options: [
 								{
-									displayName: 'Address',
-									name: 'address',
-									type: 'json',
-									default: '{}',
-									description: 'Address object to add',
+									name: 'Add Address',
+									value: 'addAddress',
 								},
-					]
+								{
+									name: 'Add Billing Address',
+									value: 'addBillingAddressId',
+								},
+								{
+									name: 'Add CustomerGroupAssignment',
+									value: 'addCustomerGroupAssignment',
+								},
+								{
+									name: 'Add Shipping Address',
+									value: 'addShippingAddressId',
+								},
+								{
+									name: 'Add Store',
+									value: 'addStore',
+								},
+								{
+									name: 'Change Address',
+									value: 'changeAddress',
+								},
+								{
+									name: 'Change Email',
+									value: 'changeEmail',
+								},
+								{
+									name: 'Remove Address',
+									value: 'removeAddress',
+								},
+								{
+									name: 'Remove Billing Address',
+									value: 'removeBillingAddressId',
+								},
+								{
+									name: 'Remove CustomerGroupAssignment',
+									value: 'removeCustomerGroupAssignment',
+								},
+								{
+									name: 'Remove Shipping Address',
+									value: 'removeShippingAddressId',
+								},
+								{
+									name: 'Remove Store',
+									value: 'removeStore',
+								},
+								{
+									name: 'Set AuthenticationMode',
+									value: 'setAuthenticationMode',
+								},
+								{
+									name: 'Set Company Name',
+									value: 'setCompanyName',
+								},
+								{
+									name: 'Set Custom Type',
+									value: 'setCustomType',
+								},
+								{
+									name: 'Set Custom Type in Address',
+									value: 'setCustomTypeInAddress',
+								},
+								{
+									name: 'Set Customer Number',
+									value: 'setCustomerNumber',
+								},
+								{
+									name: 'Set CustomerGroup',
+									value: 'setCustomerGroup',
+								},
+								{
+									name: 'Set CustomerGroupAssignments',
+									value: 'setCustomerGroupAssignments',
+								},
+								{
+									name: 'Set CustomField',
+									value: 'setCustomField',
+								},
+								{
+									name: 'Set CustomField in Address',
+									value: 'setCustomFieldInAddress',
+								},
+								{
+									name: 'Set Date of Birth',
+									value: 'setDateOfBirth',
+								},
+								{
+									name: 'Set Default Billing Address',
+									value: 'setDefaultBillingAddress',
+								},
+								{
+									name: 'Set Default Shipping Address',
+									value: 'setDefaultShippingAddress',
+								},
+								{
+									name: 'Set External ID',
+									value: 'setExternalId',
+								},
+								{
+									name: 'Set First Name',
+									value: 'setFirstName',
+								},
+								{
+									name: 'Set Key',
+									value: 'setKey',
+								},
+								{
+									name: 'Set Last Name',
+									value: 'setLastName',
+								},
+								{
+									name: 'Set Locale',
+									value: 'setLocale',
+								},
+								{
+									name: 'Set Middle Name',
+									value: 'setMiddleName',
+								},
+								{
+									name: 'Set Salutation',
+									value: 'setSalutation',
+								},
+								{
+									name: 'Set Stores',
+									value: 'setStores',
+								},
+								{
+									name: 'Set Title',
+									value: 'setTitle',
+								},
+								{
+									name: 'Set Vat ID',
+									value: 'setVatId',
+								},
+					],
+							default: 'addAddress',
 						},
 						{
-							displayName: 'Add Billing Address ID',
-							name: 'addBillingAddressId',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Billing Address ID Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address to add as billing address',
+							displayName: 'Additional Address Info',
+							name: 'additionalAddressInfo',
+							type: 'string',
+							default: '',
+							description: 'Additional address information',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Add CustomerGroupAssignment',
-							name: 'addCustomerGroupAssignment',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add CustomerGroupAssignment Action',
-							options: [
-								{
-									displayName: 'Customer Group',
-									name: 'customerGroup',
-									type: 'json',
-									default: '{}',
-									description: 'Customer group reference',
+							displayName: 'Additional Street Info',
+							name: 'additionalStreetInfo',
+							type: 'string',
+							default: '',
+							description: 'Additional street information',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Add Shipping Address ID',
-							name: 'addShippingAddressId',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Shipping Address ID Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address to add as shipping address',
+							displayName: 'Address Email',
+							name: 'addressEmail',
+							type: 'string',
+							default: '',
+							description: 'Email address for this address (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Add Store',
-							name: 'addStore',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Store Action',
+							displayName: 'Address Reference Type',
+							name: 'addressReferenceType',
+							type: 'options',
 							options: [
 								{
-									displayName: 'Store',
-									name: 'store',
-									type: 'json',
-									default: '{}',
-									description: 'Store reference',
+									name: 'ID',
+									value: 'id',
+									description: 'Reference address by ID',
 								},
-						]
+								{
+									name: 'Key',
+									value: 'key',
+									description: 'Reference address by key',
+								},
+							],
+							default: 'id',
+							description: 'Whether to reference the address by ID or key',
+							displayOptions: {
+								show: {
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'changeAddress', 'removeAddress', 'setDefaultShippingAddress', 'setDefaultBillingAddress', 'setCustomTypeInAddress'],
+								},
+							},
 						},
 						{
-							displayName: 'Change Address',
-							name: 'changeAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Change Address Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address to change',
+							displayName: 'Address ID',
+							name: 'addressId',
+							type: 'string',
+							default: '',
+							description: 'ID of the address',
+							displayOptions: {
+								show: {
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'changeAddress', 'removeAddress', 'setDefaultShippingAddress', 'setDefaultBillingAddress', 'setCustomTypeInAddress'],
+									addressReferenceType: ['id'],
 								},
-								{
-									displayName: 'Address',
-									name: 'address',
-									type: 'json',
-									default: '{}',
-									description: 'New address object',
-								},
-						]
+							},
 						},
 						{
-							displayName: 'Change Email',
-							name: 'changeEmail',
-							type: 'collection',
-							default: {},
-							placeholder: 'Change Email Action',
-							options: [
-								{
-									displayName: 'Email',
-									name: 'email',
-									type: 'string',
-									default: '',
-									placeholder: 'name@email.com',
-									description: 'New email address',
+							displayName: 'Address Key',
+							name: 'addressKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the address',
+							displayOptions: {
+								show: {
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'changeAddress', 'removeAddress', 'setDefaultShippingAddress', 'setDefaultBillingAddress', 'setCustomTypeInAddress'],
+									addressReferenceType: ['key'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Remove Address',
-							name: 'removeAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Remove Address Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address to remove',
+							displayName: 'Apartment',
+							name: 'apartment',
+							type: 'string',
+							default: '',
+							description: 'Apartment, suite, unit, etc (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Remove Billing Address ID',
-							name: 'removeBillingAddressId',
-							type: 'collection',
-							default: {},
-							placeholder: 'Remove Billing Address ID Action',
+							displayName: 'Authentication Mode',
+							name: 'authMode',
+							type: 'options',
 							options: [
 								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the billing address to remove',
+									name: 'Password',
+									value: 'Password',
 								},
-						]
+								{
+									name: 'External Auth',
+									value: 'ExternalAuth',
+								},
+						],
+							default: 'Password',
+							description: 'Authentication mode for the customer',
+							displayOptions: {
+								show: {
+									actionType: ['setAuthenticationMode'], // Only for auth mode changes, not addAddress
+								},
+							},
 						},
 						{
-							displayName: 'Remove CustomerGroupAssignment',
-							name: 'removeCustomerGroupAssignment',
-							type: 'collection',
-							default: {},
-							placeholder: 'Remove CustomerGroupAssignment Action',
-							options: [
-								{
-									displayName: 'Customer Group',
-									name: 'customerGroup',
-									type: 'json',
-									default: '{}',
-									description: 'Customer group reference to remove',
+							displayName: 'Building',
+							name: 'building',
+							type: 'string',
+							default: '',
+							description: 'Building name or number (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Remove Shipping Address ID',
-							name: 'removeShippingAddressId',
-							type: 'collection',
-							default: {},
-							placeholder: 'Remove Shipping Address ID Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the shipping address to remove',
+							displayName: 'City',
+							name: 'city',
+							type: 'string',
+							default: '',
+							description: 'City name',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Remove Store',
-							name: 'removeStore',
-							type: 'collection',
-							default: {},
-							placeholder: 'Remove Store Action',
-							options: [
-								{
-									displayName: 'Store',
-									name: 'store',
-									type: 'json',
-									default: '{}',
-									description: 'Store reference to remove',
+							displayName: 'Company Name',
+							name: 'companyName',
+							type: 'string',
+							default: '',
+							description: 'Company name for the customer',
+							displayOptions: {
+								show: {
+									actionType: ['setCompanyName'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set AuthenticationMode',
-							name: 'setAuthenticationMode',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set AuthenticationMode Action',
-							options: [
-								{
-									displayName: 'Authentication Mode',
-									name: 'authMode',
-									type: 'options',
-									options: [
-												{
-													name: 'Password',
-													value: 'Password',
-												},
-												{
-													name: 'External Auth',
-													value: 'ExternalAuth',
-												},
-										],
-									default: 'Password',
-									description: 'Authentication mode for the customer',
+							displayName: 'Country',
+							name: 'country',
+							type: 'string',
+							required: true,
+							default: '',
+							description: 'Country code (e.g., DE, US, GB) - Required',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress'],
 								},
-								{
-									displayName: 'Password',
-									name: 'password',
-									type: 'string',
-									typeOptions: { password: true },
-									default: '',
-									description: 'Password (required when setting to Password mode)',
-								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Company Name',
-							name: 'setCompanyName',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Company Name Action',
+							displayName: 'Customer Group Reference Type',
+							name: 'customerGroupReferenceType',
+							type: 'options',
 							options: [
 								{
-									displayName: 'Company Name',
-									name: 'companyName',
-									type: 'string',
-									default: '',
-									description: 'Company name for the customer',
+									name: 'ID',
+									value: 'id',
+									description: 'Reference customer group by ID',
 								},
-						]
+								{
+									name: 'Key',
+									value: 'key',
+									description: 'Reference customer group by key',
+								},
+							],
+							default: 'id',
+							description: 'Whether to reference the customer group by ID or key',
+							displayOptions: {
+								show: {
+									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup', 'setCustomerGroupAssignments'],
+								},
+							},
 						},
 						{
-							displayName: 'Set Custom Type',
-							name: 'setCustomType',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Custom Type Action',
-							options: [
-								{
-									displayName: 'Type',
-									name: 'type',
-									type: 'json',
-									default: '{}',
-									description: 'Type reference',
+							displayName: 'Customer Group ID',
+							name: 'customerGroupId',
+							type: 'string',
+							default: '',
+							description: 'ID of the customer group',
+							displayOptions: {
+								show: {
+									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
+									customerGroupReferenceType: ['id'],
 								},
-								{
-									displayName: 'Fields',
-									name: 'fields',
-									type: 'json',
-									default: '{}',
-									description: 'Custom fields object',
-								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Custom Type in Address',
-							name: 'setCustomTypeInAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Custom Type in Address Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address',
+							displayName: 'Customer Group IDs',
+							name: 'customerGroupIds',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of customer group IDs',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomerGroupAssignments'],
+									customerGroupReferenceType: ['id'],
 								},
-								{
-									displayName: 'Type',
-									name: 'type',
-									type: 'json',
-									default: '{}',
-									description: 'Type reference',
-								},
-								{
-									displayName: 'Fields',
-									name: 'fields',
-									type: 'json',
-									default: '{}',
-									description: 'Custom fields object',
-								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Customer Number',
-							name: 'setCustomerNumber',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Customer Number Action',
-							options: [
-								{
-									displayName: 'Customer Number',
-									name: 'customerNumber',
-									type: 'string',
-									default: '',
+							displayName: 'Customer Group Key',
+							name: 'customerGroupKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the customer group',
+							displayOptions: {
+								show: {
+									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
+									customerGroupReferenceType: ['key'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set CustomerGroup',
-							name: 'setCustomerGroup',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set CustomerGroup Action',
-							options: [
-								{
-									displayName: 'Customer Group',
-									name: 'customerGroup',
-									type: 'json',
-									default: '{}',
-									description: 'Customer group reference',
+							displayName: 'Customer Group Keys',
+							name: 'customerGroupKeys',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of customer group keys',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomerGroupAssignments'],
+									customerGroupReferenceType: ['key'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set CustomerGroupAssignments',
-							name: 'setCustomerGroupAssignments',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set CustomerGroupAssignments Action',
-							options: [
-								{
-									displayName: 'Customer Group Assignments',
-									name: 'customerGroupAssignments',
-									type: 'json',
-									default: '[]',
-									description: 'Array of customer group assignments',
+							displayName: 'Customer Number',
+							name: 'customerNumber',
+							type: 'string',
+							default: '',
+	
+							displayOptions: {
+								show: {
+									actionType: ['setCustomerNumber'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set CustomField',
-							name: 'setCustomField',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set CustomField Action',
-							options: [
-								{
-									displayName: 'Field Name',
-									name: 'name',
-									type: 'string',
-									default: '',
-									description: 'Name of the custom field',
+							displayName: 'Date of Birth',
+							name: 'dateOfBirth',
+							type: 'dateTime',
+							default: '',
+							description: 'Customer date of birth',
+							displayOptions: {
+								show: {
+									actionType: ['setDateOfBirth'],
 								},
-								{
-									displayName: 'Value',
-									name: 'value',
-									type: 'json',
-									default: '',
-									description: 'Value for the custom field',
+							},
+						},
+
+						{
+							displayName: 'Email',
+							name: 'email',
+							type: 'string',
+							default: '',
+							placeholder: 'name@email.com',
+							description: 'New email address',
+							displayOptions: {
+								show: {
+									actionType: ['changeEmail'], // Only for change email action, not addAddress
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set CustomField in Address',
-							name: 'setCustomFieldInAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set CustomField in Address Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address',
+							displayName: 'External ID',
+							name: 'externalId',
+							type: 'string',
+							default: '',
+							description: 'External ID for the customer',
+							displayOptions: {
+								show: {
+									actionType: ['setExternalId'],
 								},
-								{
-									displayName: 'Field Name',
-									name: 'name',
-									type: 'string',
-									default: '',
-									description: 'Name of the custom field',
-								},
-								{
-									displayName: 'Value',
-									name: 'value',
-									type: 'json',
-									default: '',
-									description: 'Value for the custom field',
-								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Date of Birth',
-							name: 'setDateOfBirth',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Date of Birth Action',
-							options: [
-								{
-									displayName: 'Date of Birth',
-									name: 'dateOfBirth',
-									type: 'dateTime',
-									default: '',
+							displayName: 'Fax',
+							name: 'fax',
+							type: 'string',
+							default: '',
+							description: 'Fax number (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Default Billing Address',
-							name: 'setDefaultBillingAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Default Billing Address Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address to set as default billing address',
+							displayName: 'Field Name',
+							name: 'name',
+							type: 'string',
+							default: '',
+							description: 'Name of the custom field',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomField', 'setCustomFieldInAddress'],
 								},
-						]
+							},
+						},
+
+						{
+							displayName: 'First Name',
+							name: 'firstName',
+							type: 'string',
+							default: '',
+							description: 'First name for the address',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress', 'setFirstName'],
+								},
+							},
 						},
 						{
-							displayName: 'Set Default Shipping Address',
-							name: 'setDefaultShippingAddress',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Default Shipping Address Action',
-							options: [
-								{
-									displayName: 'Address ID',
-									name: 'addressId',
-									type: 'string',
-									default: '',
-									description: 'ID of the address to set as default shipping address',
+							displayName: 'Key',
+							name: 'key',
+							type: 'string',
+							default: '',
+							description: 'Address key for identification (optional but recommended)',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress', 'setKey'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set External ID',
-							name: 'setExternalId',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set External ID Action',
-							options: [
-								{
-									displayName: 'External ID',
-									name: 'externalId',
-									type: 'string',
-									default: '',
-									description: 'External ID for the customer',
+							displayName: 'Last Name',
+							name: 'lastName',
+							type: 'string',
+							default: '',
+							description: 'Last name for the address',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress', 'setLastName'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set First Name',
-							name: 'setFirstName',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set First Name Action',
-							options: [
-								{
-									displayName: 'First Name',
-									name: 'firstName',
-									type: 'string',
-									default: '',
-									description: 'First name of the customer',
+							displayName: 'Locale',
+							name: 'locale',
+							type: 'string',
+							default: '',
+							description: 'Locale for the customer (e.g., \'en-US\')',
+							displayOptions: {
+								show: {
+									actionType: ['setLocale'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Key',
-							name: 'setKey',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Key Action',
-							options: [
-								{
-									displayName: 'Key',
-									name: 'key',
-									type: 'string',
-									default: '',
-									description: 'Key for the customer',
+							displayName: 'Middle Name',
+							name: 'middleName',
+							type: 'string',
+							default: '',
+							description: 'Middle name of the customer',
+							displayOptions: {
+								show: {
+									actionType: ['setMiddleName'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Last Name',
-							name: 'setLastName',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Last Name Action',
-							options: [
-								{
-									displayName: 'Last Name',
-									name: 'lastName',
-									type: 'string',
-									default: '',
-									description: 'Last name of the customer',
+							displayName: 'Mobile',
+							name: 'mobile',
+							type: 'string',
+							default: '',
+							description: 'Mobile phone number (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Locale',
-							name: 'setLocale',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Locale Action',
-							options: [
-								{
-									displayName: 'Locale',
-									name: 'locale',
-									type: 'string',
-									default: '',
-									description: 'Locale for the customer (e.g., \'en-US\')',
+							displayName: 'P.O. Box',
+							name: 'pOBox',
+							type: 'string',
+							default: '',
+							description: 'Post office box (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Middle Name',
-							name: 'setMiddleName',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Middle Name Action',
-							options: [
-								{
-									displayName: 'Middle Name',
-									name: 'middleName',
-									type: 'string',
-									default: '',
-									description: 'Middle name of the customer',
+							displayName: 'Password',
+							name: 'password',
+							type: 'string',
+							typeOptions: { password: true },
+							default: '',
+							description: 'Password (required when setting to Password mode)',
+							displayOptions: {
+								show: {
+									actionType: ['setAuthenticationMode'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Salutation',
-							name: 'setSalutation',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Salutation Action',
-							options: [
-								{
-									displayName: 'Salutation',
-									name: 'salutation',
-									type: 'string',
-									default: '',
-									description: 'Salutation for the customer (e.g., \'Mr\', \'Ms\')',
+							displayName: 'Phone',
+							name: 'phone',
+							type: 'string',
+							default: '',
+							description: 'Phone number (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Stores',
-							name: 'setStores',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Stores Action',
-							options: [
-								{
-									displayName: 'Stores',
-									name: 'stores',
-									type: 'json',
-									default: '[]',
-									description: 'Array of store references',
+							displayName: 'Postal Code',
+							name: 'postalCode',
+							type: 'string',
+							default: '',
+							description: 'Postal/ZIP code',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Title',
-							name: 'setTitle',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Title Action',
-							options: [
-								{
-									displayName: 'Title',
-									name: 'title',
-									type: 'string',
-									default: '',
-									description: 'Title for the customer',
+							displayName: 'Salutation',
+							name: 'salutation',
+							type: 'string',
+							default: '',
+							description: 'Salutation (e.g., Mr., Mrs., Dr.)',
+							displayOptions: {
+								show: {
+									actionType: ['setSalutation'],
 								},
-						]
+							},
 						},
 						{
-							displayName: 'Set Vat ID',
-							name: 'setVatId',
-							type: 'collection',
-							default: {},
-							placeholder: 'Set Vat ID Action',
+							displayName: 'State',
+							name: 'state',
+							type: 'string',
+							default: '',
+							description: 'State or region (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['changeAddress'], // Only for change, not add
+								},
+							},
+						},
+						{
+							displayName: 'Store Reference Type',
+							name: 'storeReferenceType',
+							type: 'options',
 							options: [
 								{
-									displayName: 'VAT ID',
-									name: 'vatId',
-									type: 'string',
-									default: '',
-									description: 'VAT ID for the customer',
+									name: 'ID',
+									value: 'id',
+									description: 'Reference store by ID',
 								},
-						]
+								{
+									name: 'Key',
+									value: 'key',
+									description: 'Reference store by key',
+								},
+							],
+							default: 'id',
+							description: 'Whether to reference the store by ID or key',
+							displayOptions: {
+								show: {
+									actionType: ['addStore', 'removeStore', 'setStores'],
+								},
+							},
+						},
+						{
+							displayName: 'Store ID',
+							name: 'storeId',
+							type: 'string',
+							default: '',
+							description: 'ID of the store',
+							displayOptions: {
+								show: {
+									actionType: ['addStore', 'removeStore'],
+									storeReferenceType: ['id'],
+								},
+							},
+						},
+						{
+							displayName: 'Store IDs',
+							name: 'storeIds',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of store IDs',
+							displayOptions: {
+								show: {
+									actionType: ['setStores'],
+									storeReferenceType: ['id'],
+								},
+							},
+						},
+						{
+							displayName: 'Store Key',
+							name: 'storeKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the store',
+							displayOptions: {
+								show: {
+									actionType: ['addStore', 'removeStore'],
+									storeReferenceType: ['key'],
+								},
+							},
+						},
+						{
+							displayName: 'Store Keys',
+							name: 'storeKeys',
+							type: 'string',
+							default: '',
+							description: 'Comma-separated list of store keys',
+							displayOptions: {
+								show: {
+									actionType: ['setStores'],
+									storeReferenceType: ['key'],
+								},
+							},
+						},
+						{
+							displayName: 'Street Name',
+							name: 'streetName',
+							type: 'string',
+							default: '',
+	
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress'],
+								},
+							},
+						},
+						{
+							displayName: 'Street Number',
+							name: 'streetNumber',
+							type: 'string',
+							default: '',
+	
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress'],
+								},
+							},
+						},
+						{
+							displayName: 'Title',
+							name: 'title',
+							type: 'string',
+							default: '',
+							description: 'Address title (optional)',
+							displayOptions: {
+								show: {
+									actionType: ['addAddress', 'changeAddress', 'setTitle'], // Keep for addAddress
+								},
+							},
+						},
+						{
+							displayName: 'Type Reference Type',
+							name: 'typeReferenceType',
+							type: 'options',
+							options: [
+								{
+									name: 'ID',
+									value: 'id',
+									description: 'Reference type by ID',
+								},
+								{
+									name: 'Key',
+									value: 'key',
+									description: 'Reference type by key',
+								},
+							],
+							default: 'key',
+							description: 'Whether to reference the custom type by ID or key',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomType', 'setCustomField', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
+								},
+							},
+						},
+						{
+							displayName: 'Type ID',
+							name: 'typeId',
+							type: 'string',
+							default: '',
+							description: 'ID of the custom type',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomType', 'setCustomField', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
+									typeReferenceType: ['id'],
+								},
+							},
+						},
+						{
+							displayName: 'Type Key',
+							name: 'typeKey',
+							type: 'string',
+							default: '',
+							description: 'Key of the custom type',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomType', 'setCustomField', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
+									typeReferenceType: ['key'],
+								},
+							},
+						},
+						{
+							displayName: 'Field Value',
+							name: 'value',
+							type: 'string',
+							default: '',
+							description: 'Value for the custom field (text, number, boolean, etc.)',
+							displayOptions: {
+								show: {
+									actionType: ['setCustomField', 'setCustomFieldInAddress'],
+								},
+							},
+						},
+						{
+							displayName: 'VAT ID',
+							name: 'vatId',
+							type: 'string',
+							default: '',
+							description: 'VAT ID for the customer',
+							displayOptions: {
+								show: {
+									actionType: ['setVatId'],
+								},
+							},
 						},
 				],
 				},
 			],
 		},
-		{
-			displayName: 'Actions (JSON)',
-			name: 'actions',
-			type: 'json',
-			default: '',
-			required: true,
-			displayOptions: {
-				show: {
-					resource: ['customer'],
-					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
-					actionsInputMode: ['json'],
-				},
-			},
-			description: 'JSON array of update actions to perform on the customer. Alternative to Actions (UI).'
-		},
+
+
+
+
+
+
+
+
 		{
 			displayName: 'Return All',
 			name: 'returnAll',

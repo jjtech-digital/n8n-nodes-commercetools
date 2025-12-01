@@ -20,6 +20,11 @@ export class Commercetools implements INodeType {
 	};
 
 
+	/**
+	 * Executes the Commercetools node operations including product queries,
+	 * customer management, and category operations.
+	 * Supports multiple resources with comprehensive CRUD operations.
+	 */
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];

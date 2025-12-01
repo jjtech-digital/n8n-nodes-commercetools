@@ -7,6 +7,12 @@ type CommonParameterOptions = {
 	allowPredicateVariables?: boolean;
 };
 
+/**
+ * Applies common query parameters for Commercetools API requests
+ * @param qs - Query string object to modify
+ * @param additionalFields - Additional fields from node parameters
+ * @param options - Options to control which parameters are allowed
+ */
 export const applyCommonCustomerParameters = (
 	qs: IDataObject,
 	additionalFields: IDataObject = {},
@@ -55,6 +61,14 @@ export const applyCommonCustomerParameters = (
 	}
 };
 
+/**
+ * Safely parses JSON input from string or returns object as-is
+ * @param context - n8n execution context
+ * @param raw - Raw input to parse (string or object)
+ * @param label - Label for error reporting
+ * @param itemIndex - Current item index for error context
+ * @returns Parsed object or original if already an object
+ */
 export const coerceJsonInput = (
 	context: IExecuteFunctions,
 	raw: unknown,
@@ -84,6 +98,14 @@ export const coerceJsonInput = (
 	return value as IDataObject;
 };
 
+/**
+ * Builds Commercetools update actions from n8n UI parameters
+ * Converts UI form data into proper Commercetools API action format
+ * @param context - n8n execution context
+ * @param actionsUi - UI actions data from node parameters
+ * @param itemIndex - Current item index being processed
+ * @returns Array of Commercetools update actions
+ */
 export const buildActionsFromUi = (
 	context: IExecuteFunctions,
 	actionsUi: IDataObject,
@@ -98,687 +120,604 @@ export const buildActionsFromUi = (
 		: [];
 
 	for (const actionEntry of actionEntries) {
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'addAddress')) {
-			const addAddress = actionEntry.addAddress as IDataObject;
-			const addressRaw = addAddress.address as string;
+		const actionType = actionEntry.actionType as string;
+
+		if (!actionType) {
+			throw new NodeOperationError(
+				context.getNode(),
+				'Action Type is required for each action',
+				{ itemIndex },
+			);
+		}
+
+		// Helper function to create address object from individual fields
+		const buildAddressFromFields = (entry: IDataObject): IDataObject => {
+			const address: IDataObject = {};
 			
-			let address: IDataObject;
-			try {
-				address = typeof addressRaw === 'string' ? JSON.parse(addressRaw) : addressRaw;
-			} catch {
+			if (entry.key) address.key = entry.key;
+			if (entry.title) address.title = entry.title;
+			if (entry.firstName) address.firstName = entry.firstName;
+			if (entry.lastName) address.lastName = entry.lastName;
+			if (entry.streetName) address.streetName = entry.streetName;
+			if (entry.streetNumber) address.streetNumber = entry.streetNumber;
+			if (entry.city) address.city = entry.city;
+			if (entry.postalCode) address.postalCode = entry.postalCode;
+			if (entry.country) address.country = entry.country;
+			if (entry.state) address.state = entry.state;
+			if (entry.building) address.building = entry.building;
+			if (entry.apartment) address.apartment = entry.apartment;
+			if (entry.department) address.department = entry.department;
+			if (entry.phone) address.phone = entry.phone;
+			if (entry.mobile) address.mobile = entry.mobile;
+			if (entry.addressEmail) address.email = entry.addressEmail;
+			if (entry.fax) address.fax = entry.fax;
+			if (entry.pOBox) address.pOBox = entry.pOBox;
+			if (entry.additionalAddressInfo) address.additionalAddressInfo = entry.additionalAddressInfo;
+			if (entry.additionalStreetInfo) address.additionalStreetInfo = entry.additionalStreetInfo;
+
+			return address;
+		};
+
+		// Helper function to get ID or Key reference
+		const getIdOrKeyReference = (entry: IDataObject, idField: string, keyField: string, referenceType: string): IDataObject => {
+			const id = (entry[idField] as string)?.trim();
+			const key = (entry[keyField] as string)?.trim();
+
+			if (id) {
+				return { typeId: referenceType, id };
+			} else if (key) {
+				return { typeId: referenceType, key };
+			} else {
 				throw new NodeOperationError(
 					context.getNode(),
-					'Address must be valid JSON',
+					`Either ${idField} or ${keyField} is required`,
 					{ itemIndex },
 				);
 			}
+		};
 
-			builtActions.push({
-				action: 'addAddress',
-				address,
-			});
-			continue;
-		}
+		// Helper function to get multiple ID or Key references
+		const getMultipleIdOrKeyReferences = (entry: IDataObject, idsField: string, keysField: string, referenceType: string): IDataObject[] => {
+			const ids = (entry[idsField] as string)?.trim();
+			const keys = (entry[keysField] as string)?.trim();
 
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'addBillingAddressId')) {
-			const addBillingAddressId = actionEntry.addBillingAddressId as IDataObject;
-			const addressId = (addBillingAddressId.addressId as string)?.trim();
-
-			if (!addressId) {
+			if (ids) {
+				return ids.split(',').map(id => ({ typeId: referenceType, id: id.trim() }));
+			} else if (keys) {
+				return keys.split(',').map(key => ({ typeId: referenceType, key: key.trim() }));
+			} else {
 				throw new NodeOperationError(
 					context.getNode(),
-					'Address ID is required for Add Billing Address ID action',
+					`Either ${idsField} or ${keysField} is required`,
 					{ itemIndex },
 				);
 			}
+		};
 
-			builtActions.push({
-				action: 'addBillingAddressId',
-				addressId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'changeEmail')) {
-			const changeEmail = actionEntry.changeEmail as IDataObject;
-			const email = (changeEmail.email as string)?.trim();
-
-			if (!email) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Email is required for Change Email action',
-					{ itemIndex },
-				);
+		switch (actionType) {
+			case 'addAddress': {
+				const address = buildAddressFromFields(actionEntry);
+				builtActions.push({
+					action: 'addAddress',
+					address,
+				});
+				break;
 			}
 
-			builtActions.push({
-				action: 'changeEmail',
-				email,
-			});
-			continue;
-		}
+			case 'addBillingAddressId': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Add Billing Address ID action',
+						{ itemIndex },
+					);
+				}
 
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setFirstName')) {
-			const setFirstName = actionEntry.setFirstName as IDataObject;
-			const firstName = setFirstName.firstName as string;
-
-			builtActions.push({
-				action: 'setFirstName',
-				firstName,
-			});
-			continue;
-		}
-
-	
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setLastName')) {
-			const setLastName = actionEntry.setLastName as IDataObject;
-			const lastName = setLastName.lastName as string;
-
-			builtActions.push({
-				action: 'setLastName',
-				lastName,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCompanyName')) {
-			const setCompanyName = actionEntry.setCompanyName as IDataObject;
-			const companyName = setCompanyName.companyName as string;
-
-			builtActions.push({
-				action: 'setCompanyName',
-				companyName,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setKey')) {
-			const setKey = actionEntry.setKey as IDataObject;
-			const key = setKey.key as string;
-
-			builtActions.push({
-				action: 'setKey',
-				key,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setExternalId')) {
-			const setExternalId = actionEntry.setExternalId as IDataObject;
-			const externalId = setExternalId.externalId as string;
-
-			builtActions.push({
-				action: 'setExternalId',
-				externalId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomerNumber')) {
-			const setCustomerNumber = actionEntry.setCustomerNumber as IDataObject;
-			const customerNumber = setCustomerNumber.customerNumber as string;
-
-			builtActions.push({
-				action: 'setCustomerNumber',
-				customerNumber,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setDateOfBirth')) {
-			const setDateOfBirth = actionEntry.setDateOfBirth as IDataObject;
-			const dateOfBirth = setDateOfBirth.dateOfBirth as string;
-
-			builtActions.push({
-				action: 'setDateOfBirth',
-				dateOfBirth,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setLocale')) {
-			const setLocale = actionEntry.setLocale as IDataObject;
-			const locale = setLocale.locale as string;
-
-			builtActions.push({
-				action: 'setLocale',
-				locale,
-			});
-			continue;
-		}
-
-	
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setMiddleName')) {
-			const setMiddleName = actionEntry.setMiddleName as IDataObject;
-			const middleName = setMiddleName.middleName as string;
-
-			builtActions.push({
-				action: 'setMiddleName',
-				middleName,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setSalutation')) {
-			const setSalutation = actionEntry.setSalutation as IDataObject;
-			const salutation = setSalutation.salutation as string;
-
-			builtActions.push({
-				action: 'setSalutation',
-				salutation,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setTitle')) {
-			const setTitle = actionEntry.setTitle as IDataObject;
-			const title = setTitle.title as string;
-
-			builtActions.push({
-				action: 'setTitle',
-				title,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setVatId')) {
-			const setVatId = actionEntry.setVatId as IDataObject;
-			const vatId = setVatId.vatId as string;
-
-			builtActions.push({
-				action: 'setVatId',
-				vatId,
-			});
-			continue;
-		}
-
-		
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'addCustomerGroupAssignment')) {
-			const addCustomerGroupAssignment = actionEntry.addCustomerGroupAssignment as IDataObject;
-			const customerGroupRaw = addCustomerGroupAssignment.customerGroup as string;
-			
-			let customerGroup: IDataObject;
-			try {
-				customerGroup = typeof customerGroupRaw === 'string' ? JSON.parse(customerGroupRaw) : customerGroupRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Customer Group must be valid JSON',
-					{ itemIndex },
-				);
+				builtActions.push({
+					action: 'addBillingAddressId',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
 			}
 
-			builtActions.push({
-				action: 'addCustomerGroupAssignment',
-				customerGroup,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomField')) {
-			const setCustomField = actionEntry.setCustomField as IDataObject;
-			const name = (setCustomField.name as string)?.trim();
-			const valueRaw = setCustomField.value;
-
-			if (!name) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Field name is required for Set Custom Field action',
-					{ itemIndex },
-				);
+			case 'addCustomerGroupAssignment': {
+				const customerGroup = getIdOrKeyReference(actionEntry, 'customerGroupId', 'customerGroupKey', 'customer-group');
+				builtActions.push({
+					action: 'addCustomerGroupAssignment',
+					customerGroup,
+				});
+				break;
 			}
 
-			let value: string | IDataObject | unknown;
-			if (typeof valueRaw === 'string') {
+			case 'addShippingAddressId': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Add Shipping Address ID action',
+						{ itemIndex },
+					);
+				}
+
+				builtActions.push({
+					action: 'addShippingAddressId',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
+			}
+
+			case 'addStore': {
+				const store = getIdOrKeyReference(actionEntry, 'storeId', 'storeKey', 'store');
+				builtActions.push({
+					action: 'addStore',
+					store,
+				});
+				break;
+			}
+
+			case 'changeAddress': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Change Address action',
+						{ itemIndex },
+					);
+				}
+
+				const address = buildAddressFromFields(actionEntry);
+				builtActions.push({
+					action: 'changeAddress',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+					address,
+				});
+				break;
+			}
+
+			case 'changeEmail': {
+				const email = (actionEntry.email as string)?.trim();
+				if (!email) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Email is required for Change Email action',
+						{ itemIndex },
+					);
+				}
+
+				builtActions.push({
+					action: 'changeEmail',
+					email,
+				});
+				break;
+			}
+
+			case 'removeAddress': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Remove Address action',
+						{ itemIndex },
+					);
+				}
+
+				builtActions.push({
+					action: 'removeAddress',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
+			}
+
+			case 'removeBillingAddressId': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Remove Billing Address ID action',
+						{ itemIndex },
+					);
+				}
+
+				builtActions.push({
+					action: 'removeBillingAddressId',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
+			}
+
+			case 'removeCustomerGroupAssignment': {
+				const customerGroup = getIdOrKeyReference(actionEntry, 'customerGroupId', 'customerGroupKey', 'customer-group');
+				builtActions.push({
+					action: 'removeCustomerGroupAssignment',
+					customerGroup,
+				});
+				break;
+			}
+
+			case 'removeShippingAddressId': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Remove Shipping Address ID action',
+						{ itemIndex },
+					);
+				}
+
+				builtActions.push({
+					action: 'removeShippingAddressId',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
+			}
+
+			case 'removeStore': {
+				const store = getIdOrKeyReference(actionEntry, 'storeId', 'storeKey', 'store');
+				builtActions.push({
+					action: 'removeStore',
+					store,
+				});
+				break;
+			}
+
+			case 'setAuthenticationMode': {
+				const authMode = (actionEntry.authMode as string)?.trim();
+				const password = (actionEntry.password as string)?.trim();
+
+				if (!authMode) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Authentication Mode is required for Set Authentication Mode action',
+						{ itemIndex },
+					);
+				}
+
+				const action: IDataObject = {
+					action: 'setAuthenticationMode',
+					authMode,
+				};
+
+				if (authMode === 'Password' && password) {
+					action.password = password;
+				}
+
+				builtActions.push(action);
+				break;
+			}
+
+			case 'setCompanyName': {
+				const companyName = (actionEntry.companyName as string)?.trim();
+				builtActions.push({
+					action: 'setCompanyName',
+					companyName: companyName || undefined,
+				});
+				break;
+			}
+
+			case 'setCustomType': {
+				const type = getIdOrKeyReference(actionEntry, 'typeId', 'typeKey', 'type');
+				const fieldsRaw = actionEntry.fields as string;
+				
+				let fields: IDataObject = {};
+				if (fieldsRaw && fieldsRaw.trim()) {
+					try {
+						fields = typeof fieldsRaw === 'string' ? JSON.parse(fieldsRaw) : fieldsRaw;
+					} catch {
+						throw new NodeOperationError(
+							context.getNode(),
+							'Fields must be valid JSON',
+							{ itemIndex },
+						);
+					}
+				}
+
+				builtActions.push({
+					action: 'setCustomType',
+					type,
+					fields,
+				});
+				break;
+			}
+
+			case 'setCustomTypeInAddress': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Set Custom Type in Address action',
+						{ itemIndex },
+					);
+				}
+
+				const type = getIdOrKeyReference(actionEntry, 'typeId', 'typeKey', 'type');
+				const fieldsRaw = actionEntry.fields as string;
+				
+				let fields: IDataObject = {};
+				if (fieldsRaw && fieldsRaw.trim()) {
+					try {
+						fields = typeof fieldsRaw === 'string' ? JSON.parse(fieldsRaw) : fieldsRaw;
+					} catch {
+						throw new NodeOperationError(
+							context.getNode(),
+							'Fields must be valid JSON',
+							{ itemIndex },
+						);
+					}
+				}
+
+				builtActions.push({
+					action: 'setCustomTypeInAddress',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+					type,
+					fields,
+				});
+				break;
+			}
+
+			case 'setCustomerNumber': {
+				const customerNumber = (actionEntry.customerNumber as string)?.trim();
+				builtActions.push({
+					action: 'setCustomerNumber',
+					customerNumber: customerNumber || undefined,
+				});
+				break;
+			}
+
+			case 'setCustomerGroup': {
+				const customerGroup = getIdOrKeyReference(actionEntry, 'customerGroupId', 'customerGroupKey', 'customer-group');
+				builtActions.push({
+					action: 'setCustomerGroup',
+					customerGroup,
+				});
+				break;
+			}
+
+			case 'setCustomerGroupAssignments': {
+				const customerGroupAssignments = getMultipleIdOrKeyReferences(actionEntry, 'customerGroupIds', 'customerGroupKeys', 'customer-group');
+				builtActions.push({
+					action: 'setCustomerGroupAssignments',
+					customerGroupAssignments,
+				});
+				break;
+			}
+
+			case 'setCustomField': {
+				const name = (actionEntry.name as string)?.trim();
+				const valueRaw = actionEntry.value;
+
+				if (!name) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Field Name is required for Set Custom Field action',
+						{ itemIndex },
+					);
+				}
+				
+			let value: string | number | boolean | object | null = null;
+			if (valueRaw !== undefined && valueRaw !== '') {
 				try {
-					value = JSON.parse(valueRaw);
+					value = typeof valueRaw === 'string' ? JSON.parse(valueRaw) : valueRaw;
+					} catch {
+						value = valueRaw;
+					}
+				}
+
+				builtActions.push({
+					action: 'setCustomField',
+					name,
+					value,
+				});
+				break;
+			}
+
+			case 'setCustomFieldInAddress': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				const name = (actionEntry.name as string)?.trim();
+				const valueRaw = actionEntry.value;
+
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Set Custom Field in Address action',
+						{ itemIndex },
+					);
+				}
+
+				if (!name) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Field Name is required for Set Custom Field in Address action',
+						{ itemIndex },
+					);
+				}
+				
+			let value: string | number | boolean | object | null = null;
+			if (valueRaw !== undefined && valueRaw !== '') {
+				try {
+					value = typeof valueRaw === 'string' ? JSON.parse(valueRaw) : valueRaw;
 				} catch {
 					value = valueRaw;
+					}
 				}
-			} else {
-				value = valueRaw;
+
+				builtActions.push({
+					action: 'setCustomFieldInAddress',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+					name,
+					value,
+				});
+				break;
 			}
 
-			builtActions.push({
-				action: 'setCustomField',
-				name,
-				value: value as string | IDataObject,
-			});
-			continue;
-		}
-
-	
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'addShippingAddressId')) {
-			const addShippingAddressId = actionEntry.addShippingAddressId as IDataObject;
-			const addressId = (addShippingAddressId.addressId as string)?.trim();
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Add Shipping Address ID action',
-					{ itemIndex },
-				);
+			case 'setDateOfBirth': {
+				const dateOfBirth = (actionEntry.dateOfBirth as string)?.trim();
+				builtActions.push({
+					action: 'setDateOfBirth',
+					dateOfBirth: dateOfBirth || undefined,
+				});
+				break;
 			}
 
-			builtActions.push({
-				action: 'addShippingAddressId',
-				addressId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'addStore')) {
-			const addStore = actionEntry.addStore as IDataObject;
-			const storeRaw = addStore.store as string;
-			
-			let store: IDataObject;
-			try {
-				store = typeof storeRaw === 'string' ? JSON.parse(storeRaw) : storeRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Store must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'addStore',
-				store,
-			});
-			continue;
-		}
-
-	
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'changeAddress')) {
-			const changeAddress = actionEntry.changeAddress as IDataObject;
-			const addressId = (changeAddress.addressId as string)?.trim();
-			const addressRaw = changeAddress.address as string;
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Change Address action',
-					{ itemIndex },
-				);
-			}
-			
-			let address: IDataObject;
-			try {
-				address = typeof addressRaw === 'string' ? JSON.parse(addressRaw) : addressRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'changeAddress',
-				addressId,
-				address,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'removeAddress')) {
-			const removeAddress = actionEntry.removeAddress as IDataObject;
-			const addressId = (removeAddress.addressId as string)?.trim();
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Remove Address action',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'removeAddress',
-				addressId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'removeBillingAddressId')) {
-			const removeBillingAddressId = actionEntry.removeBillingAddressId as IDataObject;
-			const addressId = (removeBillingAddressId.addressId as string)?.trim();
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Remove Billing Address ID action',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'removeBillingAddressId',
-				addressId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'removeCustomerGroupAssignment')) {
-			const removeCustomerGroupAssignment = actionEntry.removeCustomerGroupAssignment as IDataObject;
-			const customerGroupRaw = removeCustomerGroupAssignment.customerGroup as string;
-			
-			let customerGroup: IDataObject;
-			try {
-				customerGroup = typeof customerGroupRaw === 'string' ? JSON.parse(customerGroupRaw) : customerGroupRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Customer Group must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'removeCustomerGroupAssignment',
-				customerGroup,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'removeShippingAddressId')) {
-			const removeShippingAddressId = actionEntry.removeShippingAddressId as IDataObject;
-			const addressId = (removeShippingAddressId.addressId as string)?.trim();
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Remove Shipping Address ID action',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'removeShippingAddressId',
-				addressId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'removeStore')) {
-			const removeStore = actionEntry.removeStore as IDataObject;
-			const storeRaw = removeStore.store as string;
-			
-			let store: IDataObject;
-			try {
-				store = typeof storeRaw === 'string' ? JSON.parse(storeRaw) : storeRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Store must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'removeStore',
-				store,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setAuthenticationMode')) {
-			const setAuthenticationMode = actionEntry.setAuthenticationMode as IDataObject;
-			const authMode = setAuthenticationMode.authMode as string;
-			const password = setAuthenticationMode.password as string;
-
-			const action: IDataObject = {
-				action: 'setAuthenticationMode',
-				authMode,
-			};
-
-			if (authMode === 'Password' && password) {
-				action.password = password;
-			}
-
-			builtActions.push(action);
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomType')) {
-			const setCustomType = actionEntry.setCustomType as IDataObject;
-			const typeRaw = setCustomType.type as string;
-			const fieldsRaw = setCustomType.fields as string;
-			
-			let type: IDataObject;
-			let fields: IDataObject;
-			
-			try {
-				type = typeof typeRaw === 'string' ? JSON.parse(typeRaw) : typeRaw;
-				fields = typeof fieldsRaw === 'string' ? JSON.parse(fieldsRaw) : fieldsRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Type and Fields must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'setCustomType',
-				type,
-				fields,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomTypeInAddress')) {
-			const setCustomTypeInAddress = actionEntry.setCustomTypeInAddress as IDataObject;
-			const addressId = (setCustomTypeInAddress.addressId as string)?.trim();
-			const typeRaw = setCustomTypeInAddress.type as string;
-			const fieldsRaw = setCustomTypeInAddress.fields as string;
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Set Custom Type in Address action',
-					{ itemIndex },
-				);
-			}
-			
-			let type: IDataObject;
-			let fields: IDataObject;
-			
-			try {
-				type = typeof typeRaw === 'string' ? JSON.parse(typeRaw) : typeRaw;
-				fields = typeof fieldsRaw === 'string' ? JSON.parse(fieldsRaw) : fieldsRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Type and Fields must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'setCustomTypeInAddress',
-				addressId,
-				type,
-				fields,
-			});
-			continue;
-		}
-
-	
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomerGroup')) {
-			const setCustomerGroup = actionEntry.setCustomerGroup as IDataObject;
-			const customerGroupRaw = setCustomerGroup.customerGroup as string;
-			
-			let customerGroup: IDataObject;
-			try {
-				customerGroup = typeof customerGroupRaw === 'string' ? JSON.parse(customerGroupRaw) : customerGroupRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Customer Group must be valid JSON',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'setCustomerGroup',
-				customerGroup,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomerGroupAssignments')) {
-			const setCustomerGroupAssignments = actionEntry.setCustomerGroupAssignments as IDataObject;
-			const customerGroupAssignmentsRaw = setCustomerGroupAssignments.customerGroupAssignments as string;
-			
-			let customerGroupAssignments: IDataObject[];
-			try {
-				customerGroupAssignments = typeof customerGroupAssignmentsRaw === 'string' ? JSON.parse(customerGroupAssignmentsRaw) : customerGroupAssignmentsRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Customer Group Assignments must be valid JSON array',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'setCustomerGroupAssignments',
-				customerGroupAssignments,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setCustomFieldInAddress')) {
-			const setCustomFieldInAddress = actionEntry.setCustomFieldInAddress as IDataObject;
-			const addressId = (setCustomFieldInAddress.addressId as string)?.trim();
-			const name = (setCustomFieldInAddress.name as string)?.trim();
-			const valueRaw = setCustomFieldInAddress.value;
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Set Custom Field in Address action',
-					{ itemIndex },
-				);
-			}
-
-			if (!name) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Field name is required for Set Custom Field in Address action',
-					{ itemIndex },
-				);
-			}
-
-			let value: string | IDataObject | unknown;
-			if (typeof valueRaw === 'string') {
-				try {
-					value = JSON.parse(valueRaw);
-				} catch {
-					value = valueRaw;
+			case 'setDefaultBillingAddress': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Set Default Billing Address action',
+						{ itemIndex },
+					);
 				}
-			} else {
-				value = valueRaw;
+
+				builtActions.push({
+					action: 'setDefaultBillingAddress',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
 			}
 
-			builtActions.push({
-				action: 'setCustomFieldInAddress',
-				addressId,
-				name,
-				value: value as string | IDataObject,
-			});
-			continue;
-		}
+			case 'setDefaultShippingAddress': {
+				const addressId = (actionEntry.addressId as string)?.trim();
+				const addressKey = (actionEntry.addressKey as string)?.trim();
+				
+				if (!addressId && !addressKey) {
+					throw new NodeOperationError(
+						context.getNode(),
+						'Either Address ID or Address Key is required for Set Default Shipping Address action',
+						{ itemIndex },
+					);
+				}
 
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setDefaultBillingAddress')) {
-			const setDefaultBillingAddress = actionEntry.setDefaultBillingAddress as IDataObject;
-			const addressId = (setDefaultBillingAddress.addressId as string)?.trim();
+				builtActions.push({
+					action: 'setDefaultShippingAddress',
+					addressId: addressId || undefined,
+					addressKey: addressKey || undefined,
+				});
+				break;
+			}
 
-			if (!addressId) {
+			case 'setExternalId': {
+				const externalId = (actionEntry.externalId as string)?.trim();
+				builtActions.push({
+					action: 'setExternalId',
+					externalId: externalId || undefined,
+				});
+				break;
+			}
+
+			case 'setFirstName': {
+				const firstName = (actionEntry.firstName as string)?.trim();
+				builtActions.push({
+					action: 'setFirstName',
+					firstName: firstName || undefined,
+				});
+				break;
+			}
+
+			case 'setKey': {
+				const key = (actionEntry.key as string)?.trim();
+				builtActions.push({
+					action: 'setKey',
+					key: key || undefined,
+				});
+				break;
+			}
+
+			case 'setLastName': {
+				const lastName = (actionEntry.lastName as string)?.trim();
+				builtActions.push({
+					action: 'setLastName',
+					lastName: lastName || undefined,
+				});
+				break;
+			}
+
+			case 'setLocale': {
+				const locale = (actionEntry.locale as string)?.trim();
+				builtActions.push({
+					action: 'setLocale',
+					locale: locale || undefined,
+				});
+				break;
+			}
+
+			case 'setMiddleName': {
+				const middleName = (actionEntry.middleName as string)?.trim();
+				builtActions.push({
+					action: 'setMiddleName',
+					middleName: middleName || undefined,
+				});
+				break;
+			}
+
+			case 'setSalutation': {
+				const salutation = (actionEntry.salutation as string)?.trim();
+				builtActions.push({
+					action: 'setSalutation',
+					salutation: salutation || undefined,
+				});
+				break;
+			}
+
+			case 'setStores': {
+				const stores = getMultipleIdOrKeyReferences(actionEntry, 'storeIds', 'storeKeys', 'store');
+				builtActions.push({
+					action: 'setStores',
+					stores,
+				});
+				break;
+			}
+
+			case 'setTitle': {
+				const title = (actionEntry.title as string)?.trim();
+				builtActions.push({
+					action: 'setTitle',
+					title: title || undefined,
+				});
+				break;
+			}
+
+			case 'setVatId': {
+				const vatId = (actionEntry.vatId as string)?.trim();
+				builtActions.push({
+					action: 'setVatId',
+					vatId: vatId || undefined,
+				});
+				break;
+			}
+
+			default:
 				throw new NodeOperationError(
 					context.getNode(),
-					'Address ID is required for Set Default Billing Address action',
+					`Unknown action type: ${actionType}`,
 					{ itemIndex },
 				);
-			}
-
-			builtActions.push({
-				action: 'setDefaultBillingAddress',
-				addressId,
-			});
-			continue;
-		}
-
-	
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setDefaultShippingAddress')) {
-			const setDefaultShippingAddress = actionEntry.setDefaultShippingAddress as IDataObject;
-			const addressId = (setDefaultShippingAddress.addressId as string)?.trim();
-
-			if (!addressId) {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Address ID is required for Set Default Shipping Address action',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'setDefaultShippingAddress',
-				addressId,
-			});
-			continue;
-		}
-
-		
-		if (Object.prototype.hasOwnProperty.call(actionEntry, 'setStores')) {
-			const setStores = actionEntry.setStores as IDataObject;
-			const storesRaw = setStores.stores as string;
-			
-			let stores: IDataObject[];
-			try {
-				stores = typeof storesRaw === 'string' ? JSON.parse(storesRaw) : storesRaw;
-			} catch {
-				throw new NodeOperationError(
-					context.getNode(),
-					'Stores must be valid JSON array',
-					{ itemIndex },
-				);
-			}
-
-			builtActions.push({
-				action: 'setStores',
-				stores,
-			});
-			continue;
 		}
 	}
 

@@ -11,7 +11,11 @@ const DEFAULT_LIMIT = 20;
 const MAX_LIMIT_RETURN_ALL = 500;
 const MIN_VERSION = 1;
 
-
+/**
+ * Extracts HTTP status code from Commercetools API error response
+ * @param error - Error object from API response
+ * @returns HTTP status code if available
+ */
 function getErrorStatusCode(error: IDataObject): number | undefined {
 	return (
 		(error.statusCode as number | undefined) ??
@@ -25,37 +29,8 @@ async function getActionsForUpdate(
 	executeFunctions: IExecuteFunctions,
 	itemIndex: number
 ): Promise<IDataObject[]> {
-	const actionsInputMode = executeFunctions.getNodeParameter('actionsInputMode', itemIndex) as string;
-	let actions: IDataObject[] = [];
-
-	if (actionsInputMode === 'ui') {
-		const actionsUi = executeFunctions.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
-		actions = buildActionsFromUi(executeFunctions, actionsUi, itemIndex);
-	} else if (actionsInputMode === 'json') {
-		const actionsRaw = executeFunctions.getNodeParameter('actions', itemIndex, '') as string;
-		if (!actionsRaw || !actionsRaw.trim()) {
-			throw new NodeOperationError(
-				executeFunctions.getNode(),
-				'Actions (JSON) must be provided when JSON mode is selected',
-				{ itemIndex }
-			);
-		}
-		const parsedActions = coerceJsonInput(executeFunctions, actionsRaw, 'Actions', itemIndex);
-		if (!Array.isArray(parsedActions)) {
-			throw new NodeOperationError(
-				executeFunctions.getNode(),
-				'Actions must be an array of update actions',
-				{ itemIndex }
-			);
-		}
-		actions = parsedActions as IDataObject[];
-	} else {
-		throw new NodeOperationError(
-			executeFunctions.getNode(),
-			'Invalid actions input mode',
-			{ itemIndex }
-		);
-	}
+	const actionsUi = executeFunctions.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
+	const actions = buildActionsFromUi(executeFunctions, actionsUi, itemIndex);
 
 	if (actions.length === 0) {
 		throw new NodeOperationError(
@@ -469,33 +444,134 @@ export async function executeCustomerOperation(
 		const draftRaw = this.getNodeParameter('customerDraft', itemIndex);
 		const draft = coerceJsonInput(this, draftRaw, 'Customer draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/customers`,
-			body: draft,
-			qs,
-		})) as IDataObject;
+		// Validate required fields for customer creation
+		if (!draft.email || typeof draft.email !== 'string' || !draft.email.trim()) {
+			throw new NodeOperationError(
+				this.getNode(),
+				'Email is required for customer creation. Please provide a valid email address in the customer draft.',
+				{ itemIndex }
+			);
+		}
 
-		results.push({ json: response });
-		return results;
+		try {
+			const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
+				method: 'POST',
+				url: `${baseUrl}/customers`,
+				body: draft,
+				qs,
+			})) as IDataObject;
+
+			results.push({ json: response });
+			return results;
+		} catch (error) {
+			const statusCode = getErrorStatusCode(error as IDataObject);
+			const errorMessage = (error as IDataObject).message as string || '';
+			
+			if (statusCode === 400) {
+				// Email already exists error
+				if (errorMessage.includes('email') && errorMessage.includes('exists')) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`A customer with this email address already exists. Please use a different email address or use the authenticate operation to sign in existing customers.`,
+						{ itemIndex }
+					);
+				}
+			}
+			
+			// LockedField error (simultaneous customer creation)
+			if (statusCode === 409 && errorMessage.includes('LockedField')) {
+				throw new NodeOperationError(
+					this.getNode(),
+					`Another customer with the same email is being created simultaneously. Please wait a moment and try again.`,
+					{ itemIndex }
+				);
+			}
+			
+			throw error;
+		}
 	}
 
-	
 	if (operation === 'createInStore') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const additionalFields = this.getNodeParameter('additionalFieldsCreate', itemIndex, {}) as IDataObject;
+		
+		if (!storeKey?.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Store Key cannot be empty', { itemIndex });
+		}
+		
 		const qs: IDataObject = {};
 		applyCommonCustomerParameters(qs, additionalFields);
 
 		const draftRaw = this.getNodeParameter('customerDraft', itemIndex);
 		const draft = coerceJsonInput(this, draftRaw, 'Customer draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/customers`,
-			body: draft,
-			qs,
-		})) as IDataObject;
+		// Validate required fields for customer creation
+		if (!draft.email || typeof draft.email !== 'string' || !draft.email.trim()) {
+			throw new NodeOperationError(
+				this.getNode(),
+				'Email is required for customer creation. Please provide a valid email address in the customer draft.',
+				{ itemIndex }
+			);
+		}
+
+		let response: IDataObject;
+		try {
+			response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
+				method: 'POST',
+				url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/customers`,
+				body: draft,
+				qs,
+			})) as IDataObject;
+		} catch (error) {
+			const statusCode = getErrorStatusCode(error as IDataObject);
+			const errorMessage = (error as IDataObject).message as string || '';
+			
+			if (statusCode === 400) {
+				// Store not found error
+				if (errorMessage.includes("referenced object of type 'store'")) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`Store with key '${storeKey}' was not found. Please check that the store exists in your Commercetools project or use a different store key.`,
+						{ itemIndex }
+					);
+				}
+				// Email already exists error
+				if (errorMessage.includes('email') && errorMessage.includes('exists')) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`A customer with this email address already exists. Please use a different email address or use the authenticate operation to sign in existing customers.`,
+						{ itemIndex }
+					);
+				}
+				// Cart store mismatch error
+				if (errorMessage.includes('cart') && errorMessage.includes('store')) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`The cart's store field must reference the same store (${storeKey}) specified in the path parameter.`,
+						{ itemIndex }
+					);
+				}
+				// Missing required fields
+				if (errorMessage.includes('email') && errorMessage.includes('required')) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`Email is required for customer creation. Please provide a valid email address in the customer draft.`,
+						{ itemIndex }
+					);
+				}
+			}
+			
+			// LockedField error (simultaneous customer creation)
+			if (statusCode === 409 && errorMessage.includes('LockedField')) {
+				throw new NodeOperationError(
+					this.getNode(),
+					`Another customer with the same email is being created simultaneously. Please wait a moment and try again.`,
+					{ itemIndex }
+				);
+			}
+			
+			throw error;
+		}
 
 		results.push({ json: response });
 		return results;
@@ -540,43 +616,18 @@ export async function executeCustomerOperation(
 		const customerKey = this.getNodeParameter('customerKey', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const additionalFields = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		
+		if (!customerKey?.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Customer Key cannot be empty', { itemIndex });
+		}
+		if (version < MIN_VERSION) {
+			throw new NodeOperationError(this.getNode(), `Version must be ${MIN_VERSION} or greater`, { itemIndex });
+		}
+		
 		const qs: IDataObject = {};
 		applyCommonCustomerParameters(qs, additionalFields);
 
-		
-		const actionsInputMode = this.getNodeParameter('actionsInputMode', itemIndex) as string;
-		let actions: IDataObject[] = [];
-
-		if (actionsInputMode === 'ui') {
-			
-			const actionsUi = this.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
-			actions = buildActionsFromUi(this, actionsUi, itemIndex);
-		} else if (actionsInputMode === 'json') {
-			
-			const actionsRaw = this.getNodeParameter('actions', itemIndex, '') as string;
-			if (!actionsRaw || !actionsRaw.trim()) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Actions (JSON) must be provided when JSON mode is selected',
-					{ itemIndex },
-				);
-			}
-			const parsedActions = coerceJsonInput(this, actionsRaw, 'Actions', itemIndex);
-			if (!Array.isArray(parsedActions)) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Actions must be an array of update actions',
-					{ itemIndex },
-				);
-			}
-			actions = parsedActions as IDataObject[];
-		} else {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Invalid actions input mode',
-				{ itemIndex },
-			);
-		}
+		const actions = await getActionsForUpdate(this, itemIndex);
 
 		const body = {
 			version,
@@ -600,51 +651,21 @@ export async function executeCustomerOperation(
 		const customerId = this.getNodeParameter('customerId', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const additionalFields = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		
+		if (!storeKey?.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Store Key cannot be empty', { itemIndex });
+		}
+		if (!customerId?.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Customer ID cannot be empty', { itemIndex });
+		}
+		if (version < MIN_VERSION) {
+			throw new NodeOperationError(this.getNode(), `Version must be ${MIN_VERSION} or greater`, { itemIndex });
+		}
+		
 		const qs: IDataObject = {};
 		applyCommonCustomerParameters(qs, additionalFields);
 
-		
-		const actionsInputMode = this.getNodeParameter('actionsInputMode', itemIndex) as string;
-		let actions: IDataObject[] = [];
-
-		if (actionsInputMode === 'ui') {
-			
-			const actionsUi = this.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
-			actions = buildActionsFromUi(this, actionsUi, itemIndex);
-		} else if (actionsInputMode === 'json') {
-			
-			const actionsRaw = this.getNodeParameter('actions', itemIndex, '') as string;
-			if (!actionsRaw || !actionsRaw.trim()) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Actions (JSON) must be provided when JSON mode is selected',
-					{ itemIndex },
-				);
-			}
-			const parsedActions = coerceJsonInput(this, actionsRaw, 'Actions', itemIndex);
-			if (!Array.isArray(parsedActions)) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Actions must be an array of update actions',
-					{ itemIndex },
-				);
-			}
-			actions = parsedActions as IDataObject[];
-		} else {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Invalid actions input mode',
-				{ itemIndex },
-			);
-		}
-
-		if (actions.length === 0) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Actions must be an array of update actions',
-				{ itemIndex },
-			);
-		}
+		const actions = await getActionsForUpdate(this, itemIndex);
 
 		const body = {
 			version,
@@ -662,57 +683,27 @@ export async function executeCustomerOperation(
 		return results;
 	}
 
-
+	
 	if (operation === 'updateInStoreByKey') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const customerKey = this.getNodeParameter('customerKey', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const additionalFields = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		
+		if (!storeKey?.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Store Key cannot be empty', { itemIndex });
+		}
+		if (!customerKey?.trim()) {
+			throw new NodeOperationError(this.getNode(), 'Customer Key cannot be empty', { itemIndex });
+		}
+		if (version < MIN_VERSION) {
+			throw new NodeOperationError(this.getNode(), `Version must be ${MIN_VERSION} or greater`, { itemIndex });
+		}
+		
 		const qs: IDataObject = {};
 		applyCommonCustomerParameters(qs, additionalFields);
 
-		
-		const actionsInputMode = this.getNodeParameter('actionsInputMode', itemIndex) as string;
-		let actions: IDataObject[] = [];
-
-		if (actionsInputMode === 'ui') {
-			
-			const actionsUi = this.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
-			actions = buildActionsFromUi(this, actionsUi, itemIndex);
-		} else if (actionsInputMode === 'json') {
-			
-			const actionsRaw = this.getNodeParameter('actions', itemIndex, '') as string;
-			if (!actionsRaw || !actionsRaw.trim()) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Actions (JSON) must be provided when JSON mode is selected',
-					{ itemIndex },
-				);
-			}
-			const parsedActions = coerceJsonInput(this, actionsRaw, 'Actions', itemIndex);
-			if (!Array.isArray(parsedActions)) {
-				throw new NodeOperationError(
-					this.getNode(),
-					'Actions must be an array of update actions',
-					{ itemIndex },
-				);
-			}
-			actions = parsedActions as IDataObject[];
-		} else {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Invalid actions input mode',
-				{ itemIndex },
-			);
-		}
-
-		if (actions.length === 0) {
-			throw new NodeOperationError(
-				this.getNode(),
-				'Actions must be an array of update actions',
-				{ itemIndex },
-			);
-		}
+		const actions = await getActionsForUpdate(this, itemIndex);
 
 		const body = {
 			version,
@@ -729,6 +720,7 @@ export async function executeCustomerOperation(
 		results.push({ json: response });
 		return results;
 	}
+
 
 
 	if (operation === 'changePassword') {
