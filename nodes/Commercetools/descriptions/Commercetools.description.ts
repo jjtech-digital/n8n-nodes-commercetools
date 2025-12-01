@@ -560,8 +560,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 										'setAssetDescription',
 										'setAssetKey',
 										'setAssetSources',
-										'setAssetTags',
-
+										'setAssetTags'
 									],
 								},
 							},
@@ -1587,7 +1586,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel','moveImageToPosition'],
 									identifyBy: ['variantId'],
 								},
 							},
