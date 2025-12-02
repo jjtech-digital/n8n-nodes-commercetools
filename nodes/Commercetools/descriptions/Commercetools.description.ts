@@ -430,6 +430,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'revertStagedChanges',
 								},
 								{
+									name: 'Revert Staged Variant Changes',
+									value: 'revertStagedVariantChanges',
+								},
+								{
 									name: 'Set Asset Custom Field',
 									value: 'setAssetCustomField',
 								},
@@ -992,7 +996,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Custom type reference',
 							displayOptions: {
 								show: {
-									action: ['setAssetCustomType', 'setPriceCustomType'],
+									action: ['setPriceCustomType'],
 								},
 							},
 							options: [
@@ -1025,6 +1029,47 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											type: 'string',
 											default: '',
 											description: 'Key of the custom type',
+										},
+									],
+								},
+							],
+						},
+
+						// ==================== CUSTOM TYPE FOR ASSET ====================
+						{
+							displayName: 'Custom Type',
+							name: 'type',
+							type: 'fixedCollection',
+							default: {},
+							description: 'Custom type reference',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomType'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Type Reference',
+									name: 'typeReference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'options',
+											default: 'type',
+											options: [
+												{
+													name: 'Type',
+													value: 'type',
+												},
+											],
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											description: 'ID of the custom type',
 										},
 									],
 								},
@@ -1684,7 +1729,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'SKU of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'changeAssetName', 'setAssetDescription', 'setAssetCustomField', 'changeAssetOrder', 'setAssetTags', 'setAssetSources'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'changeAssetName', 'setAssetDescription', 'setAssetCustomField', 'changeAssetOrder', 'setAssetTags', 'setAssetSources', 'setAssetCustomType'],
 									identifyBy: ['sku'],
 								},
 							},
@@ -1845,7 +1890,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Choose how to identify the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources', 'setAssetCustomType', 'revertStagedVariantChanges'],
 								},
 							},
 						},
@@ -1857,7 +1902,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources', 'setAssetCustomType', 'revertStagedVariantChanges'],
 									identifyBy: ['variantId'],
 								},
 							},

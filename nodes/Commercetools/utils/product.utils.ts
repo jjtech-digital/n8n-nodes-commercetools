@@ -287,6 +287,49 @@ export const buildActionsFromUi = (
 			};
 		}
 
+		if (action?.action === 'setAssetCustomType') {
+			console.log(action?.action, "RAW ACTION");
+			
+			// Initialize flatFields as empty object
+			const flatFields: IDataObject = {};
+
+				 if (
+				action.fields &&
+				typeof action.fields === 'object' &&
+				'name' in (action.fields as IDataObject) &&
+				'value' in (action.fields as IDataObject)
+			) {
+
+				const fieldName = (action.fields as IDataObject).name as string;
+				const fieldValue = (action.fields as IDataObject).value;
+				if (fieldName) {
+					flatFields[fieldName] = fieldValue;
+				}
+			}
+		
+
+			// Flatten type to have 'id' and 'typeId' directly under 'type'
+			let flatType: IDataObject = { id: '', typeId: 'type' };
+			if (
+				action.type &&
+				typeof action.type === 'object' &&
+				'typeReference' in (action.type as IDataObject) &&
+				typeof (action.type as IDataObject).typeReference === 'object'
+			) {
+				const typeRef = (action.type as IDataObject).typeReference as IDataObject;
+				flatType = {
+					id: typeof typeRef.id === 'string' ? typeRef.id : '',
+					typeId: typeof typeRef.typeId === 'string' ? typeRef.typeId : 'type',
+				};
+			}
+
+			finalAction = {
+				...action,
+				fields: flatFields,
+				type: flatType,
+			};
+		}
+
 		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy) {
 			delete finalAction?.identifyBy;
