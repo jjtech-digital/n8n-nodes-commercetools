@@ -552,14 +552,13 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								show: {
 									action: [
 										'changeAssetName',
-										'changeAssetOrder',
 										'removeAsset',
 										'setAssetCustomField',
 										'setAssetCustomType',
 										'setAssetDescription',
 										'setAssetKey',
 										'setAssetSources',
-										'setAssetTags'
+										'setAssetTags',
 									],
 								},
 							},
@@ -577,7 +576,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Localized asset names',
 							displayOptions: {
 								show: {
-									action: ['addAsset'],
+									action: ['addAsset', 'changeAssetName'],
 								},
 							},
 							options: [
@@ -603,6 +602,21 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
+						{
+							displayName: 'Asset Order',
+							name: 'assetOrder',
+							type: 'string',
+							default: [],
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'List of asset IDs in order',
+							displayOptions: {
+								show: {
+									action: ['changeAssetOrder'],
+								},
+							},
+						},
 
 						{
 							displayName: 'Asset Sources',
@@ -615,7 +629,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Sources for the asset',
 							displayOptions: {
 								show: {
-									action: ['addAsset', 'setAssetSources'],
+									action: ['addAsset'],
 								},
 							},
 							options: [
@@ -676,6 +690,47 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							],
 						},
+
+						{
+							displayName: "Asset Sources",
+							name: "sources",
+							type: "fixedCollection",
+							placeholder: "Add source",
+							default: [],
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: "List of asset sources with URI and key",
+							displayOptions: {
+								show: {
+									action: ["setAssetSources"],
+								},
+							},
+							options: [
+								{
+									displayName: "Source",
+									name: "source",
+									values: [
+										{
+											displayName: "URI",
+											name: "uri",
+											type: "string",
+											default: "",
+											placeholder: "https://www.commercetools.de/ct-logo.svg",
+										},
+										{
+											displayName: "Key",
+											name: "key",
+											type: "string",
+											default: "",
+											placeholder: "vector",
+										},
+									],
+								},
+							],
+						}
+
+						,
 
 						// ==================== ATTRIBUTES ====================
 						{
@@ -1439,7 +1494,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'New position (0-based index)',
 							displayOptions: {
 								show: {
-									action: ['changeAssetOrder', 'moveImageToPosition'],
+									action: ['moveImageToPosition'],
 								},
 							},
 						},
@@ -1629,7 +1684,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'SKU of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'changeAssetName', 'setAssetDescription', 'setAssetCustomField', 'changeAssetOrder', 'setAssetTags', 'setAssetSources'],
 									identifyBy: ['sku'],
 								},
 							},
@@ -1693,8 +1748,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							displayName: 'Tags',
 							name: 'tags',
 							type: 'string',
-							default: '',
-							description: 'Comma-separated tags',
+							default: [],
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'List of tags for the asset',
 							displayOptions: {
 								show: {
 									action: ['setAssetTags'],
@@ -1787,7 +1845,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Choose how to identify the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources'],
 								},
 							},
 						},
@@ -1799,7 +1857,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the variant',
 							displayOptions: {
 								show: {
-									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField'],
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources'],
 									identifyBy: ['variantId'],
 								},
 							},

@@ -198,7 +198,7 @@ export const buildActionsFromUi = (
 		const localized = preprocessLocalizedFields(action);
 		let finalAction = transformFlatCategoryId(localized);
 		// setting attribute to any type like attribute can be number, string and boolaean
-		if (attributesActions.includes(action?.action as string)){
+		if (attributesActions.includes(action?.action as string)) {
 			const attributeValue = parseAttributeValue(action?.value as string, action?.valueType as string);
 			finalAction = {
 				...action,
@@ -206,7 +206,7 @@ export const buildActionsFromUi = (
 			}
 			delete finalAction?.valueType;
 		}
-		
+
 		// if setPrices, map the values correctly
 		if (action?.action === 'setPrices') {
 			const pricesData = (action?.prices as IDataObject)?.price as IDataObject[] || [];
@@ -240,7 +240,7 @@ export const buildActionsFromUi = (
 			}
 		}
 
-		if (action?.action === 'setProductPriceCustomType'){
+		if (action?.action === 'setProductPriceCustomType') {
 			const type = (action?.type as IDataObject)?.typeDetails as IDataObject;
 			delete type?.identifyBy;
 			const fieldsArray = (action?.fields as IDataObject)?.fieldValues as IDataObject[];
@@ -262,22 +262,33 @@ export const buildActionsFromUi = (
 			}
 		}
 
-		if (action?.action === 'addToCategory' || action?.action === 'removeFromCategory'){
+		if (action?.action === 'addToCategory' || action?.action === 'removeFromCategory') {
 			finalAction = {
 				...action,
 				category: (action?.category as IDataObject)?.categoryDetails
 			}
 		}
 
-		if (action?.action === 'setTaxCategory'){
+		if (action?.action === 'setTaxCategory') {
 			finalAction = {
 				...action,
 				taxCategory: (action?.taxCategory as IDataObject)?.taxCategoryDetails
 			}
 		}
-		
+
+		if (action?.action === 'setAssetSources') {
+			const flatSources = (action.sources && typeof action.sources === 'object' && 'source' in action.sources)
+				? (action.sources.source as IDataObject[])
+				: [];
+
+			finalAction = {
+				...action,
+				sources: flatSources
+			};
+		}
+
 		console.log("FINAL", finalAction)
-		if (finalAction?.identifyBy){
+		if (finalAction?.identifyBy) {
 			delete finalAction?.identifyBy;
 		}
 		builtActions.push(finalAction);
