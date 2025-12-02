@@ -288,7 +288,6 @@ export const buildActionsFromUi = (
 		}
 
 		if (action?.action === 'setAssetCustomType') {
-			console.log(action?.action, "RAW ACTION");
 			
 			// Initialize flatFields as empty object
 			const flatFields: IDataObject = {};
