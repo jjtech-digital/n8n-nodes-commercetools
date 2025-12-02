@@ -580,7 +580,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Localized asset names',
 							displayOptions: {
 								show: {
-									action: ['addAsset', 'changeAssetName'],
+									action: [ 'changeAssetName'],
 								},
 							},
 							options: [
@@ -638,7 +638,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 							options: [
 								{
-									displayName: 'Source',
+									displayName: 'Sources',
 									name: 'sources',
 									values: [
 										{
@@ -647,48 +647,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											type: 'string',
 											default: '',
 											required: true,
-											description: 'URI of the asset',
-										},
-										{
-											displayName: 'Key',
-											name: 'key',
-											type: 'string',
-											default: '',
-											description: 'Optional key for the source',
-										},
-										{
-											displayName: 'Content Type',
-											name: 'contentType',
-											type: 'string',
-											default: '',
-											description: 'MIME type (e.g., image/jpeg)',
-										},
-										{
-											displayName: 'Dimensions',
-											name: 'dimensions',
-											type: 'fixedCollection',
-											default: {},
-											description: 'Image dimensions',
-											options: [
-												{
-													displayName: 'Size',
-													name: 'size',
-													values: [
-														{
-															displayName: 'Width',
-															name: 'w',
-															type: 'number',
-															default: 0,
-														},
-														{
-															displayName: 'Height',
-															name: 'h',
-															type: 'number',
-															default: 0,
-														},
-													],
-												},
-											],
+											description: 'URI of the asset source',
 										},
 									],
 								},
@@ -722,13 +681,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 											default: "",
 											placeholder: "https://www.commercetools.de/ct-logo.svg",
 										},
-										{
-											displayName: "Key",
-											name: "key",
-											type: "string",
-											default: "",
-											placeholder: "vector",
-										},
+
 									],
 								},
 							],

@@ -288,11 +288,11 @@ export const buildActionsFromUi = (
 		}
 
 		if (action?.action === 'setAssetCustomType') {
-			
+
 			// Initialize flatFields as empty object
 			const flatFields: IDataObject = {};
 
-				 if (
+			if (
 				action.fields &&
 				typeof action.fields === 'object' &&
 				'name' in (action.fields as IDataObject) &&
@@ -305,7 +305,7 @@ export const buildActionsFromUi = (
 					flatFields[fieldName] = fieldValue;
 				}
 			}
-		
+
 
 			// Flatten type to have 'id' and 'typeId' directly under 'type'
 			let flatType: IDataObject = { id: '', typeId: 'type' };
@@ -328,6 +328,42 @@ export const buildActionsFromUi = (
 				type: flatType,
 			};
 		}
+
+		if (action?.action === 'addAsset') {
+			console.log(action?.action, "Add asset action");
+
+			// Ensure asset exists
+			if (!action.asset) {
+				action.asset = {};
+			}
+
+			// Move ANY name (root or elsewhere) into asset.name
+			if (action.name && typeof action.name === 'object') {
+
+				console.log(action.name,"action name before deleting");
+				
+				(action.asset as IDataObject).name = action.name;
+				if (typeof action.asset === 'object' && action.asset !== null) {
+					console.log((action.asset as IDataObject).name, "asset name found after moving done");
+				} else {
+					console.log("Asset is not an object or is null");
+				}
+				
+				delete action.name;
+				console.log("✅ Moved root name → asset.name");
+			}
+
+			
+
+			// Process asset
+			if (action?.asset && typeof action.asset === 'object') {
+				console.log((action.asset as IDataObject).sources, "asset sources array");
+				console.log((action.asset as IDataObject).name, "asset name object");
+			}
+		}
+
+
+
 
 		console.log("FINAL", finalAction)
 		if (finalAction?.identifyBy) {
