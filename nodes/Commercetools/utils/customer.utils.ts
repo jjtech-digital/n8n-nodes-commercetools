@@ -1,11 +1,100 @@
 import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
+/**
+ * Options for controlling which query parameters are allowed in Commercetools API calls
+ */
 type CommonParameterOptions = {
+	/** Allow sort parameters for ordering results */
 	allowSort?: boolean;
+	/** Allow where predicates for filtering results */
 	allowWhere?: boolean;
+	/** Allow predicate variables for parameterized queries */
 	allowPredicateVariables?: boolean;
 };
+
+/**
+ * Commercetools reference types for type-safe reference handling
+ */
+type CommerceToolsReference = {
+	typeId: 'customer-group' | 'store' | 'type' | 'address' | 'tax-category';
+	id?: string;
+	key?: string;
+};
+
+/**
+ * Address data structure for Commercetools addresses
+ */
+type CommerceToolsAddress = {
+	key?: string;
+	title?: string;
+	firstName?: string;
+	lastName?: string;
+	streetName?: string;
+	streetNumber?: string;
+	city?: string;
+	postalCode?: string;
+	country: string; // Required field
+	state?: string;
+	building?: string;
+	apartment?: string;
+	department?: string;
+	phone?: string;
+	mobile?: string;
+	email?: string;
+	fax?: string;
+	pOBox?: string;
+	additionalAddressInfo?: string;
+	additionalStreetInfo?: string;
+};
+
+/**
+ * Union type for all supported customer update actions
+ */
+type CustomerActionType = 
+	| 'addAddress'
+	| 'addBillingAddressId'
+	| 'addCustomerGroupAssignment'
+	| 'addShippingAddressId'
+	| 'addStore'
+	| 'changeAddress'
+	| 'changeEmail'
+	| 'removeAddress'
+	| 'removeBillingAddressId'
+	| 'removeCustomerGroupAssignment'
+	| 'removeShippingAddressId'
+	| 'removeStore'
+	| 'setAuthenticationMode'
+	| 'setCompanyName'
+	| 'setCustomType'
+	| 'setCustomTypeInAddress'
+	| 'setCustomerNumber'
+	| 'setCustomerGroup'
+	| 'setCustomerGroupAssignments'
+	| 'setCustomField'
+	| 'setCustomFieldInAddress'
+	| 'setCustomerStatus'
+	| 'setDateOfBirth'
+	| 'setDefaultBillingAddress'
+	| 'setDefaultShippingAddress'
+	| 'setEmailVerified'
+	| 'setExternalId'
+	| 'setFirstName'
+	| 'setGender'
+	| 'setKey'
+	| 'setLanguage'
+	| 'setLastName'
+	| 'setLocale'
+	| 'setMiddleName'
+	| 'setMobileNumber'
+	| 'setPhoneNumber'
+	| 'setSalutation'
+	| 'setStores'
+	| 'setTaxCategory'
+	| 'setTitle'
+	| 'setVatId';
+
+
 
 /**
  * Applies common query parameters for Commercetools API requests
@@ -119,8 +208,154 @@ export const buildActionsFromUi = (
 		? [rawActionEntries as IDataObject]
 		: [];
 
+	/**
+	 * Creates a properly typed address object from UI form fields
+	 * @param entry - Form data entry containing address fields
+	 * @returns Typed address object for Commercetools API
+	 */
+	const buildAddressFromFields = (entry: IDataObject): CommerceToolsAddress => {
+		const address: Partial<CommerceToolsAddress> = {};
+		
+		// Optional fields
+		if (entry.key && typeof entry.key === 'string') address.key = entry.key.trim();
+		if (entry.title && typeof entry.title === 'string') address.title = entry.title.trim();
+		if (entry.firstName && typeof entry.firstName === 'string') address.firstName = entry.firstName.trim();
+		if (entry.lastName && typeof entry.lastName === 'string') address.lastName = entry.lastName.trim();
+		if (entry.streetName && typeof entry.streetName === 'string') address.streetName = entry.streetName.trim();
+		if (entry.streetNumber && typeof entry.streetNumber === 'string') address.streetNumber = entry.streetNumber.trim();
+		if (entry.city && typeof entry.city === 'string') address.city = entry.city.trim();
+		if (entry.postalCode && typeof entry.postalCode === 'string') address.postalCode = entry.postalCode.trim();
+		if (entry.state && typeof entry.state === 'string') address.state = entry.state.trim();
+		if (entry.building && typeof entry.building === 'string') address.building = entry.building.trim();
+		if (entry.apartment && typeof entry.apartment === 'string') address.apartment = entry.apartment.trim();
+		if (entry.department && typeof entry.department === 'string') address.department = entry.department.trim();
+		if (entry.phone && typeof entry.phone === 'string') address.phone = entry.phone.trim();
+		if (entry.mobile && typeof entry.mobile === 'string') address.mobile = entry.mobile.trim();
+		if (entry.addressEmail && typeof entry.addressEmail === 'string') address.email = entry.addressEmail.trim();
+		if (entry.fax && typeof entry.fax === 'string') address.fax = entry.fax.trim();
+		if (entry.pOBox && typeof entry.pOBox === 'string') address.pOBox = entry.pOBox.trim();
+		if (entry.additionalAddressInfo && typeof entry.additionalAddressInfo === 'string') {
+			address.additionalAddressInfo = entry.additionalAddressInfo.trim();
+		}
+		if (entry.additionalStreetInfo && typeof entry.additionalStreetInfo === 'string') {
+			address.additionalStreetInfo = entry.additionalStreetInfo.trim();
+		}
+
+		// Country is required for addresses
+		if (entry.country && typeof entry.country === 'string') {
+			address.country = entry.country.trim();
+		}
+
+		return address as CommerceToolsAddress;
+	};
+
+	/**
+	 * Creates a typed Commercetools reference from ID or Key with validation
+	 * @param entry - Form data entry
+	 * @param idField - Name of the ID field
+	 * @param keyField - Name of the Key field
+	 * @param referenceType - Type of the reference (customer-group, store, etc.)
+	 * @returns Typed Commercetools reference
+	 * @throws NodeOperationError if neither ID nor Key is provided
+	 */
+	const getIdOrKeyReference = (
+		entry: IDataObject,
+		idField: string,
+		keyField: string,
+		referenceType: CommerceToolsReference['typeId']
+	): CommerceToolsReference => {
+		const id = typeof entry[idField] === 'string' ? entry[idField].trim() : '';
+		const key = typeof entry[keyField] === 'string' ? entry[keyField].trim() : '';
+
+		if (id) {
+			return { typeId: referenceType, id };
+		} else if (key) {
+			return { typeId: referenceType, key };
+		} else {
+			throw new NodeOperationError(
+				context.getNode(),
+				`Either ${idField} or ${keyField} is required for ${referenceType} reference`,
+				{ itemIndex },
+			);
+		}
+	};
+
+	/**
+	 * Creates multiple typed Commercetools references from IDs or Keys
+	 * Supports both array and comma-separated string formats for backward compatibility
+	 * @param entry - Form data entry
+	 * @param idsField - Name of the IDs field
+	 * @param keysField - Name of the Keys field
+	 * @param referenceType - Type of the references
+	 * @returns Array of typed Commercetools references
+	 * @throws NodeOperationError if no valid references are provided
+	 */
+	const getMultipleIdOrKeyReferences = (
+		entry: IDataObject,
+		idsField: string,
+		keysField: string,
+		referenceType: CommerceToolsReference['typeId']
+	): CommerceToolsReference[] => {
+		const idsRaw = entry[idsField];
+		const keysRaw = entry[keysField];
+
+		// Handle array format (from multi-select dropdowns)
+		if (Array.isArray(idsRaw) && idsRaw.length > 0) {
+			return idsRaw
+				.map(id => String(id).trim())
+				.filter(id => id.length > 0)
+				.map(id => ({ typeId: referenceType, id }));
+		} else if (Array.isArray(keysRaw) && keysRaw.length > 0) {
+			return keysRaw
+				.map(key => String(key).trim())
+				.filter(key => key.length > 0)
+				.map(key => ({ typeId: referenceType, key }));
+		}
+
+		// Handle string format (comma-separated, for backward compatibility)
+		const ids = typeof idsRaw === 'string' ? idsRaw.trim() : '';
+		const keys = typeof keysRaw === 'string' ? keysRaw.trim() : '';
+
+		if (ids) {
+			return ids
+				.split(',')
+				.map(id => id.trim())
+				.filter(id => id.length > 0)
+				.map(id => ({ typeId: referenceType, id }));
+		} else if (keys) {
+			return keys
+				.split(',')
+				.map(key => key.trim())
+				.filter(key => key.length > 0)
+				.map(key => ({ typeId: referenceType, key }));
+		} else {
+			throw new NodeOperationError(
+				context.getNode(),
+				`Either ${idsField} or ${keysField} is required for ${referenceType} references`,
+				{ itemIndex },
+			);
+		}
+	};
+
+	/**
+	 * Safely parses and validates custom field values
+	 * @param valueRaw - Raw value from form
+	 * @returns Parsed value or original if not JSON
+	 */
+	const parseCustomFieldValue = (valueRaw: unknown): string | number | boolean | object | null => {
+		if (valueRaw === undefined || valueRaw === '') {
+			return null;
+		}
+		
+		try {
+			return typeof valueRaw === 'string' ? JSON.parse(valueRaw) : valueRaw;
+		} catch {
+			return valueRaw;
+		}
+	};
+
 	for (const actionEntry of actionEntries) {
-		const actionType = actionEntry.actionType as string;
+		const actionType = actionEntry.actionType as CustomerActionType;
 
 		if (!actionType) {
 			throw new NodeOperationError(
@@ -129,70 +364,6 @@ export const buildActionsFromUi = (
 				{ itemIndex },
 			);
 		}
-
-		// Helper function to create address object from individual fields
-		const buildAddressFromFields = (entry: IDataObject): IDataObject => {
-			const address: IDataObject = {};
-			
-			if (entry.key) address.key = entry.key;
-			if (entry.title) address.title = entry.title;
-			if (entry.firstName) address.firstName = entry.firstName;
-			if (entry.lastName) address.lastName = entry.lastName;
-			if (entry.streetName) address.streetName = entry.streetName;
-			if (entry.streetNumber) address.streetNumber = entry.streetNumber;
-			if (entry.city) address.city = entry.city;
-			if (entry.postalCode) address.postalCode = entry.postalCode;
-			if (entry.country) address.country = entry.country;
-			if (entry.state) address.state = entry.state;
-			if (entry.building) address.building = entry.building;
-			if (entry.apartment) address.apartment = entry.apartment;
-			if (entry.department) address.department = entry.department;
-			if (entry.phone) address.phone = entry.phone;
-			if (entry.mobile) address.mobile = entry.mobile;
-			if (entry.addressEmail) address.email = entry.addressEmail;
-			if (entry.fax) address.fax = entry.fax;
-			if (entry.pOBox) address.pOBox = entry.pOBox;
-			if (entry.additionalAddressInfo) address.additionalAddressInfo = entry.additionalAddressInfo;
-			if (entry.additionalStreetInfo) address.additionalStreetInfo = entry.additionalStreetInfo;
-
-			return address;
-		};
-
-		// Helper function to get ID or Key reference
-		const getIdOrKeyReference = (entry: IDataObject, idField: string, keyField: string, referenceType: string): IDataObject => {
-			const id = (entry[idField] as string)?.trim();
-			const key = (entry[keyField] as string)?.trim();
-
-			if (id) {
-				return { typeId: referenceType, id };
-			} else if (key) {
-				return { typeId: referenceType, key };
-			} else {
-				throw new NodeOperationError(
-					context.getNode(),
-					`Either ${idField} or ${keyField} is required`,
-					{ itemIndex },
-				);
-			}
-		};
-
-		// Helper function to get multiple ID or Key references
-		const getMultipleIdOrKeyReferences = (entry: IDataObject, idsField: string, keysField: string, referenceType: string): IDataObject[] => {
-			const ids = (entry[idsField] as string)?.trim();
-			const keys = (entry[keysField] as string)?.trim();
-
-			if (ids) {
-				return ids.split(',').map(id => ({ typeId: referenceType, id: id.trim() }));
-			} else if (keys) {
-				return keys.split(',').map(key => ({ typeId: referenceType, key: key.trim() }));
-			} else {
-				throw new NodeOperationError(
-					context.getNode(),
-					`Either ${idsField} or ${keysField} is required`,
-					{ itemIndex },
-				);
-			}
-		};
 
 		switch (actionType) {
 			case 'addAddress': {
@@ -515,14 +686,7 @@ export const buildActionsFromUi = (
 					);
 				}
 				
-			let value: string | number | boolean | object | null = null;
-			if (valueRaw !== undefined && valueRaw !== '') {
-				try {
-					value = typeof valueRaw === 'string' ? JSON.parse(valueRaw) : valueRaw;
-					} catch {
-						value = valueRaw;
-					}
-				}
+				const value = parseCustomFieldValue(valueRaw);
 
 				builtActions.push({
 					action: 'setCustomField',
@@ -554,14 +718,7 @@ export const buildActionsFromUi = (
 					);
 				}
 				
-			let value: string | number | boolean | object | null = null;
-			if (valueRaw !== undefined && valueRaw !== '') {
-				try {
-					value = typeof valueRaw === 'string' ? JSON.parse(valueRaw) : valueRaw;
-				} catch {
-					value = valueRaw;
-					}
-				}
+				const value = parseCustomFieldValue(valueRaw);
 
 				builtActions.push({
 					action: 'setCustomFieldInAddress',
@@ -708,6 +865,106 @@ export const buildActionsFromUi = (
 				builtActions.push({
 					action: 'setVatId',
 					vatId: vatId || undefined,
+				});
+				break;
+			}
+
+			case 'setCustomerStatus': {
+				if (actionEntry.customerStatus === undefined) {
+					throw new NodeOperationError(context.getNode(), 'Customer status is required for setCustomerStatus action', {
+						itemIndex,
+					});
+				}
+
+				builtActions.push({
+					action: 'setCustomerStatus',
+					isActive: Boolean(actionEntry.customerStatus),
+				});
+				break;
+			}
+
+			case 'setEmailVerified': {
+				if (actionEntry.emailVerified === undefined) {
+					throw new NodeOperationError(context.getNode(), 'Email verified status is required for setEmailVerified action', {
+						itemIndex,
+					});
+				}
+
+				builtActions.push({
+					action: 'setEmailVerified',
+					isEmailVerified: Boolean(actionEntry.emailVerified),
+				});
+				break;
+			}
+
+			case 'setGender': {
+				const gender = (actionEntry.gender as string)?.trim();
+				if (!gender) {
+					throw new NodeOperationError(context.getNode(), 'Gender is required for setGender action', {
+						itemIndex,
+					});
+				}
+
+				builtActions.push({
+					action: 'setGender',
+					gender,
+				});
+				break;
+			}
+
+			case 'setLanguage': {
+				const language = (actionEntry.language as string)?.trim();
+				if (!language) {
+					throw new NodeOperationError(context.getNode(), 'Language is required for setLanguage action', {
+						itemIndex,
+					});
+				}
+
+				builtActions.push({
+					action: 'setLanguage',
+					language,
+				});
+				break;
+			}
+
+			case 'setMobileNumber': {
+				const mobileNumber = (actionEntry.mobileNumber as string)?.trim();
+				builtActions.push({
+					action: 'setMobileNumber',
+					mobile: mobileNumber || undefined,
+				});
+				break;
+			}
+
+			case 'setPhoneNumber': {
+				const phoneNumber = (actionEntry.phoneNumber as string)?.trim();
+				builtActions.push({
+					action: 'setPhoneNumber',
+					phone: phoneNumber || undefined,
+				});
+				break;
+			}
+
+			case 'setTaxCategory': {
+				if (!actionEntry.taxCategoryId && !actionEntry.taxCategoryKey) {
+					throw new NodeOperationError(context.getNode(), 'Tax category ID or key is required for setTaxCategory action', {
+						itemIndex,
+					});
+				}
+
+				const taxCategoryRef: CommerceToolsReference = {
+					typeId: 'tax-category',
+				};
+
+				if (actionEntry.taxCategoryId) {
+					taxCategoryRef.id = String(actionEntry.taxCategoryId);
+				} else if (actionEntry.taxCategoryKey) {
+					taxCategoryRef.key = String(actionEntry.taxCategoryKey);
+				}
+
+				builtActions.push({
+					action: 'setTaxCategory',
+					taxCategory: taxCategoryRef,
 				});
 				break;
 			}

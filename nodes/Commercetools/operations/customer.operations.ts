@@ -29,7 +29,7 @@ async function getActionsForUpdate(
 	executeFunctions: IExecuteFunctions,
 	itemIndex: number
 ): Promise<IDataObject[]> {
-	const actionsUi = executeFunctions.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
+	const actionsUi = executeFunctions.getNodeParameter('customerActionsUi', itemIndex, {}) as IDataObject;
 	const actions = buildActionsFromUi(executeFunctions, actionsUi, itemIndex);
 
 	if (actions.length === 0) {
@@ -364,7 +364,10 @@ export async function executeCustomerOperation(
 			return results;
 		} catch (error) {
 			const errorData = error as IDataObject;
-			const statusCode = getErrorStatusCode(errorData);
+			const statusCode =
+				(errorData.statusCode as number | undefined) ??
+				((errorData.cause as IDataObject)?.statusCode as number | undefined) ??
+				((errorData.response as IDataObject)?.statusCode as number | undefined);
 			if (statusCode === 404 || errorData.httpCode === '404') {
 				results.push({ json: { exists: false } });
 				return results;
@@ -387,7 +390,10 @@ export async function executeCustomerOperation(
 			return results;
 		} catch (error) {
 			const errorData = error as IDataObject;
-			const statusCode = getErrorStatusCode(errorData);
+			const statusCode =
+				(errorData.statusCode as number | undefined) ??
+				((errorData.cause as IDataObject)?.statusCode as number | undefined) ??
+				((errorData.response as IDataObject)?.statusCode as number | undefined);
 			if (statusCode === 404 || errorData.httpCode === '404') {
 				results.push({ json: { exists: false } });
 				return results;
@@ -417,7 +423,10 @@ export async function executeCustomerOperation(
 			return results;
 		} catch (error) {
 			const errorData = error as IDataObject;
-			const statusCode = getErrorStatusCode(errorData);
+			const statusCode =
+				(errorData.statusCode as number | undefined) ??
+				((errorData.cause as IDataObject)?.statusCode as number | undefined) ??
+				((errorData.response as IDataObject)?.statusCode as number | undefined);
 			if (statusCode === 404 || errorData.httpCode === '404') {
 				results.push({ json: { exists: false } });
 				return results;
