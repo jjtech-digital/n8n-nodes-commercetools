@@ -2412,6 +2412,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'setFirstName',
 								},
 								{
+									name: 'Set Key',
+									value: 'setKey',
+								},
+								{
 									name: 'Set Last Name',
 									value: 'setLastName',
 								},

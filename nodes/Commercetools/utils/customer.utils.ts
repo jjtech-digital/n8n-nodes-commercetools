@@ -207,7 +207,7 @@ export const buildActionsFromUi = (
 		: rawActionEntries
 		? [rawActionEntries as IDataObject]
 		: [];
-
+		
 	/**
 	 * Creates a properly typed address object from UI form fields
 	 * @param entry - Form data entry containing address fields
@@ -352,6 +352,32 @@ export const buildActionsFromUi = (
 		} catch {
 			return valueRaw;
 		}
+	};
+
+	/**
+	 * Builds custom fields object from fixedCollection format
+	 * @param entry - Form data entry containing customFields
+	 * @returns Custom fields object for Commercetools API
+	 */
+	const buildCustomFieldsFromCollection = (entry: IDataObject): IDataObject => {
+		const customFields: IDataObject = {};
+		const customFieldsData = entry.customFields as IDataObject;
+		
+		if (customFieldsData && customFieldsData.field) {
+			const fields = Array.isArray(customFieldsData.field) ? customFieldsData.field : [customFieldsData.field];
+			
+			for (const field of fields as IDataObject[]) {
+				const name = (field.name as string)?.trim();
+				const value = field.value;
+				
+				if (name) {
+					// Try to parse value as JSON, fallback to string
+					customFields[name] = parseCustomFieldValue(value);
+				}
+			}
+		}
+		
+		return customFields;
 	};
 
 	for (const actionEntry of actionEntries) {
@@ -586,20 +612,7 @@ export const buildActionsFromUi = (
 
 			case 'setCustomType': {
 				const type = getIdOrKeyReference(actionEntry, 'typeId', 'typeKey', 'type');
-				const fieldsRaw = actionEntry.fields as string;
-				
-				let fields: IDataObject = {};
-				if (fieldsRaw && fieldsRaw.trim()) {
-					try {
-						fields = typeof fieldsRaw === 'string' ? JSON.parse(fieldsRaw) : fieldsRaw;
-					} catch {
-						throw new NodeOperationError(
-							context.getNode(),
-							'Fields must be valid JSON',
-							{ itemIndex },
-						);
-					}
-				}
+				const fields = buildCustomFieldsFromCollection(actionEntry);
 
 				builtActions.push({
 					action: 'setCustomType',
@@ -622,20 +635,7 @@ export const buildActionsFromUi = (
 				}
 
 				const type = getIdOrKeyReference(actionEntry, 'typeId', 'typeKey', 'type');
-				const fieldsRaw = actionEntry.fields as string;
-				
-				let fields: IDataObject = {};
-				if (fieldsRaw && fieldsRaw.trim()) {
-					try {
-						fields = typeof fieldsRaw === 'string' ? JSON.parse(fieldsRaw) : fieldsRaw;
-					} catch {
-						throw new NodeOperationError(
-							context.getNode(),
-							'Fields must be valid JSON',
-							{ itemIndex },
-						);
-					}
-				}
+				const fields = buildCustomFieldsFromCollection(actionEntry);
 
 				builtActions.push({
 					action: 'setCustomTypeInAddress',
@@ -977,6 +977,7 @@ export const buildActionsFromUi = (
 				);
 		}
 	}
+
 
 	return builtActions;
 };
