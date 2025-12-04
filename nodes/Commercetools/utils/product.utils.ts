@@ -207,7 +207,7 @@ export const buildActionsFromUi = (
 			delete finalAction?.valueType;
 		}
 
-		// if setPrices, map the values correctly
+		// if setPrices, map the values with preprocessing
 		if (action?.action === 'setPrices') {
 			const pricesData = (action?.prices as IDataObject)?.price as IDataObject[] || [];
 			// Transform the fixedCollection format to your required format
@@ -240,27 +240,71 @@ export const buildActionsFromUi = (
 			}
 		}
 
-		if (action?.action === 'setProductPriceCustomType') {
-			const type = (action?.type as IDataObject)?.typeDetails as IDataObject;
-			delete type?.identifyBy;
-			const fieldsArray = (action?.fields as IDataObject)?.fieldValues as IDataObject[];
-			const fields: IDataObject = {};
-			fieldsArray?.forEach((field: IDataObject) => {
-				const fieldName = field.name as string;
-				const fieldValue = field.value as string;
-				const valueType = field.valueType as string;
+    if (action?.action === 'setProductPriceCustomType') {
 
-				fields[fieldName] = parseAttributeValue(fieldValue, valueType);
-			});
-			finalAction = {
-				...action,
-				type: {
-					...type,
-					typeId: "type",
-				},
-				fields: fields
-			}
-		}
+      // Initialize flatFields as empty object
+      const flatFields: IDataObject = {};
+
+      // Handle both single field object and field array structures
+      if (action.fields) {
+        // Case 1: Direct single field object with name/value
+        if (
+          typeof action.fields === 'object' &&
+          'name' in (action.fields as IDataObject) &&
+          'value' in (action.fields as IDataObject)
+        ) {
+          const fieldName = (action.fields as IDataObject).name as string;
+          const fieldValue = (action.fields as IDataObject).value;
+          if (fieldName) {
+            flatFields[fieldName] = fieldValue;
+          }
+        }
+        // Case 2: Object with field array 
+        else if (
+          typeof action.fields === 'object' &&
+          'field' in (action.fields as IDataObject) &&
+          Array.isArray((action.fields as IDataObject).field)
+        ) {
+          const fieldArray = (action.fields as IDataObject).field;
+          if (Array.isArray(fieldArray)) {
+            for (const fieldItem of fieldArray) {
+              if (
+                typeof fieldItem === 'object' &&
+                'name' in fieldItem &&
+                'value' in fieldItem
+              ) {
+                const fieldName = fieldItem.name as string;
+                const fieldValue = fieldItem.value;
+                if (fieldName) {
+                  flatFields[fieldName] = fieldValue;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Flatten type to have 'id' and 'typeId' directly under 'type'
+      let flatType: IDataObject = { id: '', typeId: 'type' };
+      if (
+        action.type &&
+        typeof action.type === 'object' &&
+        'typeReference' in (action.type as IDataObject) &&
+        typeof (action.type as IDataObject).typeReference === 'object'
+      ) {
+        const typeRef = (action.type as IDataObject).typeReference as IDataObject;
+        flatType = {
+          id: typeof typeRef.id === 'string' ? typeRef.id : '',
+          typeId: typeof typeRef.typeId === 'string' ? typeRef.typeId : 'type',
+        };
+      }
+
+      finalAction = {
+        ...action,
+        fields: flatFields,
+        type: flatType,
+      };
+    }
 
 		if (action?.action === 'addToCategory' || action?.action === 'removeFromCategory') {
 			finalAction = {
@@ -329,49 +373,26 @@ export const buildActionsFromUi = (
 			};
 		}
 
-		if (action?.action === 'addAsset') {
-			console.log(action?.action, "Add asset action");
+    if (action?.action === 'addAsset') {
 
-			// Ensure asset exists
-			if (!action.asset) {
-				action.asset = {};
-			}
+      finalAction = {
+        ...action,
+        asset: {
+          ...action.asset as IDataObject,
+          name: localized.name
+        }
+      }
+      delete finalAction?.name;
 
-			// Move ANY name (root or elsewhere) into asset.name
-			if (action.name && typeof action.name === 'object') {
-
-				console.log(action.name,"action name before deleting");
-				
-				(action.asset as IDataObject).name = action.name;
-				if (typeof action.asset === 'object' && action.asset !== null) {
-					console.log((action.asset as IDataObject).name, "asset name found after moving done");
-				} else {
-					console.log("Asset is not an object or is null");
-				}
-				
-				delete action.name;
-				console.log("✅ Moved root name → asset.name");
-			}
-
-			
-
-			// Process asset
-			if (action?.asset && typeof action.asset === 'object') {
-				console.log((action.asset as IDataObject).sources, "asset sources array");
-				console.log((action.asset as IDataObject).name, "asset name object");
-			}
-		}
-
-
-
-
-		console.log("FINAL", finalAction)
-		if (finalAction?.identifyBy) {
-			delete finalAction?.identifyBy;
-		}
-		builtActions.push(finalAction);
-	}
-	return builtActions;
+    }
+    
+    if (finalAction?.identifyBy) {
+      delete finalAction?.identifyBy;
+    }
+    console.log("FINAL", finalAction)
+    builtActions.push(finalAction);
+  }
+  return builtActions;
 }
 
 export const coerceActions = (context: IExecuteFunctions, rawActions: unknown, itemIndex: number): IDataObject[] => {
@@ -403,7 +424,7 @@ export const coerceActions = (context: IExecuteFunctions, rawActions: unknown, i
 		}
 	}
 
-	return actions as IDataObject[];
+  return actions as IDataObject[];
 };
 
 export const coerceJsonInput = (
@@ -412,7 +433,7 @@ export const coerceJsonInput = (
 	label: string,
 	itemIndex: number,
 ): IDataObject => {
-	let value = raw;
+  let value = raw;
 
 	if (typeof value === 'string') {
 		try {
