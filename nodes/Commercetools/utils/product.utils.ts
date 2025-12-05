@@ -81,7 +81,6 @@ export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
         const currentValue = value[key];
 
         if (currentValue && typeof currentValue === 'object' && 'localizedField' in currentValue) {
-          console.log("localizedArr from localizedField ", currentValue.localizedField);
 
           const localizedArr = currentValue.localizedField;
           if (Array.isArray(localizedArr)) {
@@ -89,8 +88,6 @@ export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
             for (const loc of localizedArr) {
               if (loc && typeof loc === 'object') {
                 const locale = typeof loc.locale === 'string' ? loc.locale.trim() : '';
-                console.log("LOCALE", JSON.stringify(loc));
-                console.log("Locale value", JSON.stringify(loc.value));
                 const val = loc.value;
                 if (locale && val !== undefined && val !== '') {
                   (newObj[key] as IDataObject)[locale] = val;
@@ -404,12 +401,7 @@ export const buildActionsFromUi = (
       delete finalAction?.identifyBy;
     }
 
-    if (action?.action === 'setSearchKeywords') {
-      console.log(JSON.stringify(action), "main action from the block");
-
-      console.log(action?.action, "start");
-      console.log(finalAction.searchKeywords, "finalAction.searchKeywords from finalAction");
-      
+    if (action?.action === 'setSearchKeywords') {      
       const keys = Object.keys(finalAction.searchKeywords as IDataObject);
       const searchKeywordsObj: IDataObject = {};
       for (const key of keys) {
@@ -423,10 +415,7 @@ export const buildActionsFromUi = (
         });
         searchKeywordsObj[key] = processedTokenizer;
       }
-      console.log(searchKeywordsObj, "<<<<<<<<<<<<<searchKeywordsObj");
       
-
-
       finalAction = {
         ...finalAction,
         searchKeywords: searchKeywordsObj
