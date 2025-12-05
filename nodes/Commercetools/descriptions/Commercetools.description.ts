@@ -310,19 +310,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
       },
       description: 'Current version of the resource to ensure optimistic concurrency control',
     },
-    {
-      displayName: 'Actions (JSON)',
-      name: 'actions',
-      type: 'json',
-      default: '[]',
-      description: 'Update actions to apply to the resource',
-      displayOptions: {
-        show: {
-          resource: ['product', 'category'],
-          operation: ['update', 'updateByKey'],
-        },
-      },
-    },
+
     {
       displayName: 'Actions (UI)',
       name: 'updateActions',
@@ -544,7 +532,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== ASSET ID FIELD ====================
             {
               displayName: 'Asset ID',
               name: 'assetId',
@@ -568,7 +555,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-            // ==================== ADD ASSET ====================
             {
               displayName: 'Asset Name',
               name: 'name',
@@ -606,6 +592,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               ],
             },
+
             {
               displayName: 'Asset Order',
               name: 'assetOrder',
@@ -813,7 +800,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== ATTRIBUTES ====================
             {
               displayName: 'Attribute Name',
               name: 'name',
@@ -827,6 +813,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
+
             {
               displayName: 'Attribute Value',
               name: 'value',
@@ -933,9 +920,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-
-
-            // ==================== CATEGORY ID ====================
             {
               displayName: 'Category',
               name: 'category',
@@ -974,7 +958,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== Tax CATEGORY ID ====================
             {
               displayName: 'Category',
               name: 'taxCategory',
@@ -1013,8 +996,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-
-						// ==================== CATEGORY ID ====================
 						{
 							displayName: 'Category ID',
 							name: 'categoryId',
@@ -1028,6 +1009,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
+
 						{
 							displayName: 'Custom Fields',
 							name: 'fields',
@@ -1064,7 +1046,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							],
 						},
 
-            // ==================== CUSTOM TYPE ====================
             {
               displayName: 'Custom Type',
               name: 'type',
@@ -1112,7 +1093,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== CUSTOM TYPE FOR ASSET ====================
             {
               displayName: 'Custom Type',
               name: 'type',
@@ -1153,7 +1133,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== Set Discounted Price ====================
             {
               displayName: 'Discounted Price',
               name: 'discounted',
@@ -1215,7 +1194,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               ],
             },
-            // ==================== CUSTOM FIELD ====================
+
             {
               displayName: 'Field Name',
               name: 'name',
@@ -1228,6 +1207,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
+
             {
               displayName: 'Field Value',
               name: 'value',
@@ -1254,7 +1234,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-            // ==================== EXTERNAL IMAGE ====================
             {
               displayName: 'Image',
               name: 'image',
@@ -1407,9 +1386,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-
-
-            // ==================== KEY ====================
             {
               displayName: 'Key',
               name: 'key',
@@ -1422,8 +1398,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
-
-            // ==================== SET IMAGE LABEL ====================
 
             {
               displayName: 'Label',
@@ -1439,8 +1413,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-
-            // ==================== DESCRIPTION ====================
             {
               displayName: 'Localized Descriptions',
               name: 'description',
@@ -1479,7 +1451,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== CHANGE NAME ====================
             {
               displayName: 'Localized Names',
               name: 'name',
@@ -1518,7 +1489,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== CHANGE SLUG ====================
             {
               displayName: 'Localized Slugs',
               name: 'slug',
@@ -1557,7 +1527,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== META FIELDS ====================
             {
               displayName: 'Meta Description',
               name: 'metaDescription',
@@ -1676,7 +1645,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-            // ==================== POSITION ====================
             {
               displayName: 'Position',
               name: 'position',
@@ -1690,7 +1658,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-            // ==================== CHANGE PRICE ====================
             {
               displayName: 'Price ID',
               name: 'priceId',
@@ -1705,13 +1672,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-            // ==================== PRICE MODE ====================
             {
               displayName: 'Price Mode',
               name: 'priceMode',
               type: 'options',
               default: 'Platform',
-              // description: 'Price mode',
               displayOptions: {
                 show: {
                   action: ['setPriceMode'],
@@ -1771,7 +1736,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== SET PRICES ====================
             {
               displayName: 'Prices',
               name: 'prices',
@@ -1813,8 +1777,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               ],
             },
-
-
 
             {
               displayName: "Scope",
@@ -1868,8 +1830,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               }
             },
 
-
-            // ==================== SEARCH KEYWORDS ====================
             {
               displayName: 'Search Keywords',
               name: 'searchKeywords',
@@ -1964,10 +1924,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-
-
-
-            // ==================== SKU ====================
             {
               displayName: 'SKU',
               name: 'sku',
@@ -1980,6 +1936,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
+
             {
               displayName: 'SKU',
               name: 'sku',
@@ -1993,6 +1950,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
+
             {
               displayName: 'Staged',
               name: 'staged',
@@ -2006,7 +1964,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               },
             },
 
-            // ==================== STATE TRANSITION ====================
             {
               displayName: 'State',
               name: 'state',
@@ -2047,7 +2004,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-            // ==================== TAGS ====================
             {
               displayName: 'Tags',
               name: 'tags',
@@ -2066,7 +2022,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 
             // ==================== Set Product Price Custom Type ====================
             // {
-            // 	displayName: 'Type',
+            // 	displayName: 'Type',  
             // 	name: 'type',
             // 	type: 'fixedCollection',
             // 	default: {},
@@ -2130,7 +2086,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
             // 	],
             // },
 
-            // ==================== Update Variant By ====================
             {
               displayName: 'Update Variant By',
               name: 'identifyBy',
@@ -2166,9 +2121,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
-
-
-            // ==================== ADD VARIANT ====================
             {
               displayName: 'Variant SKU',
               name: 'sku',
@@ -2181,9 +2133,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
               },
             },
-
-
-
           ],
         },
       ],
