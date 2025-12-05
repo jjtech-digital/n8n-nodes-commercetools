@@ -70,43 +70,46 @@ export const applyCommonParameters = (
  * Recursively transforms any property named 'name', 'description', 'slug', etc. containing a localizedField array into a locale-keyed object.
  */
 export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
-	function transform(value: IDataObject): IDataObject {
-		// Only process objects (not arrays or primitives)
-		if (value && typeof value === 'object' && !Array.isArray(value)) {
-			const newObj: IDataObject = {};
-			for (const key of Object.keys(value)) {
-				const currentValue = value[key] as IDataObject;
+  function transform(value: any): any {
+    if (Array.isArray(value)) {
+      return value.map((entry) => (entry && typeof entry === 'object' ? transform(entry) : entry));
+    }
 
-				// Handle localizedField property
-				if (currentValue && typeof currentValue === 'object' && 'localizedField' in currentValue) {
-					const localizedArr = currentValue.localizedField;
-					if (Array.isArray(localizedArr)) {
-						newObj[key] = {};
-						for (const loc of localizedArr) {
-							if (loc && typeof loc === 'object') {
-								const locale = typeof loc.locale === 'string' ? loc.locale.trim() : '';
-								const val = loc.value;
-								if (locale && val !== undefined && val !== '') {
-									(newObj[key] as IDataObject)[locale] = val;
-								}
-							}
-						}
-					} else {
-						newObj[key] = currentValue;
-					}
-				} else {
-					// Recursively transform nested values
-					newObj[key] = transform(currentValue);
-				}
-			}
-			return newObj;
-		}
-		// Return primitives and arrays as-is
-		return value;
-	}
-	return transform(obj) as IDataObject;
+    if (value && typeof value === 'object') {
+      const newObj: IDataObject = {};
+      for (const key of Object.keys(value)) {
+        const currentValue = value[key];
 
+        if (currentValue && typeof currentValue === 'object' && 'localizedField' in currentValue) {
+          console.log("localizedArr from localizedField ", currentValue.localizedField);
 
+          const localizedArr = currentValue.localizedField;
+          if (Array.isArray(localizedArr)) {
+            newObj[key] = {};
+            for (const loc of localizedArr) {
+              if (loc && typeof loc === 'object') {
+                const locale = typeof loc.locale === 'string' ? loc.locale.trim() : '';
+                console.log("LOCALE", JSON.stringify(loc));
+                console.log("Locale value", JSON.stringify(loc.value));
+                const val = loc.value;
+                if (locale && val !== undefined && val !== '') {
+                  (newObj[key] as IDataObject)[locale] = val;
+                }
+              }
+            }
+          } else {
+            newObj[key] = currentValue;
+          }
+        } else {
+          newObj[key] = transform(currentValue);
+        }
+      }
+      return newObj;
+    }
+
+    return value;
+  }
+  return transform(obj) as IDataObject;
 }
 /**
  * Transforms categoryId and categoryReference fields to nested category object for specific actions
@@ -207,21 +210,32 @@ export const buildActionsFromUi = (
 			delete finalAction?.valueType;
 		}
 
-		// if setPrices, map the values with preprocessing
-		if (action?.action === 'setPrices') {
-			const pricesData = (action?.prices as IDataObject)?.price as IDataObject[] || [];
-			// Transform the fixedCollection format to your required format
-			const modifiedPrices = pricesData?.map((price) => ({
-				value: {
-					currencyCode: price.currencyCode as string,
-					centAmount: price.centAmount as number,
-				},
-			}));
-			finalAction = {
-				...action,
-				prices: modifiedPrices,
-			};
-		}
+    // Map the fixedCollection price format to the API draft for supported actions
+    if (['setPrices', 'addVariant'].includes((action?.action as string) ?? '')) {
+      const pricesData = (((finalAction?.prices as IDataObject) ?? {})?.price ?? []) as IDataObject[];
+      const modifiedPrices = pricesData
+        .filter((price) => price?.currencyCode)
+        .map((price) => {
+          const value: IDataObject = {
+            currencyCode: price.currencyCode as string,
+            centAmount: price.centAmount as number,
+          };
+          const formattedPrice: IDataObject = { value };
+          if (price.country) {
+            formattedPrice.country = price.country;
+          }
+          return formattedPrice;
+        });
+
+      if (modifiedPrices.length) {
+        finalAction = {
+          ...finalAction,
+          prices: modifiedPrices,
+        };
+      } else {
+        delete finalAction.prices;
+      }
+    }
 
 		if (action?.action === 'addExternalImage') {
 			const imageDetails = (action?.image as IDataObject)?.imageDetails as IDataObject
@@ -385,11 +399,131 @@ export const buildActionsFromUi = (
       delete finalAction?.name;
 
     }
-    
+
     if (finalAction?.identifyBy) {
       delete finalAction?.identifyBy;
     }
-    console.log("FINAL", finalAction)
+
+    if (action?.action === 'setSearchKeywords') {
+      console.log(JSON.stringify(action), "main action from the block");
+
+      console.log(action?.action, "start");
+      console.log(finalAction.searchKeywords, "finalAction.searchKeywords from finalAction");
+      
+      const keys = Object.keys(finalAction.searchKeywords as IDataObject);
+      const searchKeywordsObj: IDataObject = {};
+      for (const key of keys) {
+        searchKeywordsObj[key] = ((finalAction.searchKeywords as IDataObject)[key] as IDataObject)?.keyword as IDataObject[];
+        const processedTokenizer = (searchKeywordsObj[key] as IDataObject[]).map((keywordObj : IDataObject) => {
+          const suggestTokenizer = (keywordObj?.suggestTokenizer as IDataObject)?.tokenizer as string[];
+          return {
+            ...keywordObj,
+            suggestTokenizer: suggestTokenizer
+          }
+        });
+        searchKeywordsObj[key] = processedTokenizer;
+      }
+      console.log(searchKeywordsObj, "<<<<<<<<<<<<<searchKeywordsObj");
+      
+
+
+      finalAction = {
+        ...finalAction,
+        searchKeywords: searchKeywordsObj
+      }
+    }
+    if (action?.action === 'addVariant') {
+      delete finalAction.attributes;
+      delete finalAction.images;
+      delete finalAction.assets;
+
+      const attributesInput = (((localized.attributes as IDataObject) ?? {})?.attribute ?? []) as IDataObject[];
+      const formattedAttributes = attributesInput
+        .filter((attribute) => attribute?.name && attribute?.value !== undefined && attribute?.value !== '')
+        .map((attribute) => ({
+          name: attribute.name as string,
+          value: parseAttributeValue(attribute.value as string, (attribute.valueType as string) ?? 'string'),
+        }));
+      if (formattedAttributes.length) {
+        finalAction.attributes = formattedAttributes;
+      }
+
+      const imagesInput = (((localized.images as IDataObject) ?? {})?.image ?? []) as IDataObject[];
+      const formattedImages = imagesInput
+        .filter((image) => typeof image?.url === 'string' && (image.url as string).trim() !== '')
+        .map((image) => {
+          const imageDraft: IDataObject = {
+            url: image.url,
+          };
+          if (image.label) {
+            imageDraft.label = image.label;
+          }
+          const dimensions = ((image.dimensions as IDataObject)?.size ?? {}) as IDataObject;
+          const dimensionPayload: IDataObject = {};
+          if (dimensions.w !== undefined && dimensions.w !== null) {
+            dimensionPayload.w = dimensions.w;
+          }
+          if (dimensions.h !== undefined && dimensions.h !== null) {
+            dimensionPayload.h = dimensions.h;
+          }
+          if (Object.keys(dimensionPayload).length) {
+            imageDraft.dimensions = dimensionPayload;
+          }
+          return imageDraft;
+        });
+      if (formattedImages.length) {
+        finalAction.images = formattedImages;
+      }
+
+      const assetsInput = (((localized.assets as IDataObject) ?? {})?.asset ?? []) as IDataObject[];
+      const formattedAssets = assetsInput
+        .map((asset) => {
+          const assetDraft: IDataObject = {};
+          if (asset.key) {
+            assetDraft.key = asset.key;
+          }
+          if (asset.name) {
+            assetDraft.name = asset.name as IDataObject;
+          }
+          const sources = (((asset.sources as IDataObject) ?? {})?.source ?? []) as IDataObject[];
+          const formattedSources = sources
+            .filter((source) => typeof source?.uri === 'string' && (source.uri as string).trim() !== '')
+            .map((source) => {
+              const sourceDraft: IDataObject = {
+                uri: source.uri,
+              };
+              if (source.key) {
+                sourceDraft.key = source.key;
+              }
+              if (source.contentType) {
+                sourceDraft.contentType = source.contentType;
+              }
+              const sourceDimensions = ((source.dimensions as IDataObject)?.size ?? {}) as IDataObject;
+              const sourceDimensionPayload: IDataObject = {};
+              if (sourceDimensions.w !== undefined && sourceDimensions.w !== null) {
+                sourceDimensionPayload.w = sourceDimensions.w;
+              }
+              if (sourceDimensions.h !== undefined && sourceDimensions.h !== null) {
+                sourceDimensionPayload.h = sourceDimensions.h;
+              }
+              if (Object.keys(sourceDimensionPayload).length) {
+                sourceDraft.dimensions = sourceDimensionPayload;
+              }
+              return sourceDraft;
+            });
+          if (formattedSources.length) {
+            assetDraft.sources = formattedSources;
+          }
+          return assetDraft;
+        })
+        .filter((asset) => Object.keys(asset).length);
+
+      if (formattedAssets.length) {
+        finalAction.assets = formattedAssets;
+      }
+    }
+
+
     builtActions.push(finalAction);
   }
   return builtActions;
