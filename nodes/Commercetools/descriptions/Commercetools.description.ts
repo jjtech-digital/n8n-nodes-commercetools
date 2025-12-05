@@ -2099,7 +2099,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['get', 'update', 'delete', 'head', 'changePassword', 'getInStore', 'updateInStore', 'deleteInStore', 'headInStore', 'createEmailToken'],
+					operation: ['get', 'update', 'delete', 'head', 'changePassword', 'changePasswordInStore', 'getInStore', 'updateInStore', 'deleteInStore', 'headInStore', 'createEmailToken'],
 				},
 			},
 			description: 'The unique ID of the customer',
@@ -2267,6 +2267,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			description: 'Current version of the customer for optimistic locking',
 		},
 		{
+			displayName: 'TTL Minutes',
+			name: 'ttlMinutes',
+			type: 'number',
+			default: 4320,
+			required: true,
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['createEmailToken', 'createEmailTokenInStore'],
+				},
+			},
+			description: 'Validity period of the generated token in minutes (default: 4320 = 3 days)',
+		},
+		{
 			displayName: 'Customer Draft (JSON)',
 			name: 'customerDraft',
 			type: 'json',
@@ -2410,10 +2424,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								{
 									name: 'Set First Name',
 									value: 'setFirstName',
-								},
-								{
-									name: 'Set Key',
-									value: 'setKey',
 								},
 								{
 									name: 'Set Last Name',
@@ -2790,11 +2800,36 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 						},
 						{
-							displayName: 'Fields (JSON)',
+							displayName: 'Fields',
 							name: 'fields',
-							type: 'json',
-							default: '{}',
-							description: 'Custom field values as a JSON object',
+							type: 'fixedCollection',
+							default: {},
+							description: 'Custom field values',
+							typeOptions: {
+								multipleValues: true,
+							},
+							options: [
+								{
+									displayName: 'Field',
+									name: 'field',
+									values: [
+										{
+											displayName: 'Name',
+											name: 'name',
+											type: 'string',
+											default: '',
+											description: 'The name of the custom field',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'The value of the custom field',
+										},
+									],
+								},
+							],
 							displayOptions: {
 								show: {
 									actionType: ['setCustomType', 'setCustomTypeInAddress'],

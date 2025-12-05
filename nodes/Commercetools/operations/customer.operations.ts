@@ -746,20 +746,52 @@ export async function executeCustomerOperation(
 		applyCommonCustomerParameters(qs, additionalFields);
 
 		const body = {
+			id: customerId,
 			version,
 			currentPassword,
 			newPassword,
 		};
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/customers/${customerId}/password`,
-			body,
-			qs,
-		})) as IDataObject;
+		try {
+			const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
+				method: 'POST',
+				url: `${baseUrl}/customers/password`,
+				body,
+				qs,
+			})) as IDataObject;
 
-		results.push({ json: response });
-		return results;
+			results.push({ json: response });
+			return results;
+		} catch (error) {
+			const statusCode = getErrorStatusCode(error as IDataObject);
+			const errorMessage = (error as IDataObject).message as string || '';
+			if (statusCode === 404) {
+				throw new NodeOperationError(
+					this.getNode(),
+					`Customer with ID '${customerId}' was not found. Please verify that the customer exists in your CommerceTools project and that you're using the correct Customer ID.`,
+					{ itemIndex }
+				);
+			}
+			
+			if (statusCode === 400) {
+				if (errorMessage.includes('password') && errorMessage.includes('invalid')) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`The current password provided is incorrect. Please verify the current password and try again.`,
+						{ itemIndex }
+					);
+				}
+				if (errorMessage.includes('version')) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`The customer version is outdated (provided: ${version}). Please get the latest customer data first to get the current version number.`,
+						{ itemIndex }
+					);
+				}
+			}
+			
+			throw error;
+		}
 	}
 
 	
@@ -774,6 +806,7 @@ export async function executeCustomerOperation(
 		applyCommonCustomerParameters(qs, additionalFields);
 
 		const body = {
+			id: customerId,
 			version,
 			currentPassword,
 			newPassword,
@@ -781,7 +814,7 @@ export async function executeCustomerOperation(
 
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',
-			url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/customers/${customerId}/password`,
+			url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/customers/password`,
 			body,
 			qs,
 		})) as IDataObject;
@@ -804,7 +837,10 @@ export async function executeCustomerOperation(
 		};
 
 		if (additionalFields.anonymousCartId) {
-			body.anonymousCartId = additionalFields.anonymousCartId as string;
+			body.anonymousCart = {
+				id: additionalFields.anonymousCartId as string,
+				typeId: 'cart'
+			};
 		}
 
 		if (additionalFields.anonymousCartSignInMode) {
@@ -845,7 +881,10 @@ export async function executeCustomerOperation(
 		};
 
 		if (additionalFields.anonymousCartId) {
-			body.anonymousCartId = additionalFields.anonymousCartId as string;
+			body.anonymousCart = {
+				id: additionalFields.anonymousCartId as string,
+				typeId: 'cart'
+			};
 		}
 
 		if (additionalFields.anonymousCartSignInMode) {
@@ -1006,16 +1045,13 @@ export async function executeCustomerOperation(
 	if (operation === 'createEmailToken') {
 		const customerId = this.getNodeParameter('customerId', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
-		const additionalFields = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const ttlMinutes = this.getNodeParameter('ttlMinutes', itemIndex) as number;
 
 		const body: IDataObject = {
 			id: customerId,
-			version,
+			version: Number(version),
+			ttlMinutes: Number(ttlMinutes),
 		};
-
-		if (additionalFields.ttlMinutes) {
-			body.ttlMinutes = additionalFields.ttlMinutes as number;
-		}
 
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',
@@ -1071,16 +1107,13 @@ export async function executeCustomerOperation(
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const customerId = this.getNodeParameter('customerId', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
-		const additionalFields = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const ttlMinutes = this.getNodeParameter('ttlMinutes', itemIndex) as number;
 
 		const body: IDataObject = {
 			id: customerId,
-			version,
+			version: Number(version),
+			ttlMinutes: Number(ttlMinutes),
 		};
-
-		if (additionalFields.ttlMinutes) {
-			body.ttlMinutes = additionalFields.ttlMinutes as number;
-		}
 
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',

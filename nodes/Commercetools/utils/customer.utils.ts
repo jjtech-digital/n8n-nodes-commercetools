@@ -207,6 +207,7 @@ export const buildActionsFromUi = (
 		: rawActionEntries
 		? [rawActionEntries as IDataObject]
 		: [];
+	
 		
 	/**
 	 * Creates a properly typed address object from UI form fields
@@ -360,8 +361,10 @@ export const buildActionsFromUi = (
 	 * @returns Custom fields object for Commercetools API
 	 */
 	const buildCustomFieldsFromCollection = (entry: IDataObject): IDataObject => {
+
 		const customFields: IDataObject = {};
 		const customFieldsData = entry.customFields as IDataObject;
+	
 		
 		if (customFieldsData && customFieldsData.field) {
 			const fields = Array.isArray(customFieldsData.field) ? customFieldsData.field : [customFieldsData.field];
@@ -377,6 +380,7 @@ export const buildActionsFromUi = (
 			}
 		}
 		
+	
 		return customFields;
 	};
 
@@ -969,12 +973,6 @@ export const buildActionsFromUi = (
 				break;
 			}
 
-			default:
-				throw new NodeOperationError(
-					context.getNode(),
-					`Unknown action type: ${actionType}`,
-					{ itemIndex },
-				);
 		}
 	}
 
