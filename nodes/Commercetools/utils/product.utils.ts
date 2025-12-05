@@ -165,7 +165,7 @@ function parseAttributeValue(value: string, type: string): any {
         return num;
 
       case 'boolean':
-        const lowerValue = value.toLowerCase().trim();
+        const lowerValue = value.trim().toLowerCase();
         if (lowerValue === 'true' || lowerValue === '1') return true;
         if (lowerValue === 'false' || lowerValue === '0') return false;
         throw new Error(`Cannot convert "${value}" to boolean. Use: true, false, 1, or 0`);
