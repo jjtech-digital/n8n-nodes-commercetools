@@ -1374,7 +1374,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               typeOptions: {
                 multipleValues: true,
               },
-              // description: 'Localized descriptions',
               displayOptions: {
                 show: {
                   action: ['setDescription', 'setAssetDescription'],
@@ -1875,19 +1874,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
                   ],
                 },
               ],
-            },
-
-            {
-              displayName: 'SKU',
-              name: 'sku',
-              type: 'string',
-              default: '',
-              description: 'Stock Keeping Unit',
-              displayOptions: {
-                show: {
-                  action: ['setSku'],
-                },
-              },
             },
 
             {
