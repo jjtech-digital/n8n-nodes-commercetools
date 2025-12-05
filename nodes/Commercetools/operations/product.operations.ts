@@ -250,7 +250,7 @@ export async function executeProductOperation(
 		const rawActions = this.getNodeParameter('actions', itemIndex);
 		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
-		const actionsFromUi = buildActionsFromUi(this, actionsUi, itemIndex);
+		const actionsFromUi = buildActionsFromUi(this, actionsUi);
 		const actions = [...actionsFromJson, ...actionsFromUi];
 
 		if (actions.length === 0) {

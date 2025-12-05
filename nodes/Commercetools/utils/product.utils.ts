@@ -151,24 +151,26 @@ function transformFlatCategoryId(actionObj: IDataObject): IDataObject {
 }
 
 // Helper function to parse value based on type
-function parseAttributeValue(value: string, type: string): any {
+function parseAttributeValue(value: string, type: string): string | number | boolean  {
   try {
     switch (type) {
       case 'string':
         return value;
 
-      case 'number':
+      case 'number': {
         const num = Number(value);
         if (isNaN(num)) {
           throw new Error(`Cannot convert "${value}" to number`);
         }
         return num;
+      }
 
-      case 'boolean':
+      case 'boolean': {
         const lowerValue = value.trim().toLowerCase();
         if (lowerValue === 'true' || lowerValue === '1') return true;
         if (lowerValue === 'false' || lowerValue === '0') return false;
         throw new Error(`Cannot convert "${value}" to boolean. Use: true, false, 1, or 0`);
+      }
 
       default:
         return value;
@@ -181,7 +183,6 @@ function parseAttributeValue(value: string, type: string): any {
 export const buildActionsFromUi = (
   context: IExecuteFunctions,
   actionsUi: IDataObject,
-  itemIndex: number,
 ): IDataObject[] => {
   const builtActions: IDataObject[] = [];
   const rawActionEntries = actionsUi.action;
