@@ -56,7 +56,7 @@ Below are the main configuration options and parameters available for the Commer
 - **productId** or **productKey**: ID or key of the product to update.
 - **version**: Product version (required for updates).
 - **actions**: Array of update actions (JSON).
-- **actionsUi**: UI-based update actions.
+- **updateActions**: UI builder that lets you stack multiple product update actions without hand-writing JSON. These can be combined with the `actions` array if you need to mix UI-built and raw payloads.
 - **additionalFieldsUpdate**: Optional fields (dataErasure, dryRun, etc.).
 
 #### Delete Product / Delete By Key
@@ -92,8 +92,7 @@ Below are the main configuration options and parameters available for the Commer
 #### Update Category / Update By Key
 - **categoryId** or **categoryKey**: ID or key of the category to update.
 - **version**: Category version (required for updates).
-- **actions**: Array of update actions (JSON).
-- **actionsUi**: UI-based update actions.
+- **actions**: Array of update actions (JSON). (Categories currently require JSON actions only.)
 - **additionalFieldsUpdate**: Optional fields (dataErasure, dryRun, etc.).
 
 #### Delete Category / Delete By Key
@@ -147,6 +146,67 @@ Below is a sample workflow using the Commercetools node in n8n to create and que
   // ...more products
 ]
 ```
+
+### Using updateActions (Product Updates)
+
+The `updateActions` fixed collection lets you compose Commercetools product update commands directly in the node UI, with helper inputs for localized data, prices, assets, and variant targeting. Highlights:
+- Choose whether each variant is addressed by `variantId` or `sku`, and mix multiple variant-specific actions in a single request.
+- Localized name/slug/meta helpers automatically map locale/value pairs to the format the Commercetools API expects.
+- Attribute editors support string/number/boolean parsing so you don’t need to pre-format JSON.
+- Asset, price, image, and search keyword builders flatten nested fixed collections (sources, dimensions, tokenizers, etc.) into valid drafts.
+
+Supported product update actions:
+- Add Asset
+- Add External Image
+- Add Price
+- Add Product Variant
+- Add To Category
+- Change Asset Name
+- Change Asset Order
+- Change Master Variant
+- Change Name
+- Change Price
+- Change Slug
+- Move Image To Position
+- Publish
+- Remove Asset
+- Remove From Category
+- Remove Image
+- Remove Price
+- Remove Variant
+- Revert Staged Changes
+- Revert Staged Variant Changes
+- Set Asset Custom Field
+- Set Asset Custom Type
+- Set Asset Description
+- Set Asset Key
+- Set Asset Sources
+- Set Asset Tags
+- Set Attribute
+- Set Attribute In All Variants
+- Set Category Order Hint
+- Set Description
+- Set Image Label
+- Set Key
+- Set Meta Description
+- Set Meta Keywords
+- Set Meta Title
+- Set Price Custom Field
+- Set Price Key
+- Set Price Mode
+- Set Prices
+- Set Product Attribute
+- Set Product Price Custom Type
+- Set Product Variant Key
+- Set Search Keywords
+- Set SKU
+- Set Tax Category
+- Transition State
+- Unpublish
+
+Need a field that isn’t exposed yet? Add it via the `actions` JSON array—the node merges both sources in request order.
+
+> **Transition State note:** the builder enforces that either a state ID or a state key is set per the [Commercetools Transition State action](https://docs.commercetools.com/api/projects/products#transition-state).
 
 ### Example: Create a Category
 
@@ -238,7 +298,7 @@ The Commercetools node for n8n enables you to interact with the Commercetools AP
   Retrieve detailed information for a specific product by its ID or key.
 
 - **Update Product (by ID or Key)**  
-  Update an existing product using one or more update actions.
+  Update an existing product using one or more update actions. The `updateActions` UI builder now mirrors Commercetools’ product update catalog, including localized content helpers, price/asset editors, search keyword builders, and state transitions.
 
 - **Delete Product (by ID or Key)**  
   Delete a product from your project.
@@ -260,7 +320,7 @@ The Commercetools node for n8n enables you to interact with the Commercetools AP
   Retrieve detailed information for a specific category by its ID or key.
 
 - **Update Category (by ID or Key)**  
-  Update an existing category using one or more update actions.
+  Update an existing category using one or more update actions. (Categories currently require JSON-based `actions`.)
 
 - **Delete Category (by ID or Key)**  
   Delete a category from your project.
@@ -301,6 +361,7 @@ Each operation supports additional parameters for fine-tuned control, such as st
   - Go to n8n's credentials section and add your Commercetools OAuth2 credentials.
 4. **Use the Commercetools node in your workflow**
   - Add the Commercetools node to your workflow and select the desired operation (e.g., product management).
+  - For product updates, use the `updateActions` builder to stack multiple actions (or combine with `actions` JSON for edge cases).
 5. **Lint and build**
   - Lint: `npm run lint`
   - Auto-fix: `npm run lint:fix`
@@ -379,6 +440,8 @@ All notable changes to this project will be documented in the `CHANGELOG.md` fil
 
 
 ### [Unreleased]
+- Added comprehensive product `updateActions` UI for assets, prices, attributes, search keywords, and Transition State commands
+- Documented the new updateActions builder, action coverage, and usage tips
 - Added category-related APIs to Commercetools node (create, query, get, update, delete, existence checks)
 - Updated documentation to include category operations in features, configuration, usage examples, credential setup, and troubleshooting
 - Documentation improvements and structure updates
