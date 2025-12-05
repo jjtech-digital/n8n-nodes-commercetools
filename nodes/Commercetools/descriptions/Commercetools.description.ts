@@ -310,7 +310,19 @@ export const commercetoolsDescription: INodeTypeDescription = {
       },
       description: 'Current version of the resource to ensure optimistic concurrency control',
     },
-
+    {
+      displayName: 'Actions (JSON)',
+      name: 'actions',
+      type: 'json',
+      default: '[]',
+      description: 'Update actions to apply to the resource',
+      displayOptions: {
+        show: {
+          resource: ['product', 'category'],
+          operation: ['update', 'updateByKey'],
+        },
+      },
+    },
     {
       displayName: 'Actions (UI)',
       name: 'updateActions',
@@ -996,55 +1008,55 @@ export const commercetoolsDescription: INodeTypeDescription = {
               ],
             },
 
-						{
-							displayName: 'Category ID',
-							name: 'categoryId',
-							type: 'string',
-							default: '',
-							required: true,
-							description: 'ID of the category',
-							displayOptions: {
-								show: {
-									action: ['setCategoryOrderHint'],
-								},
-							},
-						},
+            {
+              displayName: 'Category ID',
+              name: 'categoryId',
+              type: 'string',
+              default: '',
+              required: true,
+              description: 'ID of the category',
+              displayOptions: {
+                show: {
+                  action: ['setCategoryOrderHint'],
+                },
+              },
+            },
 
-						{
-							displayName: 'Custom Fields',
-							name: 'fields',
-							type: 'fixedCollection',
-							default: {},
-							typeOptions: {
-								multipleValues: true,
-							},
-							description: 'Custom field values',
-							displayOptions: {
-								show: {
-									action: ['setAssetCustomType', 'setProductPriceCustomType'],
-								},
-							},
-							options: [
-								{
-									displayName: 'Field',
-									name: 'field',
-									values: [
-										{
-											displayName: 'Name',
-											name: 'name',
-											type: 'string',
-											default: '',
-										},
-										{
-											displayName: 'Value',
-											name: 'value',
-											type: 'string',
-											default: '',
-										},
-									],
-								},
-							],
-						},
+            {
+              displayName: 'Custom Fields',
+              name: 'fields',
+              type: 'fixedCollection',
+              default: {},
+              typeOptions: {
+                multipleValues: true,
+              },
+              description: 'Custom field values',
+              displayOptions: {
+                show: {
+                  action: ['setAssetCustomType', 'setProductPriceCustomType'],
+                },
+              },
+              options: [
+                {
+                  displayName: 'Field',
+                  name: 'field',
+                  values: [
+                    {
+                      displayName: 'Name',
+                      name: 'name',
+                      type: 'string',
+                      default: '',
+                    },
+                    {
+                      displayName: 'Value',
+                      name: 'value',
+                      type: 'string',
+                      default: '',
+                    },
+                  ],
+                },
+              ],
+            },
 
             {
               displayName: 'Custom Type',
