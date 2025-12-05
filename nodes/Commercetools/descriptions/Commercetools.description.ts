@@ -1054,53 +1054,6 @@ export const commercetoolsDescription: INodeTypeDescription = {
               description: 'Custom type reference',
               displayOptions: {
                 show: {
-                  action: ['setPriceCustomType'],
-                },
-              },
-              options: [
-                {
-                  displayName: 'Type Reference',
-                  name: 'typeReference',
-                  values: [
-                    {
-                      displayName: 'Type ID',
-                      name: 'typeId',
-                      type: 'options',
-                      default: 'type',
-                      options: [
-                        {
-                          name: 'Type',
-                          value: 'type',
-                        },
-                      ],
-                    },
-                    {
-                      displayName: 'ID',
-                      name: 'id',
-                      type: 'string',
-                      default: '',
-                      description: 'ID of the custom type',
-                    },
-                    {
-                      displayName: 'Key',
-                      name: 'key',
-                      type: 'string',
-                      default: '',
-                      description: 'Key of the custom type',
-                    },
-                  ],
-                },
-              ],
-            },
-
-            {
-              displayName: 'Custom Type',
-              name: 'type',
-              type: 'fixedCollection',
-              default: {},
-              description: 'Custom type reference',
-              displayOptions: {
-                show: {
                   action: ['setAssetCustomType', 'setProductPriceCustomType'],
                 },
               },
