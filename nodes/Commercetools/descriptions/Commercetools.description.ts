@@ -477,7 +477,13 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['product'],
-					operation: ['getByKey', 'updateByKey', 'deleteByKey', 'headByKey', 'querySelectionsByKey'],
+					operation: [
+						'getByKey',
+						'updateByKey',
+						'deleteByKey',
+						'headByKey',
+						'querySelectionsByKey',
+					],
 				},
 			},
 			description: 'Unique key of the product to target',
@@ -537,7 +543,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					operation: ['create'],
 				},
 			},
-			description: 'JSON representation of the product draft to create, e.g. <code>{"productType":{"typeId":"product-type","ID":"..."},"name":{"en":"Product"},"slug":{"en":"product"}}</code>',
+			description:
+				'JSON representation of the product draft to create, e.g. <code>{"productType":{"typeId":"product-type","ID":"..."},"name":{"en":"Product"},"slug":{"en":"product"}}</code>',
 		},
 		{
 			displayName: 'Version',
@@ -778,8 +785,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'sort',
 					type: 'string',
 					default: '',
-					description:
-						'Sorting expression for query results, e.g. <code>createdAt desc</code>',
+					description: 'Sorting expression for query results, e.g. <code>createdAt desc</code>',
 				},
 				{
 					displayName: 'Staged',
@@ -807,8 +813,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'withTotal',
 					type: 'boolean',
 					default: true,
-					description:
-						'Whether the query should calculate the total number of matching products',
+					description: 'Whether the query should calculate the total number of matching products',
 				},
 			],
 			displayOptions: {
@@ -1599,7 +1604,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'withTotal',
 					type: 'boolean',
 					default: true,
-					description: 'Whether the query should calculate the total number of matching product selections',
+					description:
+						'Whether the query should calculate the total number of matching product selections',
 				},
 			],
 			displayOptions: {
@@ -1664,7 +1670,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'externalUrl',
 					type: 'string',
 					default: '',
-					description: 'If set, treats the image as an external URL instead of uploading binary content',
+					description:
+						'If set, treats the image as an external URL instead of uploading binary content',
 				},
 				{
 					displayName: 'Filename',
@@ -2089,7 +2096,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 				},
 			},
 		},
-		
+
 		{
 			displayName: 'Customer ID',
 			name: 'customerId',
@@ -2099,7 +2106,19 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['get', 'update', 'delete', 'head', 'changePassword', 'changePasswordInStore', 'getInStore', 'updateInStore', 'deleteInStore', 'headInStore', 'createEmailToken'],
+					operation: [
+						'get',
+						'update',
+						'delete',
+						'head',
+						'changePassword',
+						'changePasswordInStore',
+						'getInStore',
+						'updateInStore',
+						'deleteInStore',
+						'headInStore',
+						'createEmailToken',
+					],
 				},
 			},
 			description: 'The unique ID of the customer',
@@ -2113,7 +2132,16 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['getByKey', 'updateByKey', 'deleteByKey', 'headByKey', 'getInStoreByKey', 'updateInStoreByKey', 'deleteInStoreByKey', 'headInStoreByKey'],
+					operation: [
+						'getByKey',
+						'updateByKey',
+						'deleteByKey',
+						'headByKey',
+						'getInStoreByKey',
+						'updateInStoreByKey',
+						'deleteInStoreByKey',
+						'headInStoreByKey',
+					],
 				},
 			},
 			description: 'The unique key of the customer',
@@ -2127,7 +2155,27 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['authenticateInStore', 'changePasswordInStore', 'createInStore', 'getInStore', 'getInStoreByKey', 'getInStoreByEmailToken', 'getInStoreByPasswordToken', 'updateInStore', 'updateInStoreByKey', 'deleteInStore', 'deleteInStoreByKey', 'headInStore', 'headInStoreByKey', 'headInStoreByQuery', 'queryInStore', 'resetPasswordInStore', 'createPasswordResetTokenInStore', 'createEmailTokenInStore', 'verifyEmailInStore'],
+					operation: [
+						'authenticateInStore',
+						'changePasswordInStore',
+						'createInStore',
+						'getInStore',
+						'getInStoreByKey',
+						'getInStoreByEmailToken',
+						'getInStoreByPasswordToken',
+						'updateInStore',
+						'updateInStoreByKey',
+						'deleteInStore',
+						'deleteInStoreByKey',
+						'headInStore',
+						'headInStoreByKey',
+						'headInStoreByQuery',
+						'queryInStore',
+						'resetPasswordInStore',
+						'createPasswordResetTokenInStore',
+						'createEmailTokenInStore',
+						'verifyEmailInStore',
+					],
 				},
 			},
 			description: 'The key of the store',
@@ -2142,7 +2190,12 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['authenticate', 'authenticateInStore', 'createPasswordResetToken', 'createPasswordResetTokenInStore'],
+					operation: [
+						'authenticate',
+						'authenticateInStore',
+						'createPasswordResetToken',
+						'createPasswordResetTokenInStore',
+					],
 				},
 			},
 			description: 'The email address of the customer',
@@ -2193,7 +2246,12 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['changePassword', 'changePasswordInStore', 'resetPassword', 'resetPasswordInStore'],
+					operation: [
+						'changePassword',
+						'changePasswordInStore',
+						'resetPassword',
+						'resetPasswordInStore',
+					],
 				},
 			},
 			description: 'The new password for the customer',
@@ -2261,7 +2319,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey', 'delete', 'deleteByKey', 'deleteInStore', 'deleteInStoreByKey', 'changePassword', 'changePasswordInStore', 'createEmailToken', 'createEmailTokenInStore'],
+					operation: [
+						'update',
+						'updateByKey',
+						'updateInStore',
+						'updateInStoreByKey',
+						'delete',
+						'deleteByKey',
+						'deleteInStore',
+						'deleteInStoreByKey',
+						'changePassword',
+						'changePasswordInStore',
+						'createEmailToken',
+						'createEmailTokenInStore',
+					],
 				},
 			},
 			description: 'Current version of the customer for optimistic locking',
@@ -2292,7 +2363,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					operation: ['create', 'createInStore'],
 				},
 			},
-			description: 'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
+			description:
+				'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
 		},
 
 		{
@@ -2513,7 +2585,19 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the address',
 							displayOptions: {
 								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType'],
+									actionType: [
+										'addBillingAddressId',
+										'addShippingAddressId',
+										'removeBillingAddressId',
+										'removeShippingAddressId',
+										'removeAddress',
+										'changeAddress',
+										'changeAddressId',
+										'setDefaultBillingAddress',
+										'setDefaultShippingAddress',
+										'setAddressCustomField',
+										'setAddressCustomType',
+									],
 									addressReferenceType: ['id'],
 								},
 							},
@@ -2526,7 +2610,19 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Key of the address',
 							displayOptions: {
 								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType'],
+									actionType: [
+										'addBillingAddressId',
+										'addShippingAddressId',
+										'removeBillingAddressId',
+										'removeShippingAddressId',
+										'removeAddress',
+										'changeAddress',
+										'changeAddressId',
+										'setDefaultBillingAddress',
+										'setDefaultShippingAddress',
+										'setAddressCustomField',
+										'setAddressCustomType',
+									],
 									addressReferenceType: ['key'],
 								},
 							},
@@ -2546,12 +2642,24 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference address by key',
 								},
-						],
+							],
 							default: 'id',
 							description: 'Whether to reference the address by ID or key',
 							displayOptions: {
 								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType'],
+									actionType: [
+										'addBillingAddressId',
+										'addShippingAddressId',
+										'removeBillingAddressId',
+										'removeShippingAddressId',
+										'removeAddress',
+										'changeAddress',
+										'changeAddressId',
+										'setDefaultBillingAddress',
+										'setDefaultShippingAddress',
+										'setAddressCustomField',
+										'setAddressCustomType',
+									],
 								},
 							},
 						},
@@ -2580,7 +2688,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									name: 'External Auth',
 									value: 'ExternalAuth',
 								},
-						],
+							],
 							default: 'Password',
 							description: 'Authentication mode for the customer',
 							displayOptions: {
@@ -2646,7 +2754,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the customer group',
 							displayOptions: {
 								show: {
-									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
+									actionType: [
+										'addCustomerGroupAssignment',
+										'removeCustomerGroupAssignment',
+										'setCustomerGroup',
+									],
 									customerGroupReferenceType: ['id'],
 								},
 							},
@@ -2659,7 +2771,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Comma-separated list of customer group IDs',
 							displayOptions: {
 								show: {
-									actionType: ['setCustomerGroupAssignments', 'addToCustomerGroup', 'removeFromCustomerGroup'],
+									actionType: [
+										'setCustomerGroupAssignments',
+										'addToCustomerGroup',
+										'removeFromCustomerGroup',
+									],
 									customerGroupReferenceType: ['id'],
 								},
 							},
@@ -2672,7 +2788,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Key of the customer group',
 							displayOptions: {
 								show: {
-									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
+									actionType: [
+										'addCustomerGroupAssignment',
+										'removeCustomerGroupAssignment',
+										'setCustomerGroup',
+									],
 									customerGroupReferenceType: ['key'],
 								},
 							},
@@ -2685,7 +2805,11 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Comma-separated list of customer group keys',
 							displayOptions: {
 								show: {
-									actionType: ['setCustomerGroupAssignments', 'addToCustomerGroup', 'removeFromCustomerGroup'],
+									actionType: [
+										'setCustomerGroupAssignments',
+										'addToCustomerGroup',
+										'removeFromCustomerGroup',
+									],
 									customerGroupReferenceType: ['key'],
 								},
 							},
@@ -2705,12 +2829,19 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference customer group by key',
 								},
-						],
+							],
 							default: 'id',
 							description: 'Whether to reference the customer group by ID or key',
 							displayOptions: {
 								show: {
-									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup', 'setCustomerGroupAssignments', 'addToCustomerGroup', 'removeFromCustomerGroup'],
+									actionType: [
+										'addCustomerGroupAssignment',
+										'removeCustomerGroupAssignment',
+										'setCustomerGroup',
+										'setCustomerGroupAssignments',
+										'addToCustomerGroup',
+										'removeFromCustomerGroup',
+									],
 								},
 							},
 						},
@@ -2890,7 +3021,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							name: 'locale',
 							type: 'string',
 							default: '',
-							description: 'Locale for the customer (e.g., \'en-US\')',
+							description: "Locale for the customer (e.g., 'en-US')",
 							displayOptions: {
 								show: {
 									actionType: ['setLocale'],
@@ -3062,7 +3193,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference store by key',
 								},
-						],
+							],
 							default: 'id',
 							description: 'Whether to reference the store by ID or key',
 							displayOptions: {
@@ -3146,7 +3277,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference type by key',
 								},
-						],
+							],
 							default: 'key',
 							description: 'Whether to reference the custom type by ID or key',
 							displayOptions: {
@@ -3167,17 +3298,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
-				],
+					],
 				},
 			],
 		},
-
-
-
-
-
-
-
 
 		{
 			displayName: 'Return All',
@@ -3370,7 +3494,18 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['authenticate', 'authenticateInStore', 'query', 'queryInStore', 'headByQuery', 'headInStoreByQuery', 'createPasswordResetToken', 'createPasswordResetTokenInStore', 'createEmailToken', 'createEmailTokenInStore'],
+					operation: [
+						'authenticate',
+						'authenticateInStore',
+						'query',
+						'queryInStore',
+						'headByQuery',
+						'headInStoreByQuery',
+						'createPasswordResetToken',
+						'createPasswordResetTokenInStore',
+						'createEmailToken',
+						'createEmailTokenInStore',
+					],
 				},
 			},
 		},
@@ -3422,7 +3557,16 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: ['get', 'getByKey', 'getByEmailToken', 'getByPasswordToken', 'getInStore', 'getInStoreByKey', 'getInStoreByEmailToken', 'getInStoreByPasswordToken'],
+					operation: [
+						'get',
+						'getByKey',
+						'getByEmailToken',
+						'getByPasswordToken',
+						'getInStore',
+						'getInStoreByKey',
+						'getInStoreByEmailToken',
+						'getInStoreByPasswordToken',
+					],
 				},
 			},
 		},
