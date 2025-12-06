@@ -9,6 +9,7 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import { commercetoolsDescription } from './descriptions/Commercetools.description';
 import { executeCategoryOperation } from './operations/category.operations';
+import { executeCustomerOperation } from './operations/customer.operations';
 import { executeProductOperation } from './operations/product.operations';
 
 export class Commercetools implements INodeType {
@@ -19,6 +20,11 @@ export class Commercetools implements INodeType {
 	};
 
 
+	/**
+	 * Executes the Commercetools node operations including product queries,
+	 * customer management, and category operations.
+	 * Supports multiple resources with comprehensive CRUD operations.
+	 */
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
@@ -54,6 +60,13 @@ export class Commercetools implements INodeType {
 						operation,
 						itemIndex,
 						baseUrl,
+					});
+				} else if (resource === 'customer') {
+					results = await executeCustomerOperation.call(this, {
+						operation,
+						itemIndex,
+						baseUrl,
+						items,
 					});
 				} else {
 					throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`, {
