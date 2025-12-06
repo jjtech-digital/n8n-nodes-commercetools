@@ -73,6 +73,239 @@ Below are the main configuration options and parameters available for the Commer
 - **binaryPropertyName**: Name of the binary property containing the image.
 - **additionalFieldsUpload**: Optional fields (variantId, sku, staged, filename, externalUrl, label, customParameters).
 
+
+## Customer Operation-Specific Parameters
+
+### Authenticate Customer
+
+* **email**: Customer's email.
+* **password**: Customer password.
+
+### Authenticate Customer in Store
+
+* **storeKey**: Key of the store.
+* **email**: Customer email.
+* **password**: Customer password.
+
+
+### Change Customer Password
+
+* **customerId**: ID of the customer.
+* **version**: Customer version.
+* **PasswordToken**: PasswordToken to authenticate.
+* **newPassword**: New password.
+
+### Change Customer Password in Store
+
+* **storeKey**: Store key.
+* **customerId**: ID of the customer.
+* **version**: Customer version.
+* **PasswordToken**: PasswordToken to authenticate.
+* **newPassword**: New password.
+
+### Check if Customer Exists
+
+* **customerId**: Customer ID.
+
+### Check if Customer Exists by Key
+
+* **customerKey**: Customer key.
+
+### Check if Any Customer Matches the Query
+
+* **where**: Predicate expression.
+* **additionalFieldsCheckQuery**: Optional parameters (store projection, expand).
+
+### Check if Customer Exists in Store
+
+* **storeKey**: Store key.
+* **customerId**: Customer ID.
+
+### Check if Customer Exists in Store by Key
+
+* **storeKey**: Store key.
+* **customerKey**: Customer key.
+
+### Check if Any Customer Matches the Query in Store
+
+* **storeKey**: Store key.
+* **where**: Predicate filter.
+* **additionalFieldsCheckQueryStore**: Optional parameters.
+
+### Create Customer
+
+* **customerDraft**: Customer JSON object (email, firstName, lastName, password, custom, etc.).
+* **additionalFieldsCreate**: Optional fields (expand, localeProjection, etc.).
+
+### Create Email Verification Token
+
+* **id**: Customer ID.
+* **version**: Customer version.
+
+### Create Email Verification Token in Store
+
+* **storeKey**: Store key.
+* **id**: Customer ID.
+* **version**: Customer version.
+* **ttlMinutes**: Optional.
+
+### Create Customer in Store
+
+* **storeKey**: Store key.
+* **customerDraft**: Customer draft JSON.
+* **additionalFieldsCreateStore**: Optional fields.
+
+
+### Create Password Reset Token
+
+* **email**: Customer email.
+
+### Create Password Reset Token in Store
+
+* **storeKey**: Store key.
+* **email**: Customer email.
+
+
+### Delete Customer
+
+* **customerId**: ID of the customer.
+* **version**: Version of the customer.
+
+### Delete Customer by Key
+
+* **customerKey**: Key of the customer.
+* **version**: Version.
+* **additionalFieldsDeleteKey**: Optional.
+
+### Delete Customer in Store
+
+* **storeKey**: Store key.
+* **customerId**: Customer ID.
+* **version**: Version.
+
+### Delete Customer in Store by Key
+
+* **storeKey**: Store key.
+* **customerKey**: Customer key.
+* **version**: Version.
+
+### Get Customer
+
+* **customerId**: Customer ID.
+* **additionalFieldsGet**: Optional fields (expand, localeProjection).
+
+### Get Customer By Email Token
+
+* **emailToken**: Token value.
+* **additionalFieldsGetToken**: Optional.
+
+### Get Customer By Key
+
+* **customerKey**: Customer key.
+* **additionalFieldsGetKey**: Optional.
+
+### Get Customer By Password Token
+
+* **passwordToken**: Token value.
+* **additionalFieldsGetPassToken**: Optional.
+
+### Get Customer in Store
+
+* **storeKey**: Store key.
+* **customerId**: Customer ID.
+* **additionalFieldsGetStore**: Optional.
+
+### Get Customer in Store by Email Token
+
+* **storeKey**: Store key.
+* **emailToken**: Token value.
+* **additionalFieldsGetStoreEmailToken**: Optional.
+
+### Get Customer in Store by Key
+
+* **storeKey**: Store key.
+* **customerKey**: Customer key.
+* **additionalFieldsGetStoreKey**: Optional.
+
+### Get Customer in Store by Password Token
+
+* **storeKey**: Store key.
+* **passwordToken**: Token value.
+* **additionalFieldsGetStorePassToken**: Optional.
+
+### Query Customers
+
+* **where**: Predicate expression.
+* **limit**: Number of results.
+* **offset**: Offset for pagination.
+* **sort**: Sorting expressions.
+* **additionalFieldsQuery**: Optional fields.
+
+### Query Customers in Store
+
+* **storeKey**: Store key.
+* **where**: Predicate expression.
+* **limit**: Number of results.
+* **offset**: Pagination offset.
+* **sort**: Sorting expression.
+* **additionalFieldsQueryStore**: Optional.
+
+
+### Reset Customer Password
+
+* **tokenValue**: Password reset token.
+* **newPassword**: New password.
+* **additionalFieldsResetPwd**: Optional.
+
+### Reset Customer Password in Store
+
+* **storeKey**: Store key.
+* **tokenValue**: Token.
+* **newPassword**: New password.
+* **additionalFieldsResetPwdStore**: Optional.
+
+
+### Update Customer
+
+* **customerId**: Customer ID.
+* **version**: Customer version.
+* **actions**: Array of update actions Array.
+* **additionalFieldsUpdate**: Optional (expand).
+
+### Update Customer by Key
+
+* **customerKey**: Customer key.
+* **version**: Version.
+* **actions**: Update actions Array.
+* **additionalFieldsUpdateKey**: Optional.
+
+### Update Customer in Store
+
+* **storeKey**: Store key.
+* **customerId**: Customer ID.
+* **version**: Version.
+* **actions**: Update actions array.
+* **additionalFieldsUpdateStore**: Optional.
+
+### Update Customer in Store by Key
+
+* **storeKey**: Store key.
+* **customerKey**: Customer key.
+* **version**: Version.
+* **actions**: Update actions.
+* **additionalFieldsUpdateStoreKey**: Optional.
+
+### Verify Customer Email
+
+* **tokenValue**: Email verification token.
+* **additionalFieldsVerify**: Optional.
+
+### Verify Customer Email in Store
+
+* **storeKey**: Store key.
+* **tokenValue**: Verification token.
+* **additionalFieldsVerifyStore**: Optional.
+
 ### Category Operation-Specific Parameters
 
 #### Create Category
