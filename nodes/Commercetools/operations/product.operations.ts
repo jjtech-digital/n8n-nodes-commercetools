@@ -234,6 +234,7 @@ export async function executeProductOperation(
 	}
 
 	if (operation === 'update' || operation === 'updateByKey') {
+
 		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsUpdate);
@@ -247,9 +248,9 @@ export async function executeProductOperation(
 
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const rawActions = this.getNodeParameter('actions', itemIndex);
-		const actionsUi = this.getNodeParameter('actionsUi', itemIndex, {}) as IDataObject;
+		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
-		const actionsFromUi = buildActionsFromUi(this, actionsUi, itemIndex);
+		const actionsFromUi = buildActionsFromUi(this, actionsUi);
 		const actions = [...actionsFromJson, ...actionsFromUi];
 
 		if (actions.length === 0) {
@@ -264,6 +265,7 @@ export async function executeProductOperation(
 			version,
 			actions,
 		};
+		
 
 		if (operation === 'update') {
 			const productId = this.getNodeParameter('productId', itemIndex) as string;
