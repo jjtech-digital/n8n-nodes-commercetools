@@ -2296,7 +2296,20 @@ export const commercetoolsDescription: INodeTypeDescription = {
 		},
 
 		{
-			displayName: 'Actions',
+			displayName: 'Actions (JSON)',
+			name: 'actions',
+			type: 'json',
+			default: '[]',
+			description: 'Update actions to apply to the resource',
+			displayOptions: {
+				show: {
+					resource: ['customer'],
+					operation: ['update', 'updateByKey'],
+				},
+			},
+		},
+		{
+			displayName: 'Actions (UI)',
 			name: 'customerActionsUi',
 			type: 'fixedCollection',
 			default: {},
