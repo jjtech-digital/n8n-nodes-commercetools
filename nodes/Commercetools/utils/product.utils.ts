@@ -16,6 +16,12 @@ export const applyCommonParameters = (
     const value = additionalFields[fieldName];
     if (Array.isArray(value) && value.length) {
       qs[queryName] = value;
+		} else if (typeof value === 'string' && value.trim()) {
+			
+			const arrayValue = value.split(',').map(item => item.trim()).filter(item => item);
+			if (arrayValue.length) {
+				qs[queryName] = arrayValue;
+			}
     }
   };
 
