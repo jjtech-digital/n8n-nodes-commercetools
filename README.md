@@ -276,7 +276,7 @@ Below are the main configuration options and parameters available for the Commer
 
 * **customerKey**: Customer key.
 * **version**: Version.
-* **actions**: Update actions Array.
+* **actions**: Update actions array.
 * **additionalFieldsUpdateKey**: Optional.
 
 ### Update Customer in Store
