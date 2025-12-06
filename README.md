@@ -269,7 +269,7 @@ Below are the main configuration options and parameters available for the Commer
 
 * **customerId**: Customer ID.
 * **version**: Customer version.
-* **actions**: Array of update actions Array.
+* **actions**: Array of update actions.
 * **additionalFieldsUpdate**: Optional (expand).
 
 ### Update Customer by Key
