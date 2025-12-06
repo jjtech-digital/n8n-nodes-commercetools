@@ -70,9 +70,9 @@ export const applyCommonParameters = (
  * Recursively transforms any property named 'name', 'description', 'slug', etc. containing a localizedField array into a locale-keyed object.
  */
 export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
-  function transform(value: any): any {
+	function transform(value: IDataObject | IDataObject[]): IDataObject | IDataObject[] {
     if (Array.isArray(value)) {
-      return value.map((entry) => (entry && typeof entry === 'object' ? transform(entry) : entry));
+		return value.map((entry) => (entry && typeof entry === 'object' ? transform(entry) : entry)) as IDataObject | IDataObject[];
     }
 
     if (value && typeof value === 'object') {
@@ -98,7 +98,7 @@ export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
             newObj[key] = currentValue;
           }
         } else {
-          newObj[key] = transform(currentValue);
+			newObj[key] = transform(currentValue as IDataObject | IDataObject[]);
         }
       }
       return newObj;
