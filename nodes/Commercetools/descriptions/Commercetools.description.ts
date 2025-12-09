@@ -4118,7 +4118,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the address',
 							displayOptions: {
 								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType'],
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
 									addressReferenceType: ['id'],
 								},
 							},
@@ -4131,7 +4131,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Key of the address',
 							displayOptions: {
 								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType'],
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
 									addressReferenceType: ['key'],
 								},
 							},
@@ -4156,7 +4156,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Whether to reference the address by ID or key',
 							displayOptions: {
 								show: {
-									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType'],
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType', 'setCustomFieldInAddress', 'setCustomTypeInAddress'],
 								},
 							},
 						},
