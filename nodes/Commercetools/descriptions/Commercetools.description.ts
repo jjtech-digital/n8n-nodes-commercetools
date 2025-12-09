@@ -11,7 +11,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 	icon: 'file:Commercetools.svg',
 	...nodeGroup,
 	version: 1,
-	description: 'Interact with the Commercetools Products, Categories, and Customers API',
+		description: 'Interact with the Commercetools Products, Categories, and Customers API',
 	defaults: {
 		name: 'Commercetools',
 	},
@@ -477,13 +477,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['product'],
-					operation: [
-						'getByKey',
-						'updateByKey',
-						'deleteByKey',
-						'headByKey',
-						'querySelectionsByKey',
-					],
+					operation: ['getByKey', 'updateByKey', 'deleteByKey', 'headByKey', 'querySelectionsByKey'],
 				},
 			},
 			description: 'Unique key of the product to target',
@@ -543,8 +537,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					operation: ['create'],
 				},
 			},
-			description:
-				'JSON representation of the product draft to create, e.g. <code>{"productType":{"typeId":"product-type","ID":"..."},"name":{"en":"Product"},"slug":{"en":"product"}}</code>',
+			description: 'JSON representation of the product draft to create, e.g. <code>{"productType":{"typeId":"product-type","ID":"..."},"name":{"en":"Product"},"slug":{"en":"product"}}</code>',
 		},
 		{
 			displayName: 'Version',
@@ -578,98 +571,1703 @@ export const commercetoolsDescription: INodeTypeDescription = {
 		},
 		{
 			displayName: 'Actions (UI)',
-			name: 'actionsUi',
+			name: 'updateActions',
 			type: 'fixedCollection',
 			default: {},
 			placeholder: 'Add Action',
 			typeOptions: {
 				multipleValues: true,
 			},
-			description: 'Update actions built via UI for ease of use',
-			options: [
-				{
-					displayName: 'Action',
-					name: 'action',
-					values: [
-						{
-							displayName: 'Change Product Name',
-							name: 'changeProductName',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Change Name Action',
-							options: [
-								{
-									displayName: 'Localized Names',
-									name: 'localizedNames',
-									type: 'fixedCollection',
-									default: {},
-									typeOptions: {
-										multipleValues: true,
-									},
-									options: [
-										{
-											name: 'value',
-											displayName: 'Value',
-											values: [
-												{
-													displayName: 'Locale',
-													name: 'locale',
-													type: 'string',
-													default: '',
-													description: 'Locale identifier, e.g. "en-US"',
-												},
-												{
-													displayName: 'Name',
-													name: 'value',
-													type: 'string',
-													default: '',
-													description: 'Localized product name for the locale',
-												},
-											],
-										},
-									],
-								},
-								{
-									displayName: 'Apply to Staged Version',
-									name: 'staged',
-									type: 'boolean',
-									default: false,
-									description: 'Whether the name change should apply to the staged product data',
-								},
-							],
-						},
-						{
-							displayName: 'Set Product Key',
-							name: 'setProductKey',
-							type: 'collection',
-							default: {},
-							placeholder: 'Add Set Product Key Action',
-							options: [
-								{
-									displayName: 'New Key',
-									name: 'key',
-									type: 'string',
-									default: '',
-									description: 'New product key to set',
-								},
-								{
-									displayName: 'Remove Key',
-									name: 'removeKey',
-									type: 'boolean',
-									default: false,
-									description: 'Whether to remove the product key instead of setting a new one',
-								},
-							],
-						},
-					],
-				},
-			],
+			description: 'Define multiple update actions to perform on the product',
 			displayOptions: {
 				show: {
 					resource: ['product'],
 					operation: ['update', 'updateByKey'],
 				},
 			},
+			options: [
+				{
+					displayName: 'Action',
+					name: 'action',
+					values: [
+						// Action Type Selector
+						{
+							displayName: 'Action Type',
+							name: 'action',
+							type: 'options',
+							required: true,
+							default: 'publish',
+							// description: 'Select the type of action to perform',
+							options: [
+								{
+									name: 'Add Asset',
+									value: 'addAsset',
+								},
+								{
+									name: 'Add External Image',
+									value: 'addExternalImage',
+								},
+								{
+									name: 'Add Price',
+									value: 'addPrice',
+								},
+								{
+									name: 'Add Product Variant',
+									value: 'addVariant',
+								},
+								{
+									name: 'Add To Category',
+									value: 'addToCategory',
+								},
+								{
+									name: 'Change Asset Name',
+									value: 'changeAssetName',
+								},
+								{
+									name: 'Change Asset Order',
+									value: 'changeAssetOrder',
+								},
+								{
+									name: 'Change Master Variant',
+									value: 'changeMasterVariant',
+								},
+								{
+									name: 'Change Name',
+									value: 'changeName',
+								},
+								{
+									name: 'Change Price',
+									value: 'changePrice',
+								},
+								{
+									name: 'Change Slug',
+									value: 'changeSlug',
+								},
+								{
+									name: 'Move Image To Position',
+									value: 'moveImageToPosition',
+								},
+								{
+									name: 'Publish',
+									value: 'publish',
+								},
+								{
+									name: 'Remove Asset',
+									value: 'removeAsset',
+								},
+								{
+									name: 'Remove From Category',
+									value: 'removeFromCategory',
+								},
+								{
+									name: 'Remove Image',
+									value: 'removeImage',
+								},
+								{
+									name: 'Remove Price',
+									value: 'removePrice',
+								},
+								{
+									name: 'Remove Variant',
+									value: 'removeVariant',
+								},
+								{
+									name: 'Revert Staged Changes',
+									value: 'revertStagedChanges',
+								},
+								{
+									name: 'Revert Staged Variant Changes',
+									value: 'revertStagedVariantChanges',
+								},
+								{
+									name: 'Set Asset Custom Field',
+									value: 'setAssetCustomField',
+								},
+								{
+									name: 'Set Asset Custom Type',
+									value: 'setAssetCustomType',
+								},
+								{
+									name: 'Set Asset Description',
+									value: 'setAssetDescription',
+								},
+								{
+									name: 'Set Asset Key',
+									value: 'setAssetKey',
+								},
+								{
+									name: 'Set Asset Sources',
+									value: 'setAssetSources',
+								},
+								{
+									name: 'Set Asset Tags',
+									value: 'setAssetTags',
+								},
+								{
+									name: 'Set Attribute',
+									value: 'setAttribute',
+								},
+								{
+									name: 'Set Attribute In All Variants',
+									value: 'setAttributeInAllVariants',
+								},
+								{
+									name: 'Set Category Order Hint',
+									value: 'setCategoryOrderHint',
+								},
+								{
+									name: 'Set Description',
+									value: 'setDescription',
+								},
+								{
+									name: 'Set Image Label',
+									value: 'setImageLabel',
+								},
+								{
+									name: 'Set Key',
+									value: 'setKey',
+								},
+								{
+									name: 'Set Meta Description',
+									value: 'setMetaDescription',
+								},
+								{
+									name: 'Set Meta Keywords',
+									value: 'setMetaKeywords',
+								},
+								{
+									name: 'Set Meta Title',
+									value: 'setMetaTitle',
+								},
+								{
+									name: 'Set Price Custom Field',
+									value: 'setProductPriceCustomField',
+								},
+								{
+									name: 'Set Price Key',
+									value: 'setPriceKey',
+								},
+								{
+									name: 'Set Price Mode',
+									value: 'setPriceMode',
+								},
+								{
+									name: 'Set Prices',
+									value: 'setPrices',
+								},
+								{
+									name: 'Set Product Attribute',
+									value: 'setProductAttribute',
+								},
+								{
+									name: 'Set Product Price Custom Type',
+									value: 'setProductPriceCustomType',
+								},
+								{
+									name: 'Set Product Variant Key',
+									value: 'setProductVariantKey',
+								},
+								{
+									name: 'Set Search Keywords',
+									value: 'setSearchKeywords',
+								},
+								{
+									name: 'Set SKU',
+									value: 'setSku',
+								},
+								{
+									name: 'Set Tax Category',
+									value: 'setTaxCategory',
+								},
+								{
+									name: 'Transition State',
+									value: 'transitionState',
+								},
+								{
+									name: 'Unpublish',
+									value: 'unpublish',
+								},
+							],
+						},
+
+						{
+							displayName: 'Asset ID',
+							name: 'assetId',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'ID of the asset',
+							displayOptions: {
+								show: {
+									action: [
+										'changeAssetName',
+										'removeAsset',
+										'setAssetCustomField',
+										'setAssetCustomType',
+										'setAssetDescription',
+										'setAssetKey',
+										'setAssetSources',
+										'setAssetTags',
+									],
+								},
+							},
+						},
+
+						{
+							displayName: 'Asset Name',
+							name: 'name',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized asset names',
+							displayOptions: {
+								show: {
+									action: ['changeAssetName', 'addAsset'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Name',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Name in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Asset Order',
+							name: 'assetOrder',
+							type: 'string',
+							default: [],
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'List of asset IDs in order',
+							displayOptions: {
+								show: {
+									action: ['changeAssetOrder'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Asset Sources',
+							name: 'asset',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Sources for the asset',
+							displayOptions: {
+								show: {
+									action: ['addAsset'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Sources',
+									name: 'sources',
+									values: [
+										{
+											displayName: 'URI',
+											name: 'uri',
+											type: 'string',
+											default: '',
+											required: true,
+											description: 'URI of the asset source',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: "Asset Sources",
+							name: "sources",
+							type: "fixedCollection",
+							placeholder: "Add source",
+							default: [],
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: "List of asset sources with URI and key",
+							displayOptions: {
+								show: {
+									action: ["setAssetSources"],
+								},
+							},
+							options: [
+								{
+									displayName: "Source",
+									name: "source",
+									values: [
+										{
+											displayName: "URI",
+											name: "uri",
+											type: "string",
+											default: "",
+											placeholder: "https://www.commercetools.de/ct-logo.svg",
+										},
+
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Assets',
+							name: 'assets',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Asset',
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Assets attached to the variant',
+							displayOptions: {
+								show: {
+									action: ['addVariant'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Asset',
+									name: 'asset',
+									values: [
+										{
+											displayName: 'Key',
+											name: 'key',
+											type: 'string',
+											default: '',
+											description: 'Optional unique key for the asset',
+										},
+										{
+											displayName: 'Name',
+											name: 'name',
+											type: 'fixedCollection',
+											default: {},
+											typeOptions: {
+												multipleValues: true,
+											},
+											description: 'Localized asset name',
+											options: [
+												{
+													displayName: 'Localized Name',
+													name: 'localizedField',
+													values: [
+														{
+															displayName: 'Locale',
+															name: 'locale',
+															type: 'string',
+															default: 'en',
+														},
+														{
+															displayName: 'Value',
+															name: 'value',
+															type: 'string',
+															default: '',
+														},
+													],
+												},
+											],
+										},
+										{
+											displayName: 'Sources',
+											name: 'sources',
+											type: 'fixedCollection',
+											default: {},
+											typeOptions: {
+												multipleValues: true,
+											},
+											description: 'Sources that describe the asset content',
+											options: [
+												{
+													displayName: 'Source',
+													name: 'source',
+													values: [
+														{
+															displayName: 'URI',
+															name: 'uri',
+															type: 'string',
+															default: '',
+															required: true,
+														},
+														{
+															displayName: 'Key',
+															name: 'key',
+															type: 'string',
+															default: '',
+														},
+														{
+															displayName: 'Content Type',
+															name: 'contentType',
+															type: 'string',
+															default: '',
+														},
+														{
+															displayName: 'Dimensions',
+															name: 'dimensions',
+															type: 'fixedCollection',
+															default: {},
+															placeholder: 'Add Dimensions',
+															options: [
+																{
+																	name: 'size',
+																	displayName: 'Size',
+																	values: [
+																		{
+																			displayName: 'Width',
+																			name: 'w',
+																			type: 'number',
+																			default: 0,
+																		},
+																		{
+																			displayName: 'Height',
+																			name: 'h',
+																			type: 'number',
+																			default: 0,
+																		},
+																	],
+																},
+															],
+														},
+													],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Attribute Name',
+							name: 'name',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'Name of the attribute',
+							displayOptions: {
+								show: {
+									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Attribute Value',
+							name: 'value',
+							type: 'string',
+							default: '',
+							description: 'Value of the attribute',
+							typeOptions: {
+								alwaysOpenEditWindow: true,
+							},
+							displayOptions: {
+								show: {
+									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Attribute Value Type',
+							name: 'valueType',
+							type: 'options',
+							options: [
+								{
+									name: 'String',
+									value: 'string',
+								},
+								{
+									name: 'Number',
+									value: 'number',
+								},
+								{
+									name: 'Boolean',
+									value: 'boolean',
+								}
+							],
+							default: 'string',
+							description: 'The type of value you are entering',
+							displayOptions: {
+								show: {
+									action: ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Attributes',
+							name: 'attributes',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Attribute',
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Attributes to set on the variant',
+							displayOptions: {
+								show: {
+									action: ['addVariant'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Attribute',
+									name: 'attribute',
+									values: [
+										{
+											displayName: 'Name',
+											name: 'name',
+											type: 'string',
+											default: '',
+											required: true,
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Value assigned to this attribute',
+											typeOptions: {
+												alwaysOpenEditWindow: true,
+											},
+										},
+										{
+											displayName: 'Value Type',
+											name: 'valueType',
+											type: 'options',
+											default: 'string',
+											description: 'Choose how the value should be interpreted',
+											options: [
+												{
+													name: 'String',
+													value: 'string',
+												},
+												{
+													name: 'Number',
+													value: 'number',
+												},
+												{
+													name: 'Boolean',
+													value: 'boolean',
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Category',
+							name: 'category',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['addToCategory', 'removeFromCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'categoryDetails',
+									displayName: 'Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-ID}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Category',
+							name: 'taxCategory',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Category',
+							description: 'Category reference',
+							displayOptions: {
+								show: {
+									action: ['setTaxCategory'],
+								},
+							},
+							options: [
+								{
+									name: 'taxCategoryDetails',
+									displayName: 'Tax Category Details',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'category',
+											description: 'Type identifier (always "category")',
+										},
+										{
+											displayName: 'Category ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{category-ID}}',
+											description: 'ID of the category',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Category ID',
+							name: 'categoryId',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'ID of the category',
+							displayOptions: {
+								show: {
+									action: ['setCategoryOrderHint'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Custom Fields',
+							name: 'fields',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Custom field values',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomType', 'setProductPriceCustomType'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Field',
+									name: 'field',
+									values: [
+										{
+											displayName: 'Name',
+											name: 'name',
+											type: 'string',
+											default: '',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Custom Type',
+							name: 'type',
+							type: 'fixedCollection',
+							default: {},
+							description: 'Custom type reference',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomType', 'setProductPriceCustomType'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Type Reference',
+									name: 'typeReference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'options',
+											default: 'type',
+											options: [
+												{
+													name: 'Type',
+													value: 'type',
+												},
+											],
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											description: 'ID of the custom type',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Discounted Price',
+							name: 'discounted',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Discounted Price',
+							description: 'Discounted price details',
+							displayOptions: {
+								show: {
+									action: ['setDiscountedPrice'],
+								},
+							},
+							options: [
+								{
+									name: 'value',
+									displayName: 'Price Value',
+									values: [
+										{
+											displayName: 'Currency Code',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'USD',
+											required: true,
+											placeholder: 'EUR',
+											description: 'Currency code (e.g., USD, EUR, GBP)',
+										},
+										{
+											displayName: 'Amount in Cents',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+											required: true,
+											placeholder: '4000',
+											description: 'Discounted price amount in cents (e.g., 4000 = €40.00)',
+										},
+									],
+								},
+								{
+									name: 'discount',
+									displayName: 'Discount Reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'hidden',
+											default: 'product-discount',
+											description: 'Type identifier (always "product-discount")',
+										},
+										{
+											displayName: 'Product Discount ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '{{product-discount-ID}}',
+											description: 'ID of the product discount',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Field Name',
+							name: 'name',
+							type: 'string',
+							default: '',
+							description: 'Name of the custom field',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomField', 'setProductPriceCustomField'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Field Value',
+							name: 'value',
+							type: 'string',
+							default: '',
+							description: 'Value of the custom field',
+							displayOptions: {
+								show: {
+									action: ['setAssetCustomField', 'setProductPriceCustomField'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Force',
+							name: 'force',
+							type: 'boolean',
+							default: false,
+							// description: 'Force transition even if not valid',
+							displayOptions: {
+								show: {
+									action: ['transitionState'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Image',
+							name: 'image',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Image Details',
+							description: 'External image details',
+							displayOptions: {
+								show: {
+									action: ['addExternalImage'],
+								},
+							},
+							options: [
+								{
+									name: 'imageDetails',
+									displayName: 'Image Details',
+									values: [
+										{
+											displayName: 'URL',
+											name: 'url',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: '//myimage.jpg',
+											description: 'URL of the external image',
+										},
+										{
+											displayName: 'Label',
+											name: 'label',
+											type: 'string',
+											default: '',
+											placeholder: 'myImage',
+											description: 'Image label (optional)',
+										},
+										{
+											displayName: 'Dimensions',
+											name: 'dimensions',
+											type: 'fixedCollection',
+											default: {},
+											placeholder: 'Add Dimensions',
+											description: 'Image dimensions (optional)',
+											options: [
+												{
+													name: 'size',
+													displayName: 'Size',
+													values: [
+														{
+															displayName: 'Width',
+															name: 'w',
+															type: 'number',
+															default: 0,
+															placeholder: '1400',
+															description: 'Image width in pixels',
+														},
+														{
+															displayName: 'Height',
+															name: 'h',
+															type: 'number',
+															default: 0,
+															placeholder: '1400',
+															description: 'Image height in pixels',
+														},
+													],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Image URL',
+							name: 'imageUrl',
+							type: 'string',
+							default: '',
+							placeholder: '//image.png',
+							required: true,
+							displayOptions: {
+								show: {
+									action: ['setImageLabel', 'moveImageToPosition', 'removeImage',],
+								},
+							},
+						},
+
+						{
+							displayName: 'Images',
+							name: 'images',
+							type: 'fixedCollection',
+							default: {},
+							placeholder: 'Add Image',
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Images associated with the new variant',
+							displayOptions: {
+								show: {
+									action: ['addVariant'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Image',
+									name: 'image',
+									values: [
+										{
+											displayName: 'URL',
+											name: 'url',
+											type: 'string',
+											default: '',
+											required: true,
+											placeholder: 'https://example.com/image.jpg',
+										},
+										{
+											displayName: 'Label',
+											name: 'label',
+											type: 'string',
+											default: '',
+											description: 'Optional label for the image',
+										},
+										{
+											displayName: 'Dimensions',
+											name: 'dimensions',
+											type: 'fixedCollection',
+											default: {},
+											placeholder: 'Add Dimensions',
+											options: [
+												{
+													name: 'size',
+													displayName: 'Size',
+													values: [
+														{
+															displayName: 'Width',
+															name: 'w',
+															type: 'number',
+															default: 0,
+														},
+														{
+															displayName: 'Height',
+															name: 'h',
+															type: 'number',
+															default: 0,
+														},
+													],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Key',
+							name: 'key',
+							type: 'string',
+							default: '',
+							description: 'Unique key',
+							displayOptions: {
+								show: {
+									action: ['setKey', 'setAssetKey', 'setPriceKey', 'setProductVariantKey', 'addVariant'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Label',
+							name: 'label',
+							type: 'string',
+							default: '',
+							placeholder: 'labelString',
+							required: true,
+							displayOptions: {
+								show: {
+									action: ['setImageLabel'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Localized Descriptions',
+							name: 'description',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							displayOptions: {
+								show: {
+									action: ['setDescription', 'setAssetDescription'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Description',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Description in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Localized Names',
+							name: 'name',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized product names',
+							displayOptions: {
+								show: {
+									action: ['changeName'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Name',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Name in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Localized Slugs',
+							name: 'slug',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized product slugs',
+							displayOptions: {
+								show: {
+									action: ['changeSlug'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Slug',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+											description: 'Locale code (e.g., en, de, fr)',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+											description: 'Slug in this locale',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Meta Description',
+							name: 'metaDescription',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized meta descriptions',
+							displayOptions: {
+								show: {
+									action: ['setMetaDescription'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Value',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+						{
+							displayName: 'Meta Keywords',
+							name: 'metaKeywords',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized meta keywords',
+							displayOptions: {
+								show: {
+									action: ['setMetaKeywords'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Value',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+						{
+							displayName: 'Meta Title',
+							name: 'metaTitle',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized meta titles',
+							displayOptions: {
+								show: {
+									action: ['setMetaTitle'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Value',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Value',
+											name: 'value',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+						{
+							displayName: 'Order Hint',
+							name: 'orderHint',
+							type: 'string',
+							default: '',
+							description: 'Order hint value',
+							displayOptions: {
+								show: {
+									action: ['setCategoryOrderHint', 'addToCategory'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Position',
+							name: 'position',
+							type: 'number',
+							default: 0,
+							description: 'New position (0-based index)',
+							displayOptions: {
+								show: {
+									action: ['moveImageToPosition'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Price ID',
+							name: 'priceId',
+							type: 'string',
+							default: '',
+							required: true,
+							description: 'The ID of the price to change',
+							displayOptions: {
+								show: {
+									action: ['changePrice', 'removePrice', 'setProductPriceCustomField', 'setPriceKey', 'setProductPriceCustomType', 'setDiscountedPrice'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Price Mode',
+							name: 'priceMode',
+							type: 'options',
+							default: 'Platform',
+							displayOptions: {
+								show: {
+									action: ['setPriceMode'],
+								},
+							},
+							options: [
+								{
+									name: 'Platform',
+									value: 'Platform',
+								},
+								{
+									name: 'Embedded',
+									value: 'Embedded',
+								},
+							],
+						},
+						{
+							displayName: 'Price Value',
+							name: 'price',
+							type: 'fixedCollection',
+							default: {},
+							description: 'New price value',
+							displayOptions: {
+								show: {
+									action: ['changePrice', "addPrice"],
+								},
+							},
+							options: [
+								{
+									displayName: 'Value',
+									name: 'value',
+									values: [
+										{
+											displayName: 'Currency Code',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'EUR',
+											description: 'Currency code (e.g., EUR, USD)',
+										},
+										{
+											displayName: 'Cent Amount',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+											description: 'Price in cents (e.g., 4000 = 40.00)',
+										},
+										{
+											displayName: 'Country',
+											name: 'country',
+											type: 'string',
+											default: '',
+											description: 'Optional country code',
+
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Prices',
+							name: 'prices',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'List of prices',
+							displayOptions: {
+								show: {
+									action: ['setPrices', 'addVariant'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Price',
+									name: 'price',
+									values: [
+										{
+											displayName: 'Currency',
+											name: 'currencyCode',
+											type: 'string',
+											default: 'EUR',
+										},
+										{
+											displayName: 'Cent Amount',
+											name: 'centAmount',
+											type: 'number',
+											default: 0,
+										},
+										{
+											displayName: 'Country',
+											name: 'country',
+											type: 'string',
+											default: '',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: "Scope",
+							name: "scope",
+							type: "options",
+							default: "All",
+							description: "Scope for publish action: 'All' or specific sections like 'Prices'",
+							options: [
+								{
+									name: "All",
+									value: "All"
+								},
+								{
+									name: "Assets",
+									value: "Assets"
+								},
+								{
+									name: "Attributes",
+									value: "Attributes"
+								},
+								{
+									name: "Categories",
+									value: "Categories"
+								},
+								{
+									name: "Inventory",
+									value: "Inventory"
+								},
+								{
+									name: "Messages",
+									value: "Messages"
+								},
+								{
+									name: "Prices",
+									value: "Prices"
+								},
+								{
+									name: "TaxCategory",
+									value: "TaxCategory"
+								}
+							],
+							displayOptions: {
+								show: {
+									action: [
+										"publish"
+									]
+								}
+							},
+							typeOptions: {
+								validateInput: "={{ $json.scope === 'All' || ['Prices','Assets','Attributes','Categories','Inventory','Messages','TaxCategory'].includes($json.scope) }}"
+							}
+						},
+
+						{
+							displayName: 'Search Keywords',
+							name: 'searchKeywords',
+							type: 'fixedCollection',
+							default: {},
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'Localized search keywords',
+							displayOptions: {
+								show: {
+									action: ['setSearchKeywords'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Localized Keywords',
+									name: 'localizedField',
+									values: [
+										{
+											displayName: 'Locale',
+											name: 'locale',
+											type: 'string',
+											default: 'en',
+										},
+										{
+											displayName: 'Keywords',
+											name: 'value',
+											type: 'fixedCollection',
+											typeOptions: {
+												multipleValues: true,
+											},
+											default: {},
+											options: [
+												{
+													displayName: 'Keyword',
+													name: 'keyword',
+													values: [
+														{
+															displayName: 'Text',
+															name: 'text',
+															type: 'string',
+															default: '',
+														},
+														{
+															displayName: 'Suggest Tokenizer',
+															name: 'suggestTokenizer',
+															type: 'fixedCollection',
+															typeOptions: {
+																multipleValues: false,
+															},
+															default: {},
+															options: [
+																{
+																	displayName: 'Tokenizer',
+																	name: 'tokenizer',
+																	values: [
+																		{
+																			displayName: 'Type',
+																			name: 'type',
+																			type: 'options',
+																			options: [
+																				{ name: 'Whitespace', value: 'whitespace' },
+																				{ name: 'Custom', value: 'custom' },
+																			],
+																			default: 'whitespace',
+																		},
+																		{
+																			displayName: 'Inputs',
+																			name: 'inputs',
+																			type: 'string',
+																			typeOptions: {
+																				multipleValues: true,
+																			},
+																			default: [],
+																			displayOptions: {
+																				show: {
+																					type: ['custom'],
+																				},
+																			},
+																		},
+																	],
+																},
+															],
+														},
+													],
+												},
+											],
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'SKU of the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'changeAssetName', 'setAssetDescription', 'setAssetCustomField', 'changeAssetOrder', 'setAssetTags', 'setAssetSources', 'setAssetCustomType'],
+									identifyBy: ['sku'],
+								},
+							},
+						},
+
+						{
+							displayName: 'Staged',
+							name: 'staged',
+							type: 'boolean',
+							default: true,
+							description: 'Whether to apply changes to staged version',
+							displayOptions: {
+								show: {
+									action: ['changePrice', 'changeName', 'changeSlug', 'setDescription', 'setAttribute', 'addVariant', "setImageLabel"],
+								},
+							},
+						},
+
+						{
+							displayName: 'State',
+							name: 'state',
+							type: 'fixedCollection',
+							default: {},
+							description: 'State reference',
+							displayOptions: {
+								show: {
+									action: ['transitionState'],
+								},
+							},
+							options: [
+								{
+									displayName: 'Reference',
+									name: 'reference',
+									values: [
+										{
+											displayName: 'Type ID',
+											name: 'typeId',
+											type: 'options',
+											default: 'state',
+											options: [
+												{
+													name: 'State',
+													value: 'state',
+												},
+											],
+										},
+										{
+											displayName: 'ID',
+											name: 'id',
+											type: 'string',
+											default: '',
+											description: 'ID of the target state',
+										},
+									],
+								},
+							],
+						},
+
+						{
+							displayName: 'Tags',
+							name: 'tags',
+							type: 'string',
+							default: [],
+							typeOptions: {
+								multipleValues: true,
+							},
+							description: 'List of tags for the asset',
+							displayOptions: {
+								show: {
+									action: ['setAssetTags'],
+								},
+							},
+						},
+
+
+						{
+							displayName: 'Update Variant By',
+							name: 'identifyBy',
+							type: 'options',
+							options: [
+								{
+									name: 'Variant ID',
+									value: 'variantId',
+								},
+								{
+									name: 'SKU',
+									value: 'sku',
+								},
+							],
+							default: 'variantId',
+							description: 'Choose how to identify the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources', 'setAssetCustomType', 'revertStagedVariantChanges'],
+								},
+							},
+						},
+						{
+							displayName: 'Variant ID',
+							name: 'variantId',
+							type: 'number',
+							default: 1,
+							description: 'ID of the variant',
+							displayOptions: {
+								show: {
+									action: ['addPrice', 'changeMasterVariant', 'removeVariant', 'setSku', 'setAttribute', 'addAsset', 'setPrices', 'setProductVariantKey', 'addExternalImage', 'setImageLabel', 'moveImageToPosition', 'removeImage', 'removeAsset', 'setAssetKey', 'setAssetCustomField', 'changeAssetName', 'setAssetDescription', 'changeAssetOrder', 'setAssetTags', 'setAssetSources', 'setAssetCustomType', 'revertStagedVariantChanges'],
+									identifyBy: ['variantId'],
+								},
+							},
+						},
+						{
+							displayName: 'Variant SKU',
+							name: 'sku',
+							type: 'string',
+							default: '',
+							description: 'SKU for the new variant',
+							displayOptions: {
+								show: {
+									action: ['addVariant'],
+								},
+							},
+						},
+					],
+				},
+			],
 		},
 		{
 			displayName: 'Additional Fields',
@@ -785,7 +2383,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'sort',
 					type: 'string',
 					default: '',
-					description: 'Sorting expression for query results, e.g. <code>createdAt desc</code>',
+					description:
+						'Sorting expression for query results, e.g. <code>createdAt desc</code>',
 				},
 				{
 					displayName: 'Staged',
@@ -813,7 +2412,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'withTotal',
 					type: 'boolean',
 					default: true,
-					description: 'Whether the query should calculate the total number of matching products',
+					description:
+						'Whether the query should calculate the total number of matching products',
 				},
 			],
 			displayOptions: {
@@ -1604,8 +3204,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'withTotal',
 					type: 'boolean',
 					default: true,
-					description:
-						'Whether the query should calculate the total number of matching product selections',
+					description: 'Whether the query should calculate the total number of matching product selections',
 				},
 			],
 			displayOptions: {
@@ -1670,8 +3269,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					name: 'externalUrl',
 					type: 'string',
 					default: '',
-					description:
-						'If set, treats the image as an external URL instead of uploading binary content',
+					description: 'If set, treats the image as an external URL instead of uploading binary content',
 				},
 				{
 					displayName: 'Filename',
@@ -2096,7 +3694,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 				},
 			},
 		},
-
+		
 		{
 			displayName: 'Customer ID',
 			name: 'customerId',
@@ -2106,19 +3704,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'get',
-						'update',
-						'delete',
-						'head',
-						'changePassword',
-						'changePasswordInStore',
-						'getInStore',
-						'updateInStore',
-						'deleteInStore',
-						'headInStore',
-						'createEmailToken',
-					],
+					operation: ['get', 'update', 'delete', 'head', 'changePassword', 'changePasswordInStore', 'getInStore', 'updateInStore', 'deleteInStore', 'headInStore', 'createEmailToken'],
 				},
 			},
 			description: 'The unique ID of the customer',
@@ -2132,16 +3718,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'getByKey',
-						'updateByKey',
-						'deleteByKey',
-						'headByKey',
-						'getInStoreByKey',
-						'updateInStoreByKey',
-						'deleteInStoreByKey',
-						'headInStoreByKey',
-					],
+					operation: ['getByKey', 'updateByKey', 'deleteByKey', 'headByKey', 'getInStoreByKey', 'updateInStoreByKey', 'deleteInStoreByKey', 'headInStoreByKey'],
 				},
 			},
 			description: 'The unique key of the customer',
@@ -2155,27 +3732,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'authenticateInStore',
-						'changePasswordInStore',
-						'createInStore',
-						'getInStore',
-						'getInStoreByKey',
-						'getInStoreByEmailToken',
-						'getInStoreByPasswordToken',
-						'updateInStore',
-						'updateInStoreByKey',
-						'deleteInStore',
-						'deleteInStoreByKey',
-						'headInStore',
-						'headInStoreByKey',
-						'headInStoreByQuery',
-						'queryInStore',
-						'resetPasswordInStore',
-						'createPasswordResetTokenInStore',
-						'createEmailTokenInStore',
-						'verifyEmailInStore',
-					],
+					operation: ['authenticateInStore', 'changePasswordInStore', 'createInStore', 'getInStore', 'getInStoreByKey', 'getInStoreByEmailToken', 'getInStoreByPasswordToken', 'updateInStore', 'updateInStoreByKey', 'deleteInStore', 'deleteInStoreByKey', 'headInStore', 'headInStoreByKey', 'headInStoreByQuery', 'queryInStore', 'resetPasswordInStore', 'createPasswordResetTokenInStore', 'createEmailTokenInStore', 'verifyEmailInStore'],
 				},
 			},
 			description: 'The key of the store',
@@ -2190,12 +3747,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'authenticate',
-						'authenticateInStore',
-						'createPasswordResetToken',
-						'createPasswordResetTokenInStore',
-					],
+					operation: ['authenticate', 'authenticateInStore', 'createPasswordResetToken', 'createPasswordResetTokenInStore'],
 				},
 			},
 			description: 'The email address of the customer',
@@ -2246,12 +3798,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'changePassword',
-						'changePasswordInStore',
-						'resetPassword',
-						'resetPasswordInStore',
-					],
+					operation: ['changePassword', 'changePasswordInStore', 'resetPassword', 'resetPasswordInStore'],
 				},
 			},
 			description: 'The new password for the customer',
@@ -2319,20 +3866,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'update',
-						'updateByKey',
-						'updateInStore',
-						'updateInStoreByKey',
-						'delete',
-						'deleteByKey',
-						'deleteInStore',
-						'deleteInStoreByKey',
-						'changePassword',
-						'changePasswordInStore',
-						'createEmailToken',
-						'createEmailTokenInStore',
-					],
+					operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey', 'delete', 'deleteByKey', 'deleteInStore', 'deleteInStoreByKey', 'changePassword', 'changePasswordInStore', 'createEmailToken', 'createEmailTokenInStore'],
 				},
 			},
 			description: 'Current version of the customer for optimistic locking',
@@ -2363,8 +3897,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 					operation: ['create', 'createInStore'],
 				},
 			},
-			description:
-				'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
+			description: 'JSON representation of the customer draft to create, e.g. <code>{"email":"user@example.com","password":"secret","firstName":"John","lastName":"Doe"}</code>',
 		},
 
 		{
@@ -2487,6 +4020,10 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'setCustomerNumber',
 								},
 								{
+									name: 'Set Key',
+									value: 'setKey',
+								},
+								{
 									name: 'Set CustomerGroupAssignments',
 									value: 'setCustomerGroupAssignments',
 								},
@@ -2585,19 +4122,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the address',
 							displayOptions: {
 								show: {
-									actionType: [
-										'addBillingAddressId',
-										'addShippingAddressId',
-										'removeBillingAddressId',
-										'removeShippingAddressId',
-										'removeAddress',
-										'changeAddress',
-										'changeAddressId',
-										'setDefaultBillingAddress',
-										'setDefaultShippingAddress',
-										'setAddressCustomField',
-										'setAddressCustomType',
-									],
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType', 'setCustomTypeInAddress', 'setCustomFieldInAddress'],
 									addressReferenceType: ['id'],
 								},
 							},
@@ -2610,19 +4135,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Key of the address',
 							displayOptions: {
 								show: {
-									actionType: [
-										'addBillingAddressId',
-										'addShippingAddressId',
-										'removeBillingAddressId',
-										'removeShippingAddressId',
-										'removeAddress',
-										'changeAddress',
-										'changeAddressId',
-										'setDefaultBillingAddress',
-										'setDefaultShippingAddress',
-										'setAddressCustomField',
-										'setAddressCustomType',
-									],
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType', 'setCustomTypeInAddress', 'setCustomFieldInAddress'],
 									addressReferenceType: ['key'],
 								},
 							},
@@ -2642,24 +4155,12 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference address by key',
 								},
-							],
+						],
 							default: 'id',
 							description: 'Whether to reference the address by ID or key',
 							displayOptions: {
 								show: {
-									actionType: [
-										'addBillingAddressId',
-										'addShippingAddressId',
-										'removeBillingAddressId',
-										'removeShippingAddressId',
-										'removeAddress',
-										'changeAddress',
-										'changeAddressId',
-										'setDefaultBillingAddress',
-										'setDefaultShippingAddress',
-										'setAddressCustomField',
-										'setAddressCustomType',
-									],
+									actionType: ['addBillingAddressId', 'addShippingAddressId', 'removeBillingAddressId', 'removeShippingAddressId', 'removeAddress', 'changeAddress', 'changeAddressId', 'setDefaultBillingAddress', 'setDefaultShippingAddress', 'setAddressCustomField', 'setAddressCustomType', 'setCustomTypeInAddress', 'setCustomFieldInAddress'],
 								},
 							},
 						},
@@ -2688,7 +4189,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									name: 'External Auth',
 									value: 'ExternalAuth',
 								},
-							],
+						],
 							default: 'Password',
 							description: 'Authentication mode for the customer',
 							displayOptions: {
@@ -2754,11 +4255,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'ID of the customer group',
 							displayOptions: {
 								show: {
-									actionType: [
-										'addCustomerGroupAssignment',
-										'removeCustomerGroupAssignment',
-										'setCustomerGroup',
-									],
+									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
 									customerGroupReferenceType: ['id'],
 								},
 							},
@@ -2771,11 +4268,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Comma-separated list of customer group IDs',
 							displayOptions: {
 								show: {
-									actionType: [
-										'setCustomerGroupAssignments',
-										'addToCustomerGroup',
-										'removeFromCustomerGroup',
-									],
+									actionType: ['setCustomerGroupAssignments', 'addToCustomerGroup', 'removeFromCustomerGroup'],
 									customerGroupReferenceType: ['id'],
 								},
 							},
@@ -2788,11 +4281,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Key of the customer group',
 							displayOptions: {
 								show: {
-									actionType: [
-										'addCustomerGroupAssignment',
-										'removeCustomerGroupAssignment',
-										'setCustomerGroup',
-									],
+									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup'],
 									customerGroupReferenceType: ['key'],
 								},
 							},
@@ -2805,11 +4294,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							description: 'Comma-separated list of customer group keys',
 							displayOptions: {
 								show: {
-									actionType: [
-										'setCustomerGroupAssignments',
-										'addToCustomerGroup',
-										'removeFromCustomerGroup',
-									],
+									actionType: ['setCustomerGroupAssignments', 'addToCustomerGroup', 'removeFromCustomerGroup'],
 									customerGroupReferenceType: ['key'],
 								},
 							},
@@ -2829,19 +4314,12 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference customer group by key',
 								},
-							],
+						],
 							default: 'id',
 							description: 'Whether to reference the customer group by ID or key',
 							displayOptions: {
 								show: {
-									actionType: [
-										'addCustomerGroupAssignment',
-										'removeCustomerGroupAssignment',
-										'setCustomerGroup',
-										'setCustomerGroupAssignments',
-										'addToCustomerGroup',
-										'removeFromCustomerGroup',
-									],
+									actionType: ['addCustomerGroupAssignment', 'removeCustomerGroupAssignment', 'setCustomerGroup', 'setCustomerGroupAssignments', 'addToCustomerGroup', 'removeFromCustomerGroup'],
 								},
 							},
 						},
@@ -3017,11 +4495,23 @@ export const commercetoolsDescription: INodeTypeDescription = {
 							},
 						},
 						{
+							displayName: 'Key',
+							name: 'key',
+							type: 'string',
+							default: '',
+							description: 'Customer key for identification. If key is absent or null, the existing key, if any, will be removed.',
+							displayOptions: {
+								show: {
+									actionType: ['setKey'],
+								},
+							},
+						},
+						{
 							displayName: 'Locale',
 							name: 'locale',
 							type: 'string',
 							default: '',
-							description: "Locale for the customer (e.g., 'en-US')",
+							description: 'Locale for the customer (e.g., \'en-US\')',
 							displayOptions: {
 								show: {
 									actionType: ['setLocale'],
@@ -3193,7 +4683,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference store by key',
 								},
-							],
+						],
 							default: 'id',
 							description: 'Whether to reference the store by ID or key',
 							displayOptions: {
@@ -3277,7 +4767,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 									value: 'key',
 									description: 'Reference type by key',
 								},
-							],
+						],
 							default: 'key',
 							description: 'Whether to reference the custom type by ID or key',
 							displayOptions: {
@@ -3298,10 +4788,17 @@ export const commercetoolsDescription: INodeTypeDescription = {
 								},
 							},
 						},
-					],
+				],
 				},
 			],
 		},
+
+
+
+
+
+
+
 
 		{
 			displayName: 'Return All',
@@ -3494,18 +4991,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'authenticate',
-						'authenticateInStore',
-						'query',
-						'queryInStore',
-						'headByQuery',
-						'headInStoreByQuery',
-						'createPasswordResetToken',
-						'createPasswordResetTokenInStore',
-						'createEmailToken',
-						'createEmailTokenInStore',
-					],
+					operation: ['authenticate', 'authenticateInStore', 'query', 'queryInStore', 'headByQuery', 'headInStoreByQuery', 'createPasswordResetToken', 'createPasswordResetTokenInStore', 'createEmailToken', 'createEmailTokenInStore'],
 				},
 			},
 		},
@@ -3557,16 +5043,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
 			displayOptions: {
 				show: {
 					resource: ['customer'],
-					operation: [
-						'get',
-						'getByKey',
-						'getByEmailToken',
-						'getByPasswordToken',
-						'getInStore',
-						'getInStoreByKey',
-						'getInStoreByEmailToken',
-						'getInStoreByPasswordToken',
-					],
+					operation: ['get', 'getByKey', 'getByEmailToken', 'getByPasswordToken', 'getInStore', 'getInStoreByKey', 'getInStoreByEmailToken', 'getInStoreByPasswordToken'],
 				},
 			},
 		},
