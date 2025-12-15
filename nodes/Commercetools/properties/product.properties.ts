@@ -184,7 +184,6 @@ export const productAdditionalFields: INodeProperties[] = [
 								type: 'options',
 								required: true,
 								default: 'publish',
-								// description: 'Select the type of action to perform',
 								options: [
 									{
 										name: 'Add Asset',
@@ -1024,7 +1023,6 @@ export const productAdditionalFields: INodeProperties[] = [
 								name: 'force',
 								type: 'boolean',
 								default: false,
-								// description: 'Force transition even if not valid',
 								displayOptions: {
 									show: {
 										action: ['transitionState'],
