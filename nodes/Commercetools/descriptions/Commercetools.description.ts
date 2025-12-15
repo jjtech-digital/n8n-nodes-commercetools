@@ -1,8 +1,8 @@
 import type { INodeProperties, INodeTypeDescription } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
 
-import { productAdditionalFields, productDraftFields, productIdentificationFields, productOperations } from './product.properties';
-import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from './category.properties';
+import { productAdditionalFields, productDraftFields, productIdentificationFields, productOperations } from '../properties/product.properties';
+import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
 
 const resourceField: INodeProperties = {
 			displayName: 'Resource',
