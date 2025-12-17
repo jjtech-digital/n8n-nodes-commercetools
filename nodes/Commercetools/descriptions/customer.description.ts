@@ -1,6 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-export const customerOperations: INodeProperties = {
+export const customerOperations: INodeProperties[] = [
+	{
 	displayName: 'Operation',
 	name: 'operation',
 	type: 'options',
@@ -241,7 +242,7 @@ export const customerOperations: INodeProperties = {
 			resource: ['customer'],
 		},
 	},
-};
+}];
 
 // Complete customer field definitions extracted from main file
 export const customerFields: INodeProperties[] = [
@@ -1626,11 +1627,3 @@ export const customerFields: INodeProperties[] = [
 			},
 		},
 	];
-
-// Export an array containing all customer-related properties  
-// These will be used in the main descriptions file
-export const customerProperties: INodeProperties[] = [
-	customerOperations,
-	...customerFields,
-	// Additional customer properties will be added here
-];
