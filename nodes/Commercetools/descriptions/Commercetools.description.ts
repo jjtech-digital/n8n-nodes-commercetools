@@ -3,7 +3,7 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 
 import { productAdditionalFields, productDraftFields, productIdentificationFields, productOperations } from '../properties/product.properties';
 import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
-import { customerOperations, customerFields } from './customer.description';
+import { customerAdditionalFields, customerDraftFields, customerIdentificationFields, customerOperations } from '../properties/customer.properties';
 
 const resourceField: INodeProperties = {
 	displayName: 'Resource',
@@ -94,6 +94,8 @@ export const commercetoolsDescription: INodeTypeDescription = {
 		...sharedProductCategoryFields,
 		...productAdditionalFields,
 		...categoryAdditionalFields,
-		...customerFields,
+		...customerIdentificationFields,
+		...customerDraftFields,
+		...customerAdditionalFields,
 	],
 };
