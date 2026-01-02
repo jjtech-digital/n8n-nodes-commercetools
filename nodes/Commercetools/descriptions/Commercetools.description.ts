@@ -65,7 +65,7 @@ const nodeGroup: Pick<INodeTypeDescription, 'group'> = {
 };
 
 export const commercetoolsDescription: INodeTypeDescription = {
-	displayName: 'Commercetools',
+	displayName: 'Commercetools Actions',
 	name: 'Commercetools',
 	icon: 'file:Commercetools.svg',
 	...nodeGroup,
