@@ -45,7 +45,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 		},
 		{
 			displayName: 'AWS Client ID',
-			name: 'awsClientId',
+			name: 'awsAccessKeyId',
 			type: 'string',
 			default: '',
 			placeholder: 'your-aws-client-id',
@@ -54,7 +54,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 		},
 		{
 			displayName: 'AWS Client Secret',
-			name: 'awsClientSecret',
+			name: 'awsSecretAccessKey',
 			type: 'string',
 			typeOptions: {
 				password: true,
