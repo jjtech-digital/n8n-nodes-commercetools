@@ -149,7 +149,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         exports.handler = async (event, context) => {
             const results = [];
             const projectKey = process.env.CTP_PROJECT_KEY;
-            const webhookUrl = "https://7614d35316a2.ngrok-free.app/webhook-test/5d606908-2a19-435a-a514-af3074dcc256/commercetools-product-events";
+            const webhookUrl = process.env.WEBHOOK_URL|| "";
 
             for (const record of event.Records) {
                 try {
@@ -254,7 +254,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
                     CTP_PROJECT_KEY: 'n8n-ct-integration',
                     EVENT_TYPE: eventType,
                     QUEUE_NAME: queueName,
-                    WEBHOOK_URL: "https://7614d35316a2.ngrok-free.app/webhook-test/5d606908-2a19-435a-a514-af3074dcc256/commercetools-product-events"
+                    WEBHOOK_URL: webhookUrl || ""
                 }
             }
         };
