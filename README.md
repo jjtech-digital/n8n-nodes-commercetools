@@ -3,7 +3,16 @@
 
 # n8n-nodes-commercetools
 
-This repository provides a custom [n8n](https://n8n.io) node for integrating with [Commercetools](https://commercetools.com). It includes all required credentials, node definitions, and utilities to interact with the Commercetools API.
+This repository provides a custom [n8n](https://n8n.io) node for integrating with [Commercetools](https://commercetools.com). It includes all required credentials, node definitions, utilities to interact with the Commercetools API, and **AWS SQS integration with Lambda processing**.
+
+## Features
+
+- **Complete Commercetools Integration**: Full support for products, categories, and customers
+- **HTTP Webhooks**: Traditional webhook-based event processing
+- **AWS SQS + Lambda**: Scalable, reliable event processing with AWS infrastructure
+- **Event Types**: Product Created, Published, and Deleted events
+- **Monitoring**: CloudWatch alarms and logging for production use
+- **Multi-Environment**: Support for dev, staging, and production deployments
 
 
 ## Quick Start
@@ -16,6 +25,43 @@ npm run dev
 ```
 
 This will start n8n with the Commercetools node loaded and hot reload enabled.
+
+## AWS SQS + Lambda Integration
+
+For production-grade event processing, this node supports AWS SQS queues with Lambda function processing:
+
+### Quick Deploy
+
+```bash
+# Deploy AWS infrastructure
+cd aws
+./deploy.sh deploy
+
+# Get configuration values
+./deploy.sh outputs
+```
+
+### Configure SQS in n8n
+
+1. Add CommerceTools Trigger node to your workflow
+2. Select **"Amazon SQS"** as destination type
+3. Configure with deployment outputs:
+   - **AWS Region**: Your deployment region
+   - **SQS Queue URL**: From deployment outputs
+   - **AWS Access Key ID** and **Secret**: Your AWS credentials
+   - **Lambda Function Name**: `commercetools-integration-dev-product-processor`
+   - **CTP Project Key**: `n8n-ct-integration`
+   - **Product Events**: Select `Product Published`
+
+### Benefits of SQS Integration
+
+- **Reliability**: Messages are persisted and retried automatically
+- **Scalability**: Lambda scales automatically based on queue depth  
+- **Monitoring**: CloudWatch alarms for errors and failed messages
+- **Dead Letter Queue**: Failed messages are preserved for investigation
+- **Cost-Effective**: Pay only for what you use
+
+See [aws/README.md](aws/README.md) for detailed configuration and customization options.
 
 
 

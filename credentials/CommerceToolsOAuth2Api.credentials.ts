@@ -44,6 +44,27 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 				'Region-specific auth host; determines the OAuth token endpoint used for client credentials grants',
 		},
 		{
+			displayName: 'AWS Access Key ID',
+			name: 'awsAccessKeyId',
+			type: 'string',
+			default: '',
+			placeholder: 'AKIA...',
+			description: 'AWS Access Key ID for automatic SQS and Lambda setup',
+			required: true,
+		},
+		{
+			displayName: 'AWS Secret Access Key',
+			name: 'awsSecretAccessKey',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			placeholder: 'your-aws-secret-access-key',
+			description: 'AWS Secret Access Key for automatic SQS and Lambda setup',
+			required: true,
+		},
+		{
 			displayName: 'Grant Type',
 			name: 'grantType',
 			type: 'hidden',

@@ -43,6 +43,10 @@
 			"dist/nodes/Commercetools/CommercetoolsTrigger.node.js"
 		]
 	},
+	"dependencies": {
+		"aws-sdk": "^2.1691.0",
+		"adm-zip": "^0.5.16"
+	},
 	"devDependencies": {
 		"@n8n/node-cli": "*",
 		"eslint": "9.32.0",

@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CommerceTools Product Events Processing Infrastructure with SQS and Lambda'
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: 'commercetools-integration'
+    Description: 'Name of the project for resource naming'
+  
+  CtpProjectKey:
+    Type: String
+    Default: 'n8n-ct-integration'
+    Description: 'CommerceTools project key'
+  
+  Environment:
+    Type: String
+    Default: 'dev'
+    AllowedValues: ['dev', 'staging', 'prod']
+    Description: 'Environment name'
+
+Resources:
+  # SQS Queue for CommerceTools events
+  CommerceToolsEventQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${ProjectName}-${Environment}-product-events'
+      VisibilityTimeoutSeconds: 300  # 5 minutes for Lambda processing
+      MessageRetentionPeriod: 1209600  # 14 days
+      ReceiveMessageWaitTimeSeconds: 20  # Enable long polling
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt CommerceToolsEventDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: 'CommerceTools Product Events'
+
+  # Dead Letter Queue for failed messages
+  CommerceToolsEventDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${ProjectName}-${Environment}-product-events-dlq'
+      MessageRetentionPeriod: 1209600  # 14 days
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: 'CommerceTools Product Events DLQ'
+
+  # IAM Role for Lambda function
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-${Environment}-lambda-execution-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: SQSAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:ChangeMessageVisibility
+                Resource: 
+                  - !GetAtt CommerceToolsEventQueue.Arn
+                  - !GetAtt CommerceToolsEventDLQ.Arn
+        - PolicyName: CloudWatchMetrics
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricData
+                Resource: '*'
+        - PolicyName: SNSPublish
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref NotificationTopic
+
+  # Lambda function for processing CommerceTools events
+  ProductEventProcessor:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-${Environment}-product-processor'
+      Runtime: nodejs18.x
+      Handler: commercetools-product-processor.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          // Placeholder code - will be replaced during deployment
+          exports.handler = async (event, context) => {
+              console.log('Event:', JSON.stringify(event, null, 2));
+              return { statusCode: 200, body: 'Success' };
+          };
+      Timeout: 300  # 5 minutes
+      MemorySize: 512
+      Environment:
+        Variables:
+          CTP_PROJECT_KEY: !Ref CtpProjectKey
+          SNS_TOPIC_ARN: !Ref NotificationTopic
+          ENVIRONMENT: !Ref Environment
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: 'CommerceTools Product Event Processing'
+
+  # Event Source Mapping - Connect SQS to Lambda
+  LambdaEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt CommerceToolsEventQueue.Arn
+      FunctionName: !Ref ProductEventProcessor
+      BatchSize: 10
+      MaximumBatchingWindowInSeconds: 5
+
+  # SNS Topic for notifications
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${ProjectName}-${Environment}-product-events-notifications'
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Purpose
+          Value: 'CommerceTools Product Event Notifications'
+
+  # CloudWatch Log Group for Lambda
+  LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ProductEventProcessor}'
+      RetentionInDays: 30
+
+  # CloudWatch Alarms
+  ProcessingErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ProjectName}-${Environment}-lambda-errors'
+      AlarmDescription: 'Lambda function errors for product event processing'
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ProductEventProcessor
+      AlarmActions:
+        - !Ref NotificationTopic
+
+  DLQMessagesAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ProjectName}-${Environment}-dlq-messages'
+      AlarmDescription: 'Messages in Dead Letter Queue'
+      MetricName: ApproximateNumberOfVisibleMessages
+      Namespace: AWS/SQS
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt CommerceToolsEventDLQ.QueueName
+      AlarmActions:
+        - !Ref NotificationTopic
+
+Outputs:
+  SQSQueueUrl:
+    Description: 'URL of the SQS queue for CommerceTools events'
+    Value: !Ref CommerceToolsEventQueue
+    Export:
+      Name: !Sub '${AWS::StackName}-SQSQueueUrl'
+
+  SQSQueueArn:
+    Description: 'ARN of the SQS queue for CommerceTools events'
+    Value: !GetAtt CommerceToolsEventQueue.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-SQSQueueArn'
+
+  LambdaFunctionName:
+    Description: 'Name of the Lambda function processing events'
+    Value: !Ref ProductEventProcessor
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaFunctionName'
+
+  LambdaFunctionArn:
+    Description: 'ARN of the Lambda function processing events'
+    Value: !GetAtt ProductEventProcessor.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-LambdaFunctionArn'
+
+  SNSTopicArn:
+    Description: 'ARN of the SNS topic for notifications'
+    Value: !Ref NotificationTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-SNSTopicArn'
+
+  DLQQueueUrl:
+    Description: 'URL of the Dead Letter Queue'
+    Value: !Ref CommerceToolsEventDLQ
+    Export:
+      Name: !Sub '${AWS::StackName}-DLQQueueUrl'
