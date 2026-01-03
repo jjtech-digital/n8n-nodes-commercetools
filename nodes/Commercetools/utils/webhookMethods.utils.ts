@@ -22,22 +22,15 @@ export const triggerMethods = {
             const currentConfigHash = generateConfigHash(currentEvents, hasAWSCredentials);
 
             console.log('🔍 Checking subscription existence...');
-            console.log('   Current events:', currentEvents);
-            console.log('   AWS enabled:', hasAWSCredentials);
-            console.log('   Current config hash:', currentConfigHash);
-            console.log('   Stored config hash:', webhookData.configHash);
 
             // Check if subscription exists
             if (!webhookData.subscriptionId) {
-                console.log('❌ No subscription ID found - need to create new subscription');
                 return false;
             }
 
             // Check if configuration has changed
             if (webhookData.configHash !== currentConfigHash) {
                 console.log('⚠️  Configuration has changed - need to recreate subscription');
-                console.log('   Old config:', webhookData.configHash);
-                console.log('   New config:', currentConfigHash);
 
                 // Delete old subscription from CommerceTools
                 try {
@@ -45,7 +38,6 @@ export const triggerMethods = {
                     const subscription = await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId) as IDataObject;
                     const version = subscription.version as number;
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
-                    console.log('✅ Old subscription deleted from CommerceTools');
                 } catch (error) {
                     console.error('⚠️  Error deleting old subscription:', error);
                 }
@@ -61,13 +53,9 @@ export const triggerMethods = {
             // Verify subscription still exists in CommerceTools
             try {
                 const baseUrl = await getBaseUrl.call(this);
-                const subscription = await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId) as IDataObject;
-                console.log(`✅ Subscription exists: ${webhookData.subscriptionId}`, subscription);
-                console.log(`   Events: ${JSON.stringify(currentEvents)}`);
-                console.log(`   AWS: ${hasAWSCredentials ? 'Yes' : 'No'}`);
+                await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId) as IDataObject;
                 return true;
             } catch (error) {
-                console.error('❌ Subscription not found in CommerceTools');
                 delete webhookData.subscriptionId;
                 delete webhookData.awsInfrastructure;
                 delete webhookData.configHash;
@@ -107,7 +95,6 @@ export const triggerMethods = {
 
             if (hasAWSCredentials) {
                 console.log('🔧 AWS credentials detected - creating AWS infrastructure automatically...');
-                console.log(`🔗 Lambda will send responses to: ${webhookUrl}`);
 
                 // Create AWS infrastructure for the selected event type
                 const primaryEvent = events[0];
@@ -118,11 +105,6 @@ export const triggerMethods = {
                 useAWS = true;
 
                 console.log('✅ AWS infrastructure created successfully!');
-                console.log(`📋 SQS Queue: ${awsInfrastructure.queueUrl}`);
-                console.log(`🔧 Lambda Function: ${awsInfrastructure.lambdaFunctionName}`);
-            } else {
-                console.log('📡 Using HTTP webhook (no AWS credentials provided)');
-                console.log(`🔗 Using webhook URL: ${webhookUrl}`);
             }
 
             console.log('🔗 Creating CommerceTools subscription...');
@@ -148,14 +130,9 @@ export const triggerMethods = {
             webhookData.configHash = generateConfigHash(events, hasAWSCredentials);
 
             console.log('🎉 CommerceTools trigger setup completed successfully!');
-            console.log(`📋 Subscription ID: ${subscriptionId}`);
-            console.log(`📋 Events: ${events.join(', ')}`);
-            console.log(`📋 Config Hash: ${webhookData.configHash}`);
 
             if (useAWS && awsInfrastructure) {
-                console.log('📦 Product events will be sent to SQS and processed by Lambda function');
                 console.log(`🔗 Flow: CommerceTools → SQS → Lambda → n8n Webhook`);
-                console.log(`💡 Lambda will automatically process events and send results to: ${webhookUrl}`);
 
                 // Test Lambda function with a sample event
                 console.log('🧪 Testing Lambda function...');
@@ -201,18 +178,13 @@ export const triggerMethods = {
 
                     if (lambdaResponse.StatusCode === 200) {
                         console.log('✅ Lambda test successful!');
-                        const responsePayload = JSON.parse(lambdaResponse.Payload as string);
-                        console.log('📦 Lambda response:', JSON.stringify(responsePayload, null, 2));
+                        JSON.parse(lambdaResponse.Payload as string);
                     } else {
                         console.warn('⚠️  Lambda test returned status:', lambdaResponse.StatusCode);
                     }
                 } catch (error) {
                     console.error('❌ Lambda test failed:', error);
-                    console.log('⚠️  This is not critical - Lambda will still process real events from SQS');
                 }
-            } else {
-                console.log('📦 Product events will be sent directly to HTTP webhook');
-                console.log(`🔗 Flow: CommerceTools → n8n Webhook`);
             }
 
             return true;
@@ -224,7 +196,6 @@ export const triggerMethods = {
             console.log('🗑️  Deleting CommerceTools subscription...');
 
             if (!webhookData.subscriptionId) {
-                console.log('✅ No subscription to delete');
                 return true;
             }
 

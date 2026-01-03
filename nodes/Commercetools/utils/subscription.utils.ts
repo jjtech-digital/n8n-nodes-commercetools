@@ -73,7 +73,7 @@ export async function createSubscription(
                 },
             ],
         };
-        console.log(`🔗 Creating CommerceTools subscription with SQS destination: ${awsInfrastructure.queueUrl}`);
+        console.log(`🔗 Creating CommerceTools subscription with SQS destination`);
     } else {
         // Use HTTP webhook destination
         body = {
@@ -88,7 +88,7 @@ export async function createSubscription(
                 },
             ],
         };
-        console.log(`🔗 Creating CommerceTools subscription with HTTP destination: ${webhookUrl}`);
+        console.log(`🔗 Creating CommerceTools subscription with HTTP destination`);
     }
 
     return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {

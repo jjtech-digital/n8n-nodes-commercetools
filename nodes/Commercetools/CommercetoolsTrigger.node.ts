@@ -57,22 +57,11 @@ export class CommercetoolsTrigger implements INodeType {
 	webhookMethods = triggerMethods;
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
-		const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
+		this.getWorkflowStaticData('node') as StaticSubscriptionData;
 		const req = this.getRequestObject();
 		const body = req.body;
 
 		console.log('📨 Received webhook data');
-		console.log('📋 Subscription ID:', webhookData.subscriptionId);
-		console.log('📦 Events:', webhookData.events);
-
-		if (webhookData.awsInfrastructure) {
-			console.log('🔧 AWS Infrastructure:');
-			console.log('   Queue:', webhookData.awsInfrastructure.queueUrl);
-			console.log('   Lambda:', webhookData.awsInfrastructure.lambdaFunctionName);
-			console.log('   Event Type:', webhookData.awsInfrastructure.eventType);
-		}
-
-		console.log('📦 Received payload:', JSON.stringify(body, null, 2));
 
 		// Process the data from Lambda or direct CommerceTools webhook
 		// The body will contain the processed product event from Lambda

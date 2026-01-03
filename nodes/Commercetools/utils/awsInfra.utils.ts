@@ -5,17 +5,11 @@ import { NodeOperationError } from "n8n-workflow";
 export async function createRealAWSInfrastructure(awsCredentials: any, eventType: string, webhookUrl?: string): Promise<any> {
     const AWS_REGION = 'us-east-1';
 
-    console.log('🚀 Creating REAL AWS infrastructure automatically...');
-
     // Generate unique names based on event and timestamp
     const timestamp = Date.now();
     const queueName = `commercetools-${eventType.toLowerCase()}-events-${timestamp}`;
     const lambdaName = `commercetools-${eventType.toLowerCase()}-processor-${timestamp}`;
     const roleName = `commercetools-${eventType.toLowerCase()}-lambda-role-${timestamp}`;
-
-    console.log(`🔧 Creating SQS Queue: ${queueName}`);
-    console.log(`⚡ Creating Lambda Function: ${lambdaName}`);
-    console.log(`🔐 Creating IAM Role: ${roleName}`);
 
     try {
         // Initialize AWS clients
@@ -34,10 +28,8 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const identity = await sts.getCallerIdentity().promise();
         const accountId = identity.Account;
 
-        console.log(`📋 AWS Account ID: ${accountId}`);
-
         // 1. CREATE SQS QUEUE
-        console.log('🔧 Creating SQS Queue...');
+        console.log('🔧 Creating SQS Queue...', queueName);
         const queueParams = {
             QueueName: queueName,
             Attributes: {
@@ -51,10 +43,10 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const queueUrl = queueResult.QueueUrl;
         const queueArn = `arn:aws:sqs:${AWS_REGION}:${accountId}:${queueName}`;
 
-        console.log(`✅ SQS Queue created: ${queueUrl}`);
+        console.log(`✅ SQS Queue created`);
 
         // 2. CREATE IAM ROLE FOR LAMBDA
-        console.log('🔐 Creating IAM Role for Lambda...');
+        console.log('🔐 Creating IAM Role for Lambda...', lambdaName);
         const assumeRolePolicyDocument = {
             Version: '2012-10-17',
             Statement: [
@@ -75,7 +67,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const roleResult = await iam.createRole(roleParams).promise();
         const roleArn = roleResult.Role.Arn;
 
-        console.log(`✅ IAM Role created: ${roleArn}`);
+        console.log(`✅ IAM Role created`, roleName);
 
         // Attach basic Lambda execution policy
         await iam.attachRolePolicy({
@@ -117,201 +109,125 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
 
         // Lambda function code
         const lambdaCode = `
-const https = require('https');
-const http = require('http');
+        const https = require('https');
+        const http = require('http');
 
-// Helper function to send webhook response
-function sendWebhookResponse(webhookUrl, payload) {
-    return new Promise((resolve, reject) => {
-        const data = JSON.stringify(payload);
-        const url = new URL(webhookUrl);
-        
-        const options = {
-            hostname: url.hostname,
-            port: url.port || (url.protocol === 'https:' ? 443 : 80),
-            path: url.pathname + url.search,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': data.length,
-                'User-Agent': 'CommerceTools-Lambda-Processor/1.0'
-            }
-        };
-        
-        const client = url.protocol === 'https:' ? https : http;
-        
-        const req = client.request(options, (res) => {
-            let responseData = '';
-            res.on('data', (chunk) => responseData += chunk);
-            res.on('end', () => {
-                console.log(\`✅ Webhook response sent: \${res.statusCode}\`);
-                resolve({ statusCode: res.statusCode, data: responseData });
-            });
-        });
-        
-        req.on('error', (err) => {
-            console.error('❌ Webhook error:', err);
-            reject(err);
-        });
-        
-        req.write(data);
-        req.end();
-    });
-}
-
-exports.handler = async (event, context) => {
-    console.log('🎯 Processing CommerceTools ${eventType} Events:', JSON.stringify(event, null, 2));
-    
-    const results = [];
-    const projectKey = process.env.CTP_PROJECT_KEY || 'n8n-ct-integration';
-    const webhookUrl = process.env.WEBHOOK_URL;
-    
-    console.log(\`📋 Project Key: \${projectKey}\`);
-    console.log(\`🔗 Webhook URL: \${webhookUrl ? 'Configured' : 'Not configured'}\`);
-    
-    for (const record of event.Records) {
-        try {
-            const messageBody = JSON.parse(record.body);
-            const eventType = messageBody.type;
-            const resource = messageBody.resource || {};
-            
-            console.log(\`📦 Processing \${eventType} for project: \${projectKey}\`);
-            
-            if (eventType === '${eventType}') {
-                console.log('✅ ${eventType} Event Processed Successfully!');
-                
-                // Extract product information safely
-                const productId = resource.id || 'unknown';
-                const productKey = resource.key || 'N/A';
-                const version = resource.version || 1;
-                const masterVariant = resource.masterData?.current?.masterVariant || {};
-                const sku = masterVariant.sku || 'N/A';
-                const productName = resource.masterData?.current?.name || {};
-                const categories = resource.masterData?.current?.categories || [];
-                
-                console.log(\`📦 Product ID: \${productId}\`);
-                console.log(\`🏷️  Product Key: \${productKey}\`);
-                console.log(\`🔖 SKU: \${sku}\`);
-                console.log(\`📝 Version: \${version}\`);
-                console.log(\`📂 Categories: \${categories.length}\`);
-                
-                // Prepare webhook payload
-                const webhookPayload = {
-                    eventType: eventType,
-                    timestamp: new Date().toISOString(),
-                    projectKey: projectKey,
-                    product: {
-                        id: productId,
-                        key: productKey,
-                        version: version,
-                        sku: sku,
-                        name: productName,
-                        categories: categories,
-                        masterVariant: masterVariant
-                    },
-                    rawResource: resource,
-                    source: 'CommerceTools-Lambda',
-                    processed: true,
-                    message: 'Product ${eventType.toLowerCase()} event processed successfully'
-                };
-                
-                // Send webhook response if URL is configured
-                if (webhookUrl) {
-                    try {
-                        console.log('📤 Sending webhook response to n8n...');
-                        const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
-                        console.log(\`✅ Webhook sent successfully: \${webhookResult.statusCode}\`);
-                        
-                        webhookPayload.webhookStatus = 'sent';
-                        webhookPayload.webhookResponse = {
-                            statusCode: webhookResult.statusCode,
-                            timestamp: new Date().toISOString()
-                        };
-                    } catch (webhookError) {
-                        console.error('❌ Webhook failed:', webhookError);
-                        webhookPayload.webhookStatus = 'failed';
-                        webhookPayload.webhookError = webhookError.message;
+        function sendWebhookResponse(webhookUrl, payload) {
+            return new Promise((resolve, reject) => {
+                const data = JSON.stringify(payload);
+                const url = new URL(webhookUrl);
+                const options = {
+                    hostname: url.hostname,
+                    port: url.port || (url.protocol === 'https:' ? 443 : 80),
+                    path: url.pathname + url.search,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': data.length,
+                        'User-Agent': 'CommerceTools-Lambda-Processor/1.0'
                     }
-                } else {
-                    console.log('⚠️  No webhook URL configured - skipping webhook response');
-                    webhookPayload.webhookStatus = 'skipped';
-                }
-                
-                // YOUR CUSTOM BUSINESS LOGIC HERE:
-                // - Update inventory systems
-                // - Send notifications
-                // - Trigger workflows  
-                // - Update analytics
-                // - Call external APIs
-                // - Process product data
-                
-                console.log('🔄 Processing product in business systems...');
-                
-                // Simulate some business processing
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                results.push({
-                    status: 'success',
-                    eventType: eventType,
-                    productId: productId,
-                    productKey: productKey,
-                    sku: sku,
-                    version: version,
-                    processedAt: new Date().toISOString(),
-                    projectKey: projectKey,
-                    webhookStatus: webhookPayload.webhookStatus,
-                    payload: webhookPayload
+                };
+
+                const client = url.protocol === 'https:' ? https : http;
+                const req = client.request(options, (res) => {
+                    let responseData = '';
+                    res.on('data', (chunk) => responseData += chunk);
+                    res.on('end', () => {
+                        resolve({ statusCode: res.statusCode, data: responseData });
+                    });
                 });
-                
-                console.log(\`✅ Product \${productId} processed successfully\`);
-                
-            } else {
-                console.log(\`⚠️  Unhandled event type: \${eventType}\`);
-                results.push({
-                    status: 'ignored',
-                    eventType: eventType,
-                    reason: 'Event type not configured for processing',
-                    timestamp: new Date().toISOString()
+
+                req.on('error', (err) => {
+                    reject(err);
                 });
-            }
-            
-        } catch (error) {
-            console.error('❌ Error processing record:', error);
-            results.push({
-                status: 'error',
-                error: error.message,
-                stack: error.stack,
-                record: record.body,
-                timestamp: new Date().toISOString()
+
+                req.write(data);
+                req.end();
             });
         }
-    }
-    
-    console.log(\`📊 Processing complete: \${results.length} events processed\`);
-    
-    // Final response
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify({
-            message: 'CommerceTools ${eventType} events processed successfully',
-            processedEvents: results.length,
-            successfulEvents: results.filter(r => r.status === 'success').length,
-            ignoredEvents: results.filter(r => r.status === 'ignored').length,
-            errorEvents: results.filter(r => r.status === 'error').length,
-            webhookUrl: webhookUrl ? 'configured' : 'not configured',
-            projectKey: projectKey,
-            results: results,
-            timestamp: new Date().toISOString()
-        })
-    };
-    
-    console.log('🎉 Lambda processing completed successfully!');
-    return response;
-};
+
+        exports.handler = async (event, context) => {
+            const results = [];
+            const projectKey = process.env.CTP_PROJECT_KEY;
+            const webhookUrl = "https://7614d35316a2.ngrok-free.app/webhook-test/5d606908-2a19-435a-a514-af3074dcc256/commercetools-product-events";
+
+            for (const record of event.Records) {
+                try {
+                    const messageBody = JSON.parse(record.body);
+                    const eventType = messageBody.type;
+
+                    if (eventType === '${eventType}') {
+                        // Prepare webhook payload
+                        const webhookPayload = {
+                            eventType: eventType,
+                            product: messageBody?.productProjection,
+                            source: 'CommerceTools-Lambda',
+                            processed: true,
+                            message: 'Product ${eventType.toLowerCase()} event processed successfully'
+                        };
+
+                        // Send webhook response if URL is configured
+                        if (webhookUrl) {
+                            try {
+                                const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
+
+                                webhookPayload.webhookStatus = 'sent';
+                                webhookPayload.webhookResponse = {
+                                    statusCode: webhookResult.statusCode,
+                                };
+                            } catch (webhookError) {
+                                webhookPayload.webhookStatus = 'failed';
+                                webhookPayload.webhookError = webhookError.message;
+                            }
+                        } else {
+                            webhookPayload.webhookStatus = 'skipped';
+                        }
+
+                        // Simulate some business processing
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        results.push({
+                            status: 'success',
+                            processedAt: new Date().toISOString(),
+                            projectKey: projectKey,
+                            payload: webhookPayload
+                        });
+                    } else {
+                        results.push({
+                            status: 'ignored',
+                            eventType: eventType,
+                            reason: 'Event type not configured for processing',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                } catch (error) {
+                    results.push({
+                        status: 'error',
+                        error: error.message,
+                        stack: error.stack,
+                        record: record.body,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            }
+
+            // Final response
+            const response = {
+                statusCode: 200,
+                body: JSON.stringify({
+                    message: 'CommerceTools ${eventType} events processed successfully',
+                    processedEvents: results.length,
+                    successfulEvents: results.filter(r => r.status === 'success').length,
+                    ignoredEvents: results.filter(r => r.status === 'ignored').length,
+                    errorEvents: results.filter(r => r.status === 'error').length,
+                    webhookUrl: webhookUrl ? 'configured' : 'not configured',
+                    results: results
+                })
+            };
+
+            return response;
+        };
 `;
 
-        // Create a proper ZIP file for Lambda deployment
-        console.log('📦 Creating Lambda deployment package...');
         const AdmZip = require('adm-zip');
         const zip = new AdmZip();
 
@@ -338,18 +254,10 @@ exports.handler = async (event, context) => {
                     CTP_PROJECT_KEY: 'n8n-ct-integration',
                     EVENT_TYPE: eventType,
                     QUEUE_NAME: queueName,
-                    WEBHOOK_URL: webhookUrl || ''
+                    WEBHOOK_URL: "https://7614d35316a2.ngrok-free.app/webhook-test/5d606908-2a19-435a-a514-af3074dcc256/commercetools-product-events"
                 }
             }
         };
-
-        console.log('📋 Creating Lambda function with params:', {
-            FunctionName: lambdaParams.FunctionName,
-            Runtime: lambdaParams.Runtime,
-            Handler: lambdaParams.Handler,
-            Timeout: lambdaParams.Timeout,
-            Environment: lambdaParams.Environment
-        });
 
         const lambdaResult = await lambda.createFunction(lambdaParams).promise();
 
@@ -364,7 +272,6 @@ exports.handler = async (event, context) => {
         }).promise();
 
         console.log('✅ Lambda is ACTIVE');
-        console.log(`✅ Lambda Function created: ${lambdaResult.FunctionArn}`);
 
         // 4. CREATE EVENT SOURCE MAPPING (SQS → Lambda)
         console.log('🔗 Creating Event Source Mapping (SQS → Lambda)...');
@@ -379,10 +286,6 @@ exports.handler = async (event, context) => {
 
         const mappingResult = await lambda.createEventSourceMapping(eventSourceParams).promise();
         console.log('✅ Event Source Mapping created successfully');
-        console.log(`   UUID: ${mappingResult.UUID}`);
-        console.log(`   State: ${mappingResult.State}`);
-
-        console.log('🎉 AWS Infrastructure created successfully!');
 
         return {
             queueUrl: queueUrl,
@@ -405,8 +308,6 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        console.error('❌ Error creating AWS infrastructure:', error);
-
         if (error.code) {
             console.error(`AWS Error Code: ${error.code}`);
         }
