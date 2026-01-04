@@ -59,7 +59,7 @@ export class CommercetoolsTrigger implements INodeType {
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		this.getWorkflowStaticData('node') as StaticSubscriptionData;
 		const req = this.getRequestObject();
-		const body = req.body;
+		const body = req.body as IDataObject | IDataObject[];
 
 
 		// Process the data from Lambda or direct CommerceTools webhook
