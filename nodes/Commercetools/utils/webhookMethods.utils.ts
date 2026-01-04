@@ -37,7 +37,7 @@ export const triggerMethods = {
                     const version = subscription.version as number;
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
                 } catch (error) {
-                    console.error('⚠️  Error deleting old subscription:', error);
+
                 }
 
                 // Delete old AWS infrastructure if it exists
@@ -45,7 +45,7 @@ export const triggerMethods = {
                     try {
                         await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
                     } catch (error) {
-                        console.error('⚠️  Error deleting old AWS infrastructure:', error);
+
                     }
                 }
 
@@ -177,11 +177,9 @@ export const triggerMethods = {
 
                     if (lambdaResponse.StatusCode === 200) {
                         JSON.parse(lambdaResponse.Payload as string);
-                    } else {
-                        console.warn('⚠️  Lambda test returned status:', lambdaResponse.StatusCode);
                     }
                 } catch (error) {
-                    console.error('❌ Lambda test failed:', error);
+
                 }
             }
 
@@ -209,13 +207,7 @@ export const triggerMethods = {
 
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
                 } catch (error) {
-                    const errorData = error as IDataObject;
-                    const statusCode =
-                        (errorData.statusCode as number | undefined) ??
-                        ((errorData.cause as IDataObject)?.statusCode as number | undefined);
-                    if (statusCode !== 404) {
-                        console.error('❌ Error deleting subscription:', error);
-                    }
+
                 }
             }
 
@@ -226,7 +218,7 @@ export const triggerMethods = {
                     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
                     await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
                 } catch (error) {
-                    console.error('⚠️  You may need to manually delete AWS resources in the AWS Console');
+
                 }
             }
 

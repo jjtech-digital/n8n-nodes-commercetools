@@ -307,15 +307,6 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
 
     } catch (err) {
         const error = err as Record<string, unknown>;
-        if (error.code) {
-            console.error(`AWS Error Code: ${error.code}`);
-        }
-        if (error.message) {
-            console.error(`AWS Error Message: ${error.message}`);
-        }
-        if (error.statusCode) {
-            console.error(`AWS Status Code: ${error.statusCode}`);
-        }
 
         // Check for specific AWS credential issues
         if (error.code === 'InvalidUserID.NotFound' || error.code === 'SignatureDoesNotMatch') {
@@ -364,9 +355,7 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                     UUID: infrastructure.eventSourceMappingUuid
                 }).promise();
             } catch (error) {
-                if (error.code !== 'ResourceNotFoundException') {
-                    console.error('⚠️  Error deleting Event Source Mapping:', error.message);
-                }
+                
             }
 
             // Wait for event source mapping to be fully deleted
@@ -380,9 +369,6 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                     FunctionName: infrastructure.lambdaFunctionName
                 }).promise();
             } catch (error) {
-                if (error.code !== 'ResourceNotFoundException') {
-                    console.error('⚠️  Error deleting Lambda Function:', error.message);
-                }
             }
         }
 
@@ -393,9 +379,6 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                     QueueUrl: infrastructure.queueUrl
                 }).promise();
             } catch (error) {
-                if (error.code !== 'AWS.SimpleQueueService.NonExistentQueue') {
-                    console.error('⚠️  Error deleting SQS Queue:', error.message);
-                }
             }
         }
 
@@ -411,9 +394,7 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                         PolicyName: inlinePolicyName
                     }).promise();
                 } catch (error) {
-                    if (error.code !== 'NoSuchEntity') {
-                        console.error('⚠️  Error deleting inline policy:', error.message);
-                    }
+                
                 }
 
                 // Detach managed policies
@@ -423,9 +404,7 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                         PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
                     }).promise();
                 } catch (error) {
-                    if (error.code !== 'NoSuchEntity') {
-                        console.error('⚠️  Error detaching managed policy:', error.message);
-                    }
+                    
                 }
 
                 // Delete the role
@@ -433,15 +412,12 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                     RoleName: infrastructure.iamRoleName
                 }).promise();
             } catch (error) {
-                if (error.code !== 'NoSuchEntity') {
-                    console.error('⚠️  Error deleting IAM Role:', error.message);
-                }
+                
             }
         }
 
 
     } catch (error) {
-        console.error('❌ Error during AWS infrastructure deletion:', error);
         throw new NodeOperationError(
             {} as INode,
             `Failed to delete AWS infrastructure: ${error.message || error}. You may need to manually clean up resources in the AWS Console.`
