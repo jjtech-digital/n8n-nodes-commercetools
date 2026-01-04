@@ -65,6 +65,15 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			required: true,
 		},
 		{
+			displayName: 'AWS Region',
+			name: 'awsRegion',
+			type: 'string',
+			default: 'us-east-1',
+			placeholder: 'us-east-1',
+			description: 'AWS Region for authentication',
+			required: true,
+		},
+		{
 			displayName: 'Grant Type',
 			name: 'grantType',
 			type: 'hidden',
