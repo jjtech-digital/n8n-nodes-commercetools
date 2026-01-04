@@ -8,10 +8,11 @@ import type {
 import { NodeConnectionTypes } from 'n8n-workflow';
 import { triggerProperties } from './properties/subscription.properties';
 import { triggerMethods } from './utils/webhookMethods.utils';
+import { AWSResponse } from './utils/awsInfra.utils';
 
 export type StaticSubscriptionData = IDataObject & {
 	subscriptionId?: string;
-	awsInfrastructure?: any;
+	awsInfrastructure?: AWSResponse;
 	configHash?: string;
 	events?: string[];
 };

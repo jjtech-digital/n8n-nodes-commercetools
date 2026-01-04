@@ -1,4 +1,5 @@
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from "n8n-workflow";
+import { AWSResponse } from "./awsInfra.utils";
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -35,7 +36,7 @@ export async function createSubscription(
     params: {
         baseUrl: string;
         webhookUrl?: string;
-        awsInfrastructure?: any;
+        awsInfrastructure?: AWSResponse;
         events: string[];
         useAWS: boolean;
     },

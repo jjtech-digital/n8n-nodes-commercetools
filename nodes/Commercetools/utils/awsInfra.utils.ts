@@ -1,9 +1,28 @@
 import AWS from "aws-sdk";
-import { NodeOperationError } from "n8n-workflow";
+import { INode, NodeOperationError } from "n8n-workflow";
 import AdmZip from 'adm-zip';
 
+export type AWSResponse = {
+    queueUrl?: string;
+    queueArn?: string;
+    queueName?: string;
+    lambdaFunctionName?: string;
+    lambdaFunctionArn?: string;
+    iamRoleArn?: string;
+    iamRoleName?: string;
+    eventSourceMappingUuid?: string;
+    eventType?: string;
+    region?: string;
+    accountId?: string;
+    accessKeyId?: string;
+    secretAccessKey?: string;
+    webhookUrl?: string;
+    lambdaCode?: string;
+    created?: boolean;
+    createdAt?: string;
+};
 // Real AWS SDK functions for infrastructure creation
-export async function createRealAWSInfrastructure(awsCredentials: any, eventType: string, webhookUrl?: string): Promise<any> {
+export async function createRealAWSInfrastructure(awsCredentials: Record<string, string>, eventType: string, webhookUrl?: string): Promise<AWSResponse> {
 
     // Generate unique names based on event and timestamp
     const timestamp = Date.now();
@@ -42,7 +61,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const queueUrl = queueResult.QueueUrl;
         const queueArn = `arn:aws:sqs:${awsCredentials.awsRegion}:${accountId}:${queueName}`;
 
-
         // 2. CREATE IAM ROLE FOR LAMBDA
         const assumeRolePolicyDocument = {
             Version: '2012-10-17',
@@ -63,7 +81,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
 
         const roleResult = await iam.createRole(roleParams).promise();
         const roleArn = roleResult.Role.Arn;
-
 
         // Attach basic Lambda execution policy
         await iam.attachRolePolicy({
@@ -93,7 +110,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
             PolicyName: `${roleName}-sqs-policy`,
             PolicyDocument: JSON.stringify(sqsPolicyDocument)
         }).promise();
-
 
         // Wait for role to be available
         await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds
@@ -228,7 +244,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         // Get the ZIP buffer
         const zipBuffer = zip.toBuffer();
 
-
         const lambdaParams = {
             FunctionName: lambdaName,
             Runtime: 'nodejs18.x',
@@ -251,7 +266,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
 
         const lambdaResult = await lambda.createFunction(lambdaParams).promise();
 
-
         await lambda.waitFor('functionActive', {
             FunctionName: lambdaName,
             $waiter: {
@@ -259,7 +273,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
                 maxAttempts: 12
             }
         }).promise();
-
 
         // 4. CREATE EVENT SOURCE MAPPING (SQS → Lambda)
         const eventSourceParams = {
@@ -292,7 +305,8 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
             createdAt: new Date().toISOString()
         };
 
-    } catch (error) {
+    } catch (err) {
+        const error = err as Record<string, unknown>;
         if (error.code) {
             console.error(`AWS Error Code: ${error.code}`);
         }
@@ -306,7 +320,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         // Check for specific AWS credential issues
         if (error.code === 'InvalidUserID.NotFound' || error.code === 'SignatureDoesNotMatch') {
             throw new NodeOperationError(
-                {} as any,
+                {} as INode,
                 `AWS credentials are invalid. Please check your AWS Access Key ID and Secret Access Key. Error: ${error.message}`
             );
         }
@@ -314,13 +328,13 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         // Check for permission issues
         if (error.code === 'AccessDenied' || error.code === 'UnauthorizedOperation') {
             throw new NodeOperationError(
-                {} as any,
+                {} as INode,
                 `AWS permissions denied. Please ensure your AWS credentials have permissions for SQS, Lambda, and IAM operations. Error: ${error.message}`
             );
         }
 
         throw new NodeOperationError(
-            {} as any,
+            {} as INode,
             `Failed to create AWS infrastructure: ${error.message || error}`
         );
     }
@@ -329,7 +343,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
 /**
  * Delete AWS infrastructure (Lambda, SQS, IAM Role)
  */
-export async function deleteAWSInfrastructure(awsCredentials: any, infrastructure: any): Promise<void> {
+export async function deleteAWSInfrastructure(awsCredentials: Record<string, string>, infrastructure: AWSResponse): Promise<void> {
 
     try {
         // Initialize AWS clients
@@ -429,7 +443,7 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
     } catch (error) {
         console.error('❌ Error during AWS infrastructure deletion:', error);
         throw new NodeOperationError(
-            {} as any,
+            {} as INode,
             `Failed to delete AWS infrastructure: ${error.message || error}. You may need to manually clean up resources in the AWS Console.`
         );
     }

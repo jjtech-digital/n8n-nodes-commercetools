@@ -1,7 +1,7 @@
 import { IDataObject, IHookFunctions, NodeOperationError } from "n8n-workflow";
 import { createSubscription, deleteSubscription, fetchSubscription, getBaseUrl } from "./subscription.utils";
 import AWS from "aws-sdk";
-import { createRealAWSInfrastructure, deleteAWSInfrastructure } from "./awsInfra.utils";
+import { AWSResponse, createRealAWSInfrastructure, deleteAWSInfrastructure } from "./awsInfra.utils";
 import { StaticSubscriptionData } from "../CommercetoolsTrigger.node";
 
 // Helper function to generate configuration hash
@@ -17,7 +17,7 @@ export const triggerMethods = {
             // Get current configuration
             const eventsRaw = this.getNodeParameter('productEvents', 0) as string[] | string;
             const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
-            const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
+            const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
             const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
             const currentConfigHash = generateConfigHash(currentEvents, hasAWSCredentials);
 
@@ -83,14 +83,14 @@ export const triggerMethods = {
             }
 
             // Get credentials to check if AWS is configured
-            const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
+            const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
             const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
 
             const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
             const baseUrl = await getBaseUrl.call(this);
 
             let useAWS = false;
-            let awsInfrastructure: any = null;
+            let awsInfrastructure = null as unknown as AWSResponse;
             let webhookUrl: string | undefined;
 
             // Get webhook URL first
@@ -170,7 +170,7 @@ export const triggerMethods = {
                     };
 
                     const lambdaResponse = await lambda.invoke({
-                        FunctionName: awsInfrastructure.lambdaFunctionName,
+                        FunctionName: awsInfrastructure.lambdaFunctionName as string,
                         InvocationType: 'RequestResponse',
                         Payload: JSON.stringify(testPayload)
                     }).promise();
@@ -223,7 +223,7 @@ export const triggerMethods = {
             if (webhookData.awsInfrastructure) {
 
                 try {
-                    const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
+                    const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
                     await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
                 } catch (error) {
                     console.error('⚠️  You may need to manually delete AWS resources in the AWS Console');
