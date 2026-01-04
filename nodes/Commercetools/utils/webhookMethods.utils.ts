@@ -62,7 +62,7 @@ export const triggerMethods = {
                 const baseUrl = await getBaseUrl.call(this);
                 await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId) as IDataObject;
                 return true;
-            } catch (error) {
+            } catch {
                 delete webhookData.subscriptionId;
                 delete webhookData.awsInfrastructure;
                 delete webhookData.configHash;
