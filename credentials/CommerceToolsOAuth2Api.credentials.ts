@@ -44,7 +44,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 				'Region-specific auth host; determines the OAuth token endpoint used for client credentials grants',
 		},
 		{
-			displayName: 'AWS Client ID',
+			displayName: 'AWS Client Access Key',
 			name: 'awsAccessKeyId',
 			type: 'string',
 			default: '',
