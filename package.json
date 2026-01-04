@@ -44,11 +44,12 @@
 		]
 	},
 	"dependencies": {
-		"aws-sdk": "^2.1691.0",
-		"adm-zip": "^0.5.16"
+		"adm-zip": "^0.5.16",
+		"aws-sdk": "^2.1691.0"
 	},
 	"devDependencies": {
-		"@n8n/node-cli": "*",
+		"@n8n/node-cli": "^0.17.0",
+		"@types/node": "^25.0.3",
 		"eslint": "9.32.0",
 		"prettier": "3.6.2",
 		"release-it": "^19.0.4",
