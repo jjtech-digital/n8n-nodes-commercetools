@@ -36,16 +36,16 @@ export const triggerMethods = {
                     const subscription = await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId) as IDataObject;
                     const version = subscription.version as number;
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
-                } catch (error) {
-
+                } catch {
+                    //TODO:
                 }
 
                 // Delete old AWS infrastructure if it exists
                 if (webhookData.awsInfrastructure) {
                     try {
                         await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
-                    } catch (error) {
-
+                    } catch {
+                        //TODO:
                     }
                 }
 
@@ -91,10 +91,9 @@ export const triggerMethods = {
 
             let useAWS = false;
             let awsInfrastructure = null as unknown as AWSResponse;
-            let webhookUrl: string | undefined;
 
             // Get webhook URL first
-            webhookUrl = this.getNodeWebhookUrl('default');
+            const webhookUrl = this.getNodeWebhookUrl('default');
             if (!webhookUrl) {
                 throw new NodeOperationError(this.getNode(), 'Failed to determine the webhook URL');
             }
@@ -178,8 +177,8 @@ export const triggerMethods = {
                     if (lambdaResponse.StatusCode === 200) {
                         JSON.parse(lambdaResponse.Payload as string);
                     }
-                } catch (error) {
-
+                } catch {
+                    //TODO:
                 }
             }
 
@@ -206,8 +205,8 @@ export const triggerMethods = {
                     }
 
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
-                } catch (error) {
-
+                } catch {
+                    //TODO:
                 }
             }
 
@@ -217,8 +216,8 @@ export const triggerMethods = {
                 try {
                     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
                     await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
-                } catch (error) {
-
+                } catch {
+                    //TODO:
                 }
             }
 

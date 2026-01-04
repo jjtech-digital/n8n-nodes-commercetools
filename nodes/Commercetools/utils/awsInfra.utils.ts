@@ -354,8 +354,8 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                 await lambda.deleteEventSourceMapping({
                     UUID: infrastructure.eventSourceMappingUuid
                 }).promise();
-            } catch (error) {
-                
+            } catch {
+                //TODO:
             }
 
             // Wait for event source mapping to be fully deleted
@@ -368,7 +368,8 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                 await lambda.deleteFunction({
                     FunctionName: infrastructure.lambdaFunctionName
                 }).promise();
-            } catch (error) {
+            } catch {
+                //TODO:
             }
         }
 
@@ -378,7 +379,8 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                 await sqs.deleteQueue({
                     QueueUrl: infrastructure.queueUrl
                 }).promise();
-            } catch (error) {
+            } catch {
+                //TODO:
             }
         }
 
@@ -393,8 +395,8 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                         RoleName: infrastructure.iamRoleName,
                         PolicyName: inlinePolicyName
                     }).promise();
-                } catch (error) {
-                
+                } catch {
+                    //TODO:
                 }
 
                 // Detach managed policies
@@ -403,16 +405,16 @@ export async function deleteAWSInfrastructure(awsCredentials: Record<string, str
                         RoleName: infrastructure.iamRoleName,
                         PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
                     }).promise();
-                } catch (error) {
-                    
+                } catch {
+                    //TODO:
                 }
 
                 // Delete the role
                 await iam.deleteRole({
                     RoleName: infrastructure.iamRoleName
                 }).promise();
-            } catch (error) {
-                
+            } catch {
+                //TODO:
             }
         }
 
