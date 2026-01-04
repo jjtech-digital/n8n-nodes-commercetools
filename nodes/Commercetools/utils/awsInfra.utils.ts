@@ -3,7 +3,6 @@ import { NodeOperationError } from "n8n-workflow";
 
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(awsCredentials: any, eventType: string, webhookUrl?: string): Promise<any> {
-    const AWS_REGION = process.env.awsRegion;
 
     // Generate unique names based on event and timestamp
     const timestamp = Date.now();
@@ -16,7 +15,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         AWS.config.update({
             accessKeyId: awsCredentials.awsAccessKeyId,
             secretAccessKey: awsCredentials.awsSecretAccessKey,
-            region: awsCredentials.awsRegion || 'us-east-1'
+            region: awsCredentials.awsRegion
         });
 
         const sqs = new AWS.SQS();
@@ -41,7 +40,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
 
         const queueResult = await sqs.createQueue(queueParams).promise();
         const queueUrl = queueResult.QueueUrl;
-        const queueArn = `arn:aws:sqs:${AWS_REGION}:${accountId}:${queueName}`;
+        const queueArn = `arn:aws:sqs:${awsCredentials.awsRegion}:${accountId}:${queueName}`;
 
         console.log(`✅ SQS Queue created`);
 
@@ -297,7 +296,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
             iamRoleName: roleName,
             eventSourceMappingUuid: mappingResult.UUID,
             eventType: eventType,
-            region: AWS_REGION,
+            region: awsCredentials.awsRegion,
             accountId: accountId,
             accessKeyId: awsCredentials.awsAccessKeyId,
             secretAccessKey: awsCredentials.awsSecretAccessKey,
@@ -352,7 +351,7 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
         AWS.config.update({
             accessKeyId: awsCredentials.awsAccessKeyId,
             secretAccessKey: awsCredentials.awsSecretAccessKey,
-            region: infrastructure.region || 'us-east-1'
+            region: infrastructure.region
         });
 
         const lambda = new AWS.Lambda();
