@@ -3,7 +3,7 @@ import { NodeOperationError } from "n8n-workflow";
 
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(awsCredentials: any, eventType: string, webhookUrl?: string): Promise<any> {
-    const AWS_REGION = 'us-east-1';
+    const AWS_REGION = process.env.awsRegion;
 
     // Generate unique names based on event and timestamp
     const timestamp = Date.now();
@@ -16,7 +16,7 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         AWS.config.update({
             accessKeyId: awsCredentials.awsAccessKeyId,
             secretAccessKey: awsCredentials.awsSecretAccessKey,
-            region: AWS_REGION
+            region: awsCredentials.awsRegion || 'us-east-1'
         });
 
         const sqs = new AWS.SQS();
