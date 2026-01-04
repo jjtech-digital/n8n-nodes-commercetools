@@ -61,7 +61,6 @@ export class CommercetoolsTrigger implements INodeType {
 		const req = this.getRequestObject();
 		const body = req.body;
 
-		console.log('📨 Received webhook data');
 
 		// Process the data from Lambda or direct CommerceTools webhook
 		// The body will contain the processed product event from Lambda

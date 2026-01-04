@@ -57,11 +57,9 @@ export async function createSubscription(
             destination.authenticationMode = 'Credentials';
             destination.accessKey = awsInfrastructure.accessKeyId;      // AccessKey ID
             destination.accessSecret = awsInfrastructure.secretAccessKey;  // Secret Access Key
-            console.log('🔑 Using AWS Credentials authentication for SQS subscription');
         } else {
             // For IAM role-based auth, credentials must be omitted
             destination.authenticationMode = 'IAM';
-            console.log('🔑 Using IAM authentication for SQS subscription');
         }
 
         body = {
@@ -73,7 +71,6 @@ export async function createSubscription(
                 },
             ],
         };
-        console.log(`🔗 Creating CommerceTools subscription with SQS destination`);
     } else {
         // Use HTTP webhook destination
         body = {
@@ -88,7 +85,6 @@ export async function createSubscription(
                 },
             ],
         };
-        console.log(`🔗 Creating CommerceTools subscription with HTTP destination`);
     }
 
     return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {

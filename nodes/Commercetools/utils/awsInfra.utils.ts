@@ -28,7 +28,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const accountId = identity.Account;
 
         // 1. CREATE SQS QUEUE
-        console.log('🔧 Creating SQS Queue...', queueName);
         const queueParams = {
             QueueName: queueName,
             Attributes: {
@@ -42,10 +41,8 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const queueUrl = queueResult.QueueUrl;
         const queueArn = `arn:aws:sqs:${awsCredentials.awsRegion}:${accountId}:${queueName}`;
 
-        console.log(`✅ SQS Queue created`);
 
         // 2. CREATE IAM ROLE FOR LAMBDA
-        console.log('🔐 Creating IAM Role for Lambda...', lambdaName);
         const assumeRolePolicyDocument = {
             Version: '2012-10-17',
             Statement: [
@@ -66,7 +63,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         const roleResult = await iam.createRole(roleParams).promise();
         const roleArn = roleResult.Role.Arn;
 
-        console.log(`✅ IAM Role created`, roleName);
 
         // Attach basic Lambda execution policy
         await iam.attachRolePolicy({
@@ -97,14 +93,11 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
             PolicyDocument: JSON.stringify(sqsPolicyDocument)
         }).promise();
 
-        console.log('✅ IAM Role policies attached');
 
         // Wait for role to be available
-        console.log('⏳ Waiting for IAM role to propagate...');
         await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds
 
         // 3. CREATE LAMBDA FUNCTION
-        console.log('⚡ Creating Lambda Function...');
 
         // Lambda function code
         const lambdaCode = `
@@ -236,7 +229,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         // Get the ZIP buffer
         const zipBuffer = zip.toBuffer();
 
-        console.log(`📦 Lambda package created: ${zipBuffer.length} bytes`);
 
         const lambdaParams = {
             FunctionName: lambdaName,
@@ -260,7 +252,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
 
         const lambdaResult = await lambda.createFunction(lambdaParams).promise();
 
-        console.log('⏳ Waiting for Lambda to become ACTIVE...');
 
         await lambda.waitFor('functionActive', {
             FunctionName: lambdaName,
@@ -270,11 +261,8 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
             }
         }).promise();
 
-        console.log('✅ Lambda is ACTIVE');
 
         // 4. CREATE EVENT SOURCE MAPPING (SQS → Lambda)
-        console.log('🔗 Creating Event Source Mapping (SQS → Lambda)...');
-
         const eventSourceParams = {
             EventSourceArn: queueArn,
             FunctionName: lambdaName,
@@ -284,7 +272,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         };
 
         const mappingResult = await lambda.createEventSourceMapping(eventSourceParams).promise();
-        console.log('✅ Event Source Mapping created successfully');
 
         return {
             queueUrl: queueUrl,
@@ -344,7 +331,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
  * Delete AWS infrastructure (Lambda, SQS, IAM Role)
  */
 export async function deleteAWSInfrastructure(awsCredentials: any, infrastructure: any): Promise<void> {
-    console.log('🗑️  Starting AWS infrastructure deletion...');
 
     try {
         // Initialize AWS clients
@@ -360,12 +346,10 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
 
         // 1. DELETE EVENT SOURCE MAPPING
         if (infrastructure.eventSourceMappingUuid) {
-            console.log('🔗 Deleting Event Source Mapping...');
             try {
                 await lambda.deleteEventSourceMapping({
                     UUID: infrastructure.eventSourceMappingUuid
                 }).promise();
-                console.log('✅ Event Source Mapping deleted');
             } catch (error) {
                 if (error.code !== 'ResourceNotFoundException') {
                     console.error('⚠️  Error deleting Event Source Mapping:', error.message);
@@ -373,18 +357,15 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
             }
 
             // Wait for event source mapping to be fully deleted
-            console.log('⏳ Waiting for Event Source Mapping to be deleted...');
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
 
         // 2. DELETE LAMBDA FUNCTION
         if (infrastructure.lambdaFunctionName) {
-            console.log('⚡ Deleting Lambda Function:', infrastructure.lambdaFunctionName);
             try {
                 await lambda.deleteFunction({
                     FunctionName: infrastructure.lambdaFunctionName
                 }).promise();
-                console.log('✅ Lambda Function deleted');
             } catch (error) {
                 if (error.code !== 'ResourceNotFoundException') {
                     console.error('⚠️  Error deleting Lambda Function:', error.message);
@@ -394,12 +375,10 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
 
         // 3. DELETE SQS QUEUE
         if (infrastructure.queueUrl) {
-            console.log('🔧 Deleting SQS Queue:', infrastructure.queueName);
             try {
                 await sqs.deleteQueue({
                     QueueUrl: infrastructure.queueUrl
                 }).promise();
-                console.log('✅ SQS Queue deleted');
             } catch (error) {
                 if (error.code !== 'AWS.SimpleQueueService.NonExistentQueue') {
                     console.error('⚠️  Error deleting SQS Queue:', error.message);
@@ -409,7 +388,6 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
 
         // 4. DELETE IAM ROLE POLICIES AND ROLE
         if (infrastructure.iamRoleName) {
-            console.log('🔐 Deleting IAM Role:', infrastructure.iamRoleName);
 
             try {
                 // Delete inline policies
@@ -419,7 +397,6 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
                         RoleName: infrastructure.iamRoleName,
                         PolicyName: inlinePolicyName
                     }).promise();
-                    console.log('✅ IAM inline policy deleted');
                 } catch (error) {
                     if (error.code !== 'NoSuchEntity') {
                         console.error('⚠️  Error deleting inline policy:', error.message);
@@ -432,7 +409,6 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
                         RoleName: infrastructure.iamRoleName,
                         PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
                     }).promise();
-                    console.log('✅ IAM managed policy detached');
                 } catch (error) {
                     if (error.code !== 'NoSuchEntity') {
                         console.error('⚠️  Error detaching managed policy:', error.message);
@@ -443,7 +419,6 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
                 await iam.deleteRole({
                     RoleName: infrastructure.iamRoleName
                 }).promise();
-                console.log('✅ IAM Role deleted');
             } catch (error) {
                 if (error.code !== 'NoSuchEntity') {
                     console.error('⚠️  Error deleting IAM Role:', error.message);
@@ -451,7 +426,6 @@ export async function deleteAWSInfrastructure(awsCredentials: any, infrastructur
             }
         }
 
-        console.log('🎉 AWS infrastructure deletion completed successfully!');
 
     } catch (error) {
         console.error('❌ Error during AWS infrastructure deletion:', error);

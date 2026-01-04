@@ -21,7 +21,6 @@ export const triggerMethods = {
             const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
             const currentConfigHash = generateConfigHash(currentEvents, hasAWSCredentials);
 
-            console.log('🔍 Checking subscription existence...');
 
             // Check if subscription exists
             if (!webhookData.subscriptionId) {
@@ -30,7 +29,6 @@ export const triggerMethods = {
 
             // Check if configuration has changed
             if (webhookData.configHash !== currentConfigHash) {
-                console.log('⚠️  Configuration has changed - need to recreate subscription');
 
                 // Delete old subscription from CommerceTools
                 try {
@@ -44,10 +42,8 @@ export const triggerMethods = {
 
                 // Delete old AWS infrastructure if it exists
                 if (webhookData.awsInfrastructure) {
-                    console.log('🗑️  Deleting old AWS infrastructure...');
                     try {
                         await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
-                        console.log('✅ Old AWS infrastructure deleted');
                     } catch (error) {
                         console.error('⚠️  Error deleting old AWS infrastructure:', error);
                     }
@@ -76,7 +72,6 @@ export const triggerMethods = {
         },
 
         create: async function (this: IHookFunctions): Promise<boolean> {
-            console.log('🚀 Starting CommerceTools trigger setup...');
 
             const eventsRaw = this.getNodeParameter('productEvents', 0) as string[] | string;
             const events = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
@@ -105,7 +100,6 @@ export const triggerMethods = {
             }
 
             if (hasAWSCredentials) {
-                console.log('🔧 AWS credentials detected - creating AWS infrastructure automatically...');
 
                 // Create AWS infrastructure for the selected event type
                 const primaryEvent = events[0];
@@ -115,10 +109,8 @@ export const triggerMethods = {
                 webhookData.awsInfrastructure = awsInfrastructure;
                 useAWS = true;
 
-                console.log('✅ AWS infrastructure created successfully!');
             }
 
-            console.log('🔗 Creating CommerceTools subscription...');
             const response = (await createSubscription.call(this, {
                 baseUrl,
                 webhookUrl,
@@ -140,13 +132,10 @@ export const triggerMethods = {
             webhookData.events = events;
             webhookData.configHash = generateConfigHash(events, hasAWSCredentials);
 
-            console.log('🎉 CommerceTools trigger setup completed successfully!');
 
             if (useAWS && awsInfrastructure) {
-                console.log(`🔗 Flow: CommerceTools → SQS → Lambda → n8n Webhook`);
 
                 // Test Lambda function with a sample event
-                console.log('🧪 Testing Lambda function...');
                 try {
                     AWS.config.update({
                         accessKeyId: credentials.awsAccessKeyId as string,
@@ -180,7 +169,6 @@ export const triggerMethods = {
                         ]
                     };
 
-                    console.log('📤 Sending test event to Lambda...');
                     const lambdaResponse = await lambda.invoke({
                         FunctionName: awsInfrastructure.lambdaFunctionName,
                         InvocationType: 'RequestResponse',
@@ -188,7 +176,6 @@ export const triggerMethods = {
                     }).promise();
 
                     if (lambdaResponse.StatusCode === 200) {
-                        console.log('✅ Lambda test successful!');
                         JSON.parse(lambdaResponse.Payload as string);
                     } else {
                         console.warn('⚠️  Lambda test returned status:', lambdaResponse.StatusCode);
@@ -204,7 +191,6 @@ export const triggerMethods = {
         delete: async function (this: IHookFunctions): Promise<boolean> {
             const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 
-            console.log('🗑️  Deleting CommerceTools subscription and AWS infrastructure...', webhookData);
 
             // Delete CommerceTools subscription
             if (webhookData.subscriptionId) {
@@ -222,7 +208,6 @@ export const triggerMethods = {
                     }
 
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
-                    console.log('✅ Subscription deleted from CommerceTools');
                 } catch (error) {
                     const errorData = error as IDataObject;
                     const statusCode =
@@ -236,12 +221,10 @@ export const triggerMethods = {
 
             // Delete AWS infrastructure if it exists
             if (webhookData.awsInfrastructure) {
-                console.log('🗑️  Deleting AWS infrastructure...');
 
                 try {
                     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
                     await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
-                    console.log('✅ AWS infrastructure deleted successfully');
                 } catch (error) {
                     console.error('⚠️  You may need to manually delete AWS resources in the AWS Console');
                 }
@@ -253,7 +236,6 @@ export const triggerMethods = {
             delete webhookData.configHash;
             delete webhookData.events;
 
-            console.log('✅ Cleanup completed');
             return true;
         },
     },
