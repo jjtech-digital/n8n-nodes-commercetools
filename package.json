@@ -1,63 +1,53 @@
 {
-	"name": "n8n-nodes-commercetools",
-	"version": "0.1.9",
-	"description": "Custom n8n node for Commercetools integration",
-	"license": "MIT",
-	"homepage": "",
-	"keywords": [
-		"n8n-community-node-package",
-		"commercetools",
-		"integrations",
-		"middleware",
-		"automation"
-	],
-	"author": {
-		"name": "Koteswara Rao Mudila",
-		"email": "koteswara@compose.co.in"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/jjtech-digital/n8n-nodes-commercetools.git"
-	},
-	"scripts": {
-		"build": "n8n-node build",
-		"build:watch": "tsc --watch",
-		"dev": "n8n-node dev",
-		"lint": "n8n-node lint",
-		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
-		"prepublishOnly": "n8n-node prerelease"
-	},
-	"files": [
-		"dist",
-		"icons"
-	],
-	"n8n": {
-		"n8nNodesApiVersion": 1,
-		"strict": true,
-		"credentials": [
-			"dist/credentials/CommerceToolsOAuth2Api.credentials.js"
-		],
-		"nodes": [
-			"dist/nodes/Commercetools/Commercetools.node.js",
-			"dist/nodes/Commercetools/CommercetoolsTrigger.node.js"
-		]
-	},
-	"dependencies": {
-		"adm-zip": "^0.5.16",
-		"aws-sdk": "^2.1691.0"
-	},
-	"devDependencies": {
-		"@n8n/node-cli": "^0.17.0",
-		"@types/adm-zip": "^0.5.7",
-		"@types/node": "^25.0.3",
-		"eslint": "^9.32.0",
-		"n8n-workflow": "^1.119.1",
-		"prettier": "3.6.2",
-		"release-it": "^19.0.4",
-		"typescript": "5.9.2"
-	},
-	"peerDependencies": {
-		"n8n-workflow": "*"
-	}
+  "name": "n8n-nodes-commercetools",
+  "version": "0.1.9",
+  "description": "Custom n8n node for Commercetools integration",
+  "license": "MIT",
+  "homepage": "",
+  "keywords": [
+    "n8n-community-node-package",
+    "commercetools",
+    "integrations",
+    "middleware",
+    "automation"
+  ],
+  "author": {
+    "name": "Koteswara Rao Mudila",
+    "email": "koteswara@compose.co.in"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jjtech-digital/n8n-nodes-commercetools.git"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease"
+  },
+  "files": ["dist", "icons"],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": false,
+    "credentials": ["dist/credentials/CommerceToolsOAuth2Api.credentials.js"],
+    "nodes": [
+      "dist/nodes/Commercetools/Commercetools.node.js",
+      "dist/nodes/Commercetools/CommercetoolsTrigger.node.js"
+    ]
+  },
+  "dependencies": { "adm-zip": "^0.5.16", "aws-sdk": "^2.1691.0" },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.17.0",
+    "@types/adm-zip": "^0.5.7",
+    "@types/node": "^25.0.3",
+    "eslint": "^9.32.0",
+    "n8n-workflow": "^1.119.1",
+    "prettier": "3.6.2",
+    "release-it": "^19.0.4",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": { "n8n-workflow": "*" }
 }
