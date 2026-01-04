@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 import { NodeOperationError } from "n8n-workflow";
+import AdmZip from 'adm-zip';
 
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(awsCredentials: any, eventType: string, webhookUrl?: string): Promise<any> {
@@ -219,8 +220,6 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
             return response;
         };
 `;
-
-        const AdmZip = require('adm-zip');
         const zip = new AdmZip();
 
         // Add the Lambda function code to the ZIP as index.js
