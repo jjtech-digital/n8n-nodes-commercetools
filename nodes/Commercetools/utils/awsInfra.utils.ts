@@ -340,3 +340,125 @@ export async function createRealAWSInfrastructure(awsCredentials: any, eventType
         );
     }
 }
+
+/**
+ * Delete AWS infrastructure (Lambda, SQS, IAM Role)
+ */
+export async function deleteAWSInfrastructure(awsCredentials: any, infrastructure: any): Promise<void> {
+    console.log('🗑️  Starting AWS infrastructure deletion...');
+
+    try {
+        // Initialize AWS clients
+        AWS.config.update({
+            accessKeyId: awsCredentials.awsAccessKeyId,
+            secretAccessKey: awsCredentials.awsSecretAccessKey,
+            region: infrastructure.region || 'us-east-1'
+        });
+
+        const lambda = new AWS.Lambda();
+        const sqs = new AWS.SQS();
+        const iam = new AWS.IAM();
+
+        // 1. DELETE EVENT SOURCE MAPPING
+        if (infrastructure.eventSourceMappingUuid) {
+            console.log('🔗 Deleting Event Source Mapping...');
+            try {
+                await lambda.deleteEventSourceMapping({
+                    UUID: infrastructure.eventSourceMappingUuid
+                }).promise();
+                console.log('✅ Event Source Mapping deleted');
+            } catch (error) {
+                if (error.code !== 'ResourceNotFoundException') {
+                    console.error('⚠️  Error deleting Event Source Mapping:', error.message);
+                }
+            }
+
+            // Wait for event source mapping to be fully deleted
+            console.log('⏳ Waiting for Event Source Mapping to be deleted...');
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+
+        // 2. DELETE LAMBDA FUNCTION
+        if (infrastructure.lambdaFunctionName) {
+            console.log('⚡ Deleting Lambda Function:', infrastructure.lambdaFunctionName);
+            try {
+                await lambda.deleteFunction({
+                    FunctionName: infrastructure.lambdaFunctionName
+                }).promise();
+                console.log('✅ Lambda Function deleted');
+            } catch (error) {
+                if (error.code !== 'ResourceNotFoundException') {
+                    console.error('⚠️  Error deleting Lambda Function:', error.message);
+                }
+            }
+        }
+
+        // 3. DELETE SQS QUEUE
+        if (infrastructure.queueUrl) {
+            console.log('🔧 Deleting SQS Queue:', infrastructure.queueName);
+            try {
+                await sqs.deleteQueue({
+                    QueueUrl: infrastructure.queueUrl
+                }).promise();
+                console.log('✅ SQS Queue deleted');
+            } catch (error) {
+                if (error.code !== 'AWS.SimpleQueueService.NonExistentQueue') {
+                    console.error('⚠️  Error deleting SQS Queue:', error.message);
+                }
+            }
+        }
+
+        // 4. DELETE IAM ROLE POLICIES AND ROLE
+        if (infrastructure.iamRoleName) {
+            console.log('🔐 Deleting IAM Role:', infrastructure.iamRoleName);
+
+            try {
+                // Delete inline policies
+                const inlinePolicyName = `${infrastructure.iamRoleName}-sqs-policy`;
+                try {
+                    await iam.deleteRolePolicy({
+                        RoleName: infrastructure.iamRoleName,
+                        PolicyName: inlinePolicyName
+                    }).promise();
+                    console.log('✅ IAM inline policy deleted');
+                } catch (error) {
+                    if (error.code !== 'NoSuchEntity') {
+                        console.error('⚠️  Error deleting inline policy:', error.message);
+                    }
+                }
+
+                // Detach managed policies
+                try {
+                    await iam.detachRolePolicy({
+                        RoleName: infrastructure.iamRoleName,
+                        PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+                    }).promise();
+                    console.log('✅ IAM managed policy detached');
+                } catch (error) {
+                    if (error.code !== 'NoSuchEntity') {
+                        console.error('⚠️  Error detaching managed policy:', error.message);
+                    }
+                }
+
+                // Delete the role
+                await iam.deleteRole({
+                    RoleName: infrastructure.iamRoleName
+                }).promise();
+                console.log('✅ IAM Role deleted');
+            } catch (error) {
+                if (error.code !== 'NoSuchEntity') {
+                    console.error('⚠️  Error deleting IAM Role:', error.message);
+                }
+            }
+        }
+
+        console.log('🎉 AWS infrastructure deletion completed successfully!');
+
+    } catch (error) {
+        console.error('❌ Error during AWS infrastructure deletion:', error);
+        throw new NodeOperationError(
+            {} as any,
+            `Failed to delete AWS infrastructure: ${error.message || error}. You may need to manually clean up resources in the AWS Console.`
+        );
+    }
+}

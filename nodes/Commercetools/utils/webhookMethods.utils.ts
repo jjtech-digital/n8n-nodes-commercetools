@@ -1,7 +1,7 @@
 import { IDataObject, IHookFunctions, NodeOperationError } from "n8n-workflow";
 import { createSubscription, deleteSubscription, fetchSubscription, getBaseUrl } from "./subscription.utils";
 import AWS from "aws-sdk";
-import { createRealAWSInfrastructure } from "./awsInfra.utils";
+import { createRealAWSInfrastructure, deleteAWSInfrastructure } from "./awsInfra.utils";
 import { StaticSubscriptionData } from "../CommercetoolsTrigger.node";
 
 // Helper function to generate configuration hash
@@ -40,6 +40,17 @@ export const triggerMethods = {
                     await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
                 } catch (error) {
                     console.error('⚠️  Error deleting old subscription:', error);
+                }
+
+                // Delete old AWS infrastructure if it exists
+                if (webhookData.awsInfrastructure) {
+                    console.log('🗑️  Deleting old AWS infrastructure...');
+                    try {
+                        await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
+                        console.log('✅ Old AWS infrastructure deleted');
+                    } catch (error) {
+                        console.error('⚠️  Error deleting old AWS infrastructure:', error);
+                    }
                 }
 
                 // Clear old data
@@ -193,36 +204,47 @@ export const triggerMethods = {
         delete: async function (this: IHookFunctions): Promise<boolean> {
             const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 
-            console.log('🗑️  Deleting CommerceTools subscription...');
+            console.log('🗑️  Deleting CommerceTools subscription and AWS infrastructure...', webhookData);
 
-            if (!webhookData.subscriptionId) {
-                return true;
+            // Delete CommerceTools subscription
+            if (webhookData.subscriptionId) {
+                try {
+                    const baseUrl = await getBaseUrl.call(this);
+                    const subscription = (await fetchSubscription.call(
+                        this,
+                        baseUrl,
+                        webhookData.subscriptionId,
+                    )) as IDataObject;
+                    const version = subscription.version as number | undefined;
+
+                    if (typeof version !== 'number') {
+                        throw new NodeOperationError(this.getNode(), 'Failed to resolve subscription version');
+                    }
+
+                    await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
+                    console.log('✅ Subscription deleted from CommerceTools');
+                } catch (error) {
+                    const errorData = error as IDataObject;
+                    const statusCode =
+                        (errorData.statusCode as number | undefined) ??
+                        ((errorData.cause as IDataObject)?.statusCode as number | undefined);
+                    if (statusCode !== 404) {
+                        console.error('❌ Error deleting subscription:', error);
+                    }
+                }
             }
 
-            try {
-                const baseUrl = await getBaseUrl.call(this);
-                const subscription = (await fetchSubscription.call(
-                    this,
-                    baseUrl,
-                    webhookData.subscriptionId,
-                )) as IDataObject;
-                const version = subscription.version as number | undefined;
+            // Delete AWS infrastructure if it exists
+            if (webhookData.awsInfrastructure) {
+                console.log('🗑️  Deleting AWS infrastructure...');
 
-                if (typeof version !== 'number') {
-                    throw new NodeOperationError(this.getNode(), 'Failed to resolve subscription version');
+                try {
+                    const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
+                    await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
+                    console.log('✅ AWS infrastructure deleted successfully');
+                } catch (error) {
+                    console.error('⚠️  You may need to manually delete AWS resources in the AWS Console');
                 }
-
-                await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
-                console.log('✅ Subscription deleted from CommerceTools');
-            } catch (error) {
-                const errorData = error as IDataObject;
-                const statusCode =
-                    (errorData.statusCode as number | undefined) ??
-                    ((errorData.cause as IDataObject)?.statusCode as number | undefined);
-                if (statusCode !== 404) {
-                    throw error;
-                }
-                console.log('⚠️  Subscription already deleted (404)');
             }
 
             // Clear all stored data
@@ -231,7 +253,7 @@ export const triggerMethods = {
             delete webhookData.configHash;
             delete webhookData.events;
 
-            console.log('✅ Subscription cleanup completed');
+            console.log('✅ Cleanup completed');
             return true;
         },
     },
