@@ -50,7 +50,6 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			default: '',
 			placeholder: 'your-aws-client-id',
 			description: 'AWS Client ID for authentication',
-			required: true,
 		},
 		{
 			displayName: 'AWS Client Secret',
@@ -62,7 +61,6 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			default: '',
 			placeholder: 'your-aws-client-secret',
 			description: 'AWS Client Secret for authentication',
-			required: true,
 		},
 		{
 			displayName: 'AWS Region',
@@ -71,7 +69,6 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			default: 'us-east-1',
 			placeholder: 'us-east-1',
 			description: 'AWS Region for authentication',
-			required: true,
 		},
 		{
 			displayName: 'Grant Type',
