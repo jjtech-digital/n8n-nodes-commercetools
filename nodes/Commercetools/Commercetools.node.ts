@@ -1,9 +1,9 @@
 import type {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	IDataObject,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
@@ -18,7 +18,6 @@ export class Commercetools implements INodeType {
 		icon: 'file:Commercetools.svg',
 		usableAsTool: true,
 	};
-
 
 	/**
 	 * Executes the Commercetools node operations including product queries,

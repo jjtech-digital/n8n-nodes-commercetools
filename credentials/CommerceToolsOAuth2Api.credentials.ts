@@ -44,8 +44,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 				'Region-specific auth host; determines the OAuth token endpoint used for client credentials grants',
 		},
 		{
-			displayName: 'AWS Client ID',
-			name: 'awsClientId',
+			displayName: 'AWS Client Access Key',
+			name: 'awsAccessKeyId',
 			type: 'string',
 			default: '',
 			placeholder: 'your-aws-client-id',
@@ -54,7 +54,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 		},
 		{
 			displayName: 'AWS Client Secret',
-			name: 'awsClientSecret',
+			name: 'awsSecretAccessKey',
 			type: 'string',
 			typeOptions: {
 				password: true,
@@ -62,6 +62,15 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			default: '',
 			placeholder: 'your-aws-client-secret',
 			description: 'AWS Client Secret for authentication',
+			required: true,
+		},
+		{
+			displayName: 'AWS Region',
+			name: 'awsRegion',
+			type: 'string',
+			default: 'us-east-1',
+			placeholder: 'us-east-1',
+			description: 'AWS Region for authentication',
 			required: true,
 		},
 		{
