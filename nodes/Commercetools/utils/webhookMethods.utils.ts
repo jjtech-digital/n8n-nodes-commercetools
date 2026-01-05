@@ -61,6 +61,56 @@ export const triggerMethods = {
             try {
                 const baseUrl = await getBaseUrl.call(this);
                 await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId) as IDataObject;
+
+                // If AWS infrastructure exists, verify it's still active
+                if (webhookData.awsInfrastructure) {
+                    try {
+                        AWS.config.update({
+                            accessKeyId: credentials.awsAccessKeyId,
+                            secretAccessKey: credentials.awsSecretAccessKey,
+                            region: webhookData.awsInfrastructure.region || 'us-east-1'
+                        });
+
+                        const lambda = new AWS.Lambda();
+                        const sqs = new AWS.SQS();
+
+                        // Check if Lambda function exists
+                        try {
+                            await lambda.getFunctionConfiguration({
+                                FunctionName: webhookData.awsInfrastructure.lambdaFunctionName as string
+                            }).promise();
+                        } catch {
+                            // Lambda doesn't exist, need to recreate
+                            delete webhookData.subscriptionId;
+                            delete webhookData.awsInfrastructure;
+                            delete webhookData.configHash;
+                            delete webhookData.events;
+                            return false;
+                        }
+
+                        // Check if SQS queue exists
+                        try {
+                           await sqs.getQueueAttributes({
+                                QueueUrl: webhookData.awsInfrastructure.queueUrl as string,
+                                AttributeNames: ['ApproximateNumberOfMessages']
+                            }).promise();
+                        } catch {
+                            // SQS doesn't exist, need to recreate
+                            delete webhookData.subscriptionId;
+                            delete webhookData.awsInfrastructure;
+                            delete webhookData.configHash;
+                            delete webhookData.events;
+                            return false;
+                        }
+                    } catch {
+                        // If we can't verify AWS, assume it needs recreation
+                        delete webhookData.subscriptionId;
+                        delete webhookData.awsInfrastructure;
+                        delete webhookData.configHash;
+                        delete webhookData.events;
+                        return false;
+                    }
+                }
                 return true;
             } catch {
                 delete webhookData.subscriptionId;
@@ -184,7 +234,6 @@ export const triggerMethods = {
 
             return true;
         },
-
         delete: async function (this: IHookFunctions): Promise<boolean> {
             const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 
