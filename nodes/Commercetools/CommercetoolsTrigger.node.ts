@@ -1,5 +1,6 @@
 import type {
 	IDataObject,
+	INodeProperties,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookFunctions,
@@ -15,6 +16,22 @@ export type StaticSubscriptionData = IDataObject & {
 	awsInfrastructure?: AWSResponse;
 	configHash?: string;
 	events?: string[];
+};
+
+const resourceField: INodeProperties = {
+	displayName: 'Resource',
+	name: 'resource',
+	type: 'options',
+	noDataExpression: true,
+	options: [
+		{
+			name: 'Product',
+			value: 'product',
+			description: 'Subscribe to product-related events',
+		},
+	],
+	default: 'product',
+	description: 'The CommerceTools resource type to monitor for events',
 };
 
 export class CommercetoolsTrigger implements INodeType {
@@ -53,7 +70,10 @@ export class CommercetoolsTrigger implements INodeType {
 			},
 		],
 		usableAsTool: true,
-		properties: triggerProperties,
+		properties: [
+			resourceField,
+			...triggerProperties
+		],
 	};
 
 	webhookMethods = triggerMethods;

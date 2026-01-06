@@ -2,21 +2,6 @@ import { INodeProperties } from "n8n-workflow";
 
 export const triggerProperties: INodeProperties[] = [
     {
-        displayName: 'Resource',
-        name: 'resource',
-        type: 'options',
-        noDataExpression: true,
-        options: [
-            {
-                name: 'Product',
-                value: 'product',
-                description: 'Subscribe to product-related events',
-            },
-        ],
-        default: 'product',
-        description: 'The CommerceTools resource type to monitor for events',
-    },
-    {
         displayName: 'Events',
         name: 'productEvents',
         type: 'multiOptions',
@@ -54,7 +39,7 @@ export const triggerProperties: INodeProperties[] = [
                 description: 'Triggered when a product is updated',
             },
         ],
-        default: ['ProductCreated', 'ProductPublished'],
+        default: ['ProductPublished'],
         description: 'Select which product events should trigger this workflow',
     },
 ];
