@@ -29,14 +29,14 @@ export const triggerProperties: INodeProperties[] = [
                 description: 'Triggered when a product is published',
             },
             {
-                name: 'Product Unpublished',
-                value: 'ProductUnpublished',
-                description: 'Triggered when a product is unpublished',
-            },
-            {
                 name: 'Product Slug Changed',
                 value: 'ProductSlugChanged',
                 description: 'Triggered when a product slug is updated',
+            },
+            {
+                name: 'Product Unpublished',
+                value: 'ProductUnpublished',
+                description: 'Triggered when a product is unpublished',
             },
         ],
         default: ['ProductPublished'],
