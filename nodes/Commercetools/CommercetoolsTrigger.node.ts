@@ -1,5 +1,6 @@
 import type {
 	IDataObject,
+	INodeProperties,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookFunctions,
@@ -17,6 +18,22 @@ export type StaticSubscriptionData = IDataObject & {
 	events?: string[];
 };
 
+const resourceField: INodeProperties = {
+	displayName: 'Resource',
+	name: 'resource',
+	type: 'options',
+	noDataExpression: true,
+	options: [
+		{
+			name: 'Product',
+			value: 'product',
+			description: 'Subscribe to product-related events',
+		},
+	],
+	default: 'product',
+	description: 'The CommerceTools resource type to monitor for events',
+};
+
 export class CommercetoolsTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Commercetools Trigger',
@@ -24,7 +41,7 @@ export class CommercetoolsTrigger implements INodeType {
 		icon: 'file:Commercetools.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Subscribe to Commercetools product events. Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
+		description: 'Listen for CommerceTools product events (create, publish, update, unpublish, delete). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
 		defaults: {
 			name: 'Commercetools Trigger',
 		},
@@ -53,7 +70,10 @@ export class CommercetoolsTrigger implements INodeType {
 			},
 		],
 		usableAsTool: true,
-		properties: triggerProperties,
+		properties: [
+			resourceField,
+			...triggerProperties
+		],
 	};
 
 	webhookMethods = triggerMethods;
