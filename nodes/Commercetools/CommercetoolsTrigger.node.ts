@@ -49,6 +49,7 @@ export class CommercetoolsTrigger implements INodeType {
 				httpMethod: 'POST',
 				responseMode: 'onReceived',
 				path: 'commercetools-product-events',
+				ndvHideUrl: false,
 			},
 		],
 		usableAsTool: true,
@@ -58,15 +59,29 @@ export class CommercetoolsTrigger implements INodeType {
 	webhookMethods = triggerMethods;
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
-		this.getWorkflowStaticData('node') as StaticSubscriptionData;
 		const req = this.getRequestObject();
-		const body = req.body as IDataObject | IDataObject[];
 
+		let processedBody: IDataObject;
+		try {
+			// Handle different body formats
+			if (typeof req.body === 'string') {
+				processedBody = JSON.parse(req.body);
+			} else if (typeof req.body === 'object' && req.body !== null) {
+				processedBody = req.body;
+			} else {
+				processedBody = req.body;
+			}
 
-		// Process the data from Lambda or direct CommerceTools webhook
-		// The body will contain the processed product event from Lambda
-		return {
-			workflowData: [this.helpers.returnJsonArray(body)],
-		};
+			// Return the processed data
+			return {
+				workflowData: [this.helpers.returnJsonArray(processedBody)],
+			};
+
+		} catch {
+			// Return raw body as fallback
+			return {
+				workflowData: [this.helpers.returnJsonArray(req.body as IDataObject)],
+			};
+		}
 	}
 }
