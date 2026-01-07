@@ -26,9 +26,9 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
 
     // Generate unique names based on event and timestamp
     const timestamp = Date.now();
-    const queueName = `commercetools-${eventType.toLowerCase()}-events-${timestamp}`;
-    const lambdaName = `commercetools-${eventType.toLowerCase()}-processor-${timestamp}`;
-    const roleName = `commercetools-${eventType.toLowerCase()}-lambda-role-${timestamp}`;
+    const queueName = `ct-${eventType.toLowerCase()}-events-${timestamp}`;
+    const lambdaName = `ct-${eventType.toLowerCase()}-processor-${timestamp}`;
+    const roleName = `ct-${eventType.toLowerCase()}-lambda-role-${timestamp}`;
 
     try {
         // Initialize AWS clients
