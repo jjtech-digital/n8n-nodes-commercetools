@@ -5,95 +5,163 @@ import { productAdditionalFields, productDraftFields, productIdentificationField
 import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
 import { customerOperations, customerFields } from './customer.description';
 
+// Existing resource field - UPDATED with trigger option
 const resourceField: INodeProperties = {
-	displayName: 'Resource',
-	name: 'resource',
-	type: 'options',
-	noDataExpression: true,
-	options: [
-		{
-			name: 'Product',
-			value: 'product',
-		},
-		{
-			name: 'Category',
-			value: 'category',
-		},
-		{
-			name: 'Customer',
-			value: 'customer',
-		},
-	],
-	default: 'product',
+    displayName: 'Resource',
+    name: 'resource',
+    type: 'options',
+    noDataExpression: true,
+    options: [
+        {
+            name: 'Product',
+            value: 'product',
+        },
+        {
+            name: 'Product Event',  // Trigger resource
+            value: 'productEvent',
+        },
+        {
+            name: 'Category',
+            value: 'category',
+        },
+        {
+            name: 'Customer',
+            value: 'customer',
+        },
+    ],
+    default: 'product',
+};
+
+// Product event selector (shows only for productEvent)
+const productEventField: INodeProperties = {
+    displayName: 'Event',
+    name: 'event',
+    type: 'options',
+    required: true,
+    default: 'productPublished',
+    placeholder: 'Select product event',
+    options: [
+        { name: 'Created', value: 'productCreated' },
+        { name: 'Deleted', value: 'productDeleted' },
+        { name: 'Published', value: 'productPublished' },
+        { name: 'Unpublished', value: 'productUnpublished' },
+        { name: 'Updated', value: 'productUpdated' },
+    ],
+    displayOptions: {
+        show: {
+            resource: ['productEvent'],
+        },
+    },
+    description: 'Event type to listen for via webhook. CommerceTools will POST to generated URL.',
 };
 
 const sharedProductCategoryFields: INodeProperties[] = [
-	{
-		displayName: 'Version',
-		name: 'version',
-		type: 'number',
-		typeOptions: {
-			minValue: 0,
-		},
-		default: 0,
-		required: true,
-		displayOptions: {
-			show: {
-				resource: ['product', 'category'],
-				operation: ['update', 'updateByKey', 'delete', 'deleteByKey'],
-			},
-		},
-		description: 'Current version of the resource to ensure optimistic concurrency control',
-	},
-	{
-		displayName: 'Actions (JSON)',
-		name: 'actions',
-		type: 'json',
-		default: '[]',
-		description: 'Update actions to apply to the resource',
-		displayOptions: {
-			show: {
-				resource: ['product', 'category'],
-				operation: ['update', 'updateByKey'],
-			},
-		},
-	}
+    // UPDATE: Hide version/actions for triggers
+    {
+        displayName: 'Version',
+        name: 'version',
+        type: 'number',
+        typeOptions: {
+            minValue: 0,
+        },
+        default: 0,
+        required: true,
+        displayOptions: {
+            show: {
+                resource: ['product', 'category'],
+                operation: ['update', 'updateByKey', 'delete', 'deleteByKey'],
+            },
+        },
+        description: 'Current version of the resource to ensure optimistic concurrency control',
+    },
+    {
+        displayName: 'Actions (JSON)',
+        name: 'actions',
+        type: 'json',
+        default: '[]',
+        description: 'Update actions to apply to the resource',
+        displayOptions: {
+            show: {
+                resource: ['product', 'category'],
+                operation: ['update', 'updateByKey'],
+            },
+        },
+    }
 ];
 
 const nodeGroup: Pick<INodeTypeDescription, 'group'> = {
-	group: ['transform'],
+    group: ['transform'],
 };
 
 export const commercetoolsDescription: INodeTypeDescription = {
-	displayName: 'Commercetools Actions',
-	name: 'Commercetools',
-	icon: 'file:Commercetools.svg',
-	...nodeGroup,
-	version: 1,
-	description: 'Interact with the Commercetools Products, Categories, and Customers API',
-	defaults: {
-		name: 'Commercetools',
-	},
-	inputs: [NodeConnectionTypes.Main],
-	outputs: [NodeConnectionTypes.Main],
-	usableAsTool: true,
-	credentials: [
-		{
-			name: 'commerceToolsOAuth2Api',
-			required: true,
-		},
-	],
-	properties: [
-		resourceField,
-		...productOperations,
-		...categoryOperations,
-		...customerOperations,
-		...productIdentificationFields,
-		...categoryBaseFields,
-		...productDraftFields,
-		...sharedProductCategoryFields,
-		...productAdditionalFields,
-		...categoryAdditionalFields,
-		...customerFields,
-	],
+    displayName: 'Commercetools',  
+    name: 'commercetools',         
+    icon: 'file:Commercetools.svg',
+    ...nodeGroup,
+    version: 1,
+    description: 'Interact with Products, Categories, Customers and Product Events (create/publish/update/unpublish/delete)', 
+    defaults: {
+        name: 'Commercetools',
+    },
+    inputs: [NodeConnectionTypes.Main],
+    outputs: [NodeConnectionTypes.Main],
+    usableAsTool: true,
+    credentials: [
+        {
+            name: 'commerceToolsOAuth2Api',
+            required: true,
+        },
+    ],
+    // Webhook configuration
+    webhooks: [
+        {
+            name: 'default',
+            httpMethod: 'POST',
+            responseMode: 'onReceived',
+            path: 'commercetools-product-events',
+            ndvHideUrl: false,
+        },
+    ],
+    properties: [
+        resourceField,
+        productEventField,
+        // UPDATE displayOptions to hide action ops for triggers
+        ...productOperations.map(op => ({
+            ...op,
+            displayOptions: {
+                ...op.displayOptions,
+                show: {
+                    ...op.displayOptions?.show,
+                    resource: ['product'],  // Hide for productEvent
+                },
+            },
+        })),
+        ...categoryOperations.map(op => ({
+            ...op,
+            displayOptions: {
+                ...op.displayOptions,
+                show: {
+                    ...op.displayOptions?.show,
+                    resource: ['category'],
+                },
+            },
+        })),
+        ...customerOperations.map(op => ({
+            ...op,
+            displayOptions: {
+                ...op.displayOptions,
+                show: {
+                    ...op.displayOptions?.show,
+                    resource: ['customer'],
+                },
+            },
+        })),
+        ...productIdentificationFields,
+        ...categoryBaseFields,
+        ...productDraftFields,
+        ...sharedProductCategoryFields,
+        ...productAdditionalFields,
+        ...categoryAdditionalFields,
+        ...customerFields,
+    ],
 };
