@@ -39,9 +39,10 @@ export async function createSubscription(
         awsInfrastructure?: AWSResponse;
         events: string[];
         useAWS: boolean;
+        resource: string;
     },
 ) {
-    const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
+    const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS, resource } = params;
 
     let body: IDataObject;
 
@@ -67,7 +68,7 @@ export async function createSubscription(
             destination,
             messages: [
                 {
-                    resourceTypeId: 'product',
+                    resourceTypeId: resource,
                     types: events,
                 },
             ],
@@ -81,7 +82,7 @@ export async function createSubscription(
             },
             messages: [
                 {
-                    resourceTypeId: 'product',
+                    resourceTypeId: resource,
                     types: events,
                 },
             ],

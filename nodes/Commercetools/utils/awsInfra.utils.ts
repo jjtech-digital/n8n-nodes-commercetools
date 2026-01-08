@@ -24,6 +24,11 @@ export type AWSResponse = {
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(awsCredentials: Record<string, string>, eventType: string, webhookUrl?: string): Promise<AWSResponse> {
 
+    // Validate eventType parameter
+    if (!eventType || typeof eventType !== 'string') {
+        throw new Error('eventType must be a non-empty string');
+    }
+
     // Generate unique names based on event and timestamp
     const timestamp = Date.now();
     const queueName = `ct-${eventType.toLowerCase()}-events-${timestamp}`;
@@ -263,7 +268,7 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
                             rawMessage: messageBody,
                             source: 'CommerceTools-Lambda',
                             processed: true,
-                            message: \`Product ${eventType.toLowerCase()} event processed successfully\`,
+                            message: \`Product ${(eventType && typeof eventType === 'string') ? eventType.toLowerCase() : 'unknown'} event processed successfully\`,
                             timestamp: new Date().toISOString(),
                             projectKey: projectKey
                         };

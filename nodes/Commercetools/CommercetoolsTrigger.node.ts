@@ -8,6 +8,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
 import { triggerProperties } from './properties/subscription.properties';
+import { customerTriggerProperties } from './properties/customer.triggers.properties';
 import { triggerMethods } from './utils/webhookMethods.utils';
 import { AWSResponse } from './utils/awsInfra.utils';
 
@@ -25,12 +26,17 @@ const resourceField: INodeProperties = {
 	noDataExpression: true,
 	options: [
 		{
+			name: 'Customer',
+			value: 'customer',
+			description: 'Subscribe to customer-related events',
+		},
+		{
 			name: 'Product',
 			value: 'product',
 			description: 'Subscribe to product-related events',
 		},
 	],
-	default: 'product',
+	default: 'customer',
 	description: 'The CommerceTools resource type to monitor for events',
 };
 
@@ -41,14 +47,14 @@ export class CommercetoolsTrigger implements INodeType {
 		icon: 'file:Commercetools.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Listen for CommerceTools product events (create, publish, update, unpublish, delete). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
+		description: 'Listen for CommerceTools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
 		defaults: {
 			name: 'Commercetools Trigger',
 		},
 		codex: {
-			categories: ['Commercetools', 'Integration', 'Product'],
+			categories: ['Commercetools', 'Integration', 'Customer', 'Product'],
 			subcategories: {
-				Commercetools: ['Product'],
+				Commercetools: ['Customer', 'Product'],
 			},
 			alias: ['commercetools', 'Commercetools'],
 		},
@@ -65,13 +71,14 @@ export class CommercetoolsTrigger implements INodeType {
 				name: 'default',
 				httpMethod: 'POST',
 				responseMode: 'onReceived',
-				path: 'commercetools-product-events',
+				path: 'commercetools-events',
 				ndvHideUrl: false,
 			},
 		],
 		usableAsTool: true,
 		properties: [
 			resourceField,
+			...customerTriggerProperties,
 			...triggerProperties
 		],
 	};
