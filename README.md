@@ -10,7 +10,14 @@ This repository provides a custom [n8n](https://n8n.io) node for integrating wit
 - **Complete Commercetools Integration**: Full support for products, categories, and customers
 - **Webhook Product Trigger**: Native trigger for product events; send directly to n8n webhooks or route through AWS SQS/Lambda using the provided automation scripts
 - **AWS SQS + Lambda**: Scalable, reliable event processing with AWS infrastructure (CloudFormation + helper scripts included)
-- **Event Types**: Product Created, Published, and Deleted events
+- **Event Types**: Product Event Triggers
+                    product created,product published,product unpublished,product deleted,
+                    product added to category,product removed from category,
+                    product image added,product slug changed,product state transition,product reverted staged changes,
+                    product variant added,product variant deleted,
+                    product price added,product price changed,product price removed,product prices set,product price mode set,product price key set,product price discounts set,product price external discount set,
+                    product price custom field added,product price custom field changed,product price custom field removed,
+                    product price custom fields set,product price custom fields removed.           
 - **Monitoring**: CloudWatch alarms and logging for production use
 - **Multi-Environment**: Support for dev, staging, and production deployments
 
