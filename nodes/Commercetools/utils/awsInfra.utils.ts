@@ -374,7 +374,7 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
 
         const lambdaParams = {
             FunctionName: lambdaName,
-            Runtime: 'nodejs18.x',
+            Runtime: 'nodejs24.x',
             Role: roleArn,
             Handler: 'index.handler',
             Code: {

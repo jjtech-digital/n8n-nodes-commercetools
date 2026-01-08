@@ -120,6 +120,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
             responseMode: 'onReceived',
             path: 'commercetools-product-events',
             ndvHideUrl: false,
+            restartWebhook: true, 
         },
     ],
     properties: [
