@@ -1,6 +1,6 @@
-import AdmZip from "adm-zip";
-import AWS from "aws-sdk";
-import { INode, NodeOperationError } from "n8n-workflow";
+import AdmZip from 'adm-zip';
+import AWS from 'aws-sdk';
+import { INode, NodeOperationError } from 'n8n-workflow';
 
 export type AWSResponse = {
 	queueUrl?: string;
@@ -21,6 +21,35 @@ export type AWSResponse = {
 	created?: boolean;
 	createdAt?: string;
 };
+
+function webhookSendingAck(): string {
+	return `
+      // Send webhook response if URL is configured
+           if (webhookUrl) {
+               console.log('📤 Sending webhook to n8n...');
+               try {
+                   const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
+                   
+                   webhookPayload.webhookStatus = 'sent';
+                   webhookPayload.webhookResponse = {
+                       statusCode: webhookResult.statusCode,
+                       timestamp: new Date().toISOString()
+                   };
+                   
+                   console.log('✅ Webhook sent successfully');
+               } catch (webhookError) {
+                   console.error('❌ Webhook failed:', webhookError.message);
+                   
+                   webhookPayload.webhookStatus = 'failed';
+                   webhookPayload.webhookError = webhookError.message;
+               }
+           } else {
+               console.warn('⚠️  No webhook URL configured - skipping webhook');
+               webhookPayload.webhookStatus = 'skipped';
+           }
+    `;
+}
+
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(awsCredentials: Record<string, string>, eventType: string, webhookUrl?: string): Promise<AWSResponse> {
 
@@ -270,29 +299,7 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
                         
                         console.log('📦 Webhook Payload Prepared');
 
-                        // Send webhook response if URL is configured
-                        if (webhookUrl) {
-                            console.log('📤 Sending webhook to n8n...');
-                            try {
-                                const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
-                                
-                                webhookPayload.webhookStatus = 'sent';
-                                webhookPayload.webhookResponse = {
-                                    statusCode: webhookResult.statusCode,
-                                    timestamp: new Date().toISOString()
-                                };
-                                
-                                console.log('✅ Webhook sent successfully');
-                            } catch (webhookError) {
-                                console.error('❌ Webhook failed:', webhookError.message);
-                                
-                                webhookPayload.webhookStatus = 'failed';
-                                webhookPayload.webhookError = webhookError.message;
-                            }
-                        } else {
-                            console.warn('⚠️  No webhook URL configured - skipping webhook');
-                            webhookPayload.webhookStatus = 'skipped';
-                        }
+                        ${webhookSendingAck()}
 
                         // Simulate business processing
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -309,13 +316,32 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
                         console.log('✅ Record processed successfully');
                         
                     } else if (receivedEventType === "AWSInfrastructureTest") {
+
+                        // Prepare webhook payload
+                        const webhookPayload = {
+                            eventType: receivedEventType,
+                            rawMessage: messageBody,
+                            source: 'CommerceTools-Lambda',
+                            processed: true,
+                            message: \`Subscription connectivity established successfully\`,
+                            timestamp: new Date().toISOString(),
+                            projectKey: projectKey
+                        };
+                        
+                        console.log('📦 Webhook Payload Prepared');
+
+                        ${webhookSendingAck()}
+
+                        // Simulate business processing
+                        await new Promise(resolve => setTimeout(resolve, 100));
+
                       results.push({
                             status: 'success',
                             eventType: receivedEventType,
                             reason: '',
                             timestamp: new Date().toISOString()
                         });
-                    
+
                     } else {
                         console.log('⚠️  Event type mismatch');
                         console.log('   Expected:', eventType);
