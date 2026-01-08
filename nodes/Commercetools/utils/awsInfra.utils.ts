@@ -22,33 +22,6 @@ export type AWSResponse = {
 	createdAt?: string;
 };
 
-function webhookSendingAck(): string {
-	return `
-      // Send webhook response if URL is configured
-           if (webhookUrl) {
-               console.log('📤 Sending webhook to n8n...');
-               try {
-                   const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
-                   
-                   webhookPayload.webhookStatus = 'sent';
-                   webhookPayload.webhookResponse = {
-                       statusCode: webhookResult.statusCode,
-                       timestamp: new Date().toISOString()
-                   };
-                   
-                   console.log('✅ Webhook sent successfully');
-               } catch (webhookError) {
-                   console.error('❌ Webhook failed:', webhookError.message);
-                   
-                   webhookPayload.webhookStatus = 'failed';
-                   webhookPayload.webhookError = webhookError.message;
-               }
-           } else {
-               console.warn('⚠️  No webhook URL configured - skipping webhook');
-               webhookPayload.webhookStatus = 'skipped';
-           }
-    `;
-}
 
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(awsCredentials: Record<string, string>, eventType: string, webhookUrl?: string): Promise<AWSResponse> {
@@ -235,6 +208,33 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
             });
         }
 
+        async function webhookSendingAck(webhookUrl, webhookPayload) {
+         // Send webhook response if URL is configured
+           if (webhookUrl) {
+               console.log('📤 Sending webhook to n8n...');
+               try {
+                   const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
+                   
+                   webhookPayload.webhookStatus = 'sent';
+                   webhookPayload.webhookResponse = {
+                       statusCode: webhookResult.statusCode,
+                       timestamp: new Date().toISOString()
+                   };
+                   
+                   console.log('✅ Webhook sent successfully');
+               } catch (webhookError) {
+                   console.error('❌ Webhook failed:', webhookError.message);
+                   
+                   webhookPayload.webhookStatus = 'failed';
+                   webhookPayload.webhookError = webhookError.message;
+               }
+           } else {
+               console.warn('⚠️  No webhook URL configured - skipping webhook');
+               webhookPayload.webhookStatus = 'skipped';
+           }
+        }
+
+
         /**
          * Lambda Handler - Process CommerceTools events from SQS
          */
@@ -299,7 +299,7 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
                         
                         console.log('📦 Webhook Payload Prepared');
 
-                        ${webhookSendingAck()}
+                        await webhookSendingAck(webhookUrl, webhookPayload);
 
                         // Simulate business processing
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -330,7 +330,7 @@ export async function createRealAWSInfrastructure(awsCredentials: Record<string,
                         
                         console.log('📦 Webhook Payload Prepared');
 
-                        ${webhookSendingAck()}
+                        await webhookSendingAck(webhookUrl, webhookPayload);
 
                         // Simulate business processing
                         await new Promise(resolve => setTimeout(resolve, 100));
