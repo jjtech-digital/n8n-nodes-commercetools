@@ -16,7 +16,11 @@ export const triggerMethods = {
 
             // Get current configuration
             const resource = this.getNodeParameter('resource', 0) as string;
-            const eventsParameterName = resource === 'customer' ? 'customerEvents' : 'productEvents';
+            const eventParameterMap = {
+                product: 'productEvents',
+                customer: 'customerEvents'
+            };
+            const eventsParameterName = eventParameterMap[resource as keyof typeof eventParameterMap];
             const eventsRaw = this.getNodeParameter(eventsParameterName, 0) as string[] | string;
             const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
             const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
@@ -126,7 +130,11 @@ export const triggerMethods = {
         create: async function (this: IHookFunctions): Promise<boolean> {
 
             const resource = this.getNodeParameter('resource', 0) as string;
-            const eventsParameterName = resource === 'customer' ? 'customerEvents' : 'productEvents';
+            const eventParameterMap = {
+                product: 'productEvents',
+                customer: 'customerEvents'
+            };
+            const eventsParameterName = eventParameterMap[resource as keyof typeof eventParameterMap];
             const eventsRaw = this.getNodeParameter(eventsParameterName, 0) as string[] | string;
             const events = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
             if (!events.length) {
