@@ -197,21 +197,10 @@ export const triggerMethods = {
                         Records: [
                             {
                                 body: JSON.stringify({
-                                    type: awsInfrastructure.eventType,
+                                    type: "AWSInfrastructureTest",
                                     resource: {
-                                        typeId: 'product',
-                                        id: 'test-product-id',
-                                        key: 'test-product-key',
-                                        version: 1,
-                                        masterData: {
-                                            current: {
-                                                name: { en: 'Test Product' },
-                                                masterVariant: {
-                                                    sku: 'TEST-SKU-001'
-                                                },
-                                                categories: []
-                                            }
-                                        }
+                                        message: 'Subscription connectivity established successfully',
+                                        timestamp: new Date().toISOString(),
                                     }
                                 })
                             }
