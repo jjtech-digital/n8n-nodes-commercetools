@@ -3,13 +3,13 @@
 
 # n8n-nodes-commercetools
 
-This repository provides a custom [n8n](https://n8n.io) node for integrating with [Commercetools](https://commercetools.com). It includes all required credentials, node definitions, utilities to interact with the Commercetools API, and **AWS SQS integration with Lambda processing**.
+This repository provides a custom [n8n](https://n8n.io) node for integrating with [Commercetools](https://commercetools.com). It includes all required credentials, node definitions, utilities to interact with the Commercetools API, and optional **AWS SQS integration with Lambda processing**.
 
 ## Features
 
 - **Complete Commercetools Integration**: Full support for products, categories, and customers
-- **Webhook Product Trigger**: Native trigger for product events; send directly to n8n webhooks or route through AWS SQS/Lambda using the provided automation scripts
-- **AWS SQS + Lambda**: Scalable, reliable event processing with AWS infrastructure (CloudFormation + helper scripts included)
+- **Webhook Product Trigger**: Native trigger for product events; delivers directly to n8n or, when AWS credentials are provided, through an auto-created SQS + Lambda pipeline
+- **AWS SQS + Lambda (optional)**: Auto-provisions SQS, Lambda, and IAM via the AWS SDK when AWS credentials are present in the node credentials
 - **Event Types**: Product Event Triggers
                     product created,product published,product unpublished,product deleted,
                     product added to category,product removed from category,
@@ -32,8 +32,7 @@ This repository provides a custom [n8n](https://n8n.io) node for integrating wit
                     customer address custom type set, customer address custom type removed,
                     customer address custom field added, customer address custom field changed, customer address custom field removed
            
-- **Monitoring**: CloudWatch alarms and logging for production use
-- **Multi-Environment**: Support for dev, staging, and production deployments
+- **Monitoring**: CloudWatch logging from the generated Lambda function
 
 
 ## Quick Start
@@ -51,51 +50,23 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 
 Use the Commercetools Trigger node to receive events directly in n8n.
 
-1. Add the **Commercetools Trigger** node and choose **Webhook** as the destination (use the SQS steps below if you prefer queue delivery).
-2. Activate your workflow to generate the webhook URL and set the `WEBHOOK_URL` environment variable in your CommerceTools subscription or Lambda deployment so events post to this URL. The URL typically looks like `https://<n8n-host>/webhook/<path>/commercetools-events`.
-3. In CommerceTools, create or update a subscription pointing to that webhook URL and enable the product event types you need (Created, Published, Deleted). If you deploy via Lambda + SQS, ensure the Lambda forwards the payloads to `WEBHOOK_URL` using the provided AWS infrastructure utilities.
+1. Add the **Commercetools Trigger** node.
+2. Select the event you want to subscribe to.
+3. Choose your **Commercetools OAuth2** credentials. To send events through SQS + Lambda, also fill in **AWS Access Key**, **AWS Secret Access Key**, and **AWS Region** in the same credential.
+4. Activate your workflow. The node registers a CommerceTools subscription pointing at your n8n webhook URL (`.../webhook/<path>/commercetools-events`). With AWS credentials, it also creates the SQS queue, Lambda function, IAM role, and event source mapping, then forwards messages to n8n.
+5. Deactivate or update the trigger to clean up and recreate subscriptions or AWS resources when the configuration changes.
 
-## AWS SQS + Lambda Integration
+## AWS SQS + Lambda Integration (optional)
 
-For production-grade event processing, this node supports AWS SQS queues with Lambda function processing:
+When AWS credentials are present in the Commercetools credentials, the trigger:
 
-### Quick Deploy
+- Creates an SQS queue, Lambda function, IAM role, and event source mapping for the selected product events.
+- Configures the Lambda with your n8n webhook URL so messages are forwarded into the workflow.
+- Stores identifiers in workflow static data and deletes the resources when the trigger is removed or reconfigured.
 
-```bash
-# Deploy AWS infrastructure
-cd aws
-./deploy.sh deploy
-
-# Get configuration values
-./deploy.sh outputs
-```
-
-### Configure SQS in n8n
-
-1. Add CommerceTools Trigger node to your workflow
-2. Select **"Amazon SQS"** as destination type
-3. Configure with deployment outputs:
-   - **AWS Region**: Your deployment region
-   - **SQS Queue URL**: From deployment outputs
-   - **AWS Access Key ID** and **Secret**: Your AWS credentials
-   - **Lambda Function Name**: `commercetools-integration-dev-product-processor`
-   - **CTP Project Key**: `n8n-ct-integration`
-   - **Product Events**: Select `Product Published`
-
-### Benefits of SQS Integration
-
-- **Reliability**: Messages are persisted and retried automatically
-- **Scalability**: Lambda scales automatically based on queue depth  
-- **Monitoring**: CloudWatch alarms for errors and failed messages
-- **Dead Letter Queue**: Failed messages are preserved for investigation
-- **Cost-Effective**: Pay only for what you use
-
-See [aws/README.md](aws/README.md) for detailed configuration and customization options. Additional AWS resources: [AWS_AUTOMATION_PLAN.md](AWS_AUTOMATION_PLAN.md), [AWS_ATTRIBUTE_REFERENCE.md](AWS_ATTRIBUTE_REFERENCE.md), and [AUTOMATIC_SETUP.md](AUTOMATIC_SETUP.md).
-
-
-
-
-
+Notes:
+- Resource names are generated per activation and include the event type.
+- Ensure the n8n webhook endpoint is reachable from AWS.
 
 
 ## Configuration Options
@@ -460,7 +431,7 @@ Below is a sample workflow using the Commercetools node in n8n to create and que
 The `updateActions` fixed collection lets you compose Commercetools product update commands directly in the node UI, with helper inputs for localized data, prices, assets, and variant targeting. Highlights:
 - Choose whether each variant is addressed by `variantId` or `sku`, and mix multiple variant-specific actions in a single request.
 - Localized name/slug/meta helpers automatically map locale/value pairs to the format the Commercetools API expects.
-- Attribute editors support string/number/boolean parsing so you don’t need to pre-format JSON.
+- Attribute editors support string/number/boolean parsing so you don't need to pre-format JSON.
 - Asset, price, image, and search keyword builders flatten nested fixed collections (sources, dimensions, tokenizers, etc.) into valid drafts.
 
 Supported product update actions:
@@ -512,7 +483,7 @@ Supported product update actions:
 - Transition State
 - Unpublish
 
-Need a field that isn’t exposed yet? Add it via the `actions` JSON array—the node merges both sources in request order.
+Need a field that isn't exposed yet? Add it via the `actions` JSON array - the node merges both sources in request order.
 
 > **Transition State note:** the builder enforces that either a state ID or a state key is set per the [Commercetools Transition State action](https://docs.commercetools.com/api/projects/products#transition-state).
 
@@ -609,7 +580,7 @@ The Commercetools node for n8n enables you to interact with the Commercetools AP
   Retrieve detailed information for a specific product by its ID or key.
 
 - **Update Product (by ID or Key)**  
-  Update an existing product using one or more update actions. The `updateActions` UI builder now mirrors Commercetools’ product update catalog, including localized content helpers, price/asset editors, search keyword builders, and state transitions.
+  Update an existing product using one or more update actions. The `updateActions` UI builder now mirrors Commercetools' product update catalog, including localized content helpers, price/asset editors, search keyword builders, and state transitions.
 
 - **Delete Product (by ID or Key)**  
   Delete a product from your project.
@@ -747,21 +718,11 @@ Contributions and suggestions for improving the Commercetools node are welcome. 
 
 ## Changelog
 
-All notable changes to this project will be documented in the `CHANGELOG.md` file. Below is a summary of recent updates:
+See `CHANGELOG.md` for the full history. Highlights:
 
-
-### [Unreleased]
-- Added Commercetools webhook-based product trigger plus AWS automation/test guides
-- Added AWS credential fields (client ID/secret) and environment-driven webhook URL support for trigger delivery
-- Documented AWS deployment automation and attribute references for the CloudFormation scripts
-- Refactored Commercetools product, category, and customer property definitions for easier maintenance
-
-### v1.0.0
-- Initial release of the Commercetools node for n8n
-- Supports product management operations: create, query, search, get, update, delete, product selections, image upload, and existence checks
-- OAuth2 credential integration
-
-Refer to `CHANGELOG.md` for a complete version history and details.
+- **v0.1.15**: Updated AWS trigger infrastructure and test payloads.
+- **v0.1.14**: Added product trigger event coverage and consolidated trigger/actions.
+- **v0.1.12**: Introduced the Commercetools product trigger and AWS credential fields in the credential model.
 
 ## License
 
