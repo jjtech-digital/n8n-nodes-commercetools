@@ -1,6 +1,5 @@
 import type {
 	IDataObject,
-	INodeProperties,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookFunctions,
@@ -8,7 +7,6 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
 import { triggerProperties } from './properties/subscription.properties';
-import { customerTriggerProperties } from './properties/customer.triggers.properties';
 import { triggerMethods } from './utils/webhookMethods.utils';
 import { AWSResponse } from './utils/awsInfra.utils';
 
@@ -17,27 +15,6 @@ export type StaticSubscriptionData = IDataObject & {
 	awsInfrastructure?: AWSResponse;
 	configHash?: string;
 	events?: string[];
-};
-
-const resourceField: INodeProperties = {
-	displayName: 'Resource',
-	name: 'resource',
-	type: 'options',
-	noDataExpression: true,
-	options: [
-		{
-			name: 'Customer',
-			value: 'customer',
-			description: 'Subscribe to customer-related events',
-		},
-		{
-			name: 'Product',
-			value: 'product',
-			description: 'Subscribe to product-related events',
-		},
-	],
-	default: 'customer',
-	description: 'The CommerceTools resource type to monitor for events',
 };
 
 export class CommercetoolsTrigger implements INodeType {
@@ -77,8 +54,6 @@ export class CommercetoolsTrigger implements INodeType {
 		],
 		usableAsTool: true,
 		properties: [
-			resourceField,
-			...customerTriggerProperties,
 			...triggerProperties
 		],
 	};

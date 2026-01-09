@@ -15,13 +15,7 @@ export const triggerMethods = {
             const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 
             // Get current configuration
-            const resource = this.getNodeParameter('resource') as string;
-            const eventParameterMap = {
-                product: 'productEvents',
-                customer: 'customerEvents'
-            };
-            const eventsParameterName = eventParameterMap[resource as keyof typeof eventParameterMap];
-            const eventsRaw = this.getNodeParameter(eventsParameterName) as string[] | string;
+            const eventsRaw = this.getNodeParameter('events') as string[] | string;
             const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
             const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
             const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
@@ -129,18 +123,12 @@ export const triggerMethods = {
 
         create: async function (this: IHookFunctions): Promise<boolean> {
 
-            const resource = this.getNodeParameter('resource') as string;
-            const eventParameterMap = {
-                product: 'productEvents',
-                customer: 'customerEvents'
-            };
-            const eventsParameterName = eventParameterMap[resource as keyof typeof eventParameterMap];
-            const eventsRaw = this.getNodeParameter(eventsParameterName) as string[] | string;
+            const eventsRaw = this.getNodeParameter('events') as string[] | string;
             const events = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
             if (!events.length) {
                 throw new NodeOperationError(
                     this.getNode(),
-                    `At least one ${resource} event must be selected`,
+                    'At least one event must be selected',
                 );
             }
 
@@ -178,7 +166,6 @@ export const triggerMethods = {
                 awsInfrastructure,
                 events,
                 useAWS,
-                resource,
             })) as IDataObject;
 
             const subscriptionId = response.id as string | undefined;
