@@ -43,6 +43,30 @@ export async function createSubscription(
 ) {
     const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
 
+    // Separate events by resource type
+    const productEvents = events.filter(event => event.startsWith('Product'));
+    const customerEvents = events.filter(event => event.startsWith('Customer'));
+
+    // Create messages array for each resource type that has events
+    const messages: IDataObject[] = [];
+    if (productEvents.length > 0) {
+        messages.push({
+            resourceTypeId: 'product',
+            types: productEvents,
+        });
+    }
+    if (customerEvents.length > 0) {
+        messages.push({
+            resourceTypeId: 'customer',
+            types: customerEvents,
+        });
+    }
+
+    // Ensure we have at least one message
+    if (messages.length === 0) {
+        throw new NodeOperationError(this.getNode(), 'No valid events selected');
+    }
+
     let body: IDataObject;
 
     if (useAWS && awsInfrastructure) {
@@ -65,12 +89,7 @@ export async function createSubscription(
 
         body = {
             destination,
-            messages: [
-                {
-                    resourceTypeId: 'product',
-                    types: events,
-                },
-            ],
+            messages,
         };
     } else {
         // Use HTTP webhook destination
@@ -79,12 +98,7 @@ export async function createSubscription(
                 type: 'HTTP',
                 url: webhookUrl,
             },
-            messages: [
-                {
-                    resourceTypeId: 'product',
-                    types: events,
-                },
-            ],
+            messages,
         };
     }
 

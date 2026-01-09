@@ -17,7 +17,21 @@ This repository provides a custom [n8n](https://n8n.io) node for integrating wit
                     product variant added,product variant deleted,
                     product price added,product price changed,product price removed,product prices set,product price mode set,product price key set,product price discounts set,product price external discount set,
                     product price custom field added,product price custom field changed,product price custom field removed,
-                    product price custom fields set,product price custom fields removed.           
+                    product price custom fields set,product price custom fields removed.
+                  Customer Event Triggers
+                    customer created, customer deleted, customer email verified,
+                    customer email changed, customer password updated,
+                    customer first name set, customer last name set, customer company name set,
+                    customer title set, customer date of birth set, customer stores set,
+                    customer group set, customer address added, customer address changed, customer address removed,
+                    customer billing address added, customer billing address removed,
+                    customer shipping address added, customer shipping address removed,
+                    customer default billing address set, customer default shipping address set,
+                    customer custom type set, customer custom type removed,
+                    customer custom field added, customer custom field changed, customer custom field removed,
+                    customer address custom type set, customer address custom type removed,
+                    customer address custom field added, customer address custom field changed, customer address custom field removed
+           
 - **Monitoring**: CloudWatch logging from the generated Lambda function
 
 
@@ -39,7 +53,7 @@ Use the Commercetools Trigger node to receive events directly in n8n.
 1. Add the **Commercetools Trigger** node.
 2. Select the event you want to subscribe to.
 3. Choose your **Commercetools OAuth2** credentials. To send events through SQS + Lambda, also fill in **AWS Access Key**, **AWS Secret Access Key**, and **AWS Region** in the same credential.
-4. Activate your workflow. The node registers a CommerceTools subscription pointing at your n8n webhook URL (`.../webhook/<path>/commercetools-product-events`). With AWS credentials, it also creates the SQS queue, Lambda function, IAM role, and event source mapping, then forwards messages to n8n.
+4. Activate your workflow. The node registers a CommerceTools subscription pointing at your n8n webhook URL (`.../webhook/<path>/commercetools-events`). With AWS credentials, it also creates the SQS queue, Lambda function, IAM role, and event source mapping, then forwards messages to n8n.
 5. Deactivate or update the trigger to clean up and recreate subscriptions or AWS resources when the configuration changes.
 
 ## AWS SQS + Lambda Integration (optional)

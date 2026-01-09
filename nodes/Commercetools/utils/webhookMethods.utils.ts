@@ -15,7 +15,7 @@ export const triggerMethods = {
             const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 
             // Get current configuration
-            const eventsRaw = this.getNodeParameter('productEvents', 0) as string[] | string;
+            const eventsRaw = this.getNodeParameter('events') as string[] | string;
             const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
             const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<string, string>;
             const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
@@ -123,12 +123,12 @@ export const triggerMethods = {
 
         create: async function (this: IHookFunctions): Promise<boolean> {
 
-            const eventsRaw = this.getNodeParameter('productEvents', 0) as string[] | string;
+            const eventsRaw = this.getNodeParameter('events') as string[] | string;
             const events = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
             if (!events.length) {
                 throw new NodeOperationError(
                     this.getNode(),
-                    'At least one product event must be selected',
+                    'At least one event must be selected',
                 );
             }
 
