@@ -38,7 +38,7 @@ This will start n8n with the Commercetools node loaded and hot reload enabled.
 Use the Commercetools Trigger node to receive events directly in n8n.
 
 1. Add the **Commercetools Trigger** node and choose **Webhook** as the destination (use the SQS steps below if you prefer queue delivery).
-2. Activate your workflow to generate the webhook URL and set the `WEBHOOK_URL` environment variable in your CommerceTools subscription or Lambda deployment so events post to this URL. The URL typically looks like `https://<n8n-host>/webhook/<path>/commercetools-product-events`.
+2. Activate your workflow to generate the webhook URL and set the `WEBHOOK_URL` environment variable in your CommerceTools subscription or Lambda deployment so events post to this URL. The URL typically looks like `https://<n8n-host>/webhook/<path>/commercetools-events`.
 3. In CommerceTools, create or update a subscription pointing to that webhook URL and enable the product event types you need (Created, Published, Deleted). If you deploy via Lambda + SQS, ensure the Lambda forwards the payloads to `WEBHOOK_URL` using the provided AWS infrastructure utilities.
 
 ## AWS SQS + Lambda Integration

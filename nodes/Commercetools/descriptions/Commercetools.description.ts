@@ -118,7 +118,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
             name: 'default',
             httpMethod: 'POST',
             responseMode: 'onReceived',
-            path: 'commercetools-product-events',
+            path: 'commercetools-events',
             ndvHideUrl: false,
             restartWebhook: true, 
         },
