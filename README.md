@@ -720,9 +720,10 @@ Contributions and suggestions for improving the Commercetools node are welcome. 
 
 See `CHANGELOG.md` for the full history. Highlights:
 
+- **v0.1.17**: Added customer event triggers, refreshed the Commercetools trigger, and refactored the Lambda handler.
+- **v0.1.16**: Clarified AWS SQS/Lambda webhook delivery setup in the README.
 - **v0.1.15**: Updated AWS trigger infrastructure and test payloads.
 - **v0.1.14**: Added product trigger event coverage and consolidated trigger/actions.
-- **v0.1.12**: Introduced the Commercetools product trigger and AWS credential fields in the credential model.
 
 ## License
 
