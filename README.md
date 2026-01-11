@@ -185,9 +185,10 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
-- v0.1.17 – Customer triggers & Lambda refactor
-- v0.1.16 – AWS trigger documentation improvements
-- v0.1.15 – Infrastructure updates
+- v0.1.19 - README clarifications with a segregated Table of contents.
+- v0.1.18 - Release, changelog updates
+- v0.1.17 - Customer triggers & Lambda refactor
+- v0.1.16 - AWS trigger documentation improvements
 
 
 ## License
