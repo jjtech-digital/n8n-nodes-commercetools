@@ -9,29 +9,6 @@ This repository provides a custom [n8n](https://n8n.io) node for integrating wit
 
 - **Complete Commercetools Integration**: Full support for products, categories, and customers
 - **Webhook Product Trigger**: Native trigger for product events; delivers directly to n8n or, when AWS credentials are provided, through an auto-created SQS + Lambda pipeline
-- **AWS SQS + Lambda (optional)**: Auto-provisions SQS, Lambda, and IAM via the AWS SDK when AWS credentials are present in the node credentials
-- **Event Types**: Product Event Triggers
-                    product created,product published,product unpublished,product deleted,
-                    product added to category,product removed from category,
-                    product image added,product slug changed,product state transition,product reverted staged changes,
-                    product variant added,product variant deleted,
-                    product price added,product price changed,product price removed,product prices set,product price mode set,product price key set,product price discounts set,product price external discount set,
-                    product price custom field added,product price custom field changed,product price custom field removed,
-                    product price custom fields set,product price custom fields removed.
-                  Customer Event Triggers
-                    customer created, customer deleted, customer email verified,
-                    customer email changed, customer password updated,
-                    customer first name set, customer last name set, customer company name set,
-                    customer title set, customer date of birth set, customer stores set,
-                    customer group set, customer address added, customer address changed, customer address removed,
-                    customer billing address added, customer billing address removed,
-                    customer shipping address added, customer shipping address removed,
-                    customer default billing address set, customer default shipping address set,
-                    customer custom type set, customer custom type removed,
-                    customer custom field added, customer custom field changed, customer custom field removed,
-                    customer address custom type set, customer address custom type removed,
-                    customer address custom field added, customer address custom field changed, customer address custom field removed
-           
 - **Monitoring**: CloudWatch logging from the generated Lambda function
 
 
