@@ -185,10 +185,10 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
-- v0.1.19 - README clarifications with a segregated Table of contents.
-- v0.1.18 - Release, changelog updates
-- v0.1.17 - Customer triggers & Lambda refactor
-- v0.1.16 - AWS trigger documentation improvements
+- v0.1.21 - Hardened release tooling: refreshed changelog for v0.1.20 and stabilized auto-changelog version.
+- v0.1.20 - Release with README structure cleanup and streamlined changelog entries.
+- v0.1.19 - Expanded Commercetools integration docs and clarified feature/usage guidance.
+- v0.1.18 - Release notes captured for customer trigger and Lambda handler updates.
 
 
 ## License
