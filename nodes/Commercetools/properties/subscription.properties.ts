@@ -10,6 +10,16 @@ export const triggerProperties: INodeProperties[] = [
         
         options: [
             {
+                name: 'Category Created',
+                value: 'CategoryCreated',
+                description: 'Triggered when a new category is created',
+            },
+            {
+                name: 'Category Slug Changed',
+                value: 'CategorySlugChanged',
+                description: 'Triggered when a category slug is changed',
+            },
+            {
                 name: 'Customer Address Added',
                 value: 'CustomerAddressAdded',
                 description: 'Triggered when a new address is added to a customer',
