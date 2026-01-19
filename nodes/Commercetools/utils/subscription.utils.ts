@@ -46,6 +46,8 @@ export async function createSubscription(
     // Separate events by resource type
     const productEvents = events.filter(event => event.startsWith('Product'));
     const customerEvents = events.filter(event => event.startsWith('Customer'));
+    const categoryEvents = events.filter(event => event.startsWith('Category'));
+
 
     // Create messages array for each resource type that has events
     const messages: IDataObject[] = [];
@@ -59,6 +61,12 @@ export async function createSubscription(
         messages.push({
             resourceTypeId: 'customer',
             types: customerEvents,
+        });
+    }
+    if (categoryEvents.length > 0) {
+       messages.push({
+            resourceTypeId: 'category',
+            types: categoryEvents,
         });
     }
 
