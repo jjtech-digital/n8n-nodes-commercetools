@@ -199,6 +199,124 @@ export const buildActionsFromUi = (
   } else if (rawActionEntries) {
     actionEntries = [rawActionEntries as IDataObject];
   }
+  const buildCustomTypeFields = (fieldsInput: unknown): IDataObject => {
+    const flatFields: IDataObject = {};
+
+    if (!fieldsInput) {
+      return flatFields;
+    }
+
+    if (typeof fieldsInput === 'string') {
+      const trimmed = fieldsInput.trim();
+      if (!trimmed) {
+        return flatFields;
+      }
+      try {
+        const parsed: unknown = JSON.parse(trimmed);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return parsed as IDataObject;
+        }
+      } catch {
+        // fall through to error below
+      }
+      throw new NodeOperationError(
+        context.getNode(),
+        'Fields must be a valid JSON object',
+      );
+    }
+
+    if (
+      typeof fieldsInput === 'object' &&
+      'name' in (fieldsInput as IDataObject) &&
+      'value' in (fieldsInput as IDataObject)
+    ) {
+      const fieldName = (fieldsInput as IDataObject).name as string;
+      const fieldValue = (fieldsInput as IDataObject).value;
+      if (fieldName) {
+        flatFields[fieldName] = fieldValue;
+      }
+      return flatFields;
+    }
+
+    if (
+      typeof fieldsInput === 'object' &&
+      'field' in (fieldsInput as IDataObject) &&
+      Array.isArray((fieldsInput as IDataObject).field)
+    ) {
+      const fieldArray = (fieldsInput as IDataObject).field as IDataObject[];
+      for (const fieldItem of fieldArray) {
+        if (fieldItem && typeof fieldItem === 'object' && 'name' in fieldItem && 'value' in fieldItem) {
+          const fieldName = fieldItem.name as string;
+          const fieldValue = fieldItem.value;
+          if (fieldName) {
+            flatFields[fieldName] = fieldValue;
+          }
+        }
+      }
+    }
+
+    return flatFields;
+  };
+
+  const isUuid = (value: string): boolean =>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
+  const buildCustomTypeRef = (typeInput: unknown): IDataObject | undefined => {
+    if (!typeInput) {
+      return undefined;
+    }
+
+    if (typeof typeInput === 'string') {
+      const trimmed = typeInput.trim();
+      if (!trimmed) {
+        return undefined;
+      }
+      if (isUuid(trimmed)) {
+        return { id: trimmed, typeId: 'type' };
+      }
+      return { key: trimmed, typeId: 'type' };
+    }
+
+    if (
+      typeof typeInput === 'object' &&
+      'typeReference' in (typeInput as IDataObject) &&
+      typeof (typeInput as IDataObject).typeReference === 'object'
+    ) {
+      const typeRef = (typeInput as IDataObject).typeReference as IDataObject;
+      const id = typeof typeRef.id === 'string' ? typeRef.id : '';
+      if (!id) {
+        return undefined;
+      }
+      return {
+        id,
+        typeId: typeof typeRef.typeId === 'string' ? typeRef.typeId : 'type',
+      };
+    }
+
+    if (typeof typeInput === 'object' && 'id' in (typeInput as IDataObject)) {
+      const id = String((typeInput as IDataObject).id ?? '').trim();
+      if (!id) {
+        return undefined;
+      }
+      const typeId = typeof (typeInput as IDataObject).typeId === 'string'
+        ? (typeInput as IDataObject).typeId
+        : 'type';
+      return { id, typeId };
+    }
+
+    if (typeof typeInput === 'object' && 'key' in (typeInput as IDataObject)) {
+      const key = String((typeInput as IDataObject).key ?? '').trim();
+      if (!key) {
+        return undefined;
+      }
+      const typeId = typeof (typeInput as IDataObject).typeId === 'string'
+        ? (typeInput as IDataObject).typeId
+        : 'type';
+      return { key, typeId };
+    }
+
+    return undefined;
+  };
   const attributesActions = ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'];
   for (const action of actionEntries) {
     const localized = preprocessLocalizedFields(action);
@@ -335,6 +453,14 @@ export const buildActionsFromUi = (
       }
     }
 
+    if (action?.action === 'changeParent') {
+      const parentDetails = (action?.parent as IDataObject)?.categoryDetails;
+      finalAction = {
+        ...action,
+        ...(parentDetails ? { parent: parentDetails } : {}),
+      };
+    }
+
     if (action?.action === 'setTaxCategory') {
       const taxCategoryDetails = (action?.taxCategory as IDataObject)?.taxCategoryDetails;
       finalAction = {
@@ -354,58 +480,150 @@ export const buildActionsFromUi = (
       };
     }
 
-    if (action?.action === 'setAssetCustomType') {
+    if (action?.action === 'setAssetDescription') {
+      const rawDescription = action.description;
+      let description: IDataObject | undefined;
 
-      // Initialize flatFields as empty object
-      const flatFields: IDataObject = {};
-
-      if (
-        action.fields &&
-        typeof action.fields === 'object' &&
-        'name' in (action.fields as IDataObject) &&
-        'value' in (action.fields as IDataObject)
-      ) {
-
-        const fieldName = (action.fields as IDataObject).name as string;
-        const fieldValue = (action.fields as IDataObject).value;
-        if (fieldName) {
-          flatFields[fieldName] = fieldValue;
+      if (typeof rawDescription === 'string') {
+        const trimmed = rawDescription.trim();
+        if (trimmed) {
+          try {
+            const parsed: unknown = JSON.parse(trimmed);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              description = parsed as IDataObject;
+            } else {
+              description = { en: trimmed };
+            }
+          } catch {
+            description = { en: trimmed };
+          }
         }
-      }
-
-
-      // Flatten type to have 'id' and 'typeId' directly under 'type'
-      let flatType: IDataObject = { id: '', typeId: 'type' };
-      if (
-        action.type &&
-        typeof action.type === 'object' &&
-        'typeReference' in (action.type as IDataObject) &&
-        typeof (action.type as IDataObject).typeReference === 'object'
-      ) {
-        const typeRef = (action.type as IDataObject).typeReference as IDataObject;
-        flatType = {
-          id: typeof typeRef.id === 'string' ? typeRef.id : '',
-          typeId: typeof typeRef.typeId === 'string' ? typeRef.typeId : 'type',
-        };
+      } else if (rawDescription && typeof rawDescription === 'object') {
+        description = rawDescription as IDataObject;
       }
 
       finalAction = {
         ...action,
-        fields: flatFields,
-        type: flatType,
+        ...(description ? { description } : {}),
+      };
+    }
+
+    if (action?.action === 'changeAssetOrder') {
+      const rawOrder: unknown = action.assetOrder;
+      const secondaryOrder = typeof action.assetOrderSecond === 'string' ? action.assetOrderSecond.trim() : '';
+      let assetOrder: string[] = [];
+
+      if (Array.isArray(rawOrder)) {
+        assetOrder = rawOrder.map((entry: unknown) => String(entry)).filter((entry) => entry);
+      } else if (rawOrder && typeof rawOrder === 'object') {
+        if ('item' in rawOrder && Array.isArray((rawOrder as IDataObject).item)) {
+          const itemArray = (rawOrder as IDataObject).item;
+          if (Array.isArray(itemArray)) {
+            assetOrder = itemArray
+              .map((entry: unknown) => {
+                if (entry && typeof entry === 'object' && 'value' in (entry as IDataObject)) {
+                  return String((entry as IDataObject).value);
+                }
+                return String(entry);
+              })
+              .map((entry: string) => entry.trim())
+              .filter((entry: unknown) => entry);
+          }
+        } else if ('value' in rawOrder) {
+          const value = (rawOrder as IDataObject).value;
+          if (value !== undefined && value !== null && value !== '') {
+            assetOrder = [String(value)];
+          }
+        }
+      } else if (typeof rawOrder === 'string') {
+        const trimmed = rawOrder.trim();
+        if (trimmed) {
+          try {
+            const parsed: unknown = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+              assetOrder = parsed.map((entry: unknown) => String(entry)).filter((entry) => entry);
+            } else {
+              assetOrder = trimmed
+                .split(',')
+                .map((entry) => entry.trim())
+                .filter((entry) => entry);
+            }
+          } catch {
+            assetOrder = trimmed
+              .split(',')
+              .map((entry) => entry.trim())
+              .filter((entry) => entry);
+          }
+        }
+      } else if (rawOrder !== undefined && rawOrder !== null) {
+        assetOrder = [String(rawOrder)];
+      }
+
+      if (secondaryOrder && !assetOrder.includes(secondaryOrder)) {
+        assetOrder.push(secondaryOrder);
+      }
+
+      if (!assetOrder.length) {
+        throw new NodeOperationError(
+          context.getNode(),
+          'Change Asset Order requires at least one asset ID in Asset Order',
+        );
+      }
+
+      finalAction = {
+        ...action,
+        assetOrder,
+      };
+      delete finalAction.assetId;
+      delete finalAction.assetKey;
+      delete finalAction.assetIdentifierType;
+      delete finalAction.assetOrderSecond;
+    }
+
+    if (action?.action === 'setAssetCustomType') {
+      const flatFields = buildCustomTypeFields(action.fields);
+      const flatType = buildCustomTypeRef(action.type);
+      finalAction = {
+        ...action,
+        ...(Object.keys(flatFields).length ? { fields: flatFields } : {}),
+        ...(flatType ? { type: flatType } : {}),
+      };
+    }
+
+    if (action?.action === 'setCustomType') {
+      const flatFields = buildCustomTypeFields(action.fields);
+      const flatType = buildCustomTypeRef(action.type);
+      finalAction = {
+        ...action,
+        ...(Object.keys(flatFields).length ? { fields: flatFields } : {}),
+        ...(flatType ? { type: flatType } : {}),
       };
     }
 
     if (action?.action === 'addAsset') {
+      const assetDraft: IDataObject = {
+        ...(action.asset as IDataObject),
+        name: localized.name,
+      };
+
+      const assetSourcesFromAsset = (assetDraft.sources as IDataObject | IDataObject[] | undefined) ?? undefined;
+      const sourcesFromAction = (action.sources as IDataObject | undefined)?.source;
+      const normalizedSources = Array.isArray(assetSourcesFromAsset)
+        ? assetSourcesFromAsset
+        : Array.isArray(sourcesFromAction)
+          ? sourcesFromAction
+          : undefined;
+
+      if (normalizedSources?.length) {
+        assetDraft.sources = normalizedSources;
+      }
 
       finalAction = {
         ...action,
-        asset: {
-          ...action.asset as IDataObject,
-          name: localized.name
-        }
-      }
+        asset: assetDraft,
+      };
       delete finalAction?.name;
+      delete finalAction?.sources;
 
     }
 

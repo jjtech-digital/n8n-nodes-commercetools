@@ -93,8 +93,12 @@ export const categoryBaseFields: INodeProperties[] = [
 					},
 				},
 				description: 'Unique key of the category to target',
+
 			},
-	{
+];
+export const categoryDraftFields: INodeProperties[] = [
+
+	    {
 				displayName: 'Category Draft (JSON)',
 				name: 'categoryDraft',
 				type: 'json',
@@ -112,6 +116,762 @@ export const categoryBaseFields: INodeProperties[] = [
 ];
 
 export const categoryAdditionalFields: INodeProperties[] = [
+	{
+		displayName: 'Actions (UI)',
+		name: 'updateActions',
+		type: 'fixedCollection',
+		default: {},
+		placeholder: 'Add Action',
+		typeOptions: {
+			multipleValues: true,
+		},
+		description: 'Define multiple update actions to perform on the category',
+		displayOptions: {
+			show: {
+				resource: ['category'],
+				operation: ['update', 'updateByKey'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Action',
+				name: 'action',
+				values: [
+					{
+						displayName: 'Action Type',
+						name: 'action',
+						type: 'options',
+						required: true,
+						default: 'changeName',
+						options: [
+							{
+								name: 'Add Asset',
+								value: 'addAsset',
+							},
+							{
+								name: 'Change Asset Name',
+								value: 'changeAssetName',
+							},
+							{
+								name: 'Change Asset Order',
+								value: 'changeAssetOrder',
+							},
+							{
+								name: 'Change Name',
+								value: 'changeName',
+							},
+							{
+								name: 'Change OrderHint',
+								value: 'changeOrderHint',
+							},
+							{
+								name: 'Change Parent',
+								value: 'changeParent',
+							},
+							{
+								name: 'Change Slug',
+								value: 'changeSlug',
+							},
+							{
+								name: 'Remove Asset',
+								value: 'removeAsset',
+							},
+							{
+								name: 'Set Asset Custom Field',
+								value: 'setAssetCustomField',
+							},
+							{
+								name: 'Set Asset Custom Type',
+								value: 'setAssetCustomType',
+							},
+							{
+								name: 'Set Asset Description',
+								value: 'setAssetDescription',
+							},
+							{
+								name: 'Set Asset Key',
+								value: 'setAssetKey',
+							},
+							{
+								name: 'Set Asset Sources',
+								value: 'setAssetSources',
+							},
+							{
+								name: 'Set Asset Tags',
+								value: 'setAssetTags',
+							},
+							{
+								name: 'Set Custom Field',
+								value: 'setCustomField',
+							},
+							{
+								name: 'Set Custom Type',
+								value: 'setCustomType',
+							},
+							{
+								name: 'Set Description',
+								value: 'setDescription',
+							},
+							{
+								name: 'Set External ID',
+								value: 'setExternalId',
+							},
+							{
+								name: 'Set Key',
+								value: 'setKey',
+							},
+							{
+								name: 'Set Meta Description',
+								value: 'setMetaDescription',
+							},
+							{
+								name: 'Set Meta Keywords',
+								value: 'setMetaKeywords',
+							},
+							{
+								name: 'Set Meta Title',
+								value: 'setMetaTitle',
+							},
+						]
+					},
+					{
+						displayName: 'Asset Description',
+						name: 'description',
+						type: 'string',
+						default: '{"en": "Asset description"}',
+						displayOptions: {
+							show: {
+								action: ['setAssetDescription'],
+							},
+						},
+						description: 'Value to set. If empty, any existing value will be removed.',
+					},
+					{
+						displayName: 'Asset ID',
+						name: 'assetId',
+						type: 'string',
+						default: '',
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								assetIdentifierType: ['assetId'],
+							},
+						},
+						description: 'The ID of the asset to update',
+					},
+					{
+						displayName: 'Asset Identifier Type',
+						name: 'assetIdentifierType',
+						type: 'options',
+						default: 'assetId',
+						displayOptions: {
+							show: {
+								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+							},
+						},
+						options: [
+							{
+								name: 'Asset ID',
+								value: 'assetId',
+							},
+							{
+								name: 'Asset Key',
+								value: 'assetKey',
+							},
+						],
+						description: 'Choose whether to identify the asset by ID or Key',
+					},
+					{
+						displayName: 'Asset Key',
+						name: 'assetKey',
+						type: 'string',
+						default: '',
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								assetIdentifierType: ['assetKey'],
+							},
+						},
+						description: 'The Key of the asset to update',
+					},
+
+					{
+						displayName: 'Asset Name (Add)',
+						name: 'name',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized asset names',
+						displayOptions: {
+							show: {
+								action: ['addAsset'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Name',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Name in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Asset Name (Change)',
+						name: 'name',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized asset names',
+						displayOptions: {
+							show: {
+								action: ['changeAssetName'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Name',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Name in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Asset Order',
+						name: 'assetOrder',
+						type: 'string',
+						default: [],
+						typeOptions: {
+							multipleValues: true,
+						},
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['changeAssetOrder'],
+							},
+						},
+						description: 'List of Asset IDs in the desired order',
+					},
+					{
+						displayName: 'Asset Sources',
+						name: 'sources',
+						type: 'fixedCollection',
+						default: {},
+						placeholder: 'Add Source',
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Sources for the asset',
+						displayOptions: {
+							show: {
+								action: ['addAsset'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Source',
+								name: 'source',
+								values: [
+									{
+										displayName: 'URI',
+										name: 'uri',
+										type: 'string',
+										default: '',
+										required: true,
+										description: 'URI of the asset source',
+									},
+									{
+										displayName: 'Key',
+										name: 'key',
+										type: 'string',
+										default: '',
+										description: 'Optional key for the source',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Asset Sources',
+						name: 'sources',
+						type: 'fixedCollection',
+						default: {},
+						placeholder: 'Add Source',
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'List of asset sources with URI and key',
+						displayOptions: {
+							show: {
+								action: ['setAssetSources'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Source',
+								name: 'source',
+								values: [
+									{
+										displayName: 'URI',
+										name: 'uri',
+										type: 'string',
+										default: '',
+										required: true,
+										placeholder: 'https://www.example.com/image.jpg',
+									},
+									{
+										displayName: 'Key',
+										name: 'key',
+										type: 'string',
+										default: '',
+										description: 'Optional key for the source',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Asset Tags',
+						name: 'tags',
+						type: 'fixedCollection',
+						default: {},
+						placeholder: 'Add Tag',
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Keywords for categorizing and organizing Assets',
+						displayOptions: {
+							show: {
+								action: ['setAssetTags'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Tag',
+								name: 'tag',
+								values: [
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										required: true,
+										description: 'Tag value',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Custom Field Name',
+						name: 'name',
+						type: 'string',
+						default: '',
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomField', 'setCustomField'],
+							},
+						},
+						description: 'Name of the Custom Field',
+					},
+					{
+						displayName: 'Custom Field Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomField', 'setCustomField'],
+							},
+						},
+						description: 'If value is absent or null, this field will be removed if it exists',
+					},
+					{
+						displayName: 'Description',
+						name: 'description',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized category descriptions',
+						displayOptions: {
+							show: {
+								action: ['setDescription'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Description',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Description in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'External ID',
+						name: 'externalId',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setExternalId'],
+							},
+						},
+						description: 'Value to set. If empty, any existing value will be removed.',
+					},
+					{
+						displayName: 'Fields',
+						name: 'fields',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomType', 'setCustomType'],
+							},
+						},
+						description: 'Sets the Custom Fields fields for the Asset',
+					},
+					{
+						displayName: 'Key',
+						name: 'key',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setKey', 'setAssetKey'],
+							},
+						},
+						description: 'Value to set. If empty, any existing value will be removed.',
+					},
+					{
+						displayName: 'Meta Description',
+						name: 'metaDescription',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized category meta descriptions',
+						displayOptions: {
+							show: {
+								action: ['setMetaDescription'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Meta Description',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Meta description in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Meta Keywords',
+						name: 'metaKeywords',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized category meta keywords',
+						displayOptions: {
+							show: {
+								action: ['setMetaKeywords'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Meta Keywords',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Meta keywords in this locale (comma-separated)',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Meta Title',
+						name: 'metaTitle',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized category meta titles',
+						displayOptions: {
+							show: {
+								action: ['setMetaTitle'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Meta Title',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Meta title in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Name',
+						name: 'name',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized category names',
+						displayOptions: {
+							show: {
+								action: ['changeName'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Name',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										required: true,
+										description: 'Category name in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Order Hint',
+						name: 'orderHint',
+						type: 'string',
+						default: '0.1',
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['changeOrderHint'],
+							},
+						},
+						description: 'New value to set. Must be a decimal value between 0 and 1.',
+					},
+					{
+						displayName: 'Parent Category',
+						name: 'parent',
+						type: 'fixedCollection',
+						default: {},
+						description: 'Parent category reference',
+						displayOptions: {
+							show: {
+								action: ['changeParent'],
+							},
+						},
+						options: [
+							{
+								name: 'categoryDetails',
+								displayName: 'Category Details',
+								values: [
+									{
+										displayName: 'Type ID',
+										name: 'typeId',
+										type: 'hidden',
+										default: 'category',
+										description: 'Type identifier (always "category")',
+									},
+									{
+										displayName: 'Category ID',
+										name: 'id',
+										type: 'string',
+										default: '',
+										required: true,
+										placeholder: '{{category-ID}}',
+										description: 'ID of the parent category',
+									},
+								],
+							},                       
+						],
+					},
+					{
+						displayName: 'Position',
+						name: 'position',
+						type: 'number',
+						default: 0,
+						displayOptions: {
+							show: {
+								action: ['addAsset'],
+							},
+						},
+						description: 'Position in the array at which the Asset should be put. When specified, the value must be between 0 and the total number of Assets minus 1.',
+					},
+					{
+						displayName: 'Slug',
+						name: 'slug',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Localized category slugs (must be unique across project)',
+						displayOptions: {
+							show: {
+								action: ['changeSlug'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Localized Slug',
+								name: 'localizedField',
+								values: [
+									{
+										displayName: 'Locale',
+										name: 'locale',
+										type: 'string',
+										default: 'en',
+										description: 'Locale code (e.g., en, de, fr)',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										required: true,
+										placeholder: 'my-category',
+										description: 'URL-friendly slug (letters, numbers, hyphens, underscores)',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Type (Asset)',
+						name: 'type',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomType'],
+							},
+						},
+						description: 'Defines the Type that extends the Asset with Custom Fields. If absent, any existing Type and Custom Fields are removed from the Asset.',
+					},
+					{
+						displayName: 'Type (Category)',
+						name: 'type',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setCustomType'],
+							},
+						},
+						description: 'Defines the Type that extends the Category with Custom Fields',
+					},
+			],
+			},
+		],
+	},
 	{
 				displayName: 'Additional Fields',
 				name: 'categoryAdditionalFieldsQuery',
