@@ -153,10 +153,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								value: 'changeAssetName',
 							},
 							{
-								name: 'Change Asset Order',
-								value: 'changeAssetOrder',
-							},
-							{
 								name: 'Change Name',
 								value: 'changeName',
 							},
@@ -177,14 +173,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								value: 'removeAsset',
 							},
 							{
-								name: 'Set Asset Custom Field',
-								value: 'setAssetCustomField',
-							},
-							{
-								name: 'Set Asset Custom Type',
-								value: 'setAssetCustomType',
-							},
-							{
 								name: 'Set Asset Description',
 								value: 'setAssetDescription',
 							},
@@ -199,14 +187,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 							{
 								name: 'Set Asset Tags',
 								value: 'setAssetTags',
-							},
-							{
-								name: 'Set Custom Field',
-								value: 'setCustomField',
-							},
-							{
-								name: 'Set Custom Type',
-								value: 'setCustomType',
 							},
 							{
 								name: 'Set Description',
@@ -254,7 +234,7 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						required: true,
 						displayOptions: {
 							show: {
-								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								action: ['changeAssetName', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
 								assetIdentifierType: ['assetId'],
 							},
 						},
@@ -267,7 +247,7 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						default: 'assetId',
 						displayOptions: {
 							show: {
-								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								action: ['changeAssetName', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
 							},
 						},
 						options: [
@@ -290,7 +270,7 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						required: true,
 						displayOptions: {
 							show: {
-								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								action: ['changeAssetName', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
 								assetIdentifierType: ['assetKey'],
 							},
 						},
@@ -370,22 +350,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								],
 							},
 						],
-					},
-					{
-						displayName: 'Asset Order',
-						name: 'assetOrder',
-						type: 'string',
-						default: [],
-						typeOptions: {
-							multipleValues: true,
-						},
-						required: true,
-						displayOptions: {
-							show: {
-								action: ['changeAssetOrder'],
-							},
-						},
-						description: 'List of Asset IDs in the desired order',
 					},
 					{
 						displayName: 'Asset Sources',
@@ -498,31 +462,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						],
 					},
 					{
-						displayName: 'Custom Field Name',
-						name: 'name',
-						type: 'string',
-						default: '',
-						required: true,
-						displayOptions: {
-							show: {
-								action: ['setAssetCustomField', 'setCustomField'],
-							},
-						},
-						description: 'Name of the Custom Field',
-					},
-					{
-						displayName: 'Custom Field Value',
-						name: 'value',
-						type: 'string',
-						default: '',
-						displayOptions: {
-							show: {
-								action: ['setAssetCustomField', 'setCustomField'],
-							},
-						},
-						description: 'If value is absent or null, this field will be removed if it exists',
-					},
-					{
 						displayName: 'Description',
 						name: 'description',
 						type: 'fixedCollection',
@@ -570,18 +509,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 							},
 						},
 						description: 'Value to set. If empty, any existing value will be removed.',
-					},
-					{
-						displayName: 'Fields',
-						name: 'fields',
-						type: 'string',
-						default: '',
-						displayOptions: {
-							show: {
-								action: ['setAssetCustomType', 'setCustomType'],
-							},
-						},
-						description: 'Sets the Custom Fields fields for the Asset',
 					},
 					{
 						displayName: 'Key',
@@ -843,30 +770,6 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								],
 							},
 						],
-					},
-					{
-						displayName: 'Type (Asset)',
-						name: 'type',
-						type: 'string',
-						default: '',
-						displayOptions: {
-							show: {
-								action: ['setAssetCustomType'],
-							},
-						},
-						description: 'Defines the Type that extends the Asset with Custom Fields. If absent, any existing Type and Custom Fields are removed from the Asset.',
-					},
-					{
-						displayName: 'Type (Category)',
-						name: 'type',
-						type: 'string',
-						default: '',
-						displayOptions: {
-							show: {
-								action: ['setCustomType'],
-							},
-						},
-						description: 'Defines the Type that extends the Category with Custom Fields',
 					},
 			],
 			},
