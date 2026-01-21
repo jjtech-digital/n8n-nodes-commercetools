@@ -81,7 +81,9 @@ Use the Commercetools Trigger node to receive real-time events.
   - Profile: name, company, title, DOB
   - Addresses: added, changed, removed, defaults set
   - Custom fields & custom types
-
+- **Category Events**
+  - Lifecycle: created
+  - Metadata: slug changed
 ## AWS SQS + Lambda Integration (optional)
 
 - Auto-creates SQS queue, Lambda function, IAM role/policy, and event source mapping.
@@ -185,10 +187,11 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.23 - Category trigger events addition.
+- v0.1.22 - Postman collection update.
 - v0.1.21 - Hardened release tooling: refreshed changelog for v0.1.20 and stabilized auto-changelog version.
 - v0.1.20 - Release with README structure cleanup and streamlined changelog entries.
-- v0.1.19 - Expanded Commercetools integration docs and clarified feature/usage guidance.
-- v0.1.18 - Release notes captured for customer trigger and Lambda handler updates.
+
 
 
 ## License
