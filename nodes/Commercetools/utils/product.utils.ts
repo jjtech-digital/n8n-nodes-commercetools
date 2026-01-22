@@ -1,5 +1,6 @@
 import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+import { transformCategoryActions } from './category.utils';
 
 type CommonParameterOptions = {
   allowSort?: boolean;
@@ -114,47 +115,7 @@ export function preprocessLocalizedFields(obj: IDataObject): IDataObject {
   }
   return transform(obj) as IDataObject;
 }
-/**
- * Transforms categoryId and categoryReference fields to nested category object for specific actions
- */
-function transformFlatCategoryId(actionObj: IDataObject): IDataObject {
-  // Handle flat categoryId for addToCategory, removeFromCategory
-  if (
-    actionObj && typeof actionObj === 'object' &&
-    typeof actionObj.categoryId === 'string' && actionObj.categoryId !== '' &&
-    typeof actionObj.action === 'string' && ['addToCategory', 'removeFromCategory'].includes(actionObj.action)
-  ) {
-    return {
-      ...actionObj,
-      category: {
-        typeId: 'category',
-        id: actionObj.categoryId,
-      },
-    };
-  }
 
-  // Handle categoryReference array for addToCategory
-  if (
-    actionObj && typeof actionObj === 'object' &&
-    actionObj.category && typeof actionObj.category === 'object'
-  ) {
-    const categoryObj = actionObj.category as IDataObject;
-    if (Array.isArray(categoryObj.categoryReference) && categoryObj.categoryReference.length > 0) {
-      const ref = categoryObj.categoryReference[0] as IDataObject | undefined;
-      if (ref && typeof ref === 'object' && ref.typeId && (ref.id || ref.key)) {
-        return {
-          ...actionObj,
-          category: {
-            typeId: ref.typeId,
-            ...(ref.id ? { id: ref.id } : {}),
-            ...(ref.key ? { key: ref.key } : {}),
-          },
-        };
-      }
-    }
-  }
-  return actionObj;
-}
 
 // Helper function to parse value based on type
 function parseAttributeValue(value: string, type: string): string | number | boolean  {
@@ -320,7 +281,7 @@ export const buildActionsFromUi = (
   const attributesActions = ['setAttribute', 'setAttributeInAllVariants', 'setProductAttribute'];
   for (const action of actionEntries) {
     const localized = preprocessLocalizedFields(action);
-    let finalAction = transformFlatCategoryId(localized);
+    let finalAction = transformCategoryActions(localized);
     // setting attribute to any type like attribute can be number, string and boolean
     if (attributesActions.includes(action?.action as string)) {
       const attributeValue = parseAttributeValue(action?.value as string, action?.valueType as string);
@@ -441,25 +402,7 @@ export const buildActionsFromUi = (
       };
     }
 
-    if (action?.action === 'addToCategory' || action?.action === 'removeFromCategory') {
-      const categoryDetails = (action?.category as IDataObject)?.categoryDetails;
-      if (categoryDetails) {
-        finalAction = {
-          ...action,
-          category: categoryDetails,
-        };
-      } else {
-        finalAction = { ...action };
-      }
-    }
 
-    if (action?.action === 'changeParent') {
-      const parentDetails = (action?.parent as IDataObject)?.categoryDetails;
-      finalAction = {
-        ...action,
-        ...(parentDetails ? { parent: parentDetails } : {}),
-      };
-    }
 
     if (action?.action === 'setTaxCategory') {
       const taxCategoryDetails = (action?.taxCategory as IDataObject)?.taxCategoryDetails;
@@ -477,6 +420,26 @@ export const buildActionsFromUi = (
       finalAction = {
         ...action,
         sources: flatSources
+      };
+    }
+
+    if (action?.action === 'setAssetTags') {
+      const rawTags = (action.tags && typeof action.tags === 'object' && 'tag' in action.tags)
+        ? (action.tags as IDataObject).tag
+        : action.tags;
+      const tagEntries = Array.isArray(rawTags) ? rawTags : rawTags ? [rawTags] : [];
+      const tags = tagEntries
+        .map((tag: unknown) => {
+          if (tag && typeof tag === 'object' && 'value' in (tag as IDataObject)) {
+            return String((tag as IDataObject).value ?? '').trim();
+          }
+          return String(tag ?? '').trim();
+        })
+        .filter((tag) => tag.length > 0);
+
+      finalAction = {
+        ...action,
+        ...(tags.length ? { tags } : {}),
       };
     }
 
@@ -600,6 +563,25 @@ export const buildActionsFromUi = (
       };
     }
 
+    if (action?.action === 'setCustomField' || action?.action === 'setAssetCustomField') {
+      const rawValue = action.value;
+      let parsedValue = rawValue;
+      if (typeof rawValue === 'string') {
+        const trimmed = rawValue.trim();
+        if (trimmed) {
+          try {
+            parsedValue = JSON.parse(trimmed);
+          } catch {
+            parsedValue = rawValue;
+          }
+        }
+      }
+      finalAction = {
+        ...action,
+        ...(parsedValue !== undefined ? { value: parsedValue } : {}),
+      };
+    }
+
     if (action?.action === 'addAsset') {
       const assetDraft: IDataObject = {
         ...(action.asset as IDataObject),
@@ -629,6 +611,9 @@ export const buildActionsFromUi = (
 
     if (finalAction?.identifyBy) {
       delete finalAction?.identifyBy;
+    }
+    if (finalAction?.assetIdentifierType) {
+      delete finalAction?.assetIdentifierType;
     }
 
     if (action?.action === 'setSearchKeywords') {

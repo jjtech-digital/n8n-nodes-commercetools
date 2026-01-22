@@ -153,6 +153,10 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								value: 'changeAssetName',
 							},
 							{
+								name: 'Change Asset Order',
+								value: 'changeAssetOrder',
+							},
+							{
 								name: 'Change Name',
 								value: 'changeName',
 							},
@@ -173,6 +177,14 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								value: 'removeAsset',
 							},
 							{
+								name: 'Set Asset Custom Field',
+								value: 'setAssetCustomField',
+							},
+							{
+								name: 'Set Asset Custom Type',
+								value: 'setAssetCustomType',
+							},
+							{
 								name: 'Set Asset Description',
 								value: 'setAssetDescription',
 							},
@@ -187,6 +199,14 @@ export const categoryAdditionalFields: INodeProperties[] = [
 							{
 								name: 'Set Asset Tags',
 								value: 'setAssetTags',
+							},
+							{
+								name: 'Set Custom Field',
+								value: 'setCustomField',
+							},
+							{
+								name: 'Set Custom Type',
+								value: 'setCustomType',
 							},
 							{
 								name: 'Set Description',
@@ -234,7 +254,7 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						required: true,
 						displayOptions: {
 							show: {
-								action: ['changeAssetName', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
 								assetIdentifierType: ['assetId'],
 							},
 						},
@@ -247,7 +267,7 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						default: 'assetId',
 						displayOptions: {
 							show: {
-								action: ['changeAssetName', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
 							},
 						},
 						options: [
@@ -270,13 +290,12 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						required: true,
 						displayOptions: {
 							show: {
-								action: ['changeAssetName', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
+								action: ['changeAssetName', 'setAssetCustomField', 'setAssetCustomType', 'setAssetDescription', 'setAssetKey', 'setAssetSources', 'setAssetTags', 'removeAsset'],
 								assetIdentifierType: ['assetKey'],
 							},
 						},
 						description: 'The Key of the asset to update',
 					},
-
 					{
 						displayName: 'Asset Name (Add)',
 						name: 'name',
@@ -346,6 +365,39 @@ export const categoryAdditionalFields: INodeProperties[] = [
 										type: 'string',
 										default: '',
 										description: 'Name in this locale',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Asset Order',
+						name: 'assetOrder',
+						type: 'fixedCollection',
+						default: {},
+						placeholder: 'Add Asset ID',
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'New order for assets. Must contain all asset IDs in the desired order.',
+						displayOptions: {
+							show: {
+								action: ['changeAssetOrder'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Asset ID',
+								name: 'assetId',
+								values: [
+									{
+										displayName: 'ID',
+										name: 'id',
+										type: 'string',
+										default: '',
+										required: true,
+										placeholder: '{{assetId}}',
+										description: 'ID of the asset',
 									},
 								],
 							},
@@ -462,6 +514,81 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						],
 					},
 					{
+						displayName: 'Custom Fields',
+						name: 'fields',
+						type: 'fixedCollection',
+						default: {},
+						placeholder: 'Add Field',
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Sets the Custom Fields fields for the Asset',
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomType'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Field',
+								name: 'field',
+								values: [
+									{
+										displayName: 'Name',
+										name: 'name',
+										type: 'string',
+										default: '',
+										required: true,
+										description: 'Name of the custom field',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Value to set for the custom field',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Custom Type',
+						name: 'type',
+						type: 'fixedCollection',
+						default: {},
+						description: 'Defines the Type that extends the Asset with Custom Fields',
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomType'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Type Details',
+								name: 'typeDetails',
+								values: [
+									{
+										displayName: 'Type ID',
+										name: 'typeId',
+										type: 'hidden',
+										default: 'type',
+										description: 'Type identifier (always "type")',
+									},
+									{
+										displayName: 'ID',
+										name: 'id',
+										type: 'string',
+										default: '',
+										required: true,
+										placeholder: '',
+										description: 'ID of the Type',
+									},
+								],
+							},
+						],
+					},
+					{
 						displayName: 'Description',
 						name: 'description',
 						type: 'fixedCollection',
@@ -509,6 +636,45 @@ export const categoryAdditionalFields: INodeProperties[] = [
 							},
 						},
 						description: 'Value to set. If empty, any existing value will be removed.',
+					},
+					{
+						displayName: 'Fields',
+						name: 'fields',
+						type: 'fixedCollection',
+						default: {},
+						placeholder: 'Add Field',
+						typeOptions: {
+							multipleValues: true,
+						},
+						description: 'Sets the Custom Fields fields for the Category',
+						displayOptions: {
+							show: {
+								action: ['setCustomType'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Field',
+								name: 'field',
+								values: [
+									{
+										displayName: 'Name',
+										name: 'name',
+										type: 'string',
+										default: '',
+										required: true,
+										description: 'Name of the custom field',
+									},
+									{
+										displayName: 'Value',
+										name: 'value',
+										type: 'string',
+										default: '',
+										description: 'Value to set for the custom field',
+									},
+								],
+							},
+						],
 					},
 					{
 						displayName: 'Key',
@@ -672,6 +838,32 @@ export const categoryAdditionalFields: INodeProperties[] = [
 						],
 					},
 					{
+						displayName: 'Name',
+						name: 'name',
+						type: 'string',
+						default: '',
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomField'],
+							},
+						},
+						description: 'Name of the Custom Field',
+					},
+					{
+						displayName: 'Name',
+						name: 'name',
+						type: 'string',
+						default: '',
+						required: true,
+						displayOptions: {
+							show: {
+								action: ['setCustomField'],
+							},
+						},
+						description: 'Name of the Custom Field',
+					},
+					{
 						displayName: 'Order Hint',
 						name: 'orderHint',
 						type: 'string',
@@ -713,7 +905,7 @@ export const categoryAdditionalFields: INodeProperties[] = [
 										type: 'string',
 										default: '',
 										required: true,
-										placeholder: '{{category-ID}}',
+										placeholder: '',
 										description: 'ID of the parent category',
 									},
 								],
@@ -770,6 +962,66 @@ export const categoryAdditionalFields: INodeProperties[] = [
 								],
 							},
 						],
+					},
+					{
+						displayName: 'Type',
+						name: 'type',
+						type: 'fixedCollection',
+						default: {},
+						description: 'Defines the Type that extends the Category with Custom Fields',
+						displayOptions: {
+							show: {
+								action: ['setCustomType'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Type Details',
+								name: 'typeDetails',
+								values: [
+									{
+										displayName: 'Type ID',
+										name: 'typeId',
+										type: 'hidden',
+										default: 'type',
+										description: 'Type identifier (always "type")',
+									},
+									{
+										displayName: 'ID',
+										name: 'id',
+										type: 'string',
+										default: '',
+										required: true,
+										placeholder: '',
+										description: 'ID of the Type',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setAssetCustomField'],
+							},
+						},
+						description: 'If value is absent or null, this field will be removed if it exists. Removing a field that does not exist returns an InvalidOperation error. If value is provided, it is set for the field defined by name.',
+					},
+					{
+						displayName: 'Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						displayOptions: {
+							show: {
+								action: ['setCustomField'],
+							},
+						},
+						description: 'If value is absent or null, this field will be removed if it exists. Removing a field that does not exist returns an InvalidOperation error. If value is provided, it is set for the field defined by name.',
 					},
 			],
 			},

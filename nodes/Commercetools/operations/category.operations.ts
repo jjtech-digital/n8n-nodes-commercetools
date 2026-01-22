@@ -1,7 +1,8 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-import { buildActionsFromUi, coerceActions, coerceJsonInput } from '../utils/product.utils';
+import { coerceActions, coerceJsonInput } from '../utils/product.utils';
+import { buildCategoryActionsFromUi } from '../utils/category.utils';
 
 type CategoryOperationArgs = {
 	operation: string;
@@ -223,7 +224,7 @@ export async function executeCategoryOperation(
 		const rawActions = this.getNodeParameter('actions', itemIndex);
 		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
-		const actionsFromUi = buildActionsFromUi(this, actionsUi);
+		const actionsFromUi = buildCategoryActionsFromUi(this, actionsUi);
 		const actions = [...actionsFromJson, ...actionsFromUi];
 
 		if (actions.length === 0) {
