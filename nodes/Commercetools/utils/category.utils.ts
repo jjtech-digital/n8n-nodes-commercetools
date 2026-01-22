@@ -10,32 +10,22 @@ const isUuid = (value: string): boolean =>
  * Builds a category reference object from various input formats
  */
 export const buildCategoryReference = (categoryInput: unknown): IDataObject | undefined => {
-  if (!categoryInput) {
-    return undefined;
-  }
+  if (!categoryInput) return undefined;
 
   // Handle string input (ID or Key)
   if (typeof categoryInput === 'string') {
     const trimmed = categoryInput.trim();
-    if (!trimmed) return undefined;
-
-    return isUuid(trimmed)
-      ? { id: trimmed, typeId: 'category' }
-      : { key: trimmed, typeId: 'category' };
+    return !trimmed ? undefined : {
+      typeId: 'category',
+      ...(isUuid(trimmed) ? { id: trimmed } : { key: trimmed })
+    };
   }
 
-  // Handle object with categoryReference
-  if (
-    typeof categoryInput === 'object' &&
-    'categoryReference' in (categoryInput as IDataObject)
-  ) {
-    const ref = (categoryInput as IDataObject).categoryReference as IDataObject;
-    return buildCategoryRefFromObject(ref);
-  }
-
-  // Handle direct object with id or key
+  // Handle object input
   if (typeof categoryInput === 'object') {
-    return buildCategoryRefFromObject(categoryInput as IDataObject);
+    const obj = categoryInput as IDataObject;
+    const ref = 'categoryReference' in obj ? obj.categoryReference as IDataObject : obj;
+    return buildCategoryRefFromObject(ref);
   }
 
   return undefined;
@@ -48,17 +38,11 @@ const buildCategoryRefFromObject = (obj: IDataObject): IDataObject | undefined =
   const typeId = typeof obj.typeId === 'string' ? obj.typeId : 'category';
 
   // Prefer id over key
-  if ('id' in obj) {
-    const id = String(obj.id ?? '').trim();
-    return id ? { id, typeId } : undefined;
-  }
+  const id = String(obj.id ?? '').trim();
+  if (id) return { id, typeId };
 
-  if ('key' in obj) {
-    const key = String(obj.key ?? '').trim();
-    return key ? { key, typeId } : undefined;
-  }
-
-  return undefined;
+  const key = String(obj.key ?? '').trim();
+  return key ? { key, typeId } : undefined;
 };
 
 /**
@@ -72,34 +56,28 @@ export const transformCategoryForAddRemove = (actionObj: IDataObject): IDataObje
   }
 
   // Handle flat categoryId field
-  if (typeof actionObj.categoryId === 'string' && actionObj.categoryId.trim()) {
+  const categoryId = typeof actionObj.categoryId === 'string' ? actionObj.categoryId.trim() : '';
+  if (categoryId) {
     return {
       ...actionObj,
-      category: {
-        typeId: 'category',
-        id: actionObj.categoryId,
-      },
+      category: { typeId: 'category', id: categoryId }
     };
   }
 
   // Handle category.categoryReference array
-  if (actionObj.category && typeof actionObj.category === 'object') {
-    const categoryObj = actionObj.category as IDataObject;
-    
-    if (Array.isArray(categoryObj.categoryReference) && categoryObj.categoryReference.length > 0) {
-      const ref = categoryObj.categoryReference[0] as IDataObject | undefined;
-      
-      if (ref && typeof ref === 'object' && ref.typeId && (ref.id || ref.key)) {
-        return {
-          ...actionObj,
-          category: {
-            typeId: ref.typeId,
-            ...(ref.id ? { id: ref.id } : {}),
-            ...(ref.key ? { key: ref.key } : {}),
-          },
-        };
+  const categoryObj = actionObj.category as IDataObject;
+  const categoryRef = categoryObj?.categoryReference as IDataObject[];
+  const ref = Array.isArray(categoryRef) ? categoryRef[0] : undefined;
+  
+  if (ref?.typeId && (ref.id || ref.key)) {
+    return {
+      ...actionObj,
+      category: {
+        typeId: ref.typeId,
+        ...(ref.id && { id: ref.id }),
+        ...(ref.key && { key: ref.key })
       }
-    }
+    };
   }
 
   return actionObj;
@@ -158,43 +136,128 @@ export const transformCategoryActions = (actionObj: IDataObject): IDataObject =>
  * Recursively transforms any property named 'name', 'description', 'slug', etc. containing a localizedField array into a locale-keyed object.
  */
 function preprocessLocalizedFields(obj: IDataObject): IDataObject {
+  const processLocalizedField = (localizedArr: unknown[]): IDataObject => {
+    const result: IDataObject = {};
+    for (const loc of localizedArr) {
+      if (!loc || typeof loc !== 'object') continue;
+      
+      const locale = (loc as IDataObject).locale;
+      const value = (loc as IDataObject).value;
+      const trimmedLocale = typeof locale === 'string' ? locale.trim() : '';
+      
+      if (trimmedLocale && value !== undefined && value !== null) {
+        result[trimmedLocale] = value;
+      }
+    }
+    return result;
+  };
+
   function transform(value: IDataObject | IDataObject[]): IDataObject | IDataObject[] {
     if (Array.isArray(value)) {
-      return value.map((entry) => (entry && typeof entry === 'object' ? transform(entry) : entry)) as IDataObject | IDataObject[];
+      return value.map(entry => 
+        entry && typeof entry === 'object' ? transform(entry) : entry
+      ) as IDataObject | IDataObject[];
     }
 
-    if (value && typeof value === 'object') {
-      const newObj: IDataObject = {};
-      for (const key of Object.keys(value)) {
-        const currentValue = value[key];
+    if (!value || typeof value !== 'object') return value;
 
-        if (currentValue && typeof currentValue === 'object' && 'localizedField' in currentValue) {
-          const localizedArr = currentValue.localizedField;
-          if (Array.isArray(localizedArr)) {
-            newObj[key] = {};
-            for (const loc of localizedArr) {
-              if (loc && typeof loc === 'object') {
-                const locale = typeof loc.locale === 'string' ? loc.locale.trim() : '';
-                const val = loc.value;
-                if (locale && val !== undefined && val !== null) {
-                  (newObj[key] as IDataObject)[locale] = val;
-                }
-              }
-            }
-          } else {
-            newObj[key] = currentValue;
-          }
-        } else {
-          newObj[key] = transform(currentValue as IDataObject | IDataObject[]);
-        }
+    const newObj: IDataObject = {};
+    for (const [key, currentValue] of Object.entries(value)) {
+      const hasLocalizedField = currentValue && 
+        typeof currentValue === 'object' && 
+        'localizedField' in currentValue;
+        
+      if (hasLocalizedField) {
+        const localizedArr = (currentValue as IDataObject).localizedField;
+        newObj[key] = Array.isArray(localizedArr) 
+          ? processLocalizedField(localizedArr)
+          : currentValue;
+      } else {
+        newObj[key] = transform(currentValue as IDataObject | IDataObject[]);
       }
-      return newObj;
     }
-
-    return value;
+    return newObj;
   }
+  
   return transform(obj) as IDataObject;
 }
+
+/**
+ * Processes asset description for setAssetDescription action
+ */
+const processAssetDescription = (action: IDataObject): IDataObject => {
+  const rawDescription = action.description;
+  
+  if (typeof rawDescription === 'string') {
+    const trimmed = rawDescription.trim();
+    if (!trimmed) return action;
+    
+    try {
+      const parsed = JSON.parse(trimmed);
+      const description = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) 
+        ? parsed 
+        : { en: trimmed };
+      return { ...action, description };
+    } catch {
+      return { ...action, description: { en: trimmed } };
+    }
+  }
+  
+  if (rawDescription && typeof rawDescription === 'object') {
+    return { ...action, description: rawDescription };
+  }
+  
+  return action;
+};
+
+/**
+ * Processes asset sources for setAssetSources action
+ */
+const processAssetSources = (action: IDataObject): IDataObject => {
+  const sources = action.sources;
+  const flatSources = (sources && typeof sources === 'object' && 'source' in sources)
+    ? sources.source as IDataObject[]
+    : [];
+  
+  return { ...action, sources: flatSources };
+};
+
+/**
+ * Processes asset for addAsset action
+ */
+const processAddAsset = (action: IDataObject, localized: IDataObject): IDataObject => {
+  const assetDraft: IDataObject = {
+    ...(action.asset as IDataObject || {}),
+    name: localized.name,
+  };
+
+  const assetSourcesFromAsset = assetDraft.sources as IDataObject | IDataObject[] | undefined;
+  const sourcesFromAction = (action.sources as IDataObject | undefined)?.source;
+  const normalizedSources = Array.isArray(assetSourcesFromAsset)
+    ? assetSourcesFromAsset
+    : Array.isArray(sourcesFromAction)
+      ? sourcesFromAction
+      : undefined;
+
+  if (normalizedSources?.length) {
+    assetDraft.sources = normalizedSources;
+  }
+
+  const result = { ...action, asset: assetDraft };
+  // Remove properties that should not be in the final result
+  if ('name' in result) delete result.name;
+  if ('sources' in result) delete result.sources;
+  return result;
+};
+
+/**
+ * Action processors map for different action types
+ */
+const ACTION_PROCESSORS = {
+  setAssetDescription: (action: IDataObject) => processAssetDescription(action),
+  setAssetSources: (action: IDataObject) => processAssetSources(action),
+  addAsset: (action: IDataObject, localized: IDataObject) => processAddAsset(action, localized)
+};
 
 /**
  * Builds actions from UI specifically for category operations
@@ -203,93 +266,31 @@ export const buildCategoryActionsFromUi = (
   context: IExecuteFunctions,
   actionsUi: IDataObject,
 ): IDataObject[] => {
-  const builtActions: IDataObject[] = [];
   const rawActionEntries = actionsUi.action;
-  let actionEntries: IDataObject[] = [];
+  const actionEntries = Array.isArray(rawActionEntries) 
+    ? rawActionEntries as IDataObject[]
+    : rawActionEntries ? [rawActionEntries as IDataObject] : [];
 
-  if (Array.isArray(rawActionEntries)) {
-    actionEntries = rawActionEntries as IDataObject[];
-  } else if (rawActionEntries) {
-    actionEntries = [rawActionEntries as IDataObject];
-  }
-
-  for (const action of actionEntries) {
+  return actionEntries.map(action => {
     const localized = preprocessLocalizedFields(action);
     let finalAction = transformCategoryActions(localized);
-
-    // Handle asset-related actions for categories
-    if (action?.action === 'setAssetDescription') {
-      const rawDescription = action.description;
-      let description: IDataObject | undefined;
-
-      if (typeof rawDescription === 'string') {
-        const trimmed = rawDescription.trim();
-        if (trimmed) {
-          try {
-            const parsed: unknown = JSON.parse(trimmed);
-            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-              description = parsed as IDataObject;
-            } else {
-              description = { en: trimmed };
-            }
-          } catch {
-            description = { en: trimmed };
-          }
-        }
-      } else if (rawDescription && typeof rawDescription === 'object') {
-        description = rawDescription as IDataObject;
-      }
-
-      finalAction = {
-        ...action,
-        ...(description ? { description } : {}),
-      };
-    }
-
-    if (action?.action === 'setAssetSources') {
-      const flatSources = (action.sources && typeof action.sources === 'object' && 'source' in action.sources)
-        ? (action.sources.source as IDataObject[])
-        : [];
-
-      finalAction = {
-        ...action,
-        sources: flatSources
-      };
-    }
-
-    if (action?.action === 'addAsset') {
-      const assetDraft: IDataObject = {
-        ...(action.asset as IDataObject),
-        name: localized.name,
-      };
-
-      const assetSourcesFromAsset = (assetDraft.sources as IDataObject | IDataObject[] | undefined) ?? undefined;
-      const sourcesFromAction = (action.sources as IDataObject | undefined)?.source;
-      const normalizedSources = Array.isArray(assetSourcesFromAsset)
-        ? assetSourcesFromAsset
-        : Array.isArray(sourcesFromAction)
-          ? sourcesFromAction
-          : undefined;
-
-      if (normalizedSources?.length) {
-        assetDraft.sources = normalizedSources;
-      }
-
-      finalAction = {
-        ...action,
-        asset: assetDraft,
-      };
-      delete finalAction?.name;
-      delete finalAction?.sources;
+    
+    const actionType = action?.action as string;
+    
+    // Handle specific action types
+    if (actionType === 'setAssetDescription') {
+      finalAction = ACTION_PROCESSORS.setAssetDescription(action);
+    } else if (actionType === 'setAssetSources') {
+      finalAction = ACTION_PROCESSORS.setAssetSources(action);
+    } else if (actionType === 'addAsset') {
+      finalAction = ACTION_PROCESSORS.addAsset(action, localized);
     }
 
     // Clean up identifyBy field if present
-    if (finalAction?.identifyBy) {
-      delete finalAction?.identifyBy;
+    if ('identifyBy' in finalAction) {
+      delete finalAction.identifyBy;
     }
 
-    builtActions.push(finalAction);
-  }
-
-  return builtActions;
+    return finalAction;
+  });
 };
