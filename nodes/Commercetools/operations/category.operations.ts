@@ -1,7 +1,8 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-import { coerceActions, coerceJsonInput } from '../utils/product.utils';
+import { coerceActions, coerceJsonInput } from '../utils/common.utils';
+import { buildCategoryActionsFromUi } from '../utils/category.utils';
 
 type CategoryOperationArgs = {
 	operation: string;
@@ -221,12 +222,15 @@ export async function executeCategoryOperation(
 
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const rawActions = this.getNodeParameter('actions', itemIndex);
-		const actions = coerceActions(this, rawActions, itemIndex);
+		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
+		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
+		const actionsFromUi = buildCategoryActionsFromUi(this, actionsUi);
+		const actions = [...actionsFromJson, ...actionsFromUi];
 
 		if (actions.length === 0) {
 			throw new NodeOperationError(
 				this.getNode(),
-				'Provide at least one update action via Actions (JSON)',
+				'Provide at least one update action via Actions (JSON) or Actions (UI)',
 				{ itemIndex },
 			);
 		}
@@ -289,4 +293,3 @@ export async function executeCategoryOperation(
 		{ itemIndex },
 	);
 }
-

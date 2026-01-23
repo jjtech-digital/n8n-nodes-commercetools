@@ -3,10 +3,10 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import {
 	applyCommonParameters,
-	buildActionsFromUi,
 	coerceActions,
 	coerceJsonInput,
-} from '../utils/product.utils';
+} from '../utils/common.utils';
+import { buildActionsFromUi } from '../utils/actionBuilder';
 
 type ProductOperationArgs = {
 	operation: string;

@@ -107,7 +107,7 @@ Use the Commercetools Trigger node to receive real-time events.
   - Create Category
   - Query Categories
   - Get Category (ID or Key)
-  - Update Category (JSON actions)
+  - Update Category (ID or Key)
   - Delete Category (ID or Key)
   - HEAD checks
 - <a id="customers"></a>**Customer Operations:**
@@ -187,10 +187,10 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.24 - Category update actions addition.
 - v0.1.23 - Category trigger events addition.
 - v0.1.22 - Postman collection update.
 - v0.1.21 - Hardened release tooling: refreshed changelog for v0.1.20 and stabilized auto-changelog version.
-- v0.1.20 - Release with README structure cleanup and streamlined changelog entries.
 
 
 
