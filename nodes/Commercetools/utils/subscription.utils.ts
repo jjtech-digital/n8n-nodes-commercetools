@@ -47,6 +47,8 @@ export async function createSubscription(
     const productEvents = events.filter(event => event.startsWith('Product'));
     const customerEvents = events.filter(event => event.startsWith('Customer'));
     const categoryEvents = events.filter(event => event.startsWith('Category'));
+    const cartEvents = events.filter(event => event.startsWith('Cart'));
+
 
 
     // Create messages array for each resource type that has events
@@ -70,6 +72,12 @@ export async function createSubscription(
         });
     }
 
+    if (cartEvents.length > 0) {
+       messages.push({
+            resourceTypeId: 'cart',
+            types: cartEvents,
+        });
+    }
     // Ensure we have at least one message
     if (messages.length === 0) {
         throw new NodeOperationError(this.getNode(), 'No valid events selected');
