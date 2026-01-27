@@ -10,6 +10,21 @@ export const triggerProperties: INodeProperties[] = [
         
         options: [
             {
+                name: 'Cart Frozen',
+                value: 'CartFrozen',
+                description: 'Triggered when a cart is frozen',
+            },
+            {
+                name: 'Cart Purchase Order Number Set',
+                value: 'CartPurchaseOrderNumberSet',
+                description: 'Triggered when a cart purchase order number is set',
+            },
+            {
+                name: 'Cart Unfrozen',
+                value: 'CartUnfrozen',
+                description: 'Triggered when a cart is unfrozen',
+            },
+            {
                 name: 'Category Created',
                 value: 'CategoryCreated',
                 description: 'Triggered when a new category is created',

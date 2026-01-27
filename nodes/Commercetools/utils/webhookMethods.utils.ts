@@ -168,7 +168,9 @@ export const triggerMethods = {
                 useAWS,
             })) as IDataObject;
 
+
             const subscriptionId = response.id as string | undefined;
+
             if (!subscriptionId) {
                 throw new NodeOperationError(
                     this.getNode(),
