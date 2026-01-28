@@ -2,7 +2,7 @@
 
 # n8n-nodes-commercetools
 
-A custom n8n community node for integrating with Commercetools. Provides full support for products, categories, customers, and webhook triggers, with optional AWS SQS + Lambda buffering for reliable event delivery. Designed for production-grade automation, large catalogs, and event-driven workflows.
+A custom n8n community node for integrating with Commercetools. Provides full support for products, categories, customers,orders and webhook triggers, with optional AWS SQS + Lambda buffering for reliable event delivery. Designed for production-grade automation, large catalogs, and event-driven workflows.
 
 ## Table of Contents
 
@@ -14,6 +14,7 @@ A custom n8n community node for integrating with Commercetools. Provides full su
   - [Products](#products)
   - [Categories](#categories)
   - [Customers](#customers)
+  - [Order](#orders)
 - [Examples](#examples)
 - [Credentials Setup](#credentials)
 - [Development & Scripts](#development--scripts)
@@ -84,6 +85,22 @@ Use the Commercetools Trigger node to receive real-time events.
 - **Category Events**
   - Lifecycle: created
   - Metadata: slug changed
+- **Order Events**
+  - Lifecycle: created, deleted, imported, created from recurring order
+  - State management: state changed, state transition, edit applied
+  - Customer management: customer set, customer email set, customer group set
+  - Address management: billing address set, shipping address set
+  - Line items: line item added/removed, line item discount set, distribution channel set, line item state transition
+  - Custom line items: custom line item added/removed, quantity changed, discount set, state transition
+  - Discount codes: discount code added/removed, discount code state set
+  - Payments: payment added/removed, payment state changed
+  - Shipping: shipping info set, shipping rate input set, shipment state changed, return shipment state changed
+  - Deliveries: delivery added/removed, address set, items updated, custom fields
+  - Parcels: parcel added/removed from delivery, items/measurements/tracking data updated
+  - Custom fields and types: custom field added/changed/removed, custom type set/removed
+  - Business management: business unit set, store set, purchase order number set
+  - Returns: return info added/set
+
 ## AWS SQS + Lambda Integration (optional)
 
 - Auto-creates SQS queue, Lambda function, IAM role/policy, and event source mapping.
@@ -187,10 +204,11 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.25 - Order trigger events addition.
 - v0.1.24 - Category update actions addition.
 - v0.1.23 - Category trigger events addition.
 - v0.1.22 - Postman collection update.
-- v0.1.21 - Hardened release tooling: refreshed changelog for v0.1.20 and stabilized auto-changelog version.
+
 
 
 
