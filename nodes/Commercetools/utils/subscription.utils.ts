@@ -48,6 +48,8 @@ export async function createSubscription(
     const customerEvents = events.filter(event => event.startsWith('Customer'));
     const categoryEvents = events.filter(event => event.startsWith('Category'));
 
+    const orderEvents = events.filter(event => event.startsWith('Order'))
+
 
     // Create messages array for each resource type that has events
     const messages: IDataObject[] = [];
@@ -69,6 +71,14 @@ export async function createSubscription(
             types: categoryEvents,
         });
     }
+
+    if (orderEvents.length > 0) {
+       messages.push({
+            resourceTypeId: 'order',
+            types: orderEvents,
+        });
+    }
+    
 
     // Ensure we have at least one message
     if (messages.length === 0) {

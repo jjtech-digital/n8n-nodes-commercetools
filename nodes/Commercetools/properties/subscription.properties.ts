@@ -20,6 +20,11 @@ export const triggerProperties: INodeProperties[] = [
                 description: 'Triggered when a category slug is changed',
             },
             {
+                name: 'Custom Line Item State Transition',
+                value: 'CustomLineItemStateTransition',
+                description: 'Triggered when a custom line item state transitions',
+            },
+            {
                 name: 'Customer Address Added',
                 value: 'CustomerAddressAdded',
                 description: 'Triggered when a new address is added to a customer',
@@ -180,6 +185,266 @@ export const triggerProperties: INodeProperties[] = [
                 description: 'Triggered when a customer title is set',
             },
             {
+                name: 'Delivery Added',
+                value: 'DeliveryAdded',
+                description: 'Triggered when a delivery is added',
+            },
+            {
+                name: 'Delivery Address Set',
+                value: 'DeliveryAddressSet',
+                description: 'Triggered when a delivery address is set',
+            },
+            {
+                name: 'Delivery Custom Field Added',
+                value: 'DeliveryCustomFieldAdded',
+                description: 'Triggered when a custom field is added to a delivery',
+            },
+            {
+                name: 'Delivery Custom Field Changed',
+                value: 'DeliveryCustomFieldChanged',
+                description: 'Triggered when a delivery custom field is changed',
+            },
+            {
+                name: 'Delivery Custom Field Removed',
+                value: 'DeliveryCustomFieldRemoved',
+                description: 'Triggered when a delivery custom field is removed',
+            },
+            {
+                name: 'Delivery Custom Type Removed',
+                value: 'DeliveryCustomTypeRemoved',
+                description: 'Triggered when a custom type is removed from a delivery',
+            },
+            {
+                name: 'Delivery Custom Type Set',
+                value: 'DeliveryCustomTypeSet',
+                description: 'Triggered when a custom type is set for a delivery',
+            },
+            {
+                name: 'Delivery Items Updated',
+                value: 'DeliveryItemsUpdated',
+                description: 'Triggered when delivery items are updated',
+            },
+            {
+                name: 'Delivery Removed',
+                value: 'DeliveryRemoved',
+                description: 'Triggered when a delivery is removed',
+            },
+            {
+                name: 'Line Item State Transition',
+                value: 'LineItemStateTransition',
+                description: 'Triggered when a line item state transitions',
+            },
+            {
+                name: 'Order Billing Address Set',
+                value: 'OrderBillingAddressSet',
+                description: 'Triggered when an order billing address is set',
+            },
+            {
+                name: 'Order Business Unit Set',
+                value: 'OrderBusinessUnitSet',
+                description: 'Triggered when an order business unit is set',
+            },
+            {
+                name: 'Order Created',
+                value: 'OrderCreated',
+                description: 'Triggered when a new order is created',
+            },
+            {
+                name: 'Order Created From Recurring Order',
+                value: 'OrderCreatedFromRecurringOrder',
+                description: 'Triggered when an order is created from a recurring order',
+            },
+            {
+                name: 'Order Custom Field Added',
+                value: 'OrderCustomFieldAdded',
+                description: 'Triggered when a custom field is added to an order',
+            },
+            {
+                name: 'Order Custom Field Changed',
+                value: 'OrderCustomFieldChanged',
+                description: 'Triggered when an order custom field is changed',
+            },
+            {
+                name: 'Order Custom Field Removed',
+                value: 'OrderCustomFieldRemoved',
+                description: 'Triggered when an order custom field is removed',
+            },
+            {
+                name: 'Order Custom Line Item Added',
+                value: 'OrderCustomLineItemAdded',
+                description: 'Triggered when a custom line item is added to an order',
+            },
+            {
+                name: 'Order Custom Line Item Discount Set',
+                value: 'OrderCustomLineItemDiscountSet',
+                description: 'Triggered when a discount is set on a custom line item',
+            },
+            {
+                name: 'Order Custom Line Item Quantity Changed',
+                value: 'OrderCustomLineItemQuantityChanged',
+                description: 'Triggered when a custom line item quantity is changed',
+            },
+            {
+                name: 'Order Custom Line Item Removed',
+                value: 'OrderCustomLineItemRemoved',
+                description: 'Triggered when a custom line item is removed from an order',
+            },
+            {
+                name: 'Order Custom Type Removed',
+                value: 'OrderCustomTypeRemoved',
+                description: 'Triggered when a custom type is removed from an order',
+            },
+            {
+                name: 'Order Custom Type Set',
+                value: 'OrderCustomTypeSet',
+                description: 'Triggered when a custom type is set for an order',
+            },
+            {
+                name: 'Order Customer Email Set',
+                value: 'OrderCustomerEmailSet',
+                description: 'Triggered when an order customer email is set',
+            },
+            {
+                name: 'Order Customer Group Set',
+                value: 'OrderCustomerGroupSet',
+                description: 'Triggered when an order customer group is set',
+            },
+            {
+                name: 'Order Customer Set',
+                value: 'OrderCustomerSet',
+                description: 'Triggered when an order customer is set',
+            },
+            {
+                name: 'Order Deleted',
+                value: 'OrderDeleted',
+                description: 'Triggered when an order is deleted',
+            },
+            {
+                name: 'Order Discount Code Added',
+                value: 'OrderDiscountCodeAdded',
+                description: 'Triggered when a discount code is added to an order',
+            },
+            {
+                name: 'Order Discount Code Removed',
+                value: 'OrderDiscountCodeRemoved',
+                description: 'Triggered when a discount code is removed from an order',
+            },
+            {
+                name: 'Order Discount Code State Set',
+                value: 'OrderDiscountCodeStateSet',
+                description: 'Triggered when a discount code state is set on an order',
+            },
+            {
+                name: 'Order Edit Applied',
+                value: 'OrderEditApplied',
+                description: 'Triggered when an order edit is applied',
+            },
+            {
+                name: 'Order Imported',
+                value: 'OrderImported',
+                description: 'Triggered when an order is imported',
+            },
+            {
+                name: 'Order Line Item Added',
+                value: 'OrderLineItemAdded',
+                description: 'Triggered when a line item is added to an order',
+            },
+            {
+                name: 'Order Line Item Discount Set',
+                value: 'OrderLineItemDiscountSet',
+                description: 'Triggered when a discount is set on a line item',
+            },
+            {
+                name: 'Order Line Item Distribution Channel Set',
+                value: 'OrderLineItemDistributionChannelSet',
+                description: 'Triggered when a distribution channel is set on a line item',
+            },
+            {
+                name: 'Order Line Item Removed',
+                value: 'OrderLineItemRemoved',
+                description: 'Triggered when a line item is removed from an order',
+            },
+            {
+                name: 'Order Payment Added',
+                value: 'OrderPaymentAdded',
+                description: 'Triggered when a payment is added to an order',
+            },
+            {
+                name: 'Order Payment Removed',
+                value: 'OrderPaymentRemoved',
+                description: 'Triggered when a payment is removed from an order',
+            },
+            {
+                name: 'Order Payment State Changed',
+                value: 'OrderPaymentStateChanged',
+                description: 'Triggered when an order payment state is changed',
+            },
+            {
+                name: 'Order Return Shipment State Changed',
+                value: 'OrderReturnShipmentStateChanged',
+                description: 'Triggered when an order return shipment state is changed',
+            },
+            {
+                name: 'Order Shipment State Changed',
+                value: 'OrderShipmentStateChanged',
+                description: 'Triggered when an order shipment state is changed',
+            },
+            {
+                name: 'Order Shipping Address Set',
+                value: 'OrderShippingAddressSet',
+                description: 'Triggered when an order shipping address is set',
+            },
+            {
+                name: 'Order Shipping Info Set',
+                value: 'OrderShippingInfoSet',
+                description: 'Triggered when order shipping info is set',
+            },
+            {
+                name: 'Order Shipping Rate Input Set',
+                value: 'OrderShippingRateInputSet',
+                description: 'Triggered when an order shipping rate input is set',
+            },
+            {
+                name: 'Order State Changed',
+                value: 'OrderStateChanged',
+                description: 'Triggered when an order state is changed',
+            },
+            {
+                name: 'Order State Transition',
+                value: 'OrderStateTransition',
+                description: 'Triggered when an order state transitions',
+            },
+            {
+                name: 'Order Store Set',
+                value: 'OrderStoreSet',
+                description: 'Triggered when an order store is set',
+            },
+            {
+                name: 'Parcel Added To Delivery',
+                value: 'ParcelAddedToDelivery',
+                description: 'Triggered when a parcel is added to a delivery',
+            },
+            {
+                name: 'Parcel Items Updated',
+                value: 'ParcelItemsUpdated',
+                description: 'Triggered when parcel items are updated',
+            },
+            {
+                name: 'Parcel Measurements Updated',
+                value: 'ParcelMeasurementsUpdated',
+                description: 'Triggered when parcel measurements are updated',
+            },
+            {
+                name: 'Parcel Removed From Delivery',
+                value: 'ParcelRemovedFromDelivery',
+                description: 'Triggered when a parcel is removed from a delivery',
+            },
+            {
+                name: 'Parcel Tracking Data Updated',
+                value: 'ParcelTrackingDataUpdated',
+                description: 'Triggered when parcel tracking data is updated',
+            },
+            {
                 name: 'Product Added To Category',
                 value: 'ProductAddedToCategory',
                 description: 'Triggered when a product is added to a category',
@@ -303,6 +568,21 @@ export const triggerProperties: INodeProperties[] = [
                 name: 'Product Variant Deleted',
                 value: 'ProductVariantDeleted',
                 description: 'Triggered when a product variant is deleted',
+            },
+            {
+                name: 'Purchase Order Number Set',
+                value: 'PurchaseOrderNumberSet',
+                description: 'Triggered when a purchase order number is set',
+            },
+            {
+                name: 'Return Info Added',
+                value: 'ReturnInfoAdded',
+                description: 'Triggered when return info is added',
+            },
+            {
+                name: 'Return Info Set',
+                value: 'ReturnInfoSet',
+                description: 'Triggered when return info is set',
             },
             
         ],
