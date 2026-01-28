@@ -48,7 +48,18 @@ export async function createSubscription(
     const customerEvents = events.filter(event => event.startsWith('Customer'));
     const categoryEvents = events.filter(event => event.startsWith('Category'));
 
-    const orderEvents = events.filter(event => event.startsWith('Order'))
+    const orderEventPrefixes = [
+        'Order',
+        'Delivery',
+        'LineItem',
+        'Parcel',
+        'PurchaseOrderNumber',
+        'ReturnInfo',
+        'CustomLineItem',
+    ];
+    const orderEvents = events.filter(event =>
+        orderEventPrefixes.some(prefix => event.startsWith(prefix)),
+    );
 
 
     // Create messages array for each resource type that has events
