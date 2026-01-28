@@ -204,7 +204,7 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
-- v0.1.25 - Order trigger events addition.
+- v0.1.25 - Read file update.
 - v0.1.24 - Category update actions addition.
 - v0.1.23 - Category trigger events addition.
 - v0.1.22 - Postman collection update.
