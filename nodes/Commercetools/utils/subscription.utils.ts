@@ -1,6 +1,6 @@
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from "n8n-workflow";
 import { AWSResponse } from "./awsInfra.utils";
-import { customerEvents, orderEvents, productEvents, otherEvents } from "../properties/subscription.properties";
+import { customerEvents, orderEvents, productEvents, categoryEvents } from "../properties/subscription.properties";
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -54,7 +54,7 @@ export async function createSubscription(
     );
     
     const selectedCategoryEvents = events.filter(event => 
-        otherEvents.filter((x: { value: string }) => x.value.startsWith('Category')).find((x: { value: string }) => x.value === event)
+        categoryEvents.find((x: { value: string }) => x.value === event)
     );
     
     const selectedOrderEvents = events.filter(event => 

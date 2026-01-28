@@ -495,20 +495,8 @@ export const orderEvents = [
         value: 'PurchaseOrderNumberSet',
         description: 'Triggered when a purchase order number is set',
     },
-];
-
-// Other Events (Category, Delivery, Parcel, Return Info)
-export const otherEvents = [
-    {
-        name: 'Category Created',
-        value: 'CategoryCreated',
-        description: 'Triggered when a new category is created',
-    },
-    {
-        name: 'Category Slug Changed',
-        value: 'CategorySlugChanged',
-        description: 'Triggered when a category slug is changed',
-    },
+    
+    // Delivery Events (Order-related)
     {
         name: 'Delivery Added',
         value: 'DeliveryAdded',
@@ -554,6 +542,8 @@ export const otherEvents = [
         value: 'DeliveryCustomTypeRemoved',
         description: 'Triggered when a custom type is removed from a delivery',
     },
+    
+    // Parcel Events (Order-related)
     {
         name: 'Parcel Added To Delivery',
         value: 'ParcelAddedToDelivery',
@@ -579,6 +569,8 @@ export const otherEvents = [
         value: 'ParcelTrackingDataUpdated',
         description: 'Triggered when parcel tracking data is updated',
     },
+    
+    // Return Info Events (Order-related)
     {
         name: 'Return Info Added',
         value: 'ReturnInfoAdded',
@@ -588,6 +580,20 @@ export const otherEvents = [
         name: 'Return Info Set',
         value: 'ReturnInfoSet',
         description: 'Triggered when return info is set',
+    },
+];
+
+// Category Events
+export const categoryEvents = [
+    {
+        name: 'Category Created',
+        value: 'CategoryCreated',
+        description: 'Triggered when a new category is created',
+    },
+    {
+        name: 'Category Slug Changed',
+        value: 'CategorySlugChanged',
+        description: 'Triggered when a category slug is changed',
     },
 ];
 
@@ -604,7 +610,7 @@ export const triggerProperties: INodeProperties[] = [
             ...orderEvents,
             ...customerEvents,
             ...productEvents,
-            ...otherEvents,
+            ...categoryEvents,
         ],
         default: ['ProductPublished'],
         description: 'Select which events should trigger this workflow',
