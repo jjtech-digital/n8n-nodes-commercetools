@@ -1,5 +1,6 @@
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from "n8n-workflow";
 import { AWSResponse } from "./awsInfra.utils";
+import { customerEvents, orderEvents, productEvents, categoryEvents } from "../properties/subscription.properties";
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -43,33 +44,54 @@ export async function createSubscription(
 ) {
     const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
 
-    // Separate events by resource type
-    const productEvents = events.filter(event => event.startsWith('Product'));
-    const customerEvents = events.filter(event => event.startsWith('Customer'));
-    const categoryEvents = events.filter(event => event.startsWith('Category'));
-
+    // Separate events by resource type using dynamic filtering
+    const selectedProductEvents = events.filter(event => 
+        productEvents.find((x: { value: string }) => x.value === event)
+    );
+    
+    const selectedCustomerEvents = events.filter(event => 
+        customerEvents.find((x: { value: string }) => x.value === event)
+    );
+    
+    const selectedCategoryEvents = events.filter(event => 
+        categoryEvents.find((x: { value: string }) => x.value === event)
+    );
+    
+    const selectedOrderEvents = events.filter(event => 
+        orderEvents.find((x: { value: string }) => x.value === event)
+    );
 
     // Create messages array for each resource type that has events
     const messages: IDataObject[] = [];
-    if (productEvents.length > 0) {
+    
+    if (selectedProductEvents.length > 0) {
         messages.push({
             resourceTypeId: 'product',
-            types: productEvents,
+            types: selectedProductEvents,
         });
     }
-    if (customerEvents.length > 0) {
+    
+    if (selectedCustomerEvents.length > 0) {
         messages.push({
             resourceTypeId: 'customer',
-            types: customerEvents,
+            types: selectedCustomerEvents,
         });
     }
-    if (categoryEvents.length > 0) {
+    
+    if (selectedCategoryEvents.length > 0) {
        messages.push({
             resourceTypeId: 'category',
-            types: categoryEvents,
+            types: selectedCategoryEvents,
         });
     }
 
+    if (selectedOrderEvents.length > 0) {
+       messages.push({
+            resourceTypeId: 'order',
+            types: selectedOrderEvents,
+        });
+    }
+    
     // Ensure we have at least one message
     if (messages.length === 0) {
         throw new NodeOperationError(this.getNode(), 'No valid events selected');
