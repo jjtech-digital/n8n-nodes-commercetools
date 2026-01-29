@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-commercetools",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "Custom n8n node for Commercetools integration",
   "license": "MIT",
   "homepage": "",
