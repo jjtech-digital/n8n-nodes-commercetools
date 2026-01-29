@@ -2,7 +2,7 @@
 
 # n8n-nodes-commercetools
 
-A custom n8n community node for integrating with Commercetools. Provides full support for products, categories, customers,orders and webhook triggers, with optional AWS SQS + Lambda buffering for reliable event delivery. Designed for production-grade automation, large catalogs, and event-driven workflows.
+A custom n8n community node for integrating with Commercetools. Provides full support for products, categories, customers,orders,carts and webhook triggers, with optional AWS SQS + Lambda buffering for reliable event delivery. Designed for production-grade automation, large catalogs, and event-driven workflows.
 
 ## Table of Contents
 
@@ -15,6 +15,7 @@ A custom n8n community node for integrating with Commercetools. Provides full su
   - [Categories](#categories)
   - [Customers](#customers)
   - [Order](#orders)
+  - [Cart](#carts)
 - [Examples](#examples)
 - [Credentials Setup](#credentials)
 - [Development & Scripts](#development--scripts)
@@ -100,6 +101,8 @@ Use the Commercetools Trigger node to receive real-time events.
   - Custom fields and types: custom field added/changed/removed, custom type set/removed
   - Business management: business unit set, store set, purchase order number set
   - Returns: return info added/set
+- **Cart Events**
+  - Change notifications: cart created (only supported cart change notification)
 
 ## AWS SQS + Lambda Integration (optional)
 
@@ -204,10 +207,10 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.26 - Order trigger events addition.
 - v0.1.25 - Read file update.
 - v0.1.24 - Category update actions addition.
 - v0.1.23 - Category trigger events addition.
-- v0.1.22 - Postman collection update.
 
 
 

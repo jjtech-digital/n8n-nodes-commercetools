@@ -293,6 +293,25 @@ export const productEvents = [
     },
 ];
 
+// Cart Events
+export const cartEvents = [
+    {
+        name: 'Cart Frozen',
+        value: 'CartFrozen',
+        description: 'Triggered when a cart is frozen',
+    },
+    {
+        name: 'Cart Unfrozen',
+        value: 'CartUnfrozen',
+        description: 'Triggered when a cart is unfrozen',
+    },
+    {
+        name: 'Cart Purchase Order Number Set',
+        value: 'CartPurchaseOrderNumberSet',
+        description: 'Triggered when a purchase order number is set on a cart',
+    },
+];
+
 // Order Events
 export const orderEvents = [
     {
@@ -611,6 +630,7 @@ export const triggerProperties: INodeProperties[] = [
             ...customerEvents,
             ...productEvents,
             ...categoryEvents,
+            ...cartEvents,
         ],
         default: ['ProductPublished'],
         description: 'Select which events should trigger this workflow',
