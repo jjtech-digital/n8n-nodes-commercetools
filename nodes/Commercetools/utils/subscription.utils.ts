@@ -1,6 +1,6 @@
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from "n8n-workflow";
 import { AWSResponse } from "./awsInfra.utils";
-import { customerEvents, orderEvents, productEvents, categoryEvents } from "../properties/subscription.properties";
+import { customerEvents, orderEvents, productEvents, categoryEvents, cartEvents } from "../properties/subscription.properties";
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -60,9 +60,13 @@ export async function createSubscription(
     const selectedOrderEvents = events.filter(event => 
         orderEvents.find((x: { value: string }) => x.value === event)
     );
+    const selectedCartEvents = events.filter(event => 
+        cartEvents.find((x: { value: string }) => x.value === event)
+    );
 
     // Create messages array for each resource type that has events
     const messages: IDataObject[] = [];
+    const changes: IDataObject[] = [];
     
     if (selectedProductEvents.length > 0) {
         messages.push({
@@ -92,8 +96,15 @@ export async function createSubscription(
         });
     }
     
+    if (selectedCartEvents.length > 0) {
+        changes.push({
+            resourceTypeId: 'cart',
+            types: selectedCartEvents,
+        });
+    }
+
     // Ensure we have at least one message
-    if (messages.length === 0) {
+    if (messages.length === 0 && changes.length === 0) {
         throw new NodeOperationError(this.getNode(), 'No valid events selected');
     }
 
@@ -117,10 +128,13 @@ export async function createSubscription(
             destination.authenticationMode = 'IAM';
         }
 
-        body = {
-            destination,
-            messages,
-        };
+        body = { destination };
+        if (messages.length > 0) {
+            body.messages = messages;
+        }
+        if (changes.length > 0) {
+            body.changes = changes;
+        }
     } else {
         // Use HTTP webhook destination
         body = {
@@ -128,8 +142,13 @@ export async function createSubscription(
                 type: 'HTTP',
                 url: webhookUrl,
             },
-            messages,
         };
+        if (messages.length > 0) {
+            body.messages = messages;
+        }
+        if (changes.length > 0) {
+            body.changes = changes;
+        }
     }
 
     return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
