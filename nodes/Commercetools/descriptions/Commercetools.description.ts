@@ -5,6 +5,7 @@ import { productAdditionalFields, productDraftFields, productIdentificationField
 import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
 import { customerOperations, customerFields } from './customer.description';
 import { cartOperations, cartIdentificationFields, cartDraftFields, cartAdditionalFields } from '../properties/cart.properties';
+import { orderOperations, orderIdentificationFields, orderDraftFields, orderAdditionalFields } from '../properties/order.properties';
 
 // Existing resource field - UPDATED with trigger option
 const resourceField: INodeProperties = {
@@ -24,6 +25,10 @@ const resourceField: INodeProperties = {
         {
             name: 'Customer',
             value: 'customer',
+        },
+        {
+            name: 'Order',
+            value: 'order',
         },
         {
             name: 'Product',
@@ -172,15 +177,28 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
             },
         })),
+        ...orderOperations.map(op => ({
+            ...op,
+            displayOptions: {
+                ...op.displayOptions,
+                show: {
+                    ...op.displayOptions?.show,
+                    resource: ['order'],
+                },
+            },
+        })),
         ...productIdentificationFields,
         ...categoryBaseFields,
         ...customerFields,
         ...cartIdentificationFields,
+        ...orderIdentificationFields,
         ...productDraftFields,
         ...cartDraftFields,
+        ...orderDraftFields,
         ...sharedProductCategoryFields,
         ...productAdditionalFields,
         ...categoryAdditionalFields,
         ...cartAdditionalFields,
+        ...orderAdditionalFields,
     ],
 };
