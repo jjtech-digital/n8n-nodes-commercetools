@@ -137,6 +137,19 @@ Use the Commercetools Trigger node to receive real-time events.
   - Store-specific operations
   - Query & existence checks
   - Custom fields & address management
+- <a id="carts"></a>**Carts Operations:**
+  - Create Cart (regular & in-store)
+  - Get Cart (by ID, Key, Customer ID)
+  - Get Cart in Store (by ID, Key, Customer ID) 
+  - Query Carts (regular & in-store)
+  - Update Cart (by ID or Key, regular & in-store)
+  - Delete Cart (by ID or Key, regular & in-store)
+  - Replicate Cart (regular & in-store)
+  - Merge Cart (regular & in-store)
+  - Check Cart Existence (HEAD by ID, Key, Customer ID, Query)
+  - Check Cart Existence in Store (HEAD by ID, Key, Customer ID, Query)
+  - JSON-based update actions for cart modifications
+     
 
 ## Examples
 
@@ -165,6 +178,44 @@ Use the Commercetools Trigger node to receive real-time events.
 **Create a Category**
 ```json
 { "name": { "en": "Sample Category" }, "slug": { "en": "sample-category" }, "orderHint": "0.1" }
+```
+
+**Create a Cart (sample input)**
+```json
+{
+  "currency": "USD",
+  "customerId": "customer-ID",
+  "lineItems": [
+    {
+      "productId": "product-ID", 
+      "variant": { "id": 1 },
+      "quantity": 2
+    }
+  ]
+}
+```
+
+**Update Cart Actions (sample JSON)**
+```json
+[
+  {
+    "action": "addLineItem",
+    "productId": "product-ID",
+    "variantId": 1,
+    "quantity": 1
+  },
+  {
+    "action": "setShippingAddress",
+    "address": {
+      "country": "US",
+      "firstName": "John",
+      "lastName": "Doe",
+      "streetName": "123 Main St",
+      "city": "New York",
+      "postalCode": "10001"
+    }
+  }
+]
 ```
 
 ## Credentials
@@ -207,10 +258,10 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.27 - cart trigger events addition
 - v0.1.26 - Order trigger events addition.
 - v0.1.25 - Read file update.
 - v0.1.24 - Category update actions addition.
-- v0.1.23 - Category trigger events addition.
 
 
 

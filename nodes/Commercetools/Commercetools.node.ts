@@ -11,6 +11,7 @@ import { commercetoolsDescription } from './descriptions/Commercetools.descripti
 import { executeCategoryOperation } from './operations/category.operations';
 import { executeCustomerOperation } from './operations/customer.operations';
 import { executeProductOperation } from './operations/product.operations';
+import { executeCartOperation } from './operations/cart.operations';
 
 export class Commercetools implements INodeType {
 	description: INodeTypeDescription = {
@@ -62,6 +63,13 @@ export class Commercetools implements INodeType {
 					});
 				} else if (resource === 'customer') {
 					results = await executeCustomerOperation.call(this, {
+						operation,
+						itemIndex,
+						baseUrl,
+						items,
+					});
+				} else if (resource === 'cart') {
+					results = await executeCartOperation.call(this, {
 						operation,
 						itemIndex,
 						baseUrl,
