@@ -149,7 +149,17 @@ Use the Commercetools Trigger node to receive real-time events.
   - Check Cart Existence (HEAD by ID, Key, Customer ID, Query)
   - Check Cart Existence in Store (HEAD by ID, Key, Customer ID, Query)
   - JSON-based update actions for cart modifications
-     
+- <a id="orders"></a>**Orders Operations:**
+  - Get Order (by ID or Order Number)
+  - Get Order in Store (by ID or Order Number) 
+  - Query Orders (regular & in-store)
+  - Create Order from Cart (regular & in-store)
+  - Create Order from Quote (regular & in-store)
+  - Create Order by Import
+  - Update Order (by ID or Order Number, regular & in-store)
+  - Delete Order (by ID or Order Number, regular & in-store)
+  - Check Order Existence (HEAD by ID, Order Number, Query, regular & in-store)
+  - JSON-based update actions for order modifications
 
 ## Examples
 
@@ -258,10 +268,10 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.28 - cart operation addition
 - v0.1.27 - cart trigger events addition
 - v0.1.26 - Order trigger events addition.
 - v0.1.25 - Read file update.
-- v0.1.24 - Category update actions addition.
 
 
 
