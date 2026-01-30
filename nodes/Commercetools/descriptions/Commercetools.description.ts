@@ -4,6 +4,7 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 import { productAdditionalFields, productDraftFields, productIdentificationFields, productOperations } from '../properties/product.properties';
 import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
 import { customerOperations, customerFields } from './customer.description';
+import { cartOperations, cartIdentificationFields, cartDraftFields, cartAdditionalFields } from '../properties/cart.properties';
 
 // Existing resource field - UPDATED with trigger option
 const resourceField: INodeProperties = {
@@ -13,12 +14,8 @@ const resourceField: INodeProperties = {
     noDataExpression: true,
     options: [
         {
-            name: 'Product',
-            value: 'product',
-        },
-        {
-            name: 'Product Event',  // Trigger resource
-            value: 'productEvent',
+            name: 'Cart',
+            value: 'cart',
         },
         {
             name: 'Category',
@@ -27,6 +24,14 @@ const resourceField: INodeProperties = {
         {
             name: 'Customer',
             value: 'customer',
+        },
+        {
+            name: 'Product',
+            value: 'product',
+        },
+        {
+            name: 'Product Event',  // Trigger resource
+            value: 'productEvent',
         },
     ],
     default: 'product',
@@ -68,8 +73,8 @@ const sharedProductCategoryFields: INodeProperties[] = [
         required: true,
         displayOptions: {
             show: {
-                resource: ['product', 'category'],
-                operation: ['update', 'updateByKey', 'delete', 'deleteByKey'],
+                resource: ['product', 'category', 'cart'],
+                operation: ['update', 'updateByKey', 'delete', 'deleteByKey', 'updateInStore', 'updateInStoreByKey', 'deleteInStore', 'deleteInStoreByKey'],
             },
         },
         description: 'Current version of the resource to ensure optimistic concurrency control',
@@ -82,8 +87,8 @@ const sharedProductCategoryFields: INodeProperties[] = [
         description: 'Update actions to apply to the resource',
         displayOptions: {
             show: {
-                resource: ['product', 'category'],
-                operation: ['update', 'updateByKey'],
+                resource: ['product', 'category', 'cart'],
+                operation: ['update', 'updateByKey', 'updateInStore', 'updateInStoreByKey'],
             },
         },
     }
@@ -157,12 +162,25 @@ export const commercetoolsDescription: INodeTypeDescription = {
                 },
             },
         })),
+        ...cartOperations.map(op => ({
+            ...op,
+            displayOptions: {
+                ...op.displayOptions,
+                show: {
+                    ...op.displayOptions?.show,
+                    resource: ['cart'],
+                },
+            },
+        })),
         ...productIdentificationFields,
         ...categoryBaseFields,
+        ...customerFields,
+        ...cartIdentificationFields,
         ...productDraftFields,
+        ...cartDraftFields,
         ...sharedProductCategoryFields,
         ...productAdditionalFields,
         ...categoryAdditionalFields,
-        ...customerFields,
+        ...cartAdditionalFields,
     ],
 };
