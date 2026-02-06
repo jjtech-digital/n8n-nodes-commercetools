@@ -1138,7 +1138,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'customFieldName',
 						type: 'string',
 						default: '',
-						placeholder: 'exampleStringField',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['setCustomField'],
@@ -1151,7 +1151,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'customFieldName',
 						type: 'string',
 						default: '',
-						placeholder: 'fieldName',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: [
@@ -1172,7 +1172,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'customFieldValue',
 						type: 'string',
 						default: '',
-						placeholder: 'TextString',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['setCustomField'],
@@ -2864,7 +2864,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'shippingKey',
 						type: 'string',
 						default: '',
-						placeholder: 'shippingMethodKey1',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['addShippingMethod'],
@@ -2877,7 +2877,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'shippingKey',
 						type: 'string',
 						default: '',
-						placeholder: 'shippingMethodKey1',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['removeShippingMethod'],
@@ -2890,7 +2890,7 @@ export const cartUpdateFields: INodeProperties[] = [
 		            name: 'shippingKey',
 		            type: 'string',
 		            default: '',
-		            placeholder: 'shippingKey',
+		            placeholder: '',
 		              displayOptions: {
 			               show: {
 				             action: [
@@ -2908,7 +2908,7 @@ export const cartUpdateFields: INodeProperties[] = [
 		            name: 'shippingKey',
 		            type: 'string',
 		            default: '',
-		            placeholder: 'shippingKey',
+		            placeholder: '',
 		               displayOptions: {
 			                 show: {
 				                action: ['setLineItemTaxAmount', 'setCustomLineItemTaxAmount', 'setShippingMethodTaxAmount'],
@@ -2921,7 +2921,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'shippingKeyCustom',
 						type: 'string',
 						default: '',
-						placeholder: 'customShippingKey1',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['addCustomShippingMethod'],
@@ -3004,7 +3004,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'shippingMethodNameCustom',
 						type: 'string',
 						default: '',
-						placeholder: 'My Custom Shipping Method',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['addCustomShippingMethod', 'setCustomShippingMethod'],
@@ -3197,7 +3197,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'targetsDelta',
 						type: 'string',
 						default: '',
-						placeholder: '[{"addressKey":"address1","quantity":2}]',
+						placeholder: '',
 						displayOptions: {
 							show: {
 								action: ['applyDeltaToLineItemShippingDetailsTargets', 'applyDeltaToCustomLineItemShippingDetailsTargets'],
