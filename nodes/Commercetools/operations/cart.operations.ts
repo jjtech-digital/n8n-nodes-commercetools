@@ -503,12 +503,10 @@ export async function executeCartOperation(
 			);
 		}
 
-		let bodyString = '';
-		try {
-			bodyString = JSON.stringify({ version, actions });
-		} catch {
-			throw new NodeOperationError(this.getNode(), 'Update body is not valid JSON', { itemIndex });
-		}
+		const body = {
+			version,
+			actions,
+		};
 
 		let url: string;
 		if (operation === 'update') {
@@ -522,10 +520,7 @@ export async function executeCartOperation(
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',
 			url,
-			body: bodyString,
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			body,
 			qs,
 		})) as IDataObject;
 
@@ -569,12 +564,10 @@ export async function executeCartOperation(
 			);
 		}
 
-		let bodyString = '';
-		try {
-			bodyString = JSON.stringify({ version, actions });
-		} catch {
-			throw new NodeOperationError(this.getNode(), 'Update body is not valid JSON', { itemIndex });
-		}
+		const body = {
+			version,
+			actions,
+		};
 
 		let url: string;
 		if (operation === 'updateInStore') {
@@ -588,10 +581,7 @@ export async function executeCartOperation(
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',
 			url,
-			body: bodyString,
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			body,
 			qs,
 		})) as IDataObject;
 

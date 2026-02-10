@@ -210,9 +210,23 @@ export function handleCartActions(action: IDataObject): IDataObject {
 
 		// Discount actions
 		case 'addDiscountCode':
-		case 'removeDiscountCode':
-			if (action.discountCode) result.code = action.discountCode;
+			if (action.code) {
+				result.code = action.code;
+			} else if (typeof action.discountCode === 'string') {
+				result.code = action.discountCode;
+			}
 			break;
+		case 'removeDiscountCode': {
+			const discountCodeInput = action.discountCode as IDataObject | undefined;
+			const reference = (discountCodeInput?.discountCodeReference as IDataObject) ?? discountCodeInput;
+			if (reference && (reference.id || reference.key)) {
+				result.discountCode = {
+					typeId: (reference.typeId as string) || 'discount-code',
+					...(reference.id ? { id: reference.id } : { key: reference.key }),
+				};
+			}
+			break;
+		}
 
 		// Payment actions
 		case 'addPayment':
