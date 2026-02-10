@@ -1638,48 +1638,6 @@ export const cartUpdateFields: INodeProperties[] = [
 						
 					},              
 					{
-						displayName: 'Discount Code',
-						name: 'discountCode',
-						type: 'fixedCollection',
-						default: {},
-						placeholder: '',
-						displayOptions: {
-							show: {
-								action: ['addDiscountCode', 'removeDiscountCode'],
-							},
-						},
-						options: [
-							{
-								displayName: 'DiscountCode Reference',
-								name: 'discountCodeReference',
-									values:	[
-											{
-												displayName: 'Type ID',
-												name: 'typeId',
-												type: 'options',
-												options: [
-													{
-														name: 'Discount Code',
-														value: 'discount-code',
-													},
-													],
-												default: 'discount-code',
-												description: 'Type of the reference',
-											},
-											{
-												displayName: 'ID',
-												name: 'id',
-												type: 'string',
-												default: '',
-												placeholder: '',
-												description: 'ID of the discount code',
-											},
-									]
-							},
-					],
-						description: 'Discount Code to remove from the Cart',
-					},
-					{
 						displayName: 'Discounts',
 						name: 'discounts',
 						type: 'string',
@@ -2338,19 +2296,6 @@ export const cartUpdateFields: INodeProperties[] = [
 							},
 						},
 						description: 'Key for the address',
-					},
-					{
-						displayName: 'Key',
-						name: 'customLineItemKey',
-						type: 'string',
-						default: '',
-						placeholder: '',
-						displayOptions: {
-							show: {
-								action: ['removeCustomLineItem'],
-							},
-						},
-						description: 'User-defined unique identifier of the Custom Line Item',
 					},
 					{
 						displayName: 'Key',

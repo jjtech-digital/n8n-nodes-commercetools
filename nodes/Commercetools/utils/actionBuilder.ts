@@ -83,29 +83,49 @@ const handleSetDirectDiscounts = (
     return action;
   }
 
+  const targetPredicate = typeof action.discountPredicate === 'string'
+    ? action.discountPredicate.trim()
+    : '';
+  const rawPermyriad = action.discountPermyriad;
+  const parsedPermyriad = typeof rawPermyriad === 'number'
+    ? rawPermyriad
+    : typeof rawPermyriad === 'string' && rawPermyriad.trim() !== ''
+      ? Number(rawPermyriad)
+      : NaN;
+  const resolvedPermyriad = Number.isFinite(parsedPermyriad) ? parsedPermyriad : undefined;
+  const baseAction: IDataObject = { ...action };
+  delete (baseAction as IDataObject & { discountPredicate?: unknown }).discountPredicate;
+  delete (baseAction as IDataObject & { discountPermyriad?: unknown }).discountPermyriad;
+
   const rawDiscounts = action.discounts;
 
   if (rawDiscounts === undefined || rawDiscounts === null || rawDiscounts === '') {
-    return { ...action, discounts: [] };
+    return { ...baseAction, discounts: [] };
   }
 
   if (Array.isArray(rawDiscounts)) {
-    return { ...action, discounts: rawDiscounts };
+    return { ...baseAction, discounts: rawDiscounts };
   }
 
   if (typeof rawDiscounts === 'string') {
     const trimmed = rawDiscounts.trim();
     if (!trimmed) {
-      return { ...action, discounts: [] };
+      return { ...baseAction, discounts: [] };
     }
     const normalized = trimmed.toLowerCase();
     if (normalized === 'relative') {
+      if (!targetPredicate || resolvedPermyriad === undefined) {
+        throw new NodeOperationError(
+          context.getNode(),
+          'Discount Predicate and Discount Permyriad are required when Discounts is "relative".',
+        );
+      }
       return {
-        ...action,
+        ...baseAction,
         discounts: [
           {
-            value: { type: 'relative', permyriad: 1000 },
-            target: { type: 'lineItems', predicate: '1=1' },
+            value: { type: 'relative', permyriad: resolvedPermyriad },
+            target: { type: 'lineItems', predicate: targetPredicate },
           },
         ],
       };
@@ -113,17 +133,23 @@ const handleSetDirectDiscounts = (
     try {
       const parsed: unknown = JSON.parse(trimmed);
       if (Array.isArray(parsed)) {
-        return { ...action, discounts: parsed };
+        return { ...baseAction, discounts: parsed };
       }
       throw new Error('Discounts must be a JSON array');
     } catch {
       // Fallback to default relative discount for any non-JSON string input.
+      if (!targetPredicate || resolvedPermyriad === undefined) {
+        throw new NodeOperationError(
+          context.getNode(),
+          'Discount Predicate and Discount Permyriad are required when Discounts is not valid JSON.',
+        );
+      }
       return {
-        ...action,
+        ...baseAction,
         discounts: [
           {
-            value: { type: 'relative', permyriad: 1000 },
-            target: { type: 'lineItems', predicate: '1=1' },
+            value: { type: 'relative', permyriad: resolvedPermyriad },
+            target: { type: 'lineItems', predicate: targetPredicate },
           },
         ],
       };
@@ -134,7 +160,7 @@ const handleSetDirectDiscounts = (
     if ('discount' in (rawDiscounts as IDataObject)) {
       const discountEntries = (rawDiscounts as IDataObject).discount as IDataObject[];
       if (Array.isArray(discountEntries)) {
-        return { ...action, discounts: discountEntries };
+        return { ...baseAction, discounts: discountEntries };
       }
     }
   }
