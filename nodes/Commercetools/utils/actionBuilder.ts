@@ -18,6 +18,42 @@ import {
   handleAddAsset
 } from './product.utils';
 
+// Helper functions to reduce repetitive code
+const parseNumericValue = (value: unknown): number | undefined => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+};
+
+const cleanupFields = (obj: IDataObject, fieldsToDelete: string[]) => {
+  const cleaned = { ...obj };
+  fieldsToDelete.forEach(field => delete (cleaned as Record<string, unknown>)[field]);
+  return cleaned;
+};
+
+const validateRequiredFields = (context: IExecuteFunctions, fields: Record<string, unknown>, message: string) => {
+  if (Object.entries(fields).some(([, value]) => value === undefined || value === '')) {
+    throw new NodeOperationError(context.getNode(), message);
+  }
+};
+
+const safeJsonParseArrayOnly = (value: string): unknown[] | null => {
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const createRelativeDiscount = (permyriad: number, predicate: string) => [{
+  value: { type: 'relative', permyriad },
+  target: { type: 'lineItems', predicate }
+}];
+
 export const buildActionsFromUi = (
   context: IExecuteFunctions,
   actionsUi: IDataObject,
@@ -79,167 +115,126 @@ const handleSetDirectDiscounts = (
   context: IExecuteFunctions,
   action: IDataObject,
 ): IDataObject => {
-  if (action?.action !== 'setDirectDiscounts') {
-    return action;
-  }
+  if (action?.action !== 'setDirectDiscounts') return action;
 
-  const targetPredicate = typeof action.discountPredicate === 'string'
-    ? action.discountPredicate.trim()
-    : '';
-  const rawPermyriad = action.discountPermyriad;
-  const parsedPermyriad = typeof rawPermyriad === 'number'
-    ? rawPermyriad
-    : typeof rawPermyriad === 'string' && rawPermyriad.trim() !== ''
-      ? Number(rawPermyriad)
-      : NaN;
-  const resolvedPermyriad = Number.isFinite(parsedPermyriad) ? parsedPermyriad : undefined;
-  const baseAction: IDataObject = { ...action };
-  delete (baseAction as IDataObject & { discountPredicate?: unknown }).discountPredicate;
-  delete (baseAction as IDataObject & { discountPermyriad?: unknown }).discountPermyriad;
+  const targetPredicate = (typeof action.discountPredicate === 'string' ? action.discountPredicate.trim() : '') || '';
+  const resolvedPermyriad = parseNumericValue(action.discountPermyriad);
+  const baseAction = cleanupFields(action, ['discountPredicate', 'discountPermyriad']);
 
-  const rawDiscounts = action.discounts;
+  const { discounts: rawDiscounts } = action;
 
-  if (rawDiscounts === undefined || rawDiscounts === null || rawDiscounts === '') {
+  // Handle empty or null discounts
+  if (!rawDiscounts || rawDiscounts === '') {
     return { ...baseAction, discounts: [] };
   }
 
+  // Handle array discounts
   if (Array.isArray(rawDiscounts)) {
     return { ...baseAction, discounts: rawDiscounts };
   }
 
+  // Handle string discounts
   if (typeof rawDiscounts === 'string') {
     const trimmed = rawDiscounts.trim();
-    if (!trimmed) {
-      return { ...baseAction, discounts: [] };
+    if (!trimmed) return { ...baseAction, discounts: [] };
+    
+    // Handle 'relative' keyword
+    if (trimmed.toLowerCase() === 'relative') {
+      validateRequiredFields(
+        context,
+        { targetPredicate, resolvedPermyriad },
+        'Discount Predicate and Discount Permyriad are required when Discounts is "relative".'
+      );
+      return { ...baseAction, discounts: createRelativeDiscount(resolvedPermyriad!, targetPredicate) };
     }
-    const normalized = trimmed.toLowerCase();
-    if (normalized === 'relative') {
-      if (!targetPredicate || resolvedPermyriad === undefined) {
-        throw new NodeOperationError(
-          context.getNode(),
-          'Discount Predicate and Discount Permyriad are required when Discounts is "relative".',
-        );
-      }
-      return {
-        ...baseAction,
-        discounts: [
-          {
-            value: { type: 'relative', permyriad: resolvedPermyriad },
-            target: { type: 'lineItems', predicate: targetPredicate },
-          },
-        ],
-      };
+    
+    // Try to parse as JSON array
+    const parsed = safeJsonParseArrayOnly(trimmed);
+    if (parsed) {
+      return { ...baseAction, discounts: parsed };
     }
-    try {
-      const parsed: unknown = JSON.parse(trimmed);
-      if (Array.isArray(parsed)) {
-        return { ...baseAction, discounts: parsed };
-      }
-      throw new Error('Discounts must be a JSON array');
-    } catch {
-      // Fallback to default relative discount for any non-JSON string input.
-      if (!targetPredicate || resolvedPermyriad === undefined) {
-        throw new NodeOperationError(
-          context.getNode(),
-          'Discount Predicate and Discount Permyriad are required when Discounts is not valid JSON.',
-        );
-      }
-      return {
-        ...baseAction,
-        discounts: [
-          {
-            value: { type: 'relative', permyriad: resolvedPermyriad },
-            target: { type: 'lineItems', predicate: targetPredicate },
-          },
-        ],
-      };
-    }
+    
+    // Fallback to relative discount
+    validateRequiredFields(
+      context,
+      { targetPredicate, resolvedPermyriad },
+      'Discount Predicate and Discount Permyriad are required when Discounts is not valid JSON.'
+    );
+    return { ...baseAction, discounts: createRelativeDiscount(resolvedPermyriad!, targetPredicate) };
   }
 
-  if (typeof rawDiscounts === 'object') {
-    if ('discount' in (rawDiscounts as IDataObject)) {
-      const discountEntries = (rawDiscounts as IDataObject).discount as IDataObject[];
-      if (Array.isArray(discountEntries)) {
-        return { ...baseAction, discounts: discountEntries };
-      }
+  // Handle object discounts
+  if (typeof rawDiscounts === 'object' && 'discount' in rawDiscounts) {
+    const discountEntries = (rawDiscounts as IDataObject).discount;
+    if (Array.isArray(discountEntries)) {
+      return { ...baseAction, discounts: discountEntries };
     }
   }
 
   throw new NodeOperationError(
     context.getNode(),
-    'Discounts must be a JSON array of DirectDiscountDraft objects',
+    'Discounts must be a JSON array of DirectDiscountDraft objects'
   );
+};
+
+const safeParseJson = (value: unknown, label = 'field'): unknown => {
+  if (!value || value === '') return undefined;
+  
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+    
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      throw new Error(`${label} must be valid JSON when provided as a string`);
+    }
+  }
+  
+  return typeof value === 'object' ? value : undefined;
 };
 
 const handleAddShippingMethod = (
   context: IExecuteFunctions,
   action: IDataObject,
 ): IDataObject => {
-  if (action?.action !== 'addShippingMethod') {
-    return action;
-  }
+  if (action?.action !== 'addShippingMethod') return action;
 
-  const shippingMethodId = typeof action.shippingMethodId === 'string'
-    ? action.shippingMethodId.trim()
-    : '';
-  const shippingMethodKey = typeof action.shippingMethodKey === 'string'
-    ? action.shippingMethodKey.trim()
-    : '';
+  const shippingMethodId = (typeof action.shippingMethodId === 'string' ? action.shippingMethodId.trim() : '') || '';
+  const shippingMethodKey = (typeof action.shippingMethodKey === 'string' ? action.shippingMethodKey.trim() : '') || '';
 
-  const parseOptionalJson = (value: unknown, label: string): unknown => {
-    if (value === undefined || value === null || value === '') {
-      return undefined;
-    }
-    if (typeof value === 'string') {
-      const trimmed = value.trim();
-      if (!trimmed) {
-        return undefined;
-      }
-      try {
-        return JSON.parse(trimmed);
-      } catch {
+  try {
+    const optionalFields = {
+      shippingAddress: safeParseJson(action.shippingAddress, 'Shipping Address'),
+      shippingRateInput: safeParseJson(action.shippingRateInput, 'Shipping Rate Input'),
+      externalTaxRate: safeParseJson(action.externalTaxRate, 'External Tax Rate'),
+      deliveries: safeParseJson(action.deliveries, 'Deliveries'),
+      custom: safeParseJson(action.custom, 'Custom Fields')
+    };
+
+    const finalAction = {
+      ...action,
+      ...Object.fromEntries(
+        Object.entries(optionalFields).filter(([, value]) => value !== undefined)
+      )
+    } as IDataObject;
+
+    // Set shipping method reference
+    if (!finalAction.shippingMethod) {
+      if (!shippingMethodId && !shippingMethodKey) {
         throw new NodeOperationError(
           context.getNode(),
-          `${label} must be valid JSON when provided as a string`,
+          'Add Shipping Method requires a Shipping Method ID or Key'
         );
       }
+      finalAction.shippingMethod = {
+        typeId: 'shipping-method',
+        ...(shippingMethodId ? { id: shippingMethodId } : { key: shippingMethodKey })
+      };
     }
-    if (typeof value === 'object') {
-      return value;
-    }
-    throw new NodeOperationError(context.getNode(), `${label} must be a JSON object or array`);
-  };
 
-  const shippingAddress = parseOptionalJson(action.shippingAddress, 'Shipping Address');
-  const shippingRateInput = parseOptionalJson(action.shippingRateInput, 'Shipping Rate Input');
-  const externalTaxRate = parseOptionalJson(action.externalTaxRate, 'External Tax Rate');
-  const deliveries = parseOptionalJson(action.deliveries, 'Deliveries');
-  const custom = parseOptionalJson(action.custom, 'Custom Fields');
-
-  const finalAction: IDataObject = {
-    ...action,
-    ...(shippingAddress !== undefined ? { shippingAddress } : {}),
-    ...(shippingRateInput !== undefined ? { shippingRateInput } : {}),
-    ...(externalTaxRate !== undefined ? { externalTaxRate } : {}),
-    ...(deliveries !== undefined ? { deliveries } : {}),
-    ...(custom !== undefined ? { custom } : {}),
-  };
-
-  if (!finalAction.shippingMethod) {
-    if (shippingMethodId) {
-      finalAction.shippingMethod = { id: shippingMethodId, typeId: 'shipping-method' };
-    } else if (shippingMethodKey) {
-      finalAction.shippingMethod = { key: shippingMethodKey, typeId: 'shipping-method' };
-    } else {
-      throw new NodeOperationError(
-        context.getNode(),
-        'Add Shipping Method requires a Shipping Method ID or Key',
-      );
-    }
+    return cleanupFields(finalAction, ['shippingMethodId', 'shippingMethodKey', 'shippingMethodSelection']);
+  } catch (error) {
+    throw new NodeOperationError(context.getNode(), (error as Error).message);
   }
-
-  delete (finalAction as IDataObject & { shippingMethodId?: unknown }).shippingMethodId;
-  delete (finalAction as IDataObject & { shippingMethodKey?: unknown }).shippingMethodKey;
-
-  return finalAction;
 };

@@ -5,6 +5,150 @@ import { isUuid } from './common.utils';
  * Utility functions for cart operations
  */
 
+// Helper functions to reduce repetitive code
+const safeAssign = (target: IDataObject, source: IDataObject, fieldMap: Record<string, string>) => {
+	Object.entries(fieldMap).forEach(([sourceKey, targetKey]) => {
+		if (source[sourceKey]) {
+			target[targetKey] = source[sourceKey];
+		}
+	});
+};
+
+const createReference = (typeId: string, id?: unknown, key?: unknown) => {
+	return id ? { typeId, id } : key ? { typeId, key } : undefined;
+};
+
+const safeJsonParse = (value: unknown, fallback = value) => {
+	if (typeof value === 'string') {
+		try {
+			return JSON.parse(value);
+		} catch {
+			return fallback;
+		}
+	}
+	return value;
+};
+
+const createMoneyObject = (money: IDataObject, defaultCurrency = 'USD') => ({
+	type: 'centPrecision',
+	currencyCode: (money.currencyCode as string) || defaultCurrency,
+	centAmount: Number(money.centAmount)
+});
+
+const createTaxRate = (taxRateObj: IDataObject, defaultCountry = 'DE') => {
+	const taxRate = extractNestedValue(taxRateObj, ['taxRate']) || taxRateObj;
+	return {
+		name: (taxRate.name as string) || '',
+		amount: Number(taxRate.amount || 0),
+		country: (taxRate.country as string) || defaultCountry,
+		...(taxRate.state && { state: taxRate.state })
+	};
+};
+
+const extractNestedValue = (obj: IDataObject, path: string[]) => {
+	return path.reduce((current, key) => current?.[key] as IDataObject, obj);
+};
+
+const handleChannelReference = (channelObj: IDataObject, typeId = 'channel') => {
+	const channelRef = (channelObj.channelReference as IDataObject) ?? channelObj;
+	return channelRef && (channelRef.id || channelRef.key) 
+		? createReference(typeId, channelRef.id, channelRef.key)
+		: undefined;
+};
+
+const handleTargetsDelta = (targetsDelta: unknown) => {
+	const parsed = safeJsonParse(targetsDelta);
+	if (Array.isArray(parsed)) return { targets: parsed };
+	if (parsed && typeof parsed === 'object' && (parsed as IDataObject).target) {
+		return { targets: (parsed as IDataObject).target };
+	}
+	return undefined;
+};
+
+const createExternalTaxAmount = (taxAmountData: IDataObject, defaultCurrency = 'EUR') => {
+	const result: IDataObject = {};
+	
+	// Handle totalGross
+	const totalGrossMoney = extractNestedValue(taxAmountData, ['totalGross', 'money']);
+	if (totalGrossMoney) {
+		result.totalGross = createMoneyObject(totalGrossMoney, defaultCurrency);
+	}
+	
+	// Handle taxRate
+	const taxRateData = extractNestedValue(taxAmountData, ['taxRate', 'taxRate']) || extractNestedValue(taxAmountData, ['taxRate']);
+	if (taxRateData) {
+		result.taxRate = createTaxRate({ taxRate: taxRateData });
+	}
+	
+	return Object.keys(result).length > 0 ? result : undefined;
+};
+
+const createExternalTotalPrice = (totalPriceData: IDataObject, defaultCurrency = 'EUR') => {
+	const result: IDataObject = {};
+	
+	// Handle price
+	const priceMoney = extractNestedValue(totalPriceData, ['price', 'money']);
+	if (priceMoney) {
+		result.price = createMoneyObject(priceMoney, defaultCurrency);
+	}
+	
+	// Handle totalPrice
+	const totalPriceMoney = extractNestedValue(totalPriceData, ['totalPrice', 'money']);
+	if (totalPriceMoney) {
+		result.totalPrice = createMoneyObject(totalPriceMoney, defaultCurrency);
+	}
+	
+	return Object.keys(result).length > 0 ? result : undefined;
+};
+
+const handleLineItemActions = (result: IDataObject, action: IDataObject, actionType: string) => {
+	setLineItemIdentifier(result, action);
+	
+	switch (actionType) {
+		case 'setLineItemTaxRate':
+		case 'setShippingMethodTaxRate': {
+			if (action.shippingKey) result.shippingKey = action.shippingKey;
+			const taxRateObj = extractNestedValue(action.externalTaxRate as IDataObject, ['taxRate']);
+			if (taxRateObj) {
+				result.externalTaxRate = createTaxRate({ taxRate: taxRateObj });
+			}
+			break;
+		}
+			
+		case 'setLineItemPrice': {
+			const externalPriceMoney = extractNestedValue(action.externalPrice as IDataObject, ['money']);
+			if (externalPriceMoney) {
+				result.externalPrice = createMoneyObject(externalPriceMoney);
+			}
+			break;
+		}
+			
+		case 'setLineItemTaxAmount':
+		case 'setShippingMethodTaxAmount': {
+			if (action.shippingKey) result.shippingKey = action.shippingKey;
+			const taxAmountData = extractNestedValue(action.externalTaxAmount as IDataObject, ['taxAmount']);
+			if (taxAmountData) {
+				result.externalTaxAmount = createExternalTaxAmount(taxAmountData);
+			}
+			break;
+		}
+			
+		case 'setLineItemTotalPrice': {
+			const totalPriceData = extractNestedValue(action.externalTotalPrice as IDataObject, ['totalPrice']);
+			if (totalPriceData) {
+				result.externalTotalPrice = createExternalTotalPrice(totalPriceData);
+			}
+			break;
+		}
+			
+		case 'setLineItemDistributionChannel':
+			if (action.distributionChannelId) {
+				result.distributionChannel = createReference('channel', action.distributionChannelId);
+			}
+			break;
+	}
+};
+
 /**
  * Validates if a cart draft has required fields
  */
@@ -115,12 +259,76 @@ function setLineItemIdentifier(result: IDataObject, action: IDataObject): void {
 	}
 }
 
+
 /**
  * Handle cart update actions transformation
  */
 export function handleCartActions(action: IDataObject): IDataObject {
 	const actionType = action.action as string;
 	const result: IDataObject = { action: actionType };
+	
+
+	// Simple field mappings  is used action directly map one input field one output field
+	const simpleFieldMappings: Record<string, Record<string, string>> = {
+		setAnonymousId: { anonymousId: 'anonymousId' },
+		setCustomerEmail: { email: 'email' },
+		setCustomerId: { customerId: 'customerId' },
+		setKey: { key: 'key' },
+		setLocale: { locale: 'locale' },
+		setCountry: { country: 'country' },
+		setPurchaseOrderNumber: { purchaseOrderNumber: 'purchaseOrderNumber' },
+		changeTaxMode: { taxMode: 'taxMode' },
+		changeTaxCalculationMode: { taxCalculationMode: 'taxCalculationMode' },
+		changeTaxRoundingMode: { taxRoundingMode: 'taxRoundingMode' },
+		changePriceRoundingMode: { priceRoundingMode: 'priceRoundingMode' }
+	};
+
+	// Handle simple field mappings
+	
+	if (simpleFieldMappings[actionType]) {
+		safeAssign(result, action, simpleFieldMappings[actionType]);
+		return result;
+		
+	}
+	
+	const buildAddressFromFields = (): IDataObject | undefined => {
+		const fields: Array<keyof IDataObject> = [
+			'key',
+			'title',
+			'salutation',
+			'firstName',
+			'lastName',
+			'streetName',
+			'streetNumber',
+			'additionalStreetInfo',
+			'postalCode',
+			'city',
+			'region',
+			'state',
+			'country',
+			'company',
+			'department',
+			'building',
+			'apartment',
+			'pOBox',
+			'phone',
+			'mobile',
+			'email',
+			'fax',
+			'additionalAddressInfo',
+			'externalId',
+		];
+		const address: IDataObject = {};
+		if (action.addressKey !== undefined && action.addressKey !== '') {
+			address.key = action.addressKey;
+		}
+		for (const field of fields) {
+			if (action[field] !== undefined && action[field] !== '') {
+				address[field] = action[field];
+			}
+		}
+		return Object.keys(address).length > 0 ? address : undefined;
+	};
 
 	switch (actionType) {
 		// Simple actions with no additional fields
@@ -137,58 +345,34 @@ export function handleCartActions(action: IDataObject): IDataObject {
 		case 'addItemShippingAddress':
 		case 'updateItemShippingAddress':
 			if (action.address) {
-				result.address = formatAddress(action.address as IDataObject);
+				const parsed = typeof action.address === 'string'
+					? (() => {
+						try {
+							return JSON.parse(action.address as string);
+						} catch {
+							return undefined;
+						}
+					})()
+					: (action.address);
+				if (parsed) result.address = formatAddress(parsed);
+			} else {
+				const address = buildAddressFromFields();
+				if (address) result.address = formatAddress(address);
 			}
-			break;
-
-		// String field actions
-		case 'setAnonymousId':
-			if (action.anonymousId) result.anonymousId = action.anonymousId;
-			break;
-		case 'setCustomerEmail':
-			if (action.customerEmail) result.email = action.customerEmail;
-			break;
-		case 'setCustomerId':
-			if (action.customerId) result.customerId = action.customerId;
-			break;
-		case 'setKey':
-			if (action.key) result.key = action.key;
-			break;
-		case 'setLocale':
-			if (action.locale) result.locale = action.locale;
-			break;
-		case 'setCountry':
-			if (action.country) result.country = action.country;
-			break;
-		case 'setPurchaseOrderNumber':
-			if (action.purchaseOrderNumber) result.purchaseOrderNumber = action.purchaseOrderNumber;
 			break;
 
 		// Reference-based actions
 		case 'setCustomerGroup':
-			if (action.customerGroupId) {
-				result.customerGroup = { typeId: 'customer-group', id: action.customerGroupId };
-			} else if (action.customerGroupKey) {
-				result.customerGroup = { typeId: 'customer-group', key: action.customerGroupKey };
-			}
+			result.customerGroup = createReference('customer-group', action.customerGroupId, action.customerGroupKey);
 			break;
 
 		case 'setBusinessUnit':
-			if (action.businessUnitId) {
-				result.businessUnit = { typeId: 'business-unit', id: action.businessUnitId };
-			} else if (action.businessUnitKey) {
-				result.businessUnit = { typeId: 'business-unit', key: action.businessUnitKey };
-			}
+			result.businessUnit = createReference('business-unit', action.businessUnitId, action.businessUnitKey);
 			break;
 
-		case 'addShippingMethod':
 		case 'setShippingMethod':
 		case 'removeShippingMethod':
-			if (action.shippingMethodId) {
-				result.shippingMethod = { typeId: 'shipping-method', id: action.shippingMethodId };
-			} else if (action.shippingMethodKey) {
-				result.shippingMethod = { typeId: 'shipping-method', key: action.shippingMethodKey };
-			}
+			result.shippingMethod = createReference('shipping-method', action.shippingMethodId, action.shippingMethodKey);
 			break;
 
 		// Custom type and field actions
@@ -210,19 +394,15 @@ export function handleCartActions(action: IDataObject): IDataObject {
 
 		// Discount actions
 		case 'addDiscountCode':
-			if (action.code) {
-				result.code = action.code;
-			} else if (typeof action.discountCode === 'string') {
-				result.code = action.discountCode;
-			}
+			result.code = action.code || action.discountCode;
 			break;
+			
 		case 'removeDiscountCode': {
-			const discountCodeInput = action.discountCode as IDataObject | undefined;
-			const reference = (discountCodeInput?.discountCodeReference as IDataObject) ?? discountCodeInput;
-			if (reference && (reference.id || reference.key)) {
+			const discountCodeRef = extractNestedValue(action.discountCode as IDataObject, ['discountCodeReference']) || action.discountCode;
+			if (discountCodeRef && (discountCodeRef.id || discountCodeRef.key)) {
 				result.discountCode = {
-					typeId: (reference.typeId as string) || 'discount-code',
-					...(reference.id ? { id: reference.id } : { key: reference.key }),
+					typeId: (discountCodeRef.typeId as string) || 'discount-code',
+					...(discountCodeRef.id ? { id: discountCodeRef.id } : { key: discountCodeRef.key })
 				};
 			}
 			break;
@@ -230,26 +410,57 @@ export function handleCartActions(action: IDataObject): IDataObject {
 
 		// Payment actions
 		case 'addPayment':
-		case 'removePayment':
-			if (action.paymentId) {
-				result.payment = { typeId: 'payment', id: action.paymentId };
-			} else if (action.paymentKey) {
-				result.payment = { typeId: 'payment', key: action.paymentKey };
+		case 'removePayment': {
+			const paymentRef = extractNestedValue(action.payment as IDataObject, ['paymentReference']) || action.payment;
+			result.payment = paymentRef && (paymentRef.id || paymentRef.key)
+				? createReference((paymentRef.typeId as string) || 'payment', paymentRef.id, paymentRef.key)
+				: createReference('payment', action.paymentId, action.paymentKey);
+			break;
+		}
+
+
+			case 'addLineItem': {
+			// Required fields
+			safeAssign(result, action, { 
+				productId: 'productId'
+			});
+			if (action.variantId !== undefined) result.variantId = Number(action.variantId);
+			if (action.quantity !== undefined) result.quantity = Number(action.quantity);
+			
+			// Handle channels
+			if (action.distributionChannel) {
+				result.distributionChannel = handleChannelReference(action.distributionChannel as IDataObject);
+			}
+			if (action.supplyChannel) {
+				result.supplyChannel = handleChannelReference(action.supplyChannel as IDataObject);
+			}
+			
+			// Handle external price
+			const externalPriceMoney = extractNestedValue(action.externalPrice as IDataObject, ['money']);
+			if (externalPriceMoney) {
+				result.externalPrice = createMoneyObject(externalPriceMoney);
+			}
+			
+			// Handle external tax rate
+			const taxRateObj = extractNestedValue(action.externalTaxRate as IDataObject, ['taxRate']);
+			if (taxRateObj) {
+				result.externalTaxRate = createTaxRate({ taxRate: taxRateObj });
+			}
+			
+			// Handle shipping details
+			if (action.targetsDelta) {
+				result.shippingDetails = handleTargetsDelta(action.targetsDelta);
+			}
+			
+			// Handle custom fields
+			if (action.customFields) {
+				result.custom = safeJsonParse(action.customFields);
 			}
 			break;
+		}
 
-		// Tax mode actions
-		case 'changeTaxMode':
-			if (action.taxMode) result.taxMode = action.taxMode;
-			break;
-
-		case 'changeTaxCalculationMode':
-			if (action.taxCalculationMode) result.taxCalculationMode = action.taxCalculationMode;
-			break;
-
-		case 'changeTaxRoundingMode':
-		case 'changePriceRoundingMode':
-			if (action.roundingMode) result.roundingMode = action.roundingMode;
+		case 'removeLineItem':
+			setLineItemIdentifier(result, action);
 			break;
 
 		// Line Item actions
@@ -302,184 +513,17 @@ export function handleCartActions(action: IDataObject): IDataObject {
 			}
 			break;
 
+		// Line Item actions with complex handling
 		case 'setLineItemTaxRate':
-			setLineItemIdentifier(result, action);
-			if (action.shippingKey) result.shippingKey = action.shippingKey;
-			
-			if (action.externalTaxRate && typeof action.externalTaxRate === 'object') {
-				const externalTaxRate = action.externalTaxRate as IDataObject;
-				if (externalTaxRate.taxRate && typeof externalTaxRate.taxRate === 'object') {
-					const taxRate = externalTaxRate.taxRate as IDataObject;
-					result.externalTaxRate = {
-						name: (taxRate.name as string) || '',
-						amount: Number(taxRate.amount || 0),
-						country: (taxRate.country as string) || 'DE'
-					} as IDataObject;
-					if (taxRate.state && typeof taxRate.state === 'string') {
-						(result.externalTaxRate as IDataObject).state = taxRate.state;
-					}
-				}
-			}
-			break;
-
 		case 'setShippingMethodTaxRate':
-			if (action.shippingKey) result.shippingKey = action.shippingKey;
-			
-			if (action.externalTaxRate && typeof action.externalTaxRate === 'object') {
-				const externalTaxRate = action.externalTaxRate as IDataObject;
-				if (externalTaxRate.taxRate && typeof externalTaxRate.taxRate === 'object') {
-					const taxRate = externalTaxRate.taxRate as IDataObject;
-					result.externalTaxRate = {
-						name: (taxRate.name as string) || '',
-						amount: Number(taxRate.amount || 0),
-						country: (taxRate.country as string) || 'DE'
-					} as IDataObject;
-					if (taxRate.state && typeof taxRate.state === 'string') {
-						(result.externalTaxRate as IDataObject).state = taxRate.state;
-					}
-				}
-			}
-			break;
-
 		case 'setLineItemPrice':
-			setLineItemIdentifier(result, action);
-			
-			if (action.externalPrice && typeof action.externalPrice === 'object') {
-				const externalPrice = action.externalPrice as IDataObject;
-				if (externalPrice.money && typeof externalPrice.money === 'object') {
-					const money = externalPrice.money as IDataObject;
-					result.externalPrice = {
-						type: 'centPrecision',
-						currencyCode: (money.currencyCode as string) || 'EUR',
-						centAmount: Number(money.centAmount)
-					};
-				}
-			}
-			break;
-
 		case 'setLineItemTaxAmount':
-			setLineItemIdentifier(result, action);
-			if (action.shippingKey) result.shippingKey = action.shippingKey;
-			
-			if (action.externalTaxAmount && typeof action.externalTaxAmount === 'object') {
-				const externalTaxAmount = action.externalTaxAmount as IDataObject;
-				if (externalTaxAmount.taxAmount && typeof externalTaxAmount.taxAmount === 'object') {
-					const taxAmount = externalTaxAmount.taxAmount as IDataObject;
-					result.externalTaxAmount = {} as IDataObject;
-					
-					// Handle totalGross
-					if (taxAmount.totalGross && typeof taxAmount.totalGross === 'object') {
-						const totalGross = taxAmount.totalGross as IDataObject;
-						if (totalGross.money && typeof totalGross.money === 'object') {
-							const money = totalGross.money as IDataObject;
-							(result.externalTaxAmount as IDataObject).totalGross = {
-								type: 'centPrecision',
-								currencyCode: (money.currencyCode as string) || 'EUR',
-								centAmount: Number(money.centAmount)
-							};
-						}
-					}
-					
-					// Handle taxRate
-					if (taxAmount.taxRate && typeof taxAmount.taxRate === 'object') {
-						const taxRateObj = taxAmount.taxRate as IDataObject;
-						if (taxRateObj.taxRate && typeof taxRateObj.taxRate === 'object') {
-							const taxRate = taxRateObj.taxRate as IDataObject;
-							(result.externalTaxAmount as IDataObject).taxRate = {
-								name: (taxRate.name as string) || '',
-								amount: Number(taxRate.amount || 0),
-								country: (taxRate.country as string) || 'DE'
-							} as IDataObject;
-						}
-					}
-				}
-			}
-			break;
-
 		case 'setShippingMethodTaxAmount':
-			if (action.shippingKey) result.shippingKey = action.shippingKey;
-			
-			if (action.externalTaxAmount && typeof action.externalTaxAmount === 'object') {
-				const externalTaxAmount = action.externalTaxAmount as IDataObject;
-				if (externalTaxAmount.taxAmount && typeof externalTaxAmount.taxAmount === 'object') {
-					const taxAmount = externalTaxAmount.taxAmount as IDataObject;
-					result.externalTaxAmount = {} as IDataObject;
-					
-					if (taxAmount.totalGross && typeof taxAmount.totalGross === 'object') {
-						const totalGross = taxAmount.totalGross as IDataObject;
-						if (totalGross.money && typeof totalGross.money === 'object') {
-							const money = totalGross.money as IDataObject;
-							(result.externalTaxAmount as IDataObject).totalGross = {
-								type: 'centPrecision',
-								currencyCode: (money.currencyCode as string) || 'EUR',
-								centAmount: Number(money.centAmount)
-							};
-						}
-					}
-					
-					if (taxAmount.taxRate && typeof taxAmount.taxRate === 'object') {
-						const taxRateObj = taxAmount.taxRate as IDataObject;
-						if (taxRateObj.taxRate && typeof taxRateObj.taxRate === 'object') {
-							const taxRate = taxRateObj.taxRate as IDataObject;
-							(result.externalTaxAmount as IDataObject).taxRate = {
-								name: (taxRate.name as string) || '',
-								amount: Number(taxRate.amount || 0),
-								country: (taxRate.country as string) || 'DE'
-							} as IDataObject;
-						}
-					}
-				}
-			}
-			break;
-
 		case 'setLineItemDistributionChannel':
-			setLineItemIdentifier(result, action);
-			
-			if (action.distributionChannelId) {
-				result.distributionChannel = {
-					typeId: 'channel',
-					id: action.distributionChannelId
-				};
-			}
+		case 'setLineItemTotalPrice': {
+			handleLineItemActions(result, action, actionType);
 			break;
-
-		case 'setLineItemTotalPrice':
-			setLineItemIdentifier(result, action);
-			
-			if (action.externalTotalPrice && typeof action.externalTotalPrice === 'object') {
-				const externalTotalPrice = action.externalTotalPrice as IDataObject;
-				if (externalTotalPrice.totalPrice && typeof externalTotalPrice.totalPrice === 'object') {
-					const totalPriceData = externalTotalPrice.totalPrice as IDataObject;
-					result.externalTotalPrice = {} as IDataObject;
-					
-					// Handle price
-					if (totalPriceData.price && typeof totalPriceData.price === 'object') {
-						const priceObj = totalPriceData.price as IDataObject;
-						if (priceObj.money && typeof priceObj.money === 'object') {
-							const priceMoney = priceObj.money as IDataObject;
-							(result.externalTotalPrice as IDataObject).price = {
-								type: 'centPrecision',
-								currencyCode: (priceMoney.currencyCode as string) || 'EUR',
-								centAmount: Number(priceMoney.centAmount)
-							};
-						}
-					}
-					
-					// Handle totalPrice
-					if (totalPriceData.totalPrice && typeof totalPriceData.totalPrice === 'object') {
-						const totalPriceObj = totalPriceData.totalPrice as IDataObject;
-						if (totalPriceObj.money && typeof totalPriceObj.money === 'object') {
-							const totalMoney = totalPriceObj.money as IDataObject;
-							(result.externalTotalPrice as IDataObject).totalPrice = {
-								type: 'centPrecision',
-								currencyCode: (totalMoney.currencyCode as string) || 'EUR',
-								centAmount: Number(totalMoney.centAmount)
-							};
-						}
-					}
-				}
-			}
-			break;
+		}
 
 		case 'setLineItemSupplyChannel':
 			if (action.lineItemId) result.lineItemId = action.lineItemId;
@@ -514,9 +558,16 @@ export function handleCartActions(action: IDataObject): IDataObject {
 			
 			if (action.targetsDelta) {
 				try {
-					result.targetsDelta = typeof action.targetsDelta === 'string' 
-						? JSON.parse(action.targetsDelta) 
-						: action.targetsDelta;
+					if (typeof action.targetsDelta === 'string') {
+						result.targetsDelta = JSON.parse(action.targetsDelta);
+					} else if (
+						typeof action.targetsDelta === 'object' &&
+						(action.targetsDelta as IDataObject).target
+					) {
+						result.targetsDelta = (action.targetsDelta as IDataObject).target;
+					} else {
+						result.targetsDelta = action.targetsDelta;
+					}
 				} catch {
 					// If parsing fails, treat as already parsed or return empty array
 					result.targetsDelta = [];
@@ -530,9 +581,16 @@ export function handleCartActions(action: IDataObject): IDataObject {
 			
 			if (action.targetsDelta) {
 				try {
-					result.targetsDelta = typeof action.targetsDelta === 'string'
-						? JSON.parse(action.targetsDelta)
-						: action.targetsDelta;
+					if (typeof action.targetsDelta === 'string') {
+						result.targetsDelta = JSON.parse(action.targetsDelta);
+					} else if (
+						typeof action.targetsDelta === 'object' &&
+						(action.targetsDelta as IDataObject).target
+					) {
+						result.targetsDelta = (action.targetsDelta as IDataObject).target;
+					} else {
+						result.targetsDelta = action.targetsDelta;
+					}
 				} catch {
 					result.targetsDelta = [];
 				}
@@ -678,11 +736,30 @@ export function handleCartActions(action: IDataObject): IDataObject {
 			}
 			
 			if (action.customFields) {
-				try {
-					result.fields = typeof action.customFields === 'string'
-						? JSON.parse(action.customFields)
-						: action.customFields;
-				} catch {
+				if (typeof action.customFields === 'string') {
+					const trimmed = action.customFields.trim();
+					
+					// Check if it's already JSON
+					if (trimmed.startsWith('{')) {
+						try {
+							result.fields = JSON.parse(trimmed);
+							
+							// Validate it's an object
+							if (typeof result.fields !== 'object' || Array.isArray(result.fields)) {
+								throw new Error('Custom Fields must be a JSON object (e.g., {"fieldName": "value"})');
+							}
+						} catch (error) {
+							throw new Error(`Invalid Custom Fields format: ${(error as Error).message}`);
+						}
+					} else if (trimmed) {
+						// Plain string value - wrap it with the default field name from your Custom Type
+						// This assumes your Custom Type has a field named "exampleStringField"
+						// Replace this with your actual field name from CommerceTools Type definition!
+						result.fields = { 
+							exampleStringField: trimmed 
+						};
+					}
+				} else if (typeof action.customFields === 'object') {
 					result.fields = action.customFields;
 				}
 			}
@@ -767,11 +844,13 @@ export function handleCartActions(action: IDataObject): IDataObject {
 			break;
 
 		// Numeric actions
-		case 'setDeleteDaysAfterLastModification':
-			if (action.deleteDaysAfterLastModification !== undefined) {
-				result.deleteDaysAfterLastModification = Number(action.deleteDaysAfterLastModification);
-			}
-			break;
+		case 'setDeleteDaysAfterLastModification': {
+    const daysValue = action.deleteDaysAfterLastModification;
+    if (daysValue !== undefined && daysValue !== null && daysValue !== '') {
+        result.deleteDaysAfterLastModification = Number(daysValue);
+    }
+    break;
+}
 
 		case 'setCartTotalTax':
 			if (action.cartTotalTax !== undefined) {
@@ -786,22 +865,84 @@ export function handleCartActions(action: IDataObject): IDataObject {
 		// Custom shipping method
 		case 'setCustomShippingMethod':
 		case 'addCustomShippingMethod':
-			if (action.shippingMethodName) {
-				result.shippingMethodName = action.shippingMethodName;
-				if (action.shippingRatePrice && action.currency) {
+			{
+				const parseOptionalJson = (value: unknown): unknown => {
+					if (value === undefined || value === null || value === '') return undefined;
+					if (typeof value === 'string') {
+						const trimmed = value.trim();
+						if (!trimmed) return undefined;
+						try {
+							return JSON.parse(trimmed);
+						} catch {
+							return value;
+						}
+					}
+					if (typeof value === 'object') return value;
+					return value;
+				};
+
+				const shippingMethodName = action.shippingMethodNameCustom ?? action.shippingMethodName;
+				if (shippingMethodName) result.shippingMethodName = shippingMethodName;
+
+				const shippingKey = action.shippingKeyCustom ?? action.shippingKey;
+				if (shippingKey) result.shippingKey = shippingKey;
+
+				const shippingAddressInput = action.shippingAddressCustom ?? action.shippingAddress;
+				const shippingAddressParsed = parseOptionalJson(shippingAddressInput) as IDataObject | undefined;
+				if (shippingAddressParsed) {
+					const address = (shippingAddressParsed as IDataObject).shippingAddress as IDataObject | undefined;
+					result.shippingAddress = address ?? shippingAddressParsed;
+				}
+
+				const shippingRateInput = action.shippingRateCustom ?? action.shippingRate;
+				const shippingRateParsed = parseOptionalJson(shippingRateInput) as IDataObject | undefined;
+				if (shippingRateParsed) {
+					const rate = (shippingRateParsed as IDataObject).shippingRate as IDataObject | undefined;
+					const rateValues = rate ?? shippingRateParsed;
+					if (rateValues.currencyCode || rateValues.centAmount) {
+						result.shippingRate = {
+							price: {
+								type: 'centPrecision',
+								currencyCode: rateValues.currencyCode,
+								centAmount: Number(rateValues.centAmount) || 0,
+							},
+						};
+					} else if (rateValues.price) {
+						result.shippingRate = rateValues;
+					}
+				} else if (action.shippingRatePrice && action.currency) {
 					result.shippingRate = {
 						price: {
 							type: 'centPrecision',
 							currencyCode: action.currency,
-							centAmount: Number(action.shippingRatePrice) * 100
-						}
+							centAmount: Number(action.shippingRatePrice) * 100,
+						},
 					};
 				}
-				if (action.taxCategoryId) {
+
+				const taxCategoryInput = action.taxCategoryCustomShipping as IDataObject | undefined;
+				const taxRef = (taxCategoryInput?.taxCategoryReference as IDataObject) ?? undefined;
+				if (taxRef?.id || taxRef?.key) {
+					result.taxCategory = taxRef.id
+						? { typeId: 'tax-category', id: taxRef.id }
+						: { typeId: 'tax-category', key: taxRef.key };
+				} else if (action.taxCategoryId) {
 					result.taxCategory = { typeId: 'tax-category', id: action.taxCategoryId };
 				} else if (action.taxCategoryKey) {
 					result.taxCategory = { typeId: 'tax-category', key: action.taxCategoryKey };
 				}
+
+				const externalTaxRate = parseOptionalJson(action.externalTaxRateCustomShipping);
+				if (externalTaxRate) result.externalTaxRate = externalTaxRate;
+
+				const deliveries = parseOptionalJson(action.deliveriesCustomShipping);
+				if (deliveries) result.deliveries = deliveries;
+
+				const custom = parseOptionalJson(action.customFieldsCustomShipping);
+				if (custom) result.custom = custom;
+
+				const shippingRateInputCustom = parseOptionalJson(action.shippingRateInputCustom);
+				if (shippingRateInputCustom) result.shippingRateInput = shippingRateInputCustom;
 			}
 			break;
 
@@ -953,10 +1094,37 @@ export function handleCartActions(action: IDataObject): IDataObject {
 
 		// Shopping list actions
 		case 'addShoppingList':
-			if (action.shoppingListId) {
-				result.shoppingList = { typeId: 'shopping-list', id: action.shoppingListId };
-			} else if (action.shoppingListKey) {
-				result.shoppingList = { typeId: 'shopping-list', key: action.shoppingListKey };
+			{
+				const shoppingListInput = action.shoppingList as IDataObject | undefined;
+				const shoppingListRef = (shoppingListInput?.shoppingListReference as IDataObject) ?? shoppingListInput;
+				if (shoppingListRef && (shoppingListRef.id || shoppingListRef.key)) {
+					result.shoppingList = {
+						typeId: (shoppingListRef.typeId as string) || 'shopping-list',
+						...(shoppingListRef.id ? { id: shoppingListRef.id } : { key: shoppingListRef.key }),
+					};
+				} else if (action.shoppingListId) {
+					result.shoppingList = { typeId: 'shopping-list', id: action.shoppingListId };
+				} else if (action.shoppingListKey) {
+					result.shoppingList = { typeId: 'shopping-list', key: action.shoppingListKey };
+				}
+
+				const distributionInput = action.distributionChannel as IDataObject | undefined;
+				const distributionRef = (distributionInput?.channelReference as IDataObject) ?? distributionInput;
+				if (distributionRef && (distributionRef.id || distributionRef.key)) {
+					result.distributionChannel = {
+						typeId: (distributionRef.typeId as string) || 'channel',
+						...(distributionRef.id ? { id: distributionRef.id } : { key: distributionRef.key }),
+					};
+				}
+
+				const supplyInput = action.supplyChannel as IDataObject | undefined;
+				const supplyRef = (supplyInput?.channelReference as IDataObject) ?? supplyInput;
+				if (supplyRef && (supplyRef.id || supplyRef.key)) {
+					result.supplyChannel = {
+						typeId: (supplyRef.typeId as string) || 'channel',
+						...(supplyRef.id ? { id: supplyRef.id } : { key: supplyRef.key }),
+					};
+				}
 			}
 			break;
 
@@ -993,6 +1161,5 @@ export function handleCartActions(action: IDataObject): IDataObject {
 			// Return the action as-is if no special handling needed
 			return { ...result, ...action };
 	}
-
 	return result;
 }
