@@ -5,7 +5,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 
 	extends = ['oAuth2Api'];
 
-	displayName = 'commercetools api client';
+	// eslint-disable-next-line n8n-nodes-base/cred-class-field-display-name-miscased
+	displayName = 'commercetools OAuth2 API';
 
 	icon: Icon = 'file:../icons/Commercetools.svg';
 
