@@ -24,7 +24,7 @@ export class CommercetoolsTrigger implements INodeType {
 		icon: 'file:Commercetools.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Listen for CommerceTools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
+		description: 'Listen for commercetools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
 		defaults: {
 			name: 'commercetools Trigger',
 		},
