@@ -17,6 +17,7 @@ import {
   handleSetCustomType,
   handleAddAsset
 } from './product.utils';
+import { handleSetOrderNumber, handleSetPurchaseOrderNumber, handleSetBusinessUnit } from './order.utils';
 
 export const buildActionsFromUi = (
   context: IExecuteFunctions,
@@ -63,6 +64,11 @@ export const buildActionsFromUi = (
     
     finalAction = handleSetDirectDiscounts(context, finalAction);
     finalAction = handleAddShippingMethod(context, finalAction);
+
+    // Apply order-specific transformations
+    finalAction = handleSetOrderNumber(finalAction);
+    finalAction = handleSetPurchaseOrderNumber(finalAction);
+    finalAction = handleSetBusinessUnit(finalAction);
 
     // Clean up identifyBy field if present
     if (finalAction?.identifyBy) {
@@ -117,7 +123,6 @@ const handleSetDirectDiscounts = (
       }
       throw new Error('Discounts must be a JSON array');
     } catch {
-      // Fallback to default relative discount for any non-JSON string input.
       return {
         ...action,
         discounts: [

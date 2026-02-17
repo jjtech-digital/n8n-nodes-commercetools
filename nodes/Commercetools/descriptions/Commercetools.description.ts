@@ -5,7 +5,7 @@ import { productAdditionalFields, productDraftFields, productIdentificationField
 import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
 import { customerOperations, customerFields } from './customer.description';
 import { cartOperations, cartIdentificationFields, cartDraftFields, cartAdditionalFields, cartUpdateFields } from '../properties/cart.properties';
-import { orderOperations, orderIdentificationFields, orderDraftFields, orderAdditionalFields } from '../properties/order.properties';
+import { orderOperations, orderIdentificationFields, orderDraftFields, orderAdditionalFields, orderUpdateActions } from '../properties/order.properties';
 
 // Existing resource field - UPDATED with trigger option
 const resourceField: INodeProperties = {
@@ -200,6 +200,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
         ...categoryAdditionalFields,
         ...cartAdditionalFields,
         ...cartUpdateFields,
+        ...orderUpdateActions,
         ...orderAdditionalFields,
     ],
 };

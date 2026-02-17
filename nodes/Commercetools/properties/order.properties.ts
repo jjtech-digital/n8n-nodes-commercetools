@@ -394,18 +394,9 @@ export const orderDraftFields: INodeProperties[] = [
 						name: 'inventoryMode',
 						type: 'options',
 						options: [
-							{
-								name: 'None',
-								value: 'None',
-							},
-							{
-								name: 'Track Only',
-								value: 'TrackOnly',
-							},
-							{
-								name: 'Reserve on Stock',
-								value: 'ReserveOnStock',
-							},
+							{ name: 'None', value: 'None' },
+							{ name: 'Track Only', value: 'TrackOnly' },
+							{ name: 'Reserve on Stock', value: 'ReserveOnStock' },
 						],
 						default: 'None',
 						description: 'Inventory mode for the order',
@@ -436,19 +427,10 @@ export const orderDraftFields: INodeProperties[] = [
 						name: 'origin',
 						type: 'options',
 						options: [
-							{
-								name: 'Customer',
-								value: 'Customer',
-							},
-							{
-								name: 'Merchant',
-								value: 'Merchant',
-							},
-							{
-								name: 'Quote',
-								value: 'Quote',
-							},
-					],
+							{ name: 'Customer', value: 'Customer' },
+							{ name: 'Merchant', value: 'Merchant' },
+							{ name: 'Quote', value: 'Quote' },
+						],
 						default: 'Customer',
 						description: 'Origin of the order',
 					},
@@ -492,15 +474,9 @@ export const orderDraftFields: INodeProperties[] = [
 						name: 'taxCalculationMode',
 						type: 'options',
 						options: [
-							{
-								name: 'Line Item Level',
-								value: 'LineItemLevel',
-							},
-							{
-								name: 'Unit Price Level',
-								value: 'UnitPriceLevel',
-							},
-					],
+							{ name: 'Line Item Level', value: 'LineItemLevel' },
+							{ name: 'Unit Price Level', value: 'UnitPriceLevel' },
+						],
 						default: 'LineItemLevel',
 						description: 'Tax calculation mode for the order',
 					},
@@ -509,23 +485,11 @@ export const orderDraftFields: INodeProperties[] = [
 						name: 'taxMode',
 						type: 'options',
 						options: [
-							{
-								name: 'Platform',
-								value: 'Platform',
-							},
-							{
-								name: 'External',
-								value: 'External',
-							},
-							{
-								name: 'External Amount',
-								value: 'ExternalAmount',
-							},
-							{
-								name: 'Disabled',
-								value: 'Disabled',
-							},
-					],
+							{ name: 'Platform', value: 'Platform' },
+							{ name: 'External', value: 'External' },
+							{ name: 'External Amount', value: 'ExternalAmount' },
+							{ name: 'Disabled', value: 'Disabled' },
+						],
 						default: 'Platform',
 						description: 'Tax mode for the order',
 					},
@@ -534,23 +498,14 @@ export const orderDraftFields: INodeProperties[] = [
 						name: 'taxRoundingMode',
 						type: 'options',
 						options: [
-							{
-								name: 'Half Even',
-								value: 'HalfEven',
-							},
-							{
-								name: 'Half Up',
-								value: 'HalfUp',
-							},
-							{
-								name: 'Half Down',
-								value: 'HalfDown',
-							},
-					],
+							{ name: 'Half Even', value: 'HalfEven' },
+							{ name: 'Half Up', value: 'HalfUp' },
+							{ name: 'Half Down', value: 'HalfDown' },
+						],
 						default: 'HalfEven',
 						description: 'Tax rounding mode for the order',
 					},
-			],
+				],
 			},
 		],
 	},
@@ -638,10 +593,7 @@ export const orderAdditionalFields: INodeProperties[] = [
 				displayName: 'Limit',
 				name: 'limit',
 				type: 'number',
-				typeOptions: {
-					minValue: 1,
-					maxValue: 500,
-				},
+				typeOptions: { minValue: 1, maxValue: 500 },
 				default: 50,
 				description: 'Max number of results to return',
 			},
@@ -656,9 +608,7 @@ export const orderAdditionalFields: INodeProperties[] = [
 				displayName: 'Offset',
 				name: 'offset',
 				type: 'number',
-				typeOptions: {
-					minValue: 0,
-				},
+				typeOptions: { minValue: 0 },
 				default: 0,
 				description: 'Number of results to skip',
 			},
@@ -768,9 +718,10 @@ export const orderAdditionalFields: INodeProperties[] = [
 			{
 				displayName: 'Actions (JSON)',
 				name: 'actions',
-				type: 'string',
-				default: '',
+				type: 'json',
+				default: '[]',
 				description: 'Update actions as JSON array',
+				placeholder: '',
 			},
 			{
 				displayName: 'Expand',
@@ -785,8 +736,8 @@ export const orderAdditionalFields: INodeProperties[] = [
 
 export const orderUpdateActions: INodeProperties[] = [
 	{
-		displayName: 'Actions',
-		name: 'actionsUi',
+		displayName: 'Actions (UI)',
+		name: 'updateActions',
 		placeholder: 'Add Action',
 		type: 'fixedCollection',
 		typeOptions: {
@@ -807,316 +758,104 @@ export const orderUpdateActions: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'actionFields',
 				displayName: 'Action',
+				name: 'action',
 				values: [
 					{
-						displayName: 'Action',
+						displayName: 'Action Type',
 						name: 'action',
 						type: 'options',
-							noDataExpression:	true,
+						required: true,
+						default: 'setOrderNumber',
 						options: [
-							{
-								name: 'Add Delivery',
-								value: 'addDelivery',
-							},
-							{
-								name: 'Add Item Shipping Address',
-								value: 'addItemShippingAddress',
-							},
-							{
-								name: 'Add Parcel To Delivery',
-								value: 'addParcelToDelivery',
-							},
-							{
-								name: 'Add Payment',
-								value: 'addPayment',
-							},
-							{
-								name: 'Add Return Info',
-								value: 'addReturnInfo',
-							},
-							{
-								name: 'Change Order State',
-								value: 'changeOrderState',
-							},
-							{
-								name: 'Change Payment State',
-								value: 'changePaymentState',
-							},
-							{
-								name: 'Change Shipment State',
-								value: 'changeShipmentState',
-							},
-							{
-								name: 'Import Custom Line Item State',
-								value: 'importCustomLineItemState',
-							},
-							{
-								name: 'Import Line Item State',
-								value: 'importLineItemState',
-							},
-							{
-								name: 'Remove Delivery',
-								value: 'removeDelivery',
-							},
-							{
-								name: 'Remove Item Shipping Address',
-								value: 'removeItemShippingAddress',
-							},
-							{
-								name: 'Remove Parcel From Delivery',
-								value: 'removeParcelFromDelivery',
-							},
-							{
-								name: 'Remove Payment',
-								value: 'removePayment',
-							},
-							{
-								name: 'Set Billing Address',
-								value: 'setBillingAddress',
-							},
-							{
-								name: 'Set Billing Address Custom Field',
-								value: 'setBillingAddressCustomField',
-							},
-							{
-								name: 'Set Billing Address Custom Type',
-								value: 'setBillingAddressCustomType',
-							},
-							{
-								name: 'Set Custom Field',
-								value: 'setCustomField',
-							},
-							{
-								name: 'Set Custom Type',
-								value: 'setCustomType',
-							},
-							{
-								name: 'Set Customer Email',
-								value: 'setCustomerEmail',
-							},
-							{
-								name: 'Set Customer ID',
-								value: 'setCustomerId',
-							},
-							{
-								name: 'Set Delivery Address',
-								value: 'setDeliveryAddress',
-							},
-							{
-								name: 'Set Delivery Address Custom Field',
-								value: 'setDeliveryAddressCustomField',
-							},
-							{
-								name: 'Set Delivery Address Custom Type',
-								value: 'setDeliveryAddressCustomType',
-							},
-							{
-								name: 'Set Delivery Custom Field',
-								value: 'setDeliveryCustomField',
-							},
-							{
-								name: 'Set Delivery Custom Type',
-								value: 'setDeliveryCustomType',
-							},
-							{
-								name: 'Set Delivery Items',
-								value: 'setDeliveryItems',
-							},
-							{
-								name: 'Set Item Shipping Address Custom Field',
-								value: 'setItemShippingAddressCustomField',
-							},
-							{
-								name: 'Set Item Shipping Address Custom Type',
-								value: 'setItemShippingAddressCustomType',
-							},
-							{
-								name: 'Set Locale',
-								value: 'setLocale',
-							},
 							{
 								name: 'Set Order Number',
 								value: 'setOrderNumber',
-							},
-							{
-								name: 'Set Order Total Tax',
-								value: 'setOrderTotalTax',
-							},
-							{
-								name: 'Set Parcel Custom Field',
-								value: 'setParcelCustomField',
-							},
-							{
-								name: 'Set Parcel Custom Type',
-								value: 'setParcelCustomType',
-							},
-							{
-								name: 'Set Parcel Items',
-								value: 'setParcelItems',
-							},
-							{
-								name: 'Set Parcel Measurements',
-								value: 'setParcelMeasurements',
-							},
-							{
-								name: 'Set Parcel Tracking Data',
-								value: 'setParcelTrackingData',
 							},
 							{
 								name: 'Set Purchase Order Number',
 								value: 'setPurchaseOrderNumber',
 							},
 							{
-								name: 'Set Return Payment State',
-								value: 'setReturnPaymentState',
-							},
-							{
-								name: 'Set Return Shipment State',
-								value: 'setReturnShipmentState',
-							},
-							{
-								name: 'Set Shipping Address',
-								value: 'setShippingAddress',
-							},
-							{
-								name: 'Set Shipping Address Custom Field',
-								value: 'setShippingAddressCustomField',
-							},
-							{
-								name: 'Set Shipping Address Custom Type',
-								value: 'setShippingAddressCustomType',
-							},
-							{
-								name: 'Set Store',
-								value: 'setStore',
-							},
-							{
-								name: 'Transition Custom Line Item State',
-								value: 'transitionCustomLineItemState',
-							},
-							{
-								name: 'Transition Line Item State',
-								value: 'transitionLineItemState',
-							},
-							{
-								name: 'Transition State',
-								value: 'transitionState',
-							},
-							{
-								name: 'Update Item Shipping Address',
-								value: 'updateItemShippingAddress',
-							},
-							{
-								name: 'Update Sync Info',
-								value: 'updateSyncInfo',
+								name: 'Set Business Unit',
+								value: 'setBusinessUnit',
 							},
 						],
-						default: 'changeOrderState',
 					},
 					{
-						displayName: 'Custom Field Name',
-						name: 'name',
+						displayName: 'Business Unit ID',
+						name: 'businessUnitId',
 						type: 'string',
 						default: '',
-						description: 'Name of the custom field',
+						description: 'ID of the Business Unit to assign to the Order',
+						displayOptions: {
+							show: {
+								action: ['setBusinessUnit'],
+								businessUnitIdentifyBy: ['id'],
+							},
+						},
 					},
 					{
-						displayName: 'Order State',
-						name: 'orderState',
+						displayName: 'Business Unit Key',
+						name: 'businessUnitKey',
+						type: 'string',
+						default: '',
+						description: 'Key of the Business Unit to assign to the Order',
+						displayOptions: {
+							show: {
+								action: ['setBusinessUnit'],
+								businessUnitIdentifyBy: ['key'],
+							},
+						},
+					},
+					{
+						displayName: 'Identify Business Unit By',
+						name: 'businessUnitIdentifyBy',
 						type: 'options',
 						options: [
 							{
-								name: 'Open',
-								value: 'Open',
+								name: 'Key',
+								value: 'key',
 							},
 							{
-								name: 'Confirmed',
-								value: 'Confirmed',
+								name: 'ID',
+								value: 'id',
 							},
-							{
-								name: 'Complete',
-								value: 'Complete',
+						],
+						default: 'key',
+						description: 'Whether to identify the Business Unit by key or ID',
+						displayOptions: {
+							show: {
+								action: ['setBusinessUnit'],
 							},
-							{
-								name: 'Cancelled',
-								value: 'Cancelled',
-							},
-					],
-						default: 'Open',
-						description: 'The new order state',
+						},
 					},
 					{
-						displayName: 'Payment State',
-						name: 'paymentState',
-						type: 'options',
-						options: [
-							{
-								name: 'Balance Due',
-								value: 'BalanceDue',
+						displayName: 'Order Number',
+						name: 'orderNumber',
+						type: 'string',
+						default: '',
+						description: 'Value to set. Must be unique across a Project. Once set, the value cannot be changed.',
+						displayOptions: {
+							show: {
+								action: ['setOrderNumber'],
 							},
-							{
-								name: 'Credit Owed',
-								value: 'CreditOwed',
-							},
-							{
-								name: 'Failed',
-								value: 'Failed',
-							},
-							{
-								name: 'Paid',
-								value: 'Paid',
-							},
-							{
-								name: 'Pending',
-								value: 'Pending',
-							},
-					],
-						default: 'Pending',
-						description: 'The new payment state',
+						},
 					},
+
 					{
-						displayName: 'Shipment State',
-						name: 'shipmentState',
-						type: 'options',
-						options: [
-							{
-								name: 'Backorder',
-								value: 'Backorder',
+						displayName: 'Purchase Order Number',
+						name: 'purchaseOrderNumber',
+						type: 'string',
+						default: '',
+						description: 'Value to set. If empty, any existing value is removed.',
+						displayOptions: {
+							show: {
+								action: ['setPurchaseOrderNumber'],
 							},
-							{
-								name: 'Delayed',
-								value: 'Delayed',
-							},
-							{
-								name: 'Partial',
-								value: 'Partial',
-							},
-							{
-								name: 'Pending',
-								value: 'Pending',
-							},
-							{
-								name: 'Ready',
-								value: 'Ready',
-							},
-							{
-								name: 'Shipped',
-								value: 'Shipped',
-							},
-					],
-						default: 'Pending',
-						description: 'The new shipment state',
-					},
-					{
-						displayName: 'Value',
-						name: 'value',
-						type: 'json',
-						default: 'undefined',
-						description: 'The value to set/add/update',
-					},
-			],
+						},
+					},	
+				],
 			},
 		],
 	},

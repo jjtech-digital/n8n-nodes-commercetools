@@ -5,6 +5,7 @@ import {
 	applyCommonParameters,
 	coerceActions,
 } from '../utils/common.utils';
+import { buildActionsFromUi } from '../utils/actionBuilder';
 import { transformOrderDraft, formatOrderResponse, validateOrderImportDraft } from '../utils/order.utils';
 
 type OrderOperationArgs = {
@@ -84,7 +85,6 @@ export async function executeOrderOperation(
 			qs,
 		})) as IDataObject;
 
-		// Format each order in the results
 		if (response.results && Array.isArray(response.results)) {
 			response.results = (response.results as IDataObject[]).map((order) => formatOrderResponse(order));
 		}
@@ -107,7 +107,6 @@ export async function executeOrderOperation(
 			qs,
 		})) as IDataObject;
 
-		// Format each order in the results
 		if (response.results && Array.isArray(response.results)) {
 			response.results = (response.results as IDataObject[]).map((order) => formatOrderResponse(order));
 		}
@@ -144,9 +143,7 @@ export async function executeOrderOperation(
 			if ((error as { httpCode?: string }).httpCode === '404') {
 				results.push({ json: { exists: false } });
 			} else {
-				throw new NodeOperationError(this.getNode(), `Error checking order existence: ${(error as Error).message}`, {
-					itemIndex,
-				});
+				throw new NodeOperationError(this.getNode(), `Error checking order existence: ${(error as Error).message}`, { itemIndex });
 			}
 		}
 		return results;
@@ -181,9 +178,7 @@ export async function executeOrderOperation(
 			if ((error as { httpCode?: string }).httpCode === '404') {
 				results.push({ json: { exists: false } });
 			} else {
-				throw new NodeOperationError(this.getNode(), `Error checking order existence: ${(error as Error).message}`, {
-					itemIndex,
-				});
+				throw new NodeOperationError(this.getNode(), `Error checking order existence: ${(error as Error).message}`, { itemIndex });
 			}
 		}
 		return results;
@@ -197,31 +192,19 @@ export async function executeOrderOperation(
 			const cartId = this.getNodeParameter('cartId', itemIndex) as string;
 			const version = this.getNodeParameter('version', itemIndex) as number;
 			const orderDraft = this.getNodeParameter('orderDraft', itemIndex, {}) as IDataObject;
-			body = {
-				id: cartId,
-				version,
-				...transformOrderDraft(orderDraft),
-			};
+			body = { id: cartId, version, ...transformOrderDraft(orderDraft) };
 		} else if (operation === 'createFromQuote') {
 			const quoteId = this.getNodeParameter('quoteId', itemIndex) as string;
 			const version = this.getNodeParameter('version', itemIndex) as number;
 			const orderDraft = this.getNodeParameter('orderDraft', itemIndex, {}) as IDataObject;
-			body = {
-				id: quoteId,
-				version,
-				...transformOrderDraft(orderDraft),
-			};
+			body = { id: quoteId, version, ...transformOrderDraft(orderDraft) };
 		} else {
-			// createByImport - use JSON input directly
 			const orderImportDraftJson = this.getNodeParameter('orderImportDraft', itemIndex) as string;
 			try {
 				body = typeof orderImportDraftJson === 'string' ? JSON.parse(orderImportDraftJson) : orderImportDraftJson;
-				// Validate the import draft structure
 				validateOrderImportDraft(body);
 			} catch (error) {
-				throw new NodeOperationError(this.getNode(), `Invalid JSON in Order Import Draft: ${(error as Error).message}`, {
-					itemIndex,
-				});
+				throw new NodeOperationError(this.getNode(), `Invalid JSON in Order Import Draft: ${(error as Error).message}`, { itemIndex });
 			}
 		}
 
@@ -245,19 +228,11 @@ export async function executeOrderOperation(
 		if (operation === 'createInStoreFromCart') {
 			const cartId = this.getNodeParameter('cartId', itemIndex) as string;
 			const version = this.getNodeParameter('version', itemIndex) as number;
-			body = {
-				id: cartId,
-				version,
-				...transformOrderDraft(orderDraft),
-			};
+			body = { id: cartId, version, ...transformOrderDraft(orderDraft) };
 		} else {
 			const quoteId = this.getNodeParameter('quoteId', itemIndex) as string;
 			const version = this.getNodeParameter('version', itemIndex) as number;
-			body = {
-				id: quoteId,
-				version,
-				...transformOrderDraft(orderDraft),
-			};
+			body = { id: quoteId, version, ...transformOrderDraft(orderDraft) };
 		}
 
 		const url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders`;
@@ -271,20 +246,20 @@ export async function executeOrderOperation(
 		return results;
 	}
 
-	// Update Order operations
+	// ─── Update Order operations ──────────────────────────────────────────────
 	if (operation === 'update' || operation === 'updateByOrderNumber') {
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const updateActionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 
-		let actions: IDataObject[] = [];
-		if (additionalFieldsUpdate.actions) {
-			actions = coerceActions(this, additionalFieldsUpdate.actions, itemIndex);
-		}
+		// Merge UI actions + JSON actions
+		const uiActions = buildActionsFromUi(this, updateActionsUi);
+		const jsonActions = additionalFieldsUpdate.actions
+			? coerceActions(this, additionalFieldsUpdate.actions, itemIndex)
+			: [];
+		const actions = [...uiActions, ...jsonActions];
 
-		const body: IDataObject = {
-			version,
-			actions,
-		};
+		const body: IDataObject = { version, actions };
 
 		let url: string;
 		if (operation === 'update') {
@@ -305,21 +280,21 @@ export async function executeOrderOperation(
 		return results;
 	}
 
-	// Update Order in Store operations
+	// ─── Update Order in Store operations ─────────────────────────────────────
 	if (operation === 'updateInStore' || operation === 'updateInStoreByOrderNumber') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
 		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const updateActionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 
-		let actions: IDataObject[] = [];
-		if (additionalFieldsUpdate.actions) {
-			actions = coerceActions(this, additionalFieldsUpdate.actions, itemIndex);
-		}
+		// Merge UI actions + JSON actions
+		const uiActions = buildActionsFromUi(this, updateActionsUi);
+		const jsonActions = additionalFieldsUpdate.actions
+			? coerceActions(this, additionalFieldsUpdate.actions, itemIndex)
+			: [];
+		const actions = [...uiActions, ...jsonActions];
 
-		const body: IDataObject = {
-			version,
-			actions,
-		};
+		const body: IDataObject = { version, actions };
 
 		let url: string;
 		if (operation === 'updateInStore') {
@@ -389,7 +364,5 @@ export async function executeOrderOperation(
 		return results;
 	}
 
-	throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`, {
-		itemIndex,
-	});
+	throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`, { itemIndex });
 }
