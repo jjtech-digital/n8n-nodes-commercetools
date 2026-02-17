@@ -7,6 +7,7 @@ import {
 	categoryEvents,
 	cartEvents,
 } from '../properties/subscription.properties';
+import { GCPResponse } from './gcpInfra.utils';
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
 	const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -53,11 +54,14 @@ export async function createSubscription(
 		baseUrl: string;
 		webhookUrl?: string;
 		awsInfrastructure?: AWSResponse;
+		gcpInfrastructure?: GCPResponse;
 		events: string[];
 		useAWS: boolean;
+		useGCP: boolean;
 	},
 ) {
-	const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
+	const { baseUrl, webhookUrl, awsInfrastructure, gcpInfrastructure, events, useAWS, useGCP } =
+		params;
 
 	// Separate events by resource type using dynamic filtering
 	const selectedProductEvents = events.filter((event) =>
@@ -144,12 +148,14 @@ export async function createSubscription(
 		}
 
 		body = { destination };
-		if (messages.length > 0) {
-			body.messages = messages;
-		}
-		if (changes.length > 0) {
-			body.changes = changes;
-		}
+	} else if (useGCP && gcpInfrastructure) {
+		body = {
+			destination: {
+				type: 'GoogleCloudPubSub',
+				topic: gcpInfrastructure.topicName,
+				projectId: gcpInfrastructure.projectId,
+			},
+		};
 	} else {
 		// Use HTTP webhook destination
 		body = {
@@ -158,12 +164,12 @@ export async function createSubscription(
 				url: webhookUrl,
 			},
 		};
-		if (messages.length > 0) {
-			body.messages = messages;
-		}
-		if (changes.length > 0) {
-			body.changes = changes;
-		}
+	}
+	if (messages.length > 0) {
+		body.messages = messages;
+	}
+	if (changes.length > 0) {
+		body.changes = changes;
 	}
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {

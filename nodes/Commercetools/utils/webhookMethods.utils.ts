@@ -12,10 +12,14 @@ import {
 	deleteAWSInfrastructure,
 } from './awsInfra.utils';
 import { StaticSubscriptionData } from '../CommercetoolsTrigger.node';
+import { createGCPInfrastructure, deleteGCPInfrastructure, GCPResponse } from './gcpInfra.utils';
+import { PubSub } from '@google-cloud/pubsub';
+import { Storage } from '@google-cloud/storage';
+import { google } from 'googleapis';
 
 // Helper function to generate configuration hash
-function generateConfigHash(events: string[], hasAWS: boolean): string {
-	return JSON.stringify({ events: events.sort(), hasAWS });
+function generateConfigHash(events: string[], hasAWS: boolean, hasGCP: boolean): string {
+	return JSON.stringify({ events: events.sort(), hasAWS, hasGCP });
 }
 
 export const triggerMethods = {
@@ -31,7 +35,12 @@ export const triggerMethods = {
 				string
 			>;
 			const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			const currentConfigHash = generateConfigHash(currentEvents, hasAWSCredentials);
+			const hasGCPCredentials = !!(credentials.gcpProjectId && credentials.gcpTopicName);
+			const currentConfigHash = generateConfigHash(
+				currentEvents,
+				hasAWSCredentials,
+				hasGCPCredentials,
+			);
 
 			// Check if subscription exists
 			if (!webhookData.subscriptionId) {
@@ -61,17 +70,24 @@ export const triggerMethods = {
 					} catch {
 						//TODO:
 					}
+				} else if (webhookData.gcpInfrastructure && credentials.gcpProjectId) {
+					try {
+						await deleteGCPInfrastructure(credentials, webhookData.gcpInfrastructure);
+					} catch {
+						//TODO:
+					}
 				}
 
 				// Clear old data
 				delete webhookData.subscriptionId;
 				delete webhookData.awsInfrastructure;
+				delete webhookData.gcpInfrastructure;
 				delete webhookData.configHash;
 				delete webhookData.events;
 				return false;
 			}
 
-			// Verify subscription still exists in CommerceTools
+			// Verify subscription still exists in commercetools
 			try {
 				const baseUrl = await getBaseUrl.call(this);
 				(await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId)) as IDataObject;
@@ -99,6 +115,7 @@ export const triggerMethods = {
 							// Lambda doesn't exist, need to recreate
 							delete webhookData.subscriptionId;
 							delete webhookData.awsInfrastructure;
+							delete webhookData.gcpInfrastructure;
 							delete webhookData.configHash;
 							delete webhookData.events;
 							return false;
@@ -116,6 +133,7 @@ export const triggerMethods = {
 							// SQS doesn't exist, need to recreate
 							delete webhookData.subscriptionId;
 							delete webhookData.awsInfrastructure;
+							delete webhookData.gcpInfrastructure;
 							delete webhookData.configHash;
 							delete webhookData.events;
 							return false;
@@ -124,6 +142,56 @@ export const triggerMethods = {
 						// If we can't verify AWS, assume it needs recreation
 						delete webhookData.subscriptionId;
 						delete webhookData.awsInfrastructure;
+						delete webhookData.gcpInfrastructure;
+						delete webhookData.configHash;
+						delete webhookData.events;
+						return false;
+					}
+				} else if (webhookData.gcpInfrastructure) {
+					const auth = await google.auth.getClient({
+						scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+					});
+					const cloudfunctions = google.cloudfunctions({ version: 'v2', auth });
+					const functionFullName = `projects/${webhookData.gcpInfrastructure.projectId}/locations/${credentials.region}/functions/${webhookData.gcpInfrastructure.functionName}`;
+
+					// Check if Cloud Function exists
+					try {
+						await cloudfunctions.projects.locations.functions.get({ name: functionFullName });
+					} catch (err: any) {
+						if (err.code === 5) {
+							// Function not found, need to recreate
+							delete webhookData.subscriptionId;
+							delete webhookData.awsInfrastructure;
+							delete webhookData.gcpInfrastructure;
+							delete webhookData.configHash;
+							delete webhookData.events;
+							return false;
+						} else {
+							// Another error occurred
+							throw err;
+						}
+					}
+
+					const pubsub = new PubSub({ projectId: credentials.gcpProjectId });
+					const topicExists = await pubsub.topic(webhookData.gcpInfrastructure.topicName).exists();
+					if (!topicExists) {
+						// Topic doesn't exist, need to recreate
+						delete webhookData.subscriptionId;
+						delete webhookData.awsInfrastructure;
+						delete webhookData.gcpInfrastructure;
+						delete webhookData.configHash;
+						delete webhookData.events;
+						return false;
+					}
+					const storage = new Storage({ projectId: credentials.gcpProjectId });
+					const [bucketExists] = await storage
+						.bucket(webhookData.gcpInfrastructure.bucketName)
+						.exists();
+					if (!bucketExists) {
+						// Subscription doesn't exist, need to recreate
+						delete webhookData.subscriptionId;
+						delete webhookData.awsInfrastructure;
+						delete webhookData.gcpInfrastructure;
 						delete webhookData.configHash;
 						delete webhookData.events;
 						return false;
@@ -133,6 +201,7 @@ export const triggerMethods = {
 			} catch {
 				delete webhookData.subscriptionId;
 				delete webhookData.awsInfrastructure;
+				delete webhookData.gcpInfrastructure;
 				delete webhookData.configHash;
 				delete webhookData.events;
 				return false;
@@ -152,12 +221,15 @@ export const triggerMethods = {
 				string
 			>;
 			const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
+			const hasGCPCredentials = !!(credentials.gcpProjectId && credentials.gcpTopicName);
 
 			const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 			const baseUrl = await getBaseUrl.call(this);
 
 			let useAWS = false;
+			let useGCP = false;
 			let awsInfrastructure = null as unknown as AWSResponse;
+			let gcpInfrastructure: GCPResponse | undefined = undefined;
 
 			// Get webhook URL first
 			const webhookUrl = this.getNodeWebhookUrl('default');
@@ -179,12 +251,20 @@ export const triggerMethods = {
 				useAWS = true;
 			}
 
+			if (credentials.gcpProjectId && credentials.gcpTopicName) {
+				gcpInfrastructure = await createGCPInfrastructure(credentials, webhookUrl);
+				webhookData.gcpInfrastructure = gcpInfrastructure;
+				useGCP = true;
+			}
+
 			const response = (await createSubscription.call(this, {
 				baseUrl,
 				webhookUrl,
 				awsInfrastructure,
+				gcpInfrastructure,
 				events,
 				useAWS,
+				useGCP,
 			})) as IDataObject;
 
 			const subscriptionId = response.id as string | undefined;
@@ -198,7 +278,7 @@ export const triggerMethods = {
 			// Store subscription data and config hash
 			webhookData.subscriptionId = subscriptionId;
 			webhookData.events = events;
-			webhookData.configHash = generateConfigHash(events, hasAWSCredentials);
+			webhookData.configHash = generateConfigHash(events, hasAWSCredentials, hasGCPCredentials);
 
 			if (useAWS && awsInfrastructure) {
 				// Test Lambda function with a sample event
@@ -274,6 +354,16 @@ export const triggerMethods = {
 						string
 					>;
 					await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
+				} catch {
+					//TODO:
+				}
+			} else if (webhookData.gcpInfrastructure) {
+				try {
+					const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<
+						string,
+						string
+					>;
+					await deleteGCPInfrastructure(credentials, webhookData.gcpInfrastructure);
 				} catch {
 					//TODO:
 				}
