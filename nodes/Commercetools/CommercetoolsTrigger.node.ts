@@ -19,21 +19,21 @@ export type StaticSubscriptionData = IDataObject & {
 
 export class CommercetoolsTrigger implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Commercetools Trigger',
+		displayName: 'commercetools Trigger',
 		name: 'commercetoolsTrigger',
 		icon: 'file:Commercetools.svg',
 		group: ['trigger'],
 		version: 1,
 		description: 'Listen for CommerceTools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
 		defaults: {
-			name: 'Commercetools Trigger',
+			name: 'commercetools Trigger',
 		},
 		codex: {
-			categories: ['Commercetools', 'Integration', 'Customer', 'Product'],
+			categories: ['commercetools', 'Integration', 'Customer', 'Product'],
 			subcategories: {
-				Commercetools: ['Customer', 'Product'],
+				commercetools: ['Customer', 'Product'],
 			},
-			alias: ['commercetools', 'Commercetools'],
+			alias: ['commercetools', 'commercetools'],
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
