@@ -41,7 +41,8 @@ export const orderOperations: INodeProperties[] = [
 				name: 'Check if Order Exists in Store By Query',
 				value: 'headInStoreByQuery',
 				action: 'Check if any order matches the query in store',
-				description: 'Send a HEAD request with query predicates to check for matches in a specific store',
+				description:
+					'Send a HEAD request with query predicates to check for matches in a specific store',
 			},
 			{
 				name: 'Create Order by Import',
@@ -308,7 +309,8 @@ export const orderDraftFields: INodeProperties[] = [
 		name: 'orderImportDraft',
 		type: 'json',
 		default: '{}',
-		description: 'Complete order import draft as JSON. See <a href="https://docs.commercetools.com/api/projects/orders#orderimportdraft" target="_blank">OrderImportDraft documentation</a> for structure.',
+		description:
+			'Complete order import draft as JSON. See <a href="https://docs.commercetools.com/api/projects/orders#orderimportdraft" target="_blank">OrderImportDraft documentation</a> for structure.',
 		placeholder: `{ }`,
 		displayOptions: {
 			show: {
@@ -380,7 +382,8 @@ export const orderDraftFields: INodeProperties[] = [
 						name: 'customerGroup',
 						type: 'json',
 						default: 'undefined',
-						description: 'Set when the customer is set and the customer is a member of a customer group',
+						description:
+							'Set when the customer is set and the customer is a member of a customer group',
 					},
 					{
 						displayName: 'Customer ID',
@@ -448,7 +451,7 @@ export const orderDraftFields: INodeProperties[] = [
 								name: 'Quote',
 								value: 'Quote',
 							},
-					],
+						],
 						default: 'Customer',
 						description: 'Origin of the order',
 					},
@@ -500,7 +503,7 @@ export const orderDraftFields: INodeProperties[] = [
 								name: 'Unit Price Level',
 								value: 'UnitPriceLevel',
 							},
-					],
+						],
 						default: 'LineItemLevel',
 						description: 'Tax calculation mode for the order',
 					},
@@ -525,7 +528,7 @@ export const orderDraftFields: INodeProperties[] = [
 								name: 'Disabled',
 								value: 'Disabled',
 							},
-					],
+						],
 						default: 'Platform',
 						description: 'Tax mode for the order',
 					},
@@ -546,11 +549,11 @@ export const orderDraftFields: INodeProperties[] = [
 								name: 'Half Down',
 								value: 'HalfDown',
 							},
-					],
+						],
 						default: 'HalfEven',
 						description: 'Tax rounding mode for the order',
 					},
-			],
+				],
 			},
 		],
 	},
@@ -756,12 +759,7 @@ export const orderAdditionalFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['order'],
-				operation: [
-					'update',
-					'updateByOrderNumber',
-					'updateInStore',
-					'updateInStoreByOrderNumber',
-				],
+				operation: ['update', 'updateByOrderNumber', 'updateInStore', 'updateInStoreByOrderNumber'],
 			},
 		},
 		options: [
@@ -797,12 +795,7 @@ export const orderUpdateActions: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['order'],
-				operation: [
-					'update',
-					'updateByOrderNumber',
-					'updateInStore',
-					'updateInStoreByOrderNumber',
-				],
+				operation: ['update', 'updateByOrderNumber', 'updateInStore', 'updateInStoreByOrderNumber'],
 			},
 		},
 		options: [
@@ -814,7 +807,7 @@ export const orderUpdateActions: INodeProperties[] = [
 						displayName: 'Action',
 						name: 'action',
 						type: 'options',
-							noDataExpression:	true,
+						noDataExpression: true,
 						options: [
 							{
 								name: 'Add Delivery',
@@ -1043,7 +1036,7 @@ export const orderUpdateActions: INodeProperties[] = [
 								name: 'Cancelled',
 								value: 'Cancelled',
 							},
-					],
+						],
 						default: 'Open',
 						description: 'The new order state',
 					},
@@ -1072,7 +1065,7 @@ export const orderUpdateActions: INodeProperties[] = [
 								name: 'Pending',
 								value: 'Pending',
 							},
-					],
+						],
 						default: 'Pending',
 						description: 'The new payment state',
 					},
@@ -1105,7 +1098,7 @@ export const orderUpdateActions: INodeProperties[] = [
 								name: 'Shipped',
 								value: 'Shipped',
 							},
-					],
+						],
 						default: 'Pending',
 						description: 'The new shipment state',
 					},
@@ -1116,7 +1109,7 @@ export const orderUpdateActions: INodeProperties[] = [
 						default: 'undefined',
 						description: 'The value to set/add/update',
 					},
-			],
+				],
 			},
 		],
 	},

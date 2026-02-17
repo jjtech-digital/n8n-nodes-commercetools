@@ -51,7 +51,7 @@ type CommerceToolsAddress = {
 /**
  * Union type for all supported customer update actions
  */
-type CustomerActionType = 
+type CustomerActionType =
 	| 'addAddress'
 	| 'addBillingAddressId'
 	| 'addCustomerGroupAssignment'
@@ -94,8 +94,6 @@ type CustomerActionType =
 	| 'setTitle'
 	| 'setVatId';
 
-
-
 /**
  * Applies common query parameters for Commercetools API requests
  * @param qs - Query string object to modify
@@ -112,29 +110,29 @@ export const applyCommonCustomerParameters = (
 		if (Array.isArray(value) && value.length) {
 			qs[queryName] = value;
 		} else if (typeof value === 'string' && value.trim()) {
-			
-			const arrayValue = value.split(',').map(item => item.trim()).filter(item => item);
+			const arrayValue = value
+				.split(',')
+				.map((item) => item.trim())
+				.filter((item) => item);
 			if (arrayValue.length) {
 				qs[queryName] = arrayValue;
 			}
 		}
 	};
 
-	
 	setArrayField('expand', 'expand');
 
 	if (options.allowSort) {
 		setArrayField('sort', 'sort');
 	}
 
-
 	if (options.allowWhere) {
 		setArrayField('where', 'where');
 	}
 
-
 	if (options.allowPredicateVariables) {
-		const predicateVariables = ((additionalFields.predicateVariables as IDataObject)?.variable ?? []) as IDataObject[];
+		const predicateVariables = ((additionalFields.predicateVariables as IDataObject)?.variable ??
+			[]) as IDataObject[];
 		for (const predicateVariable of predicateVariables) {
 			const name = predicateVariable.name as string;
 			if (!name) continue;
@@ -142,7 +140,8 @@ export const applyCommonCustomerParameters = (
 		}
 	}
 
-	const customParameters = ((additionalFields.customParameters as IDataObject)?.parameter ?? []) as IDataObject[];
+	const customParameters = ((additionalFields.customParameters as IDataObject)?.parameter ??
+		[]) as IDataObject[];
 	for (const customParameter of customParameters) {
 		const key = customParameter.key as string;
 		if (!key) continue;
@@ -205,10 +204,9 @@ export const buildActionsFromUi = (
 	const actionEntries = Array.isArray(rawActionEntries)
 		? (rawActionEntries as IDataObject[])
 		: rawActionEntries
-		? [rawActionEntries as IDataObject]
-		: [];
-	
-		
+			? [rawActionEntries as IDataObject]
+			: [];
+
 	/**
 	 * Creates a properly typed address object from UI form fields
 	 * @param entry - Form data entry containing address fields
@@ -216,23 +214,32 @@ export const buildActionsFromUi = (
 	 */
 	const buildAddressFromFields = (entry: IDataObject): CommerceToolsAddress => {
 		const address: Partial<CommerceToolsAddress> = {};
-		
+
 		// Optional fields
 		if (entry.key && typeof entry.key === 'string') address.key = entry.key.trim();
 		if (entry.title && typeof entry.title === 'string') address.title = entry.title.trim();
-		if (entry.firstName && typeof entry.firstName === 'string') address.firstName = entry.firstName.trim();
-		if (entry.lastName && typeof entry.lastName === 'string') address.lastName = entry.lastName.trim();
-		if (entry.streetName && typeof entry.streetName === 'string') address.streetName = entry.streetName.trim();
-		if (entry.streetNumber && typeof entry.streetNumber === 'string') address.streetNumber = entry.streetNumber.trim();
+		if (entry.firstName && typeof entry.firstName === 'string')
+			address.firstName = entry.firstName.trim();
+		if (entry.lastName && typeof entry.lastName === 'string')
+			address.lastName = entry.lastName.trim();
+		if (entry.streetName && typeof entry.streetName === 'string')
+			address.streetName = entry.streetName.trim();
+		if (entry.streetNumber && typeof entry.streetNumber === 'string')
+			address.streetNumber = entry.streetNumber.trim();
 		if (entry.city && typeof entry.city === 'string') address.city = entry.city.trim();
-		if (entry.postalCode && typeof entry.postalCode === 'string') address.postalCode = entry.postalCode.trim();
+		if (entry.postalCode && typeof entry.postalCode === 'string')
+			address.postalCode = entry.postalCode.trim();
 		if (entry.state && typeof entry.state === 'string') address.state = entry.state.trim();
-		if (entry.building && typeof entry.building === 'string') address.building = entry.building.trim();
-		if (entry.apartment && typeof entry.apartment === 'string') address.apartment = entry.apartment.trim();
-		if (entry.department && typeof entry.department === 'string') address.department = entry.department.trim();
+		if (entry.building && typeof entry.building === 'string')
+			address.building = entry.building.trim();
+		if (entry.apartment && typeof entry.apartment === 'string')
+			address.apartment = entry.apartment.trim();
+		if (entry.department && typeof entry.department === 'string')
+			address.department = entry.department.trim();
 		if (entry.phone && typeof entry.phone === 'string') address.phone = entry.phone.trim();
 		if (entry.mobile && typeof entry.mobile === 'string') address.mobile = entry.mobile.trim();
-		if (entry.addressEmail && typeof entry.addressEmail === 'string') address.email = entry.addressEmail.trim();
+		if (entry.addressEmail && typeof entry.addressEmail === 'string')
+			address.email = entry.addressEmail.trim();
 		if (entry.fax && typeof entry.fax === 'string') address.fax = entry.fax.trim();
 		if (entry.pOBox && typeof entry.pOBox === 'string') address.pOBox = entry.pOBox.trim();
 		if (entry.additionalAddressInfo && typeof entry.additionalAddressInfo === 'string') {
@@ -263,7 +270,7 @@ export const buildActionsFromUi = (
 		entry: IDataObject,
 		idField: string,
 		keyField: string,
-		referenceType: CommerceToolsReference['typeId']
+		referenceType: CommerceToolsReference['typeId'],
 	): CommerceToolsReference => {
 		const id = typeof entry[idField] === 'string' ? entry[idField].trim() : '';
 		const key = typeof entry[keyField] === 'string' ? entry[keyField].trim() : '';
@@ -295,7 +302,7 @@ export const buildActionsFromUi = (
 		entry: IDataObject,
 		idsField: string,
 		keysField: string,
-		referenceType: CommerceToolsReference['typeId']
+		referenceType: CommerceToolsReference['typeId'],
 	): CommerceToolsReference[] => {
 		const idsRaw = entry[idsField];
 		const keysRaw = entry[keysField];
@@ -303,14 +310,14 @@ export const buildActionsFromUi = (
 		// Handle array format (from multi-select dropdowns)
 		if (Array.isArray(idsRaw) && idsRaw.length > 0) {
 			return idsRaw
-				.map(id => String(id).trim())
-				.filter(id => id.length > 0)
-				.map(id => ({ typeId: referenceType, id }));
+				.map((id) => String(id).trim())
+				.filter((id) => id.length > 0)
+				.map((id) => ({ typeId: referenceType, id }));
 		} else if (Array.isArray(keysRaw) && keysRaw.length > 0) {
 			return keysRaw
-				.map(key => String(key).trim())
-				.filter(key => key.length > 0)
-				.map(key => ({ typeId: referenceType, key }));
+				.map((key) => String(key).trim())
+				.filter((key) => key.length > 0)
+				.map((key) => ({ typeId: referenceType, key }));
 		}
 
 		// Handle string format (comma-separated, for backward compatibility)
@@ -320,15 +327,15 @@ export const buildActionsFromUi = (
 		if (ids) {
 			return ids
 				.split(',')
-				.map(id => id.trim())
-				.filter(id => id.length > 0)
-				.map(id => ({ typeId: referenceType, id }));
+				.map((id) => id.trim())
+				.filter((id) => id.length > 0)
+				.map((id) => ({ typeId: referenceType, id }));
 		} else if (keys) {
 			return keys
 				.split(',')
-				.map(key => key.trim())
-				.filter(key => key.length > 0)
-				.map(key => ({ typeId: referenceType, key }));
+				.map((key) => key.trim())
+				.filter((key) => key.length > 0)
+				.map((key) => ({ typeId: referenceType, key }));
 		} else {
 			throw new NodeOperationError(
 				context.getNode(),
@@ -347,7 +354,7 @@ export const buildActionsFromUi = (
 		if (valueRaw === undefined || valueRaw === '') {
 			return null;
 		}
-		
+
 		try {
 			return typeof valueRaw === 'string' ? JSON.parse(valueRaw) : valueRaw;
 		} catch {
@@ -361,26 +368,25 @@ export const buildActionsFromUi = (
 	 * @returns Custom fields object for Commercetools API
 	 */
 	const buildCustomFieldsFromCollection = (entry: IDataObject): IDataObject => {
-
 		const customFields: IDataObject = {};
 		const customFieldsData = entry.customFields as IDataObject;
-	
-		
+
 		if (customFieldsData && customFieldsData.field) {
-			const fields = Array.isArray(customFieldsData.field) ? customFieldsData.field : [customFieldsData.field];
-			
+			const fields = Array.isArray(customFieldsData.field)
+				? customFieldsData.field
+				: [customFieldsData.field];
+
 			for (const field of fields as IDataObject[]) {
 				const name = (field.name as string)?.trim();
 				const value = field.value;
-				
+
 				if (name) {
 					// Try to parse value as JSON, fallback to string
 					customFields[name] = parseCustomFieldValue(value);
 				}
 			}
 		}
-		
-	
+
 		return customFields;
 	};
 
@@ -388,11 +394,9 @@ export const buildActionsFromUi = (
 		const actionType = actionEntry.actionType as CustomerActionType;
 
 		if (!actionType) {
-			throw new NodeOperationError(
-				context.getNode(),
-				'Action Type is required for each action',
-				{ itemIndex },
-			);
+			throw new NodeOperationError(context.getNode(), 'Action Type is required for each action', {
+				itemIndex,
+			});
 		}
 
 		switch (actionType) {
@@ -408,7 +412,7 @@ export const buildActionsFromUi = (
 			case 'addBillingAddressId': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -426,7 +430,12 @@ export const buildActionsFromUi = (
 			}
 
 			case 'addCustomerGroupAssignment': {
-				const customerGroup = getIdOrKeyReference(actionEntry, 'customerGroupId', 'customerGroupKey', 'customer-group');
+				const customerGroup = getIdOrKeyReference(
+					actionEntry,
+					'customerGroupId',
+					'customerGroupKey',
+					'customer-group',
+				);
 				builtActions.push({
 					action: 'addCustomerGroupAssignment',
 					customerGroup,
@@ -437,7 +446,7 @@ export const buildActionsFromUi = (
 			case 'addShippingAddressId': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -466,7 +475,7 @@ export const buildActionsFromUi = (
 			case 'changeAddress': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -505,7 +514,7 @@ export const buildActionsFromUi = (
 			case 'removeAddress': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -525,7 +534,7 @@ export const buildActionsFromUi = (
 			case 'removeBillingAddressId': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -543,7 +552,12 @@ export const buildActionsFromUi = (
 			}
 
 			case 'removeCustomerGroupAssignment': {
-				const customerGroup = getIdOrKeyReference(actionEntry, 'customerGroupId', 'customerGroupKey', 'customer-group');
+				const customerGroup = getIdOrKeyReference(
+					actionEntry,
+					'customerGroupId',
+					'customerGroupKey',
+					'customer-group',
+				);
 				builtActions.push({
 					action: 'removeCustomerGroupAssignment',
 					customerGroup,
@@ -554,7 +568,7 @@ export const buildActionsFromUi = (
 			case 'removeShippingAddressId': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -629,7 +643,7 @@ export const buildActionsFromUi = (
 			case 'setCustomTypeInAddress': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -661,7 +675,12 @@ export const buildActionsFromUi = (
 			}
 
 			case 'setCustomerGroup': {
-				const customerGroup = getIdOrKeyReference(actionEntry, 'customerGroupId', 'customerGroupKey', 'customer-group');
+				const customerGroup = getIdOrKeyReference(
+					actionEntry,
+					'customerGroupId',
+					'customerGroupKey',
+					'customer-group',
+				);
 				builtActions.push({
 					action: 'setCustomerGroup',
 					customerGroup,
@@ -670,7 +689,12 @@ export const buildActionsFromUi = (
 			}
 
 			case 'setCustomerGroupAssignments': {
-				const customerGroupAssignments = getMultipleIdOrKeyReferences(actionEntry, 'customerGroupIds', 'customerGroupKeys', 'customer-group');
+				const customerGroupAssignments = getMultipleIdOrKeyReferences(
+					actionEntry,
+					'customerGroupIds',
+					'customerGroupKeys',
+					'customer-group',
+				);
 				builtActions.push({
 					action: 'setCustomerGroupAssignments',
 					customerGroupAssignments,
@@ -689,7 +713,7 @@ export const buildActionsFromUi = (
 						{ itemIndex },
 					);
 				}
-				
+
 				const value = parseCustomFieldValue(valueRaw);
 
 				builtActions.push({
@@ -721,7 +745,7 @@ export const buildActionsFromUi = (
 						{ itemIndex },
 					);
 				}
-				
+
 				const value = parseCustomFieldValue(valueRaw);
 
 				builtActions.push({
@@ -746,7 +770,7 @@ export const buildActionsFromUi = (
 			case 'setDefaultBillingAddress': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -766,7 +790,7 @@ export const buildActionsFromUi = (
 			case 'setDefaultShippingAddress': {
 				const addressId = (actionEntry.addressId as string)?.trim();
 				const addressKey = (actionEntry.addressKey as string)?.trim();
-				
+
 				if (!addressId && !addressKey) {
 					throw new NodeOperationError(
 						context.getNode(),
@@ -875,9 +899,13 @@ export const buildActionsFromUi = (
 
 			case 'setCustomerStatus': {
 				if (actionEntry.customerStatus === undefined) {
-					throw new NodeOperationError(context.getNode(), 'Customer status is required for setCustomerStatus action', {
-						itemIndex,
-					});
+					throw new NodeOperationError(
+						context.getNode(),
+						'Customer status is required for setCustomerStatus action',
+						{
+							itemIndex,
+						},
+					);
 				}
 
 				builtActions.push({
@@ -889,9 +917,13 @@ export const buildActionsFromUi = (
 
 			case 'setEmailVerified': {
 				if (actionEntry.emailVerified === undefined) {
-					throw new NodeOperationError(context.getNode(), 'Email verified status is required for setEmailVerified action', {
-						itemIndex,
-					});
+					throw new NodeOperationError(
+						context.getNode(),
+						'Email verified status is required for setEmailVerified action',
+						{
+							itemIndex,
+						},
+					);
 				}
 
 				builtActions.push({
@@ -904,9 +936,13 @@ export const buildActionsFromUi = (
 			case 'setGender': {
 				const gender = (actionEntry.gender as string)?.trim();
 				if (!gender) {
-					throw new NodeOperationError(context.getNode(), 'Gender is required for setGender action', {
-						itemIndex,
-					});
+					throw new NodeOperationError(
+						context.getNode(),
+						'Gender is required for setGender action',
+						{
+							itemIndex,
+						},
+					);
 				}
 
 				builtActions.push({
@@ -919,9 +955,13 @@ export const buildActionsFromUi = (
 			case 'setLanguage': {
 				const language = (actionEntry.language as string)?.trim();
 				if (!language) {
-					throw new NodeOperationError(context.getNode(), 'Language is required for setLanguage action', {
-						itemIndex,
-					});
+					throw new NodeOperationError(
+						context.getNode(),
+						'Language is required for setLanguage action',
+						{
+							itemIndex,
+						},
+					);
 				}
 
 				builtActions.push({
@@ -951,9 +991,13 @@ export const buildActionsFromUi = (
 
 			case 'setTaxCategory': {
 				if (!actionEntry.taxCategoryId && !actionEntry.taxCategoryKey) {
-					throw new NodeOperationError(context.getNode(), 'Tax category ID or key is required for setTaxCategory action', {
-						itemIndex,
-					});
+					throw new NodeOperationError(
+						context.getNode(),
+						'Tax category ID or key is required for setTaxCategory action',
+						{
+							itemIndex,
+						},
+					);
 				}
 
 				const taxCategoryRef: CommerceToolsReference = {
@@ -972,10 +1016,8 @@ export const buildActionsFromUi = (
 				});
 				break;
 			}
-
 		}
 	}
-
 
 	return builtActions;
 };

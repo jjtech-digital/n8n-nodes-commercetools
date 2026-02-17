@@ -17,7 +17,11 @@ export function validateCartDraft(cartDraft: IDataObject): boolean {
 /**
  * Formats line item for cart operations
  */
-export function formatLineItem(productId: string, variantId: number, quantity: number): IDataObject {
+export function formatLineItem(
+	productId: string,
+	variantId: number,
+	quantity: number,
+): IDataObject {
 	return {
 		productId,
 		variant: { id: variantId },
@@ -68,7 +72,11 @@ export function formatDiscountCodeAction(code: string): IDataObject {
 /**
  * Formats line item action for adding items to cart
  */
-export function formatAddLineItemAction(productId: string, variantId: number, quantity: number): IDataObject {
+export function formatAddLineItemAction(
+	productId: string,
+	variantId: number,
+	quantity: number,
+): IDataObject {
 	return {
 		action: 'addLineItem',
 		productId,
@@ -90,7 +98,10 @@ export function formatRemoveLineItemAction(lineItemId: string): IDataObject {
 /**
  * Formats line item quantity change action
  */
-export function formatChangeLineItemQuantityAction(lineItemId: string, quantity: number): IDataObject {
+export function formatChangeLineItemQuantityAction(
+	lineItemId: string,
+	quantity: number,
+): IDataObject {
 	return {
 		action: 'changeLineItemQuantity',
 		lineItemId,

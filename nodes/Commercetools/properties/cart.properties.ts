@@ -53,7 +53,8 @@ export const cartOperations: INodeProperties[] = [
 				name: 'Check if Cart Exists in Store By Query',
 				value: 'headInStoreByQuery',
 				action: 'Check if any cart matches the query in store',
-				description: 'Send a HEAD request with query predicates to check for matches in a specific store',
+				description:
+					'Send a HEAD request with query predicates to check for matches in a specific store',
 			},
 			{
 				name: 'Create Cart',
@@ -194,7 +195,7 @@ export const cartOperations: INodeProperties[] = [
 				resource: ['cart'],
 			},
 		},
-	}
+	},
 ];
 
 export const cartIdentificationFields: INodeProperties[] = [
@@ -312,7 +313,8 @@ export const cartDraftFields: INodeProperties[] = [
 				operation: ['create', 'createInStore'],
 			},
 		},
-		description: 'JSON representation of the cart draft to create, e.g. <code>{"currency":"USD","customerID":"customer-ID","lineItems":[{"productID":"product-ID","variant":{"ID":1},"quantity":1}]}</code>',
+		description:
+			'JSON representation of the cart draft to create, e.g. <code>{"currency":"USD","customerID":"customer-ID","lineItems":[{"productID":"product-ID","variant":{"ID":1},"quantity":1}]}</code>',
 	},
 	{
 		displayName: 'Replica Cart Draft (JSON)',
@@ -425,14 +427,16 @@ export const cartAdditionalFields: INodeProperties[] = [
 				name: 'sort',
 				type: 'string',
 				default: '',
-				description: 'Sort the results. Supported fields depend on the endpoint. Pass multiple sort parameters by separating with comma',
+				description:
+					'Sort the results. Supported fields depend on the endpoint. Pass multiple sort parameters by separating with comma',
 			},
 			{
 				displayName: 'Where',
 				name: 'where',
 				type: 'string',
 				default: '',
-				description: 'Query predicates. See <a href="https://docs.commercetools.com/api/predicates/query" target="_blank">documentation</a>.',
+				description:
+					'Query predicates. See <a href="https://docs.commercetools.com/api/predicates/query" target="_blank">documentation</a>.',
 			},
 			{
 				displayName: 'With Total',

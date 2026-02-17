@@ -1,11 +1,7 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-import {
-	applyCommonParameters,
-	coerceActions,
-	coerceJsonInput,
-} from '../utils/common.utils';
+import { applyCommonParameters, coerceActions, coerceJsonInput } from '../utils/common.utils';
 import { buildActionsFromUi } from '../utils/actionBuilder';
 
 type ProductOperationArgs = {
@@ -22,19 +18,27 @@ export async function executeProductOperation(
 	const results: INodeExecutionData[] = [];
 
 	if (operation === 'create') {
-		const additionalFieldsCreate = this.getNodeParameter('additionalFieldsCreate', itemIndex, {}) as IDataObject;
+		const additionalFieldsCreate = this.getNodeParameter(
+			'additionalFieldsCreate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsCreate);
 
 		const draftRaw = this.getNodeParameter('productDraft', itemIndex);
 		const draft = coerceJsonInput(this, draftRaw, 'Product draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/products`,
-			body: draft,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/products`,
+				body: draft,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -44,7 +48,11 @@ export async function executeProductOperation(
 		const returnAll = this.getNodeParameter('returnAll', itemIndex, false) as boolean;
 		const limit = returnAll ? 500 : (this.getNodeParameter('limit', itemIndex, 20) as number);
 		const offset = this.getNodeParameter('offset', itemIndex, 0) as number;
-		const additionalFields = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const additionalFields = this.getNodeParameter(
+			'additionalFields',
+			itemIndex,
+			{},
+		) as IDataObject;
 
 		const qs: IDataObject = { limit };
 
@@ -71,21 +79,29 @@ export async function executeProductOperation(
 		let hasMore = true;
 
 		do {
-			const response = await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-				method: 'GET',
-				url: `${baseUrl}/products`,
-				qs: {
-					...qs,
-					offset: requestOffset,
+			const response = await this.helpers.httpRequestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				{
+					method: 'GET',
+					url: `${baseUrl}/products`,
+					qs: {
+						...qs,
+						offset: requestOffset,
+					},
 				},
-			});
+			);
 
 			const resultsPage = (response.results ?? response) as IDataObject[];
 
 			if (!Array.isArray(resultsPage)) {
-				throw new NodeOperationError(this.getNode(), 'Unexpected response format from Commercetools API', {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					'Unexpected response format from Commercetools API',
+					{
+						itemIndex,
+					},
+				);
 			}
 
 			collected.push(...resultsPage);
@@ -109,7 +125,11 @@ export async function executeProductOperation(
 	}
 
 	if (operation === 'search') {
-		const additionalFieldsSearch = this.getNodeParameter('additionalFieldsSearch', itemIndex, {}) as IDataObject;
+		const additionalFieldsSearch = this.getNodeParameter(
+			'additionalFieldsSearch',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsSearch);
 
@@ -132,19 +152,27 @@ export async function executeProductOperation(
 		const bodyRaw = this.getNodeParameter('searchRequest', itemIndex);
 		const body = coerceJsonInput(this, bodyRaw, 'Search request', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/products/search`,
-			body,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/products/search`,
+				body,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	if (operation === 'headByQuery') {
-		const additionalFieldsHead = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const additionalFieldsHead = this.getNodeParameter(
+			'additionalFields',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsHead, {
 			allowWhere: true,
@@ -206,36 +234,51 @@ export async function executeProductOperation(
 	}
 
 	if (operation === 'get' || operation === 'getByKey') {
-		const additionalFieldsGet = this.getNodeParameter('additionalFieldsGet', itemIndex, {}) as IDataObject;
+		const additionalFieldsGet = this.getNodeParameter(
+			'additionalFieldsGet',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsGet);
 
 		if (operation === 'get') {
 			const productId = this.getNodeParameter('productId', itemIndex) as string;
-			const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-				method: 'GET',
-				url: `${baseUrl}/products/${productId}`,
-				qs,
-			})) as IDataObject;
+			const response = (await this.helpers.httpRequestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				{
+					method: 'GET',
+					url: `${baseUrl}/products/${productId}`,
+					qs,
+				},
+			)) as IDataObject;
 
 			results.push({ json: response });
 			return results;
 		}
 
 		const productKey = this.getNodeParameter('productKey', itemIndex) as string;
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url: `${baseUrl}/products/key=${encodeURIComponent(productKey)}`,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url: `${baseUrl}/products/key=${encodeURIComponent(productKey)}`,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	if (operation === 'update' || operation === 'updateByKey') {
-
-		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpdate = this.getNodeParameter(
+			'additionalFieldsUpdate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsUpdate);
 
@@ -265,35 +308,46 @@ export async function executeProductOperation(
 			version,
 			actions,
 		};
-		
 
 		if (operation === 'update') {
 			const productId = this.getNodeParameter('productId', itemIndex) as string;
-			const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-				method: 'POST',
-				url: `${baseUrl}/products/${productId}`,
-				body,
-				qs,
-			})) as IDataObject;
+			const response = (await this.helpers.httpRequestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				{
+					method: 'POST',
+					url: `${baseUrl}/products/${productId}`,
+					body,
+					qs,
+				},
+			)) as IDataObject;
 
 			results.push({ json: response });
 			return results;
 		}
 
 		const productKey = this.getNodeParameter('productKey', itemIndex) as string;
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/products/key=${encodeURIComponent(productKey)}`,
-			body,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/products/key=${encodeURIComponent(productKey)}`,
+				body,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	if (operation === 'delete' || operation === 'deleteByKey') {
-		const additionalFieldsDelete = this.getNodeParameter('additionalFieldsDelete', itemIndex, {}) as IDataObject;
+		const additionalFieldsDelete = this.getNodeParameter(
+			'additionalFieldsDelete',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsDelete);
 
@@ -309,18 +363,26 @@ export async function executeProductOperation(
 				? `${baseUrl}/products/${this.getNodeParameter('productId', itemIndex) as string}`
 				: `${baseUrl}/products/key=${encodeURIComponent(this.getNodeParameter('productKey', itemIndex) as string)}`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'DELETE',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'DELETE',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	if (operation === 'querySelections' || operation === 'querySelectionsByKey') {
-		const additionalFieldsSelections = this.getNodeParameter('additionalFieldsSelections', itemIndex, {}) as IDataObject;
+		const additionalFieldsSelections = this.getNodeParameter(
+			'additionalFieldsSelections',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		if (additionalFieldsSelections.expand) {
 			qs.expand = additionalFieldsSelections.expand;
@@ -335,8 +397,8 @@ export async function executeProductOperation(
 			qs.withTotal = additionalFieldsSelections.withTotal as boolean;
 		}
 
-		const customParameters =
-			((additionalFieldsSelections.customParameters as IDataObject)?.parameter ?? []) as IDataObject[];
+		const customParameters = ((additionalFieldsSelections.customParameters as IDataObject)
+			?.parameter ?? []) as IDataObject[];
 		for (const customParameter of customParameters) {
 			const key = customParameter.key as string;
 			if (!key) continue;
@@ -348,11 +410,15 @@ export async function executeProductOperation(
 				? `${baseUrl}/products/${this.getNodeParameter('productId', itemIndex) as string}/product-selections`
 				: `${baseUrl}/products/key=${encodeURIComponent(this.getNodeParameter('productKey', itemIndex) as string)}/product-selections`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -360,7 +426,11 @@ export async function executeProductOperation(
 
 	if (operation === 'uploadImage') {
 		const binaryPropertyName = this.getNodeParameter('binaryPropertyName', itemIndex) as string;
-		const additionalFieldsUpload = this.getNodeParameter('additionalFieldsUpload', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpload = this.getNodeParameter(
+			'additionalFieldsUpload',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 
 		if (additionalFieldsUpload.variantId) {
@@ -382,8 +452,8 @@ export async function executeProductOperation(
 			qs.label = additionalFieldsUpload.label;
 		}
 
-		const customParameters =
-			((additionalFieldsUpload.customParameters as IDataObject)?.parameter ?? []) as IDataObject[];
+		const customParameters = ((additionalFieldsUpload.customParameters as IDataObject)?.parameter ??
+			[]) as IDataObject[];
 		for (const customParameter of customParameters) {
 			const key = customParameter.key as string;
 			if (!key) continue;
@@ -420,16 +490,22 @@ export async function executeProductOperation(
 			} as IDataObject;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/products/${this.getNodeParameter('productId', itemIndex) as string}/images`,
-			qs,
-			...(body ?? {}),
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/products/${this.getNodeParameter('productId', itemIndex) as string}/images`,
+				qs,
+				...(body ?? {}),
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
-	throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`, { itemIndex });
+	throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`, {
+		itemIndex,
+	});
 }

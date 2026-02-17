@@ -40,9 +40,13 @@ export class Commercetools implements INodeType {
 				const region = (credentials.region as string) || 'australia-southeast1.gcp';
 
 				if (!projectKey) {
-					throw new NodeOperationError(this.getNode(), 'Project key is missing in the credentials', {
-						itemIndex,
-					});
+					throw new NodeOperationError(
+						this.getNode(),
+						'Project key is missing in the credentials',
+						{
+							itemIndex,
+						},
+					);
 				}
 
 				const baseUrl = `https://api.${region}.commercetools.com/${projectKey}`;

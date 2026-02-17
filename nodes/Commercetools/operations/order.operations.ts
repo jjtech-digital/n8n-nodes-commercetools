@@ -1,11 +1,12 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
+import { applyCommonParameters, coerceActions } from '../utils/common.utils';
 import {
-	applyCommonParameters,
-	coerceActions,
-} from '../utils/common.utils';
-import { transformOrderDraft, formatOrderResponse, validateOrderImportDraft } from '../utils/order.utils';
+	transformOrderDraft,
+	formatOrderResponse,
+	validateOrderImportDraft,
+} from '../utils/order.utils';
 
 type OrderOperationArgs = {
 	operation: string;
@@ -22,7 +23,11 @@ export async function executeOrderOperation(
 
 	// Get Order operations
 	if (operation === 'get' || operation === 'getByOrderNumber') {
-		const additionalFieldsGet = this.getNodeParameter('additionalFieldsGet', itemIndex, {}) as IDataObject;
+		const additionalFieldsGet = this.getNodeParameter(
+			'additionalFieldsGet',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsGet);
 
@@ -35,11 +40,15 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: formatOrderResponse(response) });
 		return results;
@@ -48,7 +57,11 @@ export async function executeOrderOperation(
 	// Get Order in Store operations
 	if (operation === 'getInStore' || operation === 'getInStoreByOrderNumber') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsGet = this.getNodeParameter('additionalFieldsGet', itemIndex, {}) as IDataObject;
+		const additionalFieldsGet = this.getNodeParameter(
+			'additionalFieldsGet',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsGet);
 
@@ -61,11 +74,15 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: formatOrderResponse(response) });
 		return results;
@@ -73,20 +90,30 @@ export async function executeOrderOperation(
 
 	// Query Orders operations
 	if (operation === 'query') {
-		const additionalFieldsQuery = this.getNodeParameter('additionalFieldsQuery', itemIndex, {}) as IDataObject;
+		const additionalFieldsQuery = this.getNodeParameter(
+			'additionalFieldsQuery',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsQuery);
 
 		const url = `${baseUrl}/orders`;
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		// Format each order in the results
 		if (response.results && Array.isArray(response.results)) {
-			response.results = (response.results as IDataObject[]).map((order) => formatOrderResponse(order));
+			response.results = (response.results as IDataObject[]).map((order) =>
+				formatOrderResponse(order),
+			);
 		}
 
 		results.push({ json: response });
@@ -96,20 +123,30 @@ export async function executeOrderOperation(
 	// Query Orders in Store
 	if (operation === 'queryInStore') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsQuery = this.getNodeParameter('additionalFieldsQuery', itemIndex, {}) as IDataObject;
+		const additionalFieldsQuery = this.getNodeParameter(
+			'additionalFieldsQuery',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsQuery);
 
 		const url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders`;
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		// Format each order in the results
 		if (response.results && Array.isArray(response.results)) {
-			response.results = (response.results as IDataObject[]).map((order) => formatOrderResponse(order));
+			response.results = (response.results as IDataObject[]).map((order) =>
+				formatOrderResponse(order),
+			);
 		}
 
 		results.push({ json: response });
@@ -118,7 +155,11 @@ export async function executeOrderOperation(
 
 	// Check if Order exists operations
 	if (operation === 'head' || operation === 'headByOrderNumber' || operation === 'headByQuery') {
-		const additionalFieldsHead = this.getNodeParameter('additionalFieldsHead', itemIndex, {}) as IDataObject;
+		const additionalFieldsHead = this.getNodeParameter(
+			'additionalFieldsHead',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsHead);
 
@@ -144,18 +185,30 @@ export async function executeOrderOperation(
 			if ((error as { httpCode?: string }).httpCode === '404') {
 				results.push({ json: { exists: false } });
 			} else {
-				throw new NodeOperationError(this.getNode(), `Error checking order existence: ${(error as Error).message}`, {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					`Error checking order existence: ${(error as Error).message}`,
+					{
+						itemIndex,
+					},
+				);
 			}
 		}
 		return results;
 	}
 
 	// Check if Order exists in Store operations
-	if (operation === 'headInStore' || operation === 'headInStoreByOrderNumber' || operation === 'headInStoreByQuery') {
+	if (
+		operation === 'headInStore' ||
+		operation === 'headInStoreByOrderNumber' ||
+		operation === 'headInStoreByQuery'
+	) {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsHead = this.getNodeParameter('additionalFieldsHead', itemIndex, {}) as IDataObject;
+		const additionalFieldsHead = this.getNodeParameter(
+			'additionalFieldsHead',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsHead);
 
@@ -181,16 +234,24 @@ export async function executeOrderOperation(
 			if ((error as { httpCode?: string }).httpCode === '404') {
 				results.push({ json: { exists: false } });
 			} else {
-				throw new NodeOperationError(this.getNode(), `Error checking order existence: ${(error as Error).message}`, {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					`Error checking order existence: ${(error as Error).message}`,
+					{
+						itemIndex,
+					},
+				);
 			}
 		}
 		return results;
 	}
 
 	// Create Order operations
-	if (operation === 'createFromCart' || operation === 'createFromQuote' || operation === 'createByImport') {
+	if (
+		operation === 'createFromCart' ||
+		operation === 'createFromQuote' ||
+		operation === 'createByImport'
+	) {
 		let body: IDataObject = {};
 
 		if (operation === 'createFromCart') {
@@ -215,22 +276,33 @@ export async function executeOrderOperation(
 			// createByImport - use JSON input directly
 			const orderImportDraftJson = this.getNodeParameter('orderImportDraft', itemIndex) as string;
 			try {
-				body = typeof orderImportDraftJson === 'string' ? JSON.parse(orderImportDraftJson) : orderImportDraftJson;
+				body =
+					typeof orderImportDraftJson === 'string'
+						? JSON.parse(orderImportDraftJson)
+						: orderImportDraftJson;
 				// Validate the import draft structure
 				validateOrderImportDraft(body);
 			} catch (error) {
-				throw new NodeOperationError(this.getNode(), `Invalid JSON in Order Import Draft: ${(error as Error).message}`, {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					`Invalid JSON in Order Import Draft: ${(error as Error).message}`,
+					{
+						itemIndex,
+					},
+				);
 			}
 		}
 
 		const url = operation === 'createByImport' ? `${baseUrl}/orders/import` : `${baseUrl}/orders`;
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+			},
+		)) as IDataObject;
 
 		results.push({ json: formatOrderResponse(response) });
 		return results;
@@ -261,11 +333,15 @@ export async function executeOrderOperation(
 		}
 
 		const url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders`;
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+			},
+		)) as IDataObject;
 
 		results.push({ json: formatOrderResponse(response) });
 		return results;
@@ -274,7 +350,11 @@ export async function executeOrderOperation(
 	// Update Order operations
 	if (operation === 'update' || operation === 'updateByOrderNumber') {
 		const version = this.getNodeParameter('version', itemIndex) as number;
-		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpdate = this.getNodeParameter(
+			'additionalFieldsUpdate',
+			itemIndex,
+			{},
+		) as IDataObject;
 
 		let actions: IDataObject[] = [];
 		if (additionalFieldsUpdate.actions) {
@@ -295,11 +375,15 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -309,7 +393,11 @@ export async function executeOrderOperation(
 	if (operation === 'updateInStore' || operation === 'updateInStoreByOrderNumber') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const version = this.getNodeParameter('version', itemIndex) as number;
-		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpdate = this.getNodeParameter(
+			'additionalFieldsUpdate',
+			itemIndex,
+			{},
+		) as IDataObject;
 
 		let actions: IDataObject[] = [];
 		if (additionalFieldsUpdate.actions) {
@@ -330,11 +418,15 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -354,11 +446,15 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'DELETE',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'DELETE',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -379,11 +475,15 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'DELETE',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'DELETE',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;

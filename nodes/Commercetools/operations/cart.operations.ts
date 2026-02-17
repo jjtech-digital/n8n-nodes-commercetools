@@ -1,11 +1,7 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-import {
-	applyCommonParameters,
-	coerceActions,
-	coerceJsonInput,
-} from '../utils/common.utils';
+import { applyCommonParameters, coerceActions, coerceJsonInput } from '../utils/common.utils';
 import { buildActionsFromUi } from '../utils/actionBuilder';
 
 type CartOperationArgs = {
@@ -23,7 +19,11 @@ export async function executeCartOperation(
 
 	// Get Cart operations
 	if (operation === 'get' || operation === 'getByKey' || operation === 'getByCustomerId') {
-		const additionalFieldsGet = this.getNodeParameter('additionalFieldsGet', itemIndex, {}) as IDataObject;
+		const additionalFieldsGet = this.getNodeParameter(
+			'additionalFieldsGet',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsGet);
 
@@ -39,20 +39,32 @@ export async function executeCartOperation(
 			url = `${baseUrl}/carts/customer-id=${encodeURIComponent(customerId)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	// Get Cart in Store operations
-	if (operation === 'getInStore' || operation === 'getInStoreByKey' || operation === 'getInStoreByCustomerId') {
+	if (
+		operation === 'getInStore' ||
+		operation === 'getInStoreByKey' ||
+		operation === 'getInStoreByCustomerId'
+	) {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsGet = this.getNodeParameter('additionalFieldsGet', itemIndex, {}) as IDataObject;
+		const additionalFieldsGet = this.getNodeParameter(
+			'additionalFieldsGet',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsGet);
 
@@ -68,11 +80,15 @@ export async function executeCartOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/customer-id=${encodeURIComponent(customerId)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -83,7 +99,11 @@ export async function executeCartOperation(
 		const returnAll = this.getNodeParameter('returnAll', itemIndex, false) as boolean;
 		const limit = returnAll ? 500 : (this.getNodeParameter('limit', itemIndex, 20) as number);
 		const offset = this.getNodeParameter('offset', itemIndex, 0) as number;
-		const additionalFields = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const additionalFields = this.getNodeParameter(
+			'additionalFields',
+			itemIndex,
+			{},
+		) as IDataObject;
 
 		const qs: IDataObject = { limit };
 
@@ -110,21 +130,29 @@ export async function executeCartOperation(
 		let hasMore = true;
 
 		do {
-			const response = await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-				method: 'GET',
-				url: `${baseUrl}/carts`,
-				qs: {
-					...qs,
-					offset: requestOffset,
+			const response = await this.helpers.httpRequestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				{
+					method: 'GET',
+					url: `${baseUrl}/carts`,
+					qs: {
+						...qs,
+						offset: requestOffset,
+					},
 				},
-			});
+			);
 
 			const resultsPage = (response.results ?? response) as IDataObject[];
 
 			if (!Array.isArray(resultsPage)) {
-				throw new NodeOperationError(this.getNode(), 'Unexpected response format from Commercetools API', {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					'Unexpected response format from Commercetools API',
+					{
+						itemIndex,
+					},
+				);
 			}
 
 			collected.push(...resultsPage);
@@ -153,7 +181,11 @@ export async function executeCartOperation(
 		const returnAll = this.getNodeParameter('returnAll', itemIndex, false) as boolean;
 		const limit = returnAll ? 500 : (this.getNodeParameter('limit', itemIndex, 20) as number);
 		const offset = this.getNodeParameter('offset', itemIndex, 0) as number;
-		const additionalFields = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const additionalFields = this.getNodeParameter(
+			'additionalFields',
+			itemIndex,
+			{},
+		) as IDataObject;
 
 		const qs: IDataObject = { limit };
 
@@ -180,21 +212,29 @@ export async function executeCartOperation(
 		let hasMore = true;
 
 		do {
-			const response = await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-				method: 'GET',
-				url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts`,
-				qs: {
-					...qs,
-					offset: requestOffset,
+			const response = await this.helpers.httpRequestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				{
+					method: 'GET',
+					url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts`,
+					qs: {
+						...qs,
+						offset: requestOffset,
+					},
 				},
-			});
+			);
 
 			const resultsPage = (response.results ?? response) as IDataObject[];
 
 			if (!Array.isArray(resultsPage)) {
-				throw new NodeOperationError(this.getNode(), 'Unexpected response format from Commercetools API', {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					'Unexpected response format from Commercetools API',
+					{
+						itemIndex,
+					},
+				);
 			}
 
 			collected.push(...resultsPage);
@@ -219,7 +259,11 @@ export async function executeCartOperation(
 
 	// Check if Cart exists operations
 	if (operation === 'headByQuery') {
-		const additionalFieldsHead = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+		const additionalFieldsHead = this.getNodeParameter(
+			'additionalFields',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsHead, {
 			allowWhere: true,
@@ -284,12 +328,17 @@ export async function executeCartOperation(
 	}
 
 	// Check if Cart exists in Store operations
-	if (operation === 'headInStore' || operation === 'headInStoreByKey' || operation === 'headInStoreByCustomerId' || operation === 'headInStoreByQuery') {
+	if (
+		operation === 'headInStore' ||
+		operation === 'headInStoreByKey' ||
+		operation === 'headInStoreByCustomerId' ||
+		operation === 'headInStoreByQuery'
+	) {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 
 		let url: string;
 		const qs: IDataObject = {};
-		
+
 		if (operation === 'headInStore') {
 			const cartId = this.getNodeParameter('cartId', itemIndex) as string;
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/${cartId}`;
@@ -301,7 +350,11 @@ export async function executeCartOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/customer-id=${encodeURIComponent(customerId)}`;
 		} else {
 			// headInStoreByQuery
-			const additionalFieldsHead = this.getNodeParameter('additionalFields', itemIndex, {}) as IDataObject;
+			const additionalFieldsHead = this.getNodeParameter(
+				'additionalFields',
+				itemIndex,
+				{},
+			) as IDataObject;
 			applyCommonParameters(qs, additionalFieldsHead, {
 				allowWhere: true,
 				allowPredicateVariables: true,
@@ -334,19 +387,27 @@ export async function executeCartOperation(
 
 	// Create Cart operations
 	if (operation === 'create') {
-		const additionalFieldsCreate = this.getNodeParameter('additionalFieldsCreate', itemIndex, {}) as IDataObject;
+		const additionalFieldsCreate = this.getNodeParameter(
+			'additionalFieldsCreate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsCreate);
 
 		const draftRaw = this.getNodeParameter('cartDraft', itemIndex);
 		const draft = coerceJsonInput(this, draftRaw, 'Cart draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/carts`,
-			body: draft,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/carts`,
+				body: draft,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -354,19 +415,27 @@ export async function executeCartOperation(
 
 	if (operation === 'createInStore') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsCreate = this.getNodeParameter('additionalFieldsCreate', itemIndex, {}) as IDataObject;
+		const additionalFieldsCreate = this.getNodeParameter(
+			'additionalFieldsCreate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsCreate);
 
 		const draftRaw = this.getNodeParameter('cartDraft', itemIndex);
 		const draft = coerceJsonInput(this, draftRaw, 'Cart draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts`,
-			body: draft,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts`,
+				body: draft,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -375,25 +444,38 @@ export async function executeCartOperation(
 	// Replicate Cart operations
 	if (operation === 'replicate') {
 		const cartId = this.getNodeParameter('cartId', itemIndex) as string;
-		const additionalFieldsReplicate = this.getNodeParameter('additionalFieldsReplicate', itemIndex, {}) as IDataObject;
+		const additionalFieldsReplicate = this.getNodeParameter(
+			'additionalFieldsReplicate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsReplicate);
 
 		const replicaCartDraftRaw = this.getNodeParameter('replicaCartDraft', itemIndex, {});
-		const replicaCartDraft = coerceJsonInput(this, replicaCartDraftRaw, 'Replica cart draft', itemIndex);
+		const replicaCartDraft = coerceJsonInput(
+			this,
+			replicaCartDraftRaw,
+			'Replica cart draft',
+			itemIndex,
+		);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/carts/replicate`,
-			body: {
-				reference: {
-					typeId: 'cart',
-					id: cartId,
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/carts/replicate`,
+				body: {
+					reference: {
+						typeId: 'cart',
+						id: cartId,
+					},
+					...replicaCartDraft,
 				},
-				...replicaCartDraft,
+				qs,
 			},
-			qs,
-		})) as IDataObject;
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -402,25 +484,38 @@ export async function executeCartOperation(
 	if (operation === 'replicateInStore') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const cartId = this.getNodeParameter('cartId', itemIndex) as string;
-		const additionalFieldsReplicate = this.getNodeParameter('additionalFieldsReplicate', itemIndex, {}) as IDataObject;
+		const additionalFieldsReplicate = this.getNodeParameter(
+			'additionalFieldsReplicate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsReplicate);
 
 		const replicaCartDraftRaw = this.getNodeParameter('replicaCartDraft', itemIndex, {});
-		const replicaCartDraft = coerceJsonInput(this, replicaCartDraftRaw, 'Replica cart draft', itemIndex);
+		const replicaCartDraft = coerceJsonInput(
+			this,
+			replicaCartDraftRaw,
+			'Replica cart draft',
+			itemIndex,
+		);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/replicate`,
-			body: {
-				reference: {
-					typeId: 'cart',
-					id: cartId,
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/replicate`,
+				body: {
+					reference: {
+						typeId: 'cart',
+						id: cartId,
+					},
+					...replicaCartDraft,
 				},
-				...replicaCartDraft,
+				qs,
 			},
-			qs,
-		})) as IDataObject;
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -429,19 +524,27 @@ export async function executeCartOperation(
 	// Merge Cart operations
 	if (operation === 'merge') {
 		const cartId = this.getNodeParameter('cartId', itemIndex) as string;
-		const additionalFieldsMerge = this.getNodeParameter('additionalFieldsMerge', itemIndex, {}) as IDataObject;
+		const additionalFieldsMerge = this.getNodeParameter(
+			'additionalFieldsMerge',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsMerge);
 
 		const mergeCartDraftRaw = this.getNodeParameter('mergeCartDraft', itemIndex);
 		const mergeCartDraft = coerceJsonInput(this, mergeCartDraftRaw, 'Merge cart draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/carts/${cartId}`,
-			body: mergeCartDraft,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/carts/${cartId}`,
+				body: mergeCartDraft,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -450,19 +553,27 @@ export async function executeCartOperation(
 	if (operation === 'mergeInStore') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
 		const cartId = this.getNodeParameter('cartId', itemIndex) as string;
-		const additionalFieldsMerge = this.getNodeParameter('additionalFieldsMerge', itemIndex, {}) as IDataObject;
+		const additionalFieldsMerge = this.getNodeParameter(
+			'additionalFieldsMerge',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsMerge);
 
 		const mergeCartDraftRaw = this.getNodeParameter('mergeCartDraft', itemIndex);
 		const mergeCartDraft = coerceJsonInput(this, mergeCartDraftRaw, 'Merge cart draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/${cartId}`,
-			body: mergeCartDraft,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/${cartId}`,
+				body: mergeCartDraft,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -470,7 +581,11 @@ export async function executeCartOperation(
 
 	// Update Cart operations
 	if (operation === 'update' || operation === 'updateByKey') {
-		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpdate = this.getNodeParameter(
+			'additionalFieldsUpdate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsUpdate);
 
@@ -510,12 +625,16 @@ export async function executeCartOperation(
 			url = `${baseUrl}/carts/key=${encodeURIComponent(cartKey)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -524,7 +643,11 @@ export async function executeCartOperation(
 	// Update Cart in Store operations
 	if (operation === 'updateInStore' || operation === 'updateInStoreByKey') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsUpdate = this.getNodeParameter('additionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpdate = this.getNodeParameter(
+			'additionalFieldsUpdate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsUpdate);
 
@@ -564,12 +687,16 @@ export async function executeCartOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/key=${encodeURIComponent(cartKey)}`;
 		}
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -577,7 +704,11 @@ export async function executeCartOperation(
 
 	// Delete Cart operations
 	if (operation === 'delete' || operation === 'deleteByKey') {
-		const additionalFieldsDelete = this.getNodeParameter('additionalFieldsDelete', itemIndex, {}) as IDataObject;
+		const additionalFieldsDelete = this.getNodeParameter(
+			'additionalFieldsDelete',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsDelete);
 
@@ -593,11 +724,15 @@ export async function executeCartOperation(
 				? `${baseUrl}/carts/${this.getNodeParameter('cartId', itemIndex) as string}`
 				: `${baseUrl}/carts/key=${encodeURIComponent(this.getNodeParameter('cartKey', itemIndex) as string)}`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'DELETE',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'DELETE',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -606,7 +741,11 @@ export async function executeCartOperation(
 	// Delete Cart in Store operations
 	if (operation === 'deleteInStore' || operation === 'deleteInStoreByKey') {
 		const storeKey = this.getNodeParameter('storeKey', itemIndex) as string;
-		const additionalFieldsDelete = this.getNodeParameter('additionalFieldsDelete', itemIndex, {}) as IDataObject;
+		const additionalFieldsDelete = this.getNodeParameter(
+			'additionalFieldsDelete',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCommonParameters(qs, additionalFieldsDelete);
 
@@ -622,15 +761,21 @@ export async function executeCartOperation(
 				? `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/${this.getNodeParameter('cartId', itemIndex) as string}`
 				: `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/carts/key=${encodeURIComponent(this.getNodeParameter('cartKey', itemIndex) as string)}`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'DELETE',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'DELETE',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
-	throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`, { itemIndex });
+	throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`, {
+		itemIndex,
+	});
 }
