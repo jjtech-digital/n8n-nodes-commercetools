@@ -80,13 +80,13 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			displayName: 'Authorization URL',
 			name: 'authUrl',
 			type: 'hidden',
-			default: '',
+			default: '={{ `https://auth.${$self["region"]}.commercetools.com` }}',
 		},
 		{
 			displayName: 'Access Token URL',
 			name: 'accessTokenUrl',
 			type: 'hidden',
-			default: 'https://auth.australia-southeast1.gcp.commercetools.com/oauth/token',
+			default: '={{ `https://auth.${$self["region"]}.commercetools.com/oauth/token` }}',
 			required: true,
 		},
 		{
