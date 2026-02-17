@@ -5,7 +5,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 
 	extends = ['oAuth2Api'];
 
-	displayName = 'CommerceTools OAuth2 API';
+	// eslint-disable-next-line n8n-nodes-base/cred-class-field-display-name-miscased
+	displayName = 'commercetools OAuth2 API';
 
 	icon: Icon = 'file:../icons/Commercetools.svg';
 
@@ -18,7 +19,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			type: 'string',
 			default: '',
 			placeholder: 'your-project-key',
-			description: 'The project key from CommerceTools',
+			description: 'The project key from commercetools',
 			required: true,
 		},
 		{
@@ -80,13 +81,13 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			displayName: 'Authorization URL',
 			name: 'authUrl',
 			type: 'hidden',
-			default: '',
+			default: '={{ `https://auth.${$self["region"]}.commercetools.com` }}',
 		},
 		{
 			displayName: 'Access Token URL',
 			name: 'accessTokenUrl',
 			type: 'hidden',
-			default: 'https://auth.australia-southeast1.gcp.commercetools.com/oauth/token',
+			default: '={{ `https://auth.${$self["region"]}.commercetools.com/oauth/token` }}',
 			required: true,
 		},
 		{
