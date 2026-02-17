@@ -33,7 +33,7 @@ export class CommercetoolsTrigger implements INodeType {
 			subcategories: {
 				commercetools: ['Customer', 'Product'],
 			},
-			alias: ['commercetools', 'commercetools'],
+			alias: ['commercetools'],
 		},
 		inputs: [],
 		outputs: [NodeConnectionTypes.Main],
