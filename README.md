@@ -268,6 +268,7 @@ Contributions are welcome—open an issue or pull request.
 See `CHANGELOG.md` 
 
 Recent Highlights
+- v0.1.31 - Standardize capitalization for display Name
 - v0.1.30 - Included all regions of CT.
 - v0.1.29 - order operation addition.
 - v0.1.28 - cart operation addition.
