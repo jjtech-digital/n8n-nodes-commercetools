@@ -593,10 +593,7 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Add Custom Line Item',
 								value: 'addCustomLineItem',	
 							},
-							{
-								name: 'Add Custom ShippingMethod',
-								value: 'addCustomShippingMethod',
-							},
+							
 							{
 								name: 'Add DiscountCode',
 								value: 'addDiscountCode',
@@ -605,94 +602,22 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Add ItemShippingAddress',
 								value: 'addItemShippingAddress',
 							},
-							{
-								name : 'Add Line Item',
-								value: 'addLineItem', 
-							},
+						
 							{
 								name: 'Add Payment',
 								value: 'addPayment',	
 							},
-							{
-								name: 'Add Shipping Method',
-								value: 'addShippingMethod',
-							},
-							{
-								name: 'Add Shopping List',
-								value: 'addShoppingList',
-							},
-							{
-								name: 'Apply DeltaToCustomLineItemShippingDetailsTargets',
-								value: 'applyDeltaToCustomLineItemShippingDetailsTargets',
-							},
-							{
-								name: 'Apply DeltaToLineItemShippingDetailsTargets',
-								value: 'applyDeltaToLineItemShippingDetailsTargets',
-							},
-							{
-								name: 'Change Custom Line Item Money',
-								value: 'changeCustomLineItemMoney',
-							},
-							{
-								name: 'Change Custom Line Item Price Mode',
-								value: 'changeCustomLineItemPriceMode',
-							},
-							{
-								name: 'Change Custom Line Item Quantity',
-								value: 'changeCustomLineItemQuantity',
-							},
-							{
-								name: 'Change LineItem Quantity',
-								value: 'changeLineItemQuantity',
-							},
-							{
-								name: 'Change Price Rounding Mode',
-								value: 'changePriceRoundingMode',	
-							},
-							{
-								name: 'Change Tax Calculation Mode',
-								value: 'changeTaxCalculationMode',
-							},
-							{
-								name: 'Change Tax Mode',
-								value: 'changeTaxMode',
-							},
-							{
-								name: 'Change Tax Rounding Mode',
-								value: 'changeTaxRoundingMode',
-							},
-							{
-								name: 'Freeze Cart',
-								value: 'freezeCart',
-							},
+							
 							{
 								name: 'Lock Cart',
 								value: 'lockCart',
 							},
-							{
-								name: 'Recalculate',
-								value: 'recalculate',
-							},
-							{
-								name: 'Remove Custom Line Item',
-								value: 'removeCustomLineItem',
-							},
+							
 							{
 								name: 'Remove DiscountCode',
 								value: 'removeDiscountCode',
 							},
-							{
-								name: 'Remove Item Shipping Address',
-								value: 'removeItemShippingAddress',
-							},
-							{
-								name: 'Remove Payment',
-								value: 'removePayment',
-							},
-							{
-								name: 'Remove ShippingMethod',
-								value: 'removeShippingMethod',
-							},
+							
 							{
 								name: 'Set Anonymous ID',
 								value: 'setAnonymousId',
@@ -701,59 +626,12 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set Billing Address',
 								value: 'setBillingAddress',
 							},
-							{
-								name: 'Set Billing Address CustomField',
-								value: 'setBillingAddressCustomField',
-							},
-							{
-								name: 'Set Billing Address CustomType',
-								value: 'setBillingAddressCustomType',
-							},
-							{
-								name: 'Set Business Unit',
-								value: 'setBusinessUnit',	
-							},
-							{
-								name: 'Set Cart Total Tax',
-								value: 'setCartTotalTax',
-							},
+							
 							{
 								name: 'Set Country',
 								value: 'setCountry',
 							},
-							{
-								name: 'Set Custom Line Item CustomField',
-								value: 'setCustomLineItemCustomField',
-							},
-							{
-								name: 'Set Custom Line Item CustomType',
-								value: 'setCustomLineItemCustomType',
-							},
-							{
-								name: 'Set Custom Line Item RecurrenceInfo',
-								value: 'setCustomLineItemRecurrenceInfo',
-							},
-							{
-								name: 'Set Custom Line Item ShippingDetails',
-								value: 'setCustomLineItemShippingDetails',
-							},
-							{
-								name: 'Set Custom Line Item TaxAmount',
-								value: 'setCustomLineItemTaxAmount',
-							},
-							{
-								name: 'Set Custom Line Item TaxRate',
-								value: 'setCustomLineItemTaxRate',
-							},
-							{
-								name: 'Set Custom ShippingMethod',
-								value: 'setCustomShippingMethod',
-							},
 							
-							{
-								name: 'Set Custom Type',
-								value: 'setCustomType',
-							},
 							{
 								name: 'Set Customer Email',
 								value: 'setCustomerEmail',
@@ -766,10 +644,7 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set Customer ID',
 								value: 'setCustomerId',
 							},
-							{
-								name: 'Set CustomField',
-								value: 'setCustomField',
-							},
+							
 							{
 								name: 'Set DeleteDaysAfterLastModification',
 								value: 'setDeleteDaysAfterLastModification',
@@ -778,66 +653,12 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set DirectDiscounts',
 								value: 'setDirectDiscounts',
 							},
-							{
-								name: 'Set ItemShipping Address CustomField',
-								value: 'setItemShippingAddressCustomField',
-							},
-							{
-								name: 'Set ItemShipping Address CustomType',
-								value: 'setItemShippingAddressCustomType',
-							},
+							
 							{
 								name: 'Set Key',
 								value: 'setKey',
 							},
-							{
-								name: 'Set LineItem CustomField',
-								value: 'setLineItemCustomField',
-							},
 							
-							{
-								name: 'Set LineItem CustomType',
-								value: 'setLineItemCustomType',
-							},
-							
-							{
-								name: 'Set LineItem DistributionChannel',
-								value: 'setLineItemDistributionChannel',
-							},
-							{
-								name: 'Set LineItem InventoryMode',
-								value: 'setLineItemInventoryMode',
-							},
-							{
-								name: 'Set LineItem Price',
-								value: 'setLineItemPrice',
-							},
-							{
-								name: 'Set LineItem RecurrenceInfo',
-								value: 'setLineItemRecurrenceInfo',
-							},
-							
-							{
-								name: 'Set LineItem ShippingDetails',
-								value: 'setLineItemShippingDetails',
-							},
-							{
-								name: 'Set LineItem SupplyChannel',
-								value: 'setLineItemSupplyChannel',
-							},
-							{
-								name: 'Set LineItem TaxAmount',
-								value: 'setLineItemTaxAmount',
-							},
-							
-							{
-								name: 'Set LineItem TaxRate',
-								value: 'setLineItemTaxRate',
-							},
-							{
-								name: 'Set LineItem TotalPrice',
-								value: 'setLineItemTotalPrice',
-							},
 							{
 								name: 'Set Locale',
 								value: 'setLocale',
@@ -851,50 +672,17 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set Shipping Address',
 								value: 'setShippingAddress',
 							},
-							{
-								name: 'Set Shipping Address CustomField',
-								value: 'setShippingAddressCustomField',
-							},
-							{
-								name: 'Set Shipping Address CustomType',
-								value: 'setShippingAddressCustomType',
-							},
-							{
-								name: 'Set Shipping CustomField',
-								value: 'setShippingCustomField',
-							},
-							{
-								name: 'Set Shipping CustomType',
-								value: 'setShippingCustomType',
-							},
+							
 							{
 								name: 'Set ShippingMethod',
 								value: 'setShippingMethod',
 							},
-							{
-								name: 'Set ShippingMethod TaxAmount',
-								value: 'setShippingMethodTaxAmount',
-							},
-							{
-								name: 'Set ShippingMethod TaxRate',
-								value: 'setShippingMethodTaxRate',
-							},
-							{
-								name: 'Set ShippingRateInput',
-								value: 'setShippingRateInput',
-							},
-							{
-								name: 'Unfreeze Cart',
-								value: 'unfreezeCart',
-							},
+							
 							{
 								name: 'Unlock Cart',
 								value: 'unlockCart',
 							},
-							{
-								name: 'Update ItemShippingAddress',
-								value: 'updateItemShippingAddress',
-							},
+							
 						]
 					},
 					{
