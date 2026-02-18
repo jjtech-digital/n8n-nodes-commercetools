@@ -4,7 +4,7 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 import { productAdditionalFields, productDraftFields, productIdentificationFields, productOperations } from '../properties/product.properties';
 import { categoryAdditionalFields, categoryBaseFields, categoryOperations } from '../properties/category.properties';
 import { customerOperations, customerFields } from './customer.description';
-import { cartOperations, cartIdentificationFields, cartDraftFields, cartAdditionalFields } from '../properties/cart.properties';
+import { cartOperations, cartIdentificationFields, cartDraftFields, cartAdditionalFields, cartUpdateFields } from '../properties/cart.properties';
 import { orderOperations, orderIdentificationFields, orderDraftFields, orderAdditionalFields } from '../properties/order.properties';
 
 // Existing resource field - UPDATED with trigger option
@@ -199,6 +199,7 @@ export const commercetoolsDescription: INodeTypeDescription = {
         ...productAdditionalFields,
         ...categoryAdditionalFields,
         ...cartAdditionalFields,
+        ...cartUpdateFields,
         ...orderAdditionalFields,
     ],
 };

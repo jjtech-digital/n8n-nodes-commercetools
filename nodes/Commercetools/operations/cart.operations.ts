@@ -486,6 +486,13 @@ export async function executeCartOperation(
 		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
 		const actionsFromUi = buildActionsFromUi(this, actionsUi);
+		if (actionsFromJson.length > 0 && actionsFromUi.length > 0) {
+			throw new NodeOperationError(
+				this.getNode(),
+				'Use only one input method for update actions: Actions (JSON) or Actions (UI)',
+				{ itemIndex },
+			);
+		}
 		const actions = [...actionsFromJson, ...actionsFromUi];
 
 		if (actions.length === 0) {
@@ -540,6 +547,13 @@ export async function executeCartOperation(
 		const actionsUi = this.getNodeParameter('updateActions', itemIndex, {}) as IDataObject;
 		const actionsFromJson = coerceActions(this, rawActions, itemIndex);
 		const actionsFromUi = buildActionsFromUi(this, actionsUi);
+		if (actionsFromJson.length > 0 && actionsFromUi.length > 0) {
+			throw new NodeOperationError(
+				this.getNode(),
+				'Use only one input method for update actions: Actions (JSON) or Actions (UI)',
+				{ itemIndex },
+			);
+		}
 		const actions = [...actionsFromJson, ...actionsFromUi];
 
 		if (actions.length === 0) {
