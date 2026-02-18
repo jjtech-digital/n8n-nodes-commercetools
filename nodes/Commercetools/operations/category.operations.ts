@@ -59,8 +59,8 @@ const setCommaSeparatedParameter = (
 };
 
 const appendCustomParameters = (qs: IDataObject, additionalFields: IDataObject) => {
-	const customParameters =
-		((additionalFields.customParameters as IDataObject)?.parameter ?? []) as IDataObject[];
+	const customParameters = ((additionalFields.customParameters as IDataObject)?.parameter ??
+		[]) as IDataObject[];
 	for (const customParameter of customParameters) {
 		const key = (customParameter.key as string | undefined)?.trim();
 		if (!key) continue;
@@ -108,26 +108,38 @@ export async function executeCategoryOperation(
 	const results: INodeExecutionData[] = [];
 
 	if (operation === 'create') {
-		const additionalFieldsCreate = this.getNodeParameter('categoryAdditionalFieldsCreate', itemIndex, {}) as IDataObject;
+		const additionalFieldsCreate = this.getNodeParameter(
+			'categoryAdditionalFieldsCreate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCategoryParameters(qs, additionalFieldsCreate);
 
 		const draftRaw = this.getNodeParameter('categoryDraft', itemIndex);
 		const draft = coerceJsonInput(this, draftRaw, 'Category draft', itemIndex);
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url: `${baseUrl}/categories`,
-			body: draft,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url: `${baseUrl}/categories`,
+				body: draft,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	if (operation === 'get' || operation === 'getByKey') {
-		const additionalFieldsGet = this.getNodeParameter('categoryAdditionalFieldsGet', itemIndex, {}) as IDataObject;
+		const additionalFieldsGet = this.getNodeParameter(
+			'categoryAdditionalFieldsGet',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCategoryParameters(qs, additionalFieldsGet);
 
@@ -140,11 +152,15 @@ export async function executeCategoryOperation(
 				? `${baseUrl}/categories/${identifier}`
 				: `${baseUrl}/categories/key=${encodeURIComponent(identifier)}`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'GET',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'GET',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
@@ -152,9 +168,15 @@ export async function executeCategoryOperation(
 
 	if (operation === 'query') {
 		const returnAll = this.getNodeParameter('categoryReturnAll', itemIndex, false) as boolean;
-		const limit = returnAll ? 500 : (this.getNodeParameter('categoryLimit', itemIndex, 50) as number);
+		const limit = returnAll
+			? 500
+			: (this.getNodeParameter('categoryLimit', itemIndex, 50) as number);
 		const offset = this.getNodeParameter('categoryOffset', itemIndex, 0) as number;
-		const additionalFieldsQuery = this.getNodeParameter('categoryAdditionalFieldsQuery', itemIndex, {}) as IDataObject;
+		const additionalFieldsQuery = this.getNodeParameter(
+			'categoryAdditionalFieldsQuery',
+			itemIndex,
+			{},
+		) as IDataObject;
 
 		const qs: IDataObject = { limit };
 
@@ -178,21 +200,29 @@ export async function executeCategoryOperation(
 		let hasMore = true;
 
 		do {
-			const response = await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-				method: 'GET',
-				url: `${baseUrl}/categories`,
-				qs: {
-					...qs,
-					offset: requestOffset,
+			const response = await this.helpers.httpRequestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				{
+					method: 'GET',
+					url: `${baseUrl}/categories`,
+					qs: {
+						...qs,
+						offset: requestOffset,
+					},
 				},
-			});
+			);
 
 			const resultsPage = (response.results ?? response) as IDataObject[];
 
 			if (!Array.isArray(resultsPage)) {
-				throw new NodeOperationError(this.getNode(), 'Unexpected response format from Commercetools API', {
-					itemIndex,
-				});
+				throw new NodeOperationError(
+					this.getNode(),
+					'Unexpected response format from Commercetools API',
+					{
+						itemIndex,
+					},
+				);
 			}
 
 			collected.push(...resultsPage);
@@ -216,7 +246,11 @@ export async function executeCategoryOperation(
 	}
 
 	if (operation === 'update' || operation === 'updateByKey') {
-		const additionalFieldsUpdate = this.getNodeParameter('categoryAdditionalFieldsUpdate', itemIndex, {}) as IDataObject;
+		const additionalFieldsUpdate = this.getNodeParameter(
+			'categoryAdditionalFieldsUpdate',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCategoryParameters(qs, additionalFieldsUpdate);
 
@@ -249,19 +283,27 @@ export async function executeCategoryOperation(
 				? `${baseUrl}/categories/${identifierParam}`
 				: `${baseUrl}/categories/key=${encodeURIComponent(identifierParam)}`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'POST',
-			url,
-			body,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'POST',
+				url,
+				body,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;
 	}
 
 	if (operation === 'delete' || operation === 'deleteByKey') {
-		const additionalFieldsDelete = this.getNodeParameter('categoryAdditionalFieldsDelete', itemIndex, {}) as IDataObject;
+		const additionalFieldsDelete = this.getNodeParameter(
+			'categoryAdditionalFieldsDelete',
+			itemIndex,
+			{},
+		) as IDataObject;
 		const qs: IDataObject = {};
 		applyCategoryParameters(qs, additionalFieldsDelete);
 
@@ -277,11 +319,15 @@ export async function executeCategoryOperation(
 				? `${baseUrl}/categories/${identifierParam}`
 				: `${baseUrl}/categories/key=${encodeURIComponent(identifierParam)}`;
 
-		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
-			method: 'DELETE',
-			url,
-			qs,
-		})) as IDataObject;
+		const response = (await this.helpers.httpRequestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			{
+				method: 'DELETE',
+				url,
+				qs,
+			},
+		)) as IDataObject;
 
 		results.push({ json: response });
 		return results;

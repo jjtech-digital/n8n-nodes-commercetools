@@ -25,7 +25,10 @@ export function validateOrderDraft(orderDraft: IDataObject): void {
 
 	// Validate inventory mode if provided
 	const validInventoryModes = ['None', 'TrackOnly', 'ReserveOnStock'];
-	if (orderDraft.inventoryMode && !validInventoryModes.includes(orderDraft.inventoryMode as string)) {
+	if (
+		orderDraft.inventoryMode &&
+		!validInventoryModes.includes(orderDraft.inventoryMode as string)
+	) {
 		throw new Error(`Invalid inventory mode. Must be one of: ${validInventoryModes.join(', ')}`);
 	}
 
@@ -73,10 +76,12 @@ export function validateOrderImportDraft(importDraft: IDataObject): void {
 			if (!item.name || !item.quantity || !item.money) {
 				throw new Error(`Custom line item at index ${index} must have name, quantity, and money`);
 			}
-			
+
 			const money = item.money as IDataObject;
 			if (!money.centAmount || !money.currencyCode) {
-				throw new Error(`Custom line item at index ${index} money must have centAmount and currencyCode`);
+				throw new Error(
+					`Custom line item at index ${index} money must have centAmount and currencyCode`,
+				);
 			}
 		});
 	}
@@ -96,8 +101,8 @@ export function transformOrderDraft(orderDraftUi: IDataObject): IDataObject {
 	// Handle order draft fields transformation
 	if (orderDraftUi.orderDraftFields && Array.isArray(orderDraftUi.orderDraftFields)) {
 		const fields = (orderDraftUi.orderDraftFields as IDataObject[])[0] || {};
-		
-		Object.keys(fields).forEach(key => {
+
+		Object.keys(fields).forEach((key) => {
 			const value = fields[key];
 			if (value !== undefined && value !== null && value !== '') {
 				// Transform specific fields that need special handling
@@ -234,8 +239,8 @@ export function formatOrderResponse(order: IDataObject): IDataObject {
 function formatPrice(price: IDataObject): string {
 	const amount = price.centAmount as number;
 	const currencyCode = price.currencyCode as string;
-	const fractionDigits = price.fractionDigits as number || 2;
-	
+	const fractionDigits = (price.fractionDigits as number) || 2;
+
 	const value = amount / Math.pow(10, fractionDigits);
 	return `${value.toFixed(fractionDigits)} ${currencyCode}`;
 }
