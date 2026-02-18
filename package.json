@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-commercetools",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "description": "Custom n8n node for Commercetools integration",
   "license": "MIT",
   "homepage": "",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "aws-sdk": "^2.1691.0"
+    "aws-sdk": "^2.1692.0"
   },
   "devDependencies": {
     "@n8n/node-cli": "^0.17.0",
