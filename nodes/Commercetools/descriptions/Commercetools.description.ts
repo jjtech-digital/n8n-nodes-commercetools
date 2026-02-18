@@ -104,14 +104,14 @@ const nodeGroup: Pick<INodeTypeDescription, 'group'> = {
 };
 
 export const commercetoolsDescription: INodeTypeDescription = {
-    displayName: 'Commercetools',  
+    displayName: 'commercetools',  
     name: 'commercetools',         
     icon: 'file:Commercetools.svg',
     ...nodeGroup,
     version: 1,
     description: 'Interact with Products, Categories, Customers and Product Events (create/publish/update/unpublish/delete)', 
     defaults: {
-        name: 'Commercetools',
+        name: 'commercetools',
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
