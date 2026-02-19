@@ -1,0 +1,5868 @@
+{
+  "queryProductSelectionsForProductByProductKey": {
+    "name": "Query Product Selections for Product by Product Key",
+    "value": "queryProductSelectionsForProductByProductKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/products/key={{product-key}}/product-selections",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "withTotal",
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "getProductByKey": {
+    "name": "Get Product by Key",
+    "value": "getProductByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/products/key={{product-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "checkIfProductExistsByKey": {
+    "name": "Check if Product exists by Key",
+    "value": "checkIfProductExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/products/key={{product-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Product exists with the provided `key`. Returns a `200` status if the Product exists, or a `404` status otherwise.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "updateProductByKey": {
+    "name": "Update Product by Key",
+    "value": "updateProductByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/key={{product-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 2,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDescription",
+            "description": {
+              "en": "The best product ever!"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "The best product ever!"
+        },
+        "description": "Description"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "deleteProductByKey": {
+    "name": "Delete Product by Key",
+    "value": "deleteProductByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/products/key={{product-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "version",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\nProduces the [ProductDeleted](/projects/messages/product-catalog-messages#product-deleted) Message.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "uploadProductImage": {
+    "name": "Upload Product image",
+    "value": "uploadProductImage",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}/images",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "filename",
+      "variant",
+      "sku",
+      "staged"
+    ],
+    "description": "Uploads a JPEG, PNG, or a GIF image file to a [ProductVariant](ctp:api:type:ProductVariant).\nThe maximum file size of the image is **10MB**.\nEither `variant` or `sku` is required to update a specific ProductVariant.\nIf neither is provided, the image is uploaded to the Master Variant of the Product.\n\nThe response status code depends on the size of the original image.\nIf the image is small, the API responds with `200 OK`, and if the image is larger, it responds with `202 Accepted`.\nThe Product returned with a `202 Accepted` status code contains a `warnings` field with an [ImageProcessingOngoing](ctp:api:type:ImageProcessingOngoingWarning) Warning.\n\nProduces the [ProductImageAdded](/projects/messages/product-catalog-messages#product-image-added) Message.\n",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "queryProductSelectionsForProductByProductId": {
+    "name": "Query Product Selections for Product by Product ID",
+    "value": "queryProductSelectionsForProductByProductId",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}/product-selections",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "withTotal",
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "getProductById": {
+    "name": "Get Product by ID",
+    "value": "getProductById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "checkIfProductExistsById": {
+    "name": "Check if Product exists by ID",
+    "value": "checkIfProductExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Product exists with the provided `id`. Returns a `200` status if the Product exists, or a `404` status otherwise.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "updateProductById": {
+    "name": "Update Product by ID",
+    "value": "updateProductById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 2,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDescription",
+            "description": {
+              "en": "The best product ever!"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "The best product ever!"
+        },
+        "description": "Description"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "deleteProductById": {
+    "name": "Delete Product by ID",
+    "value": "deleteProductById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "version",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\nProduces the [ProductDeleted](/projects/messages/product-catalog-messages#product-deleted) Message.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "searchProducts": {
+    "name": "Search Products",
+    "value": "searchProducts",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/search",
+    "bodyFields": [
+      {
+        "name": "query.and",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "fullText": {
+              "field": "name",
+              "language": "en",
+              "value": "banana"
+            }
+          },
+          {
+            "filter": [
+              {
+                "exact": {
+                  "field": "variants.attributes.farming",
+                  "fieldType": "text",
+                  "value": "organic"
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Array of and"
+      },
+      {
+        "name": "sort",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "field": "name",
+            "language": "en",
+            "order": "desc"
+          }
+        ],
+        "description": "Array of sort"
+      },
+      {
+        "name": "limit",
+        "type": "number",
+        "required": true,
+        "example": 10,
+        "description": "Limit"
+      },
+      {
+        "name": "offset",
+        "type": "number",
+        "required": true,
+        "example": 0,
+        "description": "Offset"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "If indexing is in progress or if Product Search is inactive, an [ObjectNotFound](ctp:api:type:ObjectNotFoundError) error is returned.\nIf inactive, you can [reactivate](/../api/projects/product-search#activate-the-product-search-api) it.\n",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "queryProducts": {
+    "name": "Query Products",
+    "value": "queryProducts",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/products",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where",
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "checkIfProductExistsByQueryPredicate": {
+    "name": "Check if Product exists by Query Predicate",
+    "value": "checkIfProductExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/products",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Products exist for the provided query predicate. Returns a `200` status if any Products match the query predicate, or a `404` status otherwise.",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "createProduct": {
+    "name": "Create Product",
+    "value": "createProduct",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products",
+    "bodyFields": [
+      {
+        "name": "productType.id",
+        "type": "string",
+        "required": false,
+        "example": "24f510c3-f334-4099-94e2-d6224a8eb919",
+        "description": "Product Type › id"
+      },
+      {
+        "name": "productType.typeId",
+        "type": "string",
+        "required": false,
+        "example": "product-type",
+        "description": "Product Type › type Id"
+      },
+      {
+        "name": "categories",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "category",
+            "id": "24f510c3-f334-4099-94e2-d6224a8eb919"
+          }
+        ],
+        "description": "Array of categories"
+      },
+      {
+        "name": "name.en",
+        "type": "string",
+        "required": false,
+        "example": "Some Product",
+        "description": "Name › en"
+      },
+      {
+        "name": "slug.en",
+        "type": "string",
+        "required": false,
+        "example": "product_slug_<random-uuid>",
+        "description": "Slug › en"
+      },
+      {
+        "name": "masterVariant.sku",
+        "type": "string",
+        "required": false,
+        "example": "SKU-1",
+        "description": "Master Variant › sku"
+      },
+      {
+        "name": "masterVariant.prices",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 4200
+            }
+          }
+        ],
+        "description": "Array of prices"
+      },
+      {
+        "name": "masterVariant.images",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "url": "http://my.custom.cdn.net/master.png",
+            "label": "Master Image",
+            "dimensions": {
+              "w": 303,
+              "h": 197
+            }
+          }
+        ],
+        "description": "Array of images"
+      },
+      {
+        "name": "variants",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "images": [
+              {
+                "url": "http://my.custom.cdn.net/variant.png",
+                "label": "Variant Image",
+                "dimensions": {
+                  "w": 303,
+                  "h": 197
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Array of variants"
+      },
+      {
+        "name": "attributes",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "name": "label",
+            "value": "product-attribute"
+          }
+        ],
+        "description": "Array of attributes"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "To create a new Product, send a representation that is going to become the initial _staged_ and _current_ representation of the new Product in the catalog.\nIf [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, selected Prices will be added to the response.\nProduces the [ProductCreated](/projects/messages/product-catalog-messages#product-created) Message.\n",
+    "folder": "Products",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "addAsset": {
+    "name": "AddAsset",
+    "value": "addAsset",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAsset",
+            "variantId": 1,
+            "asset": {
+              "sources": [
+                {
+                  "uri": "//asset.mp4"
+                }
+              ],
+              "name": {
+                "de": "FirstAssetDE",
+                "en": "FirstassetEN"
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "asset",
+        "type": "json",
+        "required": false,
+        "example": {
+          "sources": [
+            {
+              "uri": "//asset.mp4"
+            }
+          ],
+          "name": {
+            "de": "FirstAssetDE",
+            "en": "FirstassetEN"
+          }
+        },
+        "description": "Asset"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addExternalImage": {
+    "name": "AddExternalImage",
+    "value": "addExternalImage",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addExternalImage",
+            "variantId": 1,
+            "image": {
+              "url": "//myimage.jpg",
+              "dimensions": {
+                "w": 1400,
+                "h": 1400
+              },
+              "label": "myImage"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "image",
+        "type": "json",
+        "required": false,
+        "example": {
+          "url": "//myimage.jpg",
+          "dimensions": {
+            "w": 1400,
+            "h": 1400
+          },
+          "label": "myImage"
+        },
+        "description": "Image"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addPrice": {
+    "name": "AddPrice",
+    "value": "addPrice",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addPrice",
+            "variantId": 1,
+            "price": {
+              "value": {
+                "currencyCode": "EUR",
+                "centAmount": 4000
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "price",
+        "type": "json",
+        "required": false,
+        "example": {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 4000
+          }
+        },
+        "description": "Price"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addToCategory": {
+    "name": "AddToCategory",
+    "value": "addToCategory",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addToCategory",
+            "category": {
+              "typeId": "category",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "category",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "category",
+          "id": "placeholder"
+        },
+        "description": "Category"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addVariant": {
+    "name": "AddVariant",
+    "value": "addVariant",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addVariant",
+            "key": "VariantKey",
+            "sku": "VariantSKU"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "VariantKey",
+        "description": "Key"
+      },
+      {
+        "name": "sku",
+        "type": "string",
+        "required": false,
+        "example": "VariantSKU",
+        "description": "Sku"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeAssetName": {
+    "name": "ChangeAssetName",
+    "value": "changeAssetName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeAssetName",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "name": {
+              "de": "Mein Asset",
+              "en": "My asset"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "Mein Asset",
+          "en": "My asset"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeAssetOrder": {
+    "name": "ChangeAssetOrder",
+    "value": "changeAssetOrder",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeAssetOrder",
+            "variantId": 1,
+            "assetOrder": [
+              "{{assetId1}}",
+              "{{assetId2}}"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetOrder",
+        "type": "json",
+        "required": false,
+        "example": [
+          "{{assetId1}}",
+          "{{assetId2}}"
+        ],
+        "description": "Asset Order"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeMasterVariant": {
+    "name": "ChangeMasterVariant",
+    "value": "changeMasterVariant",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeMasterVariant",
+            "variantId": 1
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeName": {
+    "name": "ChangeName",
+    "value": "changeName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "de": "Mein neuer Produkt Name",
+              "en": "My new product name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "Mein neuer Produkt Name",
+          "en": "My new product name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changePrice": {
+    "name": "ChangePrice",
+    "value": "changePrice",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changePrice",
+            "priceId": "placeholder",
+            "price": {
+              "value": {
+                "currencyCode": "EUR",
+                "centAmount": 4000
+              }
+            },
+            "staged": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Price Id"
+      },
+      {
+        "name": "price",
+        "type": "json",
+        "required": false,
+        "example": {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 4000
+          }
+        },
+        "description": "Price"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeSlug": {
+    "name": "ChangeSlug",
+    "value": "changeSlug",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeSlug",
+            "slug": {
+              "de": "mein-neuer-produkt-slug",
+              "en": "my-new-product-slug"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "slug",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "mein-neuer-produkt-slug",
+          "en": "my-new-product-slug"
+        },
+        "description": "Slug"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "moveImageToPosition": {
+    "name": "MoveImageToPosition",
+    "value": "moveImageToPosition",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "moveImageToPosition",
+            "variantId": 1,
+            "imageUrl": "//myimage2.jpg",
+            "position": 1
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "imageUrl",
+        "type": "string",
+        "required": false,
+        "example": "//myimage2.jpg",
+        "description": "Image Url"
+      },
+      {
+        "name": "position",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Position"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "publish": {
+    "name": "Publish",
+    "value": "publish",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "publish"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeAsset": {
+    "name": "RemoveAsset",
+    "value": "removeAsset",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeAsset",
+            "variantId": 1,
+            "assetId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeFromCategory": {
+    "name": "RemoveFromCategory",
+    "value": "removeFromCategory",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeFromCategory",
+            "category": {
+              "typeId": "category",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "category",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "category",
+          "id": "placeholder"
+        },
+        "description": "Category"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeImage": {
+    "name": "RemoveImage",
+    "value": "removeImage",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeImage",
+            "variantId": 1,
+            "imageUrl": "//myimage2.jpg"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "imageUrl",
+        "type": "string",
+        "required": false,
+        "example": "//myimage2.jpg",
+        "description": "Image Url"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removePrice": {
+    "name": "RemovePrice",
+    "value": "removePrice",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removePrice",
+            "priceId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Price Id"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeVariant": {
+    "name": "RemoveVariant",
+    "value": "removeVariant",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeVariant",
+            "id": 2
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "id",
+        "type": "number",
+        "required": false,
+        "example": 2,
+        "description": "Id"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "revertStagedChanges": {
+    "name": "RevertStagedChanges",
+    "value": "revertStagedChanges",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "revertStagedChanges"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "revertStagedVariantChanges": {
+    "name": "RevertStagedVariantChanges",
+    "value": "revertStagedVariantChanges",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "revertStagedVariantChanges",
+            "variantId": 2
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 2,
+        "description": "Variant Id"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAssetCustomField": {
+    "name": "SetAssetCustomField",
+    "value": "setAssetCustomField",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssetCustomField",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "name": "exampleStringField",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "exampleStringField",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAssetCustomType": {
+    "name": "SetAssetCustomType",
+    "value": "setAssetCustomType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssetCustomType",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "type": {
+              "id": "placeholder",
+              "typeId": "type"
+            },
+            "fields": {
+              "exampleStringField": "TextString"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "type",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "type"
+        },
+        "description": "Type"
+      },
+      {
+        "name": "fields",
+        "type": "json",
+        "required": false,
+        "example": {
+          "exampleStringField": "TextString"
+        },
+        "description": "Fields"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAssetDescription": {
+    "name": "SetAssetDescription",
+    "value": "setAssetDescription",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssetDescription",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "description": {
+              "de": "Dies ist eine Asset-Beschreibung",
+              "en": "This is an asset description"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "Dies ist eine Asset-Beschreibung",
+          "en": "This is an asset description"
+        },
+        "description": "Description"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAssetKey": {
+    "name": "SetAssetKey",
+    "value": "setAssetKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssetKey",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "assetKey": "assetKeyString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "assetKey",
+        "type": "string",
+        "required": false,
+        "example": "assetKeyString",
+        "description": "Asset Key"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAssetSources": {
+    "name": "SetAssetSources",
+    "value": "setAssetSources",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssetSources",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "sources": [
+              {
+                "uri": "https://www.commercetools.de/ct-logo.svg",
+                "key": "vector"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "sources",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "uri": "https://www.commercetools.de/ct-logo.svg",
+            "key": "vector"
+          }
+        ],
+        "description": "Sources"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAssetTags": {
+    "name": "SetAssetTags",
+    "value": "setAssetTags",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssetTags",
+            "variantId": 1,
+            "assetId": "placeholder",
+            "tags": [
+              "commercetools",
+              "awesome"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "assetId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Asset Id"
+      },
+      {
+        "name": "tags",
+        "type": "json",
+        "required": false,
+        "example": [
+          "commercetools",
+          "awesome"
+        ],
+        "description": "Tags"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAttribute": {
+    "name": "SetAttribute",
+    "value": "setAttribute",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAttribute",
+            "variantId": 1,
+            "name": "ExampleStringTypeAttribute",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "ExampleStringTypeAttribute",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAttributeInAllVariants": {
+    "name": "SetAttributeInAllVariants",
+    "value": "setAttributeInAllVariants",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAttributeInAllVariants",
+            "name": "ExampleStringTypeAttribute",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "ExampleStringTypeAttribute",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCategoryOrderHint": {
+    "name": "SetCategoryOrderHint",
+    "value": "setCategoryOrderHint",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCategoryOrderHint",
+            "categoryId": "placeholder",
+            "orderHint": "0.1"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "categoryId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Category Id"
+      },
+      {
+        "name": "orderHint",
+        "type": "string",
+        "required": false,
+        "example": "0.1",
+        "description": "Order Hint"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setDescription": {
+    "name": "SetDescription",
+    "value": "setDescription",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDescription",
+            "description": {
+              "de": "Dies ist eine neue Produktbeschreibung",
+              "en": "This is a new product description"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "Dies ist eine neue Produktbeschreibung",
+          "en": "This is a new product description"
+        },
+        "description": "Description"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setDiscountedPrice": {
+    "name": "SetDiscountedPrice",
+    "value": "setDiscountedPrice",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDiscountedPrice",
+            "priceId": "placeholder",
+            "staged": true,
+            "discounted": {
+              "value": {
+                "currencyCode": "EUR",
+                "centAmount": 4000
+              },
+              "discount": {
+                "typeId": "product-discount",
+                "id": "placeholder"
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Price Id"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      },
+      {
+        "name": "discounted",
+        "type": "json",
+        "required": false,
+        "example": {
+          "value": {
+            "currencyCode": "EUR",
+            "centAmount": 4000
+          },
+          "discount": {
+            "typeId": "product-discount",
+            "id": "placeholder"
+          }
+        },
+        "description": "Discounted"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setImageLabel": {
+    "name": "SetImageLabel",
+    "value": "setImageLabel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setImageLabel",
+            "variantId": 2,
+            "imageUrl": "//image.png",
+            "label": "labelString",
+            "staged": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 2,
+        "description": "Variant Id"
+      },
+      {
+        "name": "imageUrl",
+        "type": "string",
+        "required": false,
+        "example": "//image.png",
+        "description": "Image Url"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "example": "labelString",
+        "description": "Label"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setKey": {
+    "name": "SetKey",
+    "value": "setKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setKey",
+            "key": "newKey"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "newKey",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setMetaDescription": {
+    "name": "SetMetaDescription",
+    "value": "setMetaDescription",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMetaDescription",
+            "metaDescription": {
+              "de": "meine Meta Beschreibung",
+              "en": "my metaDescription"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "metaDescription",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "meine Meta Beschreibung",
+          "en": "my metaDescription"
+        },
+        "description": "Meta Description"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setMetaKeywords": {
+    "name": "SetMetaKeywords",
+    "value": "setMetaKeywords",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMetaKeywords",
+            "metaKeywords": {
+              "de": "mein MetaKeyword",
+              "en": "my metaKeeyword"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "metaKeywords",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "mein MetaKeyword",
+          "en": "my metaKeeyword"
+        },
+        "description": "Meta Keywords"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setMetaTitle": {
+    "name": "SetMetaTitle",
+    "value": "setMetaTitle",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMetaTitle",
+            "metaTitle": {
+              "de": "mein MetaTitel",
+              "en": "my metaTitle"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "metaTitle",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "mein MetaTitel",
+          "en": "my metaTitle"
+        },
+        "description": "Meta Title"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setPriceKey": {
+    "name": "SetPriceKey",
+    "value": "setPriceKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setPriceKey",
+            "priceId": "placeholder",
+            "key": "a-new-embedded-price-key",
+            "staged": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Price Id"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "a-new-embedded-price-key",
+        "description": "Key"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setPriceMode": {
+    "name": "SetPriceMode",
+    "value": "setPriceMode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setPriceMode",
+            "priceMode": "Standalone"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceMode",
+        "type": "string",
+        "required": false,
+        "example": "Standalone",
+        "description": "Price Mode"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setPrices": {
+    "name": "SetPrices",
+    "value": "setPrices",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setPrices",
+            "variantId": 1,
+            "prices": [
+              {
+                "value": {
+                  "currencyCode": "USD",
+                  "centAmount": 3100
+                }
+              },
+              {
+                "value": {
+                  "currencyCode": "EUR",
+                  "centAmount": 4000
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "prices",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "value": {
+              "currencyCode": "USD",
+              "centAmount": 3100
+            }
+          },
+          {
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 4000
+            }
+          }
+        ],
+        "description": "Prices"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setProductAttribute": {
+    "name": "SetProductAttribute",
+    "value": "setProductAttribute",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setProductAttribute",
+            "name": "ExampleStringTypeAttribute",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "ExampleStringTypeAttribute",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setProductPriceCustomField": {
+    "name": "SetProductPriceCustomField",
+    "value": "setProductPriceCustomField",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setProductPriceCustomField",
+            "priceId": "placeholder",
+            "name": "exampleStringField",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Price Id"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "exampleStringField",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setProductPriceCustomType": {
+    "name": "SetProductPriceCustomType",
+    "value": "setProductPriceCustomType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setProductPriceCustomType",
+            "priceId": "placeholder",
+            "type": {
+              "id": "placeholder",
+              "typeId": "type"
+            },
+            "fields": {
+              "exampleStringField": "TextString"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "priceId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Price Id"
+      },
+      {
+        "name": "type",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "type"
+        },
+        "description": "Type"
+      },
+      {
+        "name": "fields",
+        "type": "json",
+        "required": false,
+        "example": {
+          "exampleStringField": "TextString"
+        },
+        "description": "Fields"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setProductVariantKey": {
+    "name": "SetProductVariantKey",
+    "value": "setProductVariantKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setProductVariantKey",
+            "variantId": 1,
+            "key": "keyString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "keyString",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setSearchKeywords": {
+    "name": "SetSearchKeywords",
+    "value": "setSearchKeywords",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSearchKeywords",
+            "searchKeywords": {
+              "en": [
+                {
+                  "text": "Super Keyword"
+                },
+                {
+                  "text": "What a keyword",
+                  "suggestTokenizer": {
+                    "type": "whitespace"
+                  }
+                }
+              ],
+              "de": [
+                {
+                  "text": "Ein super Schlüsselwort",
+                  "suggestTokenizer": {
+                    "type": "custom",
+                    "inputs": [
+                      "wow wow wow",
+                      "super genial",
+                      "der Wahnsinn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "searchKeywords",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": [
+            {
+              "text": "Super Keyword"
+            },
+            {
+              "text": "What a keyword",
+              "suggestTokenizer": {
+                "type": "whitespace"
+              }
+            }
+          ],
+          "de": [
+            {
+              "text": "Ein super Schlüsselwort",
+              "suggestTokenizer": {
+                "type": "custom",
+                "inputs": [
+                  "wow wow wow",
+                  "super genial",
+                  "der Wahnsinn"
+                ]
+              }
+            }
+          ]
+        },
+        "description": "Search Keywords"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setSku": {
+    "name": "SetSku",
+    "value": "setSku",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSku",
+            "variantId": 1,
+            "sku": "SKU"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "sku",
+        "type": "string",
+        "required": false,
+        "example": "SKU",
+        "description": "Sku"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setTaxCategory": {
+    "name": "SetTaxCategory",
+    "value": "setTaxCategory",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTaxCategory",
+            "taxCategory": {
+              "typeId": "tax-category",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "taxCategory",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "tax-category",
+          "id": "placeholder"
+        },
+        "description": "Tax Category"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "transitionState": {
+    "name": "TransitionState",
+    "value": "transitionState",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "transitionState",
+            "state": {
+              "typeId": "state",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "state",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "state",
+          "id": "placeholder"
+        },
+        "description": "State"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "unpublish": {
+    "name": "Unpublish",
+    "value": "unpublish",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "unpublish"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "getCustomerByPasswordToken": {
+    "name": "Get Customer by password token",
+    "value": "getCustomerByPasswordToken",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customers/password-token={{password-token}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Use this method to retrieve the details of a global Customer by using the password token during their [password reset process](/../api/customers-overview#customer-password-reset).\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "getCustomerByEmailToken": {
+    "name": "Get Customer by email token",
+    "value": "getCustomerByEmailToken",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customers/email-token={{email-token}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Use this method to retrieve a global Customer's details by using the email token during their [email verification process](/../api/customers-overview#customer-email-verification).\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "createEmailTokenForCustomer": {
+    "name": "Create email token for Customer",
+    "value": "createEmailTokenForCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/email-token",
+    "bodyFields": [
+      {
+        "name": "id",
+        "type": "string",
+        "required": true,
+        "example": "58ae9ffc-7e7b-414c-b060-357749d80c55",
+        "description": "Id"
+      },
+      {
+        "name": "ttlMinutes",
+        "type": "number",
+        "required": true,
+        "example": 4320,
+        "description": "Ttl Minutes"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Use this method to create an email token for a global Customer during their [email verification process](/../api/customers-overview#customer-email-verification).\n\nCreating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "verifyEmailOfCustomer": {
+    "name": "Verify email of Customer",
+    "value": "verifyEmailOfCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/email/confirm",
+    "bodyFields": [
+      {
+        "name": "tokenValue",
+        "type": "string",
+        "required": true,
+        "example": "hI_6fkuFIyd_wadz1JmpRGh1vMvgFrlsSJia3G6d",
+        "description": "Token Value"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Use this method to verify a global Customer's email during their [email verification process](/../api/customers-overview#customer-email-verification).\n\nVerifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.\n\nAfter the email is verified, all email tokens issued previously through the [email verification flow](/../api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "changePasswordOfCustomer": {
+    "name": "Change password of Customer",
+    "value": "changePasswordOfCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/password",
+    "bodyFields": [
+      {
+        "name": "id",
+        "type": "string",
+        "required": true,
+        "example": "3cdcdcc8-80c5-41bb-abb5-ac8772c9cc24",
+        "description": "Id"
+      },
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "currentPassword",
+        "type": "string",
+        "required": true,
+        "example": "secret123",
+        "description": "Current Password"
+      },
+      {
+        "name": "newPassword",
+        "type": "string",
+        "required": true,
+        "example": "newSecret456",
+        "description": "New Password"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Changing the password produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=false`.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": true
+  },
+  "resetPasswordOfCustomer": {
+    "name": "Reset password of Customer",
+    "value": "resetPasswordOfCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/password/reset",
+    "bodyFields": [
+      {
+        "name": "tokenValue",
+        "type": "string",
+        "required": true,
+        "example": "VRndRV5oCr-pKH2360DnlhqEOVVUZXSAIUXgT5HL",
+        "description": "Token Value"
+      },
+      {
+        "name": "newPassword",
+        "type": "string",
+        "required": true,
+        "example": "newsecret123",
+        "description": "New Password"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Use this method to reset a global Customer's password during their [password reset process](/../api/customers-overview#customer-password-reset).\n\nResetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.\n\nAfter the password is reset, all password tokens issued previously through the [password reset flow](/../api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/../api/authorization#password-flow) and [refresh token flow](/../api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/../api/general-concepts#eventual-consistency).\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "createPasswordResetTokenForCustomer": {
+    "name": "Create password reset token for Customer",
+    "value": "createPasswordResetTokenForCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/password-token",
+    "bodyFields": [
+      {
+        "name": "email",
+        "type": "string",
+        "required": true,
+        "example": "johndoe@example.com",
+        "description": "Email"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Use this method to create a password reset token for a global Customer during their [password reset process](/../api/customers-overview#customer-password-reset).\n\nCreating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "getCustomerByKey": {
+    "name": "Get Customer by Key",
+    "value": "getCustomerByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customers/key={{customer-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "checkIfCustomerExistsByKey": {
+    "name": "Check if Customer exists by Key",
+    "value": "checkIfCustomerExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customers/key={{customer-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Customer exists with the provided `key`. Returns a `200` status if the Customer exists, or a `404` status otherwise.",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "updateCustomerByKey": {
+    "name": "Update Customer by Key",
+    "value": "updateCustomerByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/key={{customer-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 3,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAddress",
+            "address": {
+              "streetName": "Any Street",
+              "streetNumber": "1337",
+              "postalCode": "11111",
+              "city": "Any City",
+              "country": "US"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "streetName": "Any Street",
+          "streetNumber": "1337",
+          "postalCode": "11111",
+          "city": "Any City",
+          "country": "US"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "deleteCustomerByKey": {
+    "name": "Delete Customer by Key",
+    "value": "deleteCustomerByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/customers/key={{customer-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "getCustomerById": {
+    "name": "Get Customer by ID",
+    "value": "getCustomerById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "checkIfCustomerExistsById": {
+    "name": "Check if Customer exists by ID",
+    "value": "checkIfCustomerExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Customer exists with the provided `id`. Returns a `200` status if the Customer exists, or a `404` status otherwise.",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": false
+  },
+  "updateCustomerById": {
+    "name": "Update Customer by ID",
+    "value": "updateCustomerById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 3,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAddress",
+            "address": {
+              "streetName": "Any Street",
+              "streetNumber": "1337",
+              "postalCode": "11111",
+              "city": "Any City",
+              "country": "US"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "streetName": "Any Street",
+          "streetNumber": "1337",
+          "postalCode": "11111",
+          "city": "Any City",
+          "country": "US"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "deleteCustomerById": {
+    "name": "Delete Customer by ID",
+    "value": "deleteCustomerById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deleting a Customer produces the [CustomerDeleted](ctp:api:type:CustomerDeletedMessage) Message.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "searchCustomers": {
+    "name": "Search Customers",
+    "value": "searchCustomers",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/search",
+    "bodyFields": [
+      {
+        "name": "query.fullText.field",
+        "type": "string",
+        "required": false,
+        "example": "all",
+        "description": "Query › full Text › field"
+      },
+      {
+        "name": "query.fullText.value",
+        "type": "string",
+        "required": false,
+        "example": "john",
+        "description": "Query › full Text › value"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "If the initial indexing is in progress or the feature is inactive, a [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned.\nIf inactive, you can [reactivate](/../api/projects/customer-search#reactivate) it.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "checkIfCustomerSearchIndexExists": {
+    "name": "Check if Customer Search index exists",
+    "value": "checkIfCustomerSearchIndexExists",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customers/search",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks whether a search index of Customers exists for a Project.\nReturns a `200 OK` if an index exists; otherwise, returns a `409 Conflict`.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "getIndexingStatusOfCustomerSearch": {
+    "name": "Get indexing status of Customer Search",
+    "value": "getIndexingStatusOfCustomerSearch",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customers/search/indexing-status",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Returns the indexing status of the Customer Search for a Project.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "queryCustomers": {
+    "name": "Query Customers",
+    "value": "queryCustomers",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customers",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "checkIfCustomerExistsByQueryPredicate": {
+    "name": "Check if Customer exists by Query Predicate",
+    "value": "checkIfCustomerExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customers",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Customers exist for the provided query predicate. Returns a `200` status if any Customers match the query predicate, or a `404` status otherwise.",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "createSignUpCustomer": {
+    "name": "Create (sign up) Customer",
+    "value": "createSignUpCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers",
+    "bodyFields": [
+      {
+        "name": "email",
+        "type": "string",
+        "required": true,
+        "example": "johndoe@example.com",
+        "description": "Email"
+      },
+      {
+        "name": "firstName",
+        "type": "string",
+        "required": true,
+        "example": "John",
+        "description": "First Name"
+      },
+      {
+        "name": "lastName",
+        "type": "string",
+        "required": true,
+        "example": "Doe",
+        "description": "Last Name"
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "required": true,
+        "example": "secret123",
+        "description": "Password"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Allows converting an anonymous Cart to the active Cart of a Customer with [cart merge](/../api/customers-overview#cart-merge-during-sign-in-and-sign-up).\n\nCreating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.\n",
+    "folder": "Customers",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresVersion": false
+  },
+  "addAddress": {
+    "name": "AddAddress",
+    "value": "addAddress",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAddress",
+            "address": {
+              "key": "exampleKey",
+              "title": "My Address",
+              "salutation": "Mr.",
+              "firstName": "Example",
+              "lastName": "Person",
+              "streetName": "Example Street",
+              "streetNumber": "4711",
+              "additionalStreetInfo": "Backhouse",
+              "postalCode": "80933",
+              "city": "Exemplary City",
+              "region": "Exemplary Region",
+              "state": "Exemplary State",
+              "country": "DE",
+              "company": "My Company Name",
+              "department": "Sales",
+              "building": "Hightower 1",
+              "apartment": "247",
+              "pOBox": "2471",
+              "phone": "+49 89 12345678",
+              "mobile": "+49 171 2345678",
+              "email": "email@example.com",
+              "fax": "+49 89 12345679",
+              "additionalAddressInfo": "no additional Info",
+              "externalId": "Information not needed"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "exampleKey",
+          "title": "My Address",
+          "salutation": "Mr.",
+          "firstName": "Example",
+          "lastName": "Person",
+          "streetName": "Example Street",
+          "streetNumber": "4711",
+          "additionalStreetInfo": "Backhouse",
+          "postalCode": "80933",
+          "city": "Exemplary City",
+          "region": "Exemplary Region",
+          "state": "Exemplary State",
+          "country": "DE",
+          "company": "My Company Name",
+          "department": "Sales",
+          "building": "Hightower 1",
+          "apartment": "247",
+          "pOBox": "2471",
+          "phone": "+49 89 12345678",
+          "mobile": "+49 171 2345678",
+          "email": "email@example.com",
+          "fax": "+49 89 12345679",
+          "additionalAddressInfo": "no additional Info",
+          "externalId": "Information not needed"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addBillingAddressId": {
+    "name": "AddBillingAddressId",
+    "value": "addBillingAddressId",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addBillingAddressId",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addCustomerGroupAssignment": {
+    "name": "AddCustomerGroupAssignment",
+    "value": "addCustomerGroupAssignment",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addCustomerGroupAssignment",
+            "customerGroupAssignment": {
+              "customerGroup": {
+                "id": "placeholder",
+                "typeId": "customer-group"
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customerGroupAssignment",
+        "type": "json",
+        "required": false,
+        "example": {
+          "customerGroup": {
+            "id": "placeholder",
+            "typeId": "customer-group"
+          }
+        },
+        "description": "Customer Group Assignment"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addShippingAddressId": {
+    "name": "AddShippingAddressId",
+    "value": "addShippingAddressId",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addShippingAddressId",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "addStore": {
+    "name": "AddStore",
+    "value": "addStore",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addStore",
+            "store": {
+              "key": "placeholder",
+              "typeId": "store"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "store",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "placeholder",
+          "typeId": "store"
+        },
+        "description": "Store"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeAddress": {
+    "name": "ChangeAddress",
+    "value": "changeAddress",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeAddress",
+            "addressId": "placeholder",
+            "address": {
+              "key": "exampleKey",
+              "title": "My Address",
+              "salutation": "Mr.",
+              "firstName": "Example",
+              "lastName": "Person",
+              "streetName": "Example Street",
+              "streetNumber": "4711",
+              "additionalStreetInfo": "Backhouse",
+              "postalCode": "80933",
+              "city": "Exemplary City",
+              "region": "Exemplary Region",
+              "state": "Exemplary State",
+              "country": "DE",
+              "company": "My Company Name",
+              "department": "Sales",
+              "building": "Hightower 1",
+              "apartment": "247",
+              "pOBox": "2471",
+              "phone": "+49 89 12345678",
+              "mobile": "+49 171 2345678",
+              "email": "email@example.com",
+              "fax": "+49 89 12345679",
+              "additionalAddressInfo": "no additional Info",
+              "externalId": "Information not needed"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      },
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "exampleKey",
+          "title": "My Address",
+          "salutation": "Mr.",
+          "firstName": "Example",
+          "lastName": "Person",
+          "streetName": "Example Street",
+          "streetNumber": "4711",
+          "additionalStreetInfo": "Backhouse",
+          "postalCode": "80933",
+          "city": "Exemplary City",
+          "region": "Exemplary Region",
+          "state": "Exemplary State",
+          "country": "DE",
+          "company": "My Company Name",
+          "department": "Sales",
+          "building": "Hightower 1",
+          "apartment": "247",
+          "pOBox": "2471",
+          "phone": "+49 89 12345678",
+          "mobile": "+49 171 2345678",
+          "email": "email@example.com",
+          "fax": "+49 89 12345679",
+          "additionalAddressInfo": "no additional Info",
+          "externalId": "Information not needed"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "changeEmail": {
+    "name": "ChangeEmail",
+    "value": "changeEmail",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeEmail",
+            "email": "email@example.com"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "email",
+        "type": "string",
+        "required": false,
+        "example": "email@example.com",
+        "description": "Email"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeAddress": {
+    "name": "RemoveAddress",
+    "value": "removeAddress",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeAddress",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeBillingAddressId": {
+    "name": "RemoveBillingAddressId",
+    "value": "removeBillingAddressId",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeBillingAddressId",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeCustomerGroupAssignment": {
+    "name": "RemoveCustomerGroupAssignment",
+    "value": "removeCustomerGroupAssignment",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeCustomerGroupAssignment",
+            "customerGroup": {
+              "id": "placeholder",
+              "typeId": "customer-group"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customerGroup",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "customer-group"
+        },
+        "description": "Customer Group"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeShippingAddressId": {
+    "name": "RemoveShippingAddressId",
+    "value": "removeShippingAddressId",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeShippingAddressId",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "removeStore": {
+    "name": "RemoveStore",
+    "value": "removeStore",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeStore",
+            "store": {
+              "key": "placeholder",
+              "typeId": "store"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "store",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "placeholder",
+          "typeId": "store"
+        },
+        "description": "Store"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAddressCustomField": {
+    "name": "SetAddressCustomField",
+    "value": "setAddressCustomField",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAddressCustomField",
+            "name": "exampleStringField",
+            "value": "TextString",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "exampleStringField",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      },
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAddressCustomType": {
+    "name": "SetAddressCustomType",
+    "value": "setAddressCustomType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAddressCustomType",
+            "type": {
+              "id": "placeholder",
+              "typeId": "type"
+            },
+            "fields": {
+              "exampleStringField": "TextString"
+            },
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "type",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "type"
+        },
+        "description": "Type"
+      },
+      {
+        "name": "fields",
+        "type": "json",
+        "required": false,
+        "example": {
+          "exampleStringField": "TextString"
+        },
+        "description": "Fields"
+      },
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setAuthenticationMode": {
+    "name": "SetAuthenticationMode",
+    "value": "setAuthenticationMode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAuthenticationMode",
+            "authMode": "ExternalAuth"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "authMode",
+        "type": "string",
+        "required": false,
+        "example": "ExternalAuth",
+        "description": "Auth Mode"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCompanyName": {
+    "name": "SetCompanyName",
+    "value": "setCompanyName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCompanyName",
+            "companyName": "Company Ltd."
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "companyName",
+        "type": "string",
+        "required": false,
+        "example": "Company Ltd.",
+        "description": "Company Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCustomField": {
+    "name": "SetCustomField",
+    "value": "setCustomField",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCustomField",
+            "name": "exampleStringField",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "exampleStringField",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCustomType": {
+    "name": "SetCustomType",
+    "value": "setCustomType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCustomType",
+            "type": {
+              "id": "placeholder",
+              "typeId": "type"
+            },
+            "fields": {
+              "exampleStringField": "TextString"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "type",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "type"
+        },
+        "description": "Type"
+      },
+      {
+        "name": "fields",
+        "type": "json",
+        "required": false,
+        "example": {
+          "exampleStringField": "TextString"
+        },
+        "description": "Fields"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCustomerGroup": {
+    "name": "SetCustomerGroup",
+    "value": "setCustomerGroup",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCustomerGroup",
+            "customerGroup": {
+              "id": "placeholder",
+              "typeId": "customer-group"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customerGroup",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "customer-group"
+        },
+        "description": "Customer Group"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCustomerGroupAssignments": {
+    "name": "SetCustomerGroupAssignments",
+    "value": "setCustomerGroupAssignments",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCustomerGroupAssignments",
+            "customerGroupAssignments": [
+              {
+                "customerGroup": {
+                  "id": "placeholder",
+                  "typeId": "customer-group"
+                }
+              },
+              {
+                "customerGroup": {
+                  "id": "placeholder",
+                  "typeId": "customer-group"
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customerGroupAssignments",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "customerGroup": {
+              "id": "placeholder",
+              "typeId": "customer-group"
+            }
+          },
+          {
+            "customerGroup": {
+              "id": "placeholder",
+              "typeId": "customer-group"
+            }
+          }
+        ],
+        "description": "Customer Group Assignments"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setCustomerNumber": {
+    "name": "SetCustomerNumber",
+    "value": "setCustomerNumber",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCustomerNumber",
+            "customerNumber": "123"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customerNumber",
+        "type": "string",
+        "required": false,
+        "example": "123",
+        "description": "Customer Number"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setDateOfBirth": {
+    "name": "SetDateOfBirth",
+    "value": "setDateOfBirth",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDateOfBirth",
+            "dateOfBirth": "2015-10-21"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "dateOfBirth",
+        "type": "string",
+        "required": false,
+        "example": "2015-10-21",
+        "description": "Date Of Birth"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setDefaultBillingAddress": {
+    "name": "SetDefaultBillingAddress",
+    "value": "setDefaultBillingAddress",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDefaultBillingAddress",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setDefaultShippingAddress": {
+    "name": "SetDefaultShippingAddress",
+    "value": "setDefaultShippingAddress",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDefaultShippingAddress",
+            "addressId": "placeholder"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "addressId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Address Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setExternalId": {
+    "name": "SetExternalId",
+    "value": "setExternalId",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setExternalId",
+            "externalId": "123"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "externalId",
+        "type": "string",
+        "required": false,
+        "example": "123",
+        "description": "External Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setFirstName": {
+    "name": "SetFirstName",
+    "value": "setFirstName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setFirstName",
+            "firstName": "John"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "firstName",
+        "type": "string",
+        "required": false,
+        "example": "John",
+        "description": "First Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setLastName": {
+    "name": "SetLastName",
+    "value": "setLastName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setLastName",
+            "lastName": "Person"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "lastName",
+        "type": "string",
+        "required": false,
+        "example": "Person",
+        "description": "Last Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setLocale": {
+    "name": "SetLocale",
+    "value": "setLocale",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setLocale",
+            "locale": "de-DE"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "locale",
+        "type": "string",
+        "required": false,
+        "example": "de-DE",
+        "description": "Locale"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setMiddleName": {
+    "name": "SetMiddleName",
+    "value": "setMiddleName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMiddleName",
+            "middleName": "middleName"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "middleName",
+        "type": "string",
+        "required": false,
+        "example": "middleName",
+        "description": "Middle Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setSalutation": {
+    "name": "SetSalutation",
+    "value": "setSalutation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSalutation",
+            "salutation": "Mr"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "salutation",
+        "type": "string",
+        "required": false,
+        "example": "Mr",
+        "description": "Salutation"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setStores": {
+    "name": "SetStores",
+    "value": "setStores",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setStores",
+            "stores": [
+              {
+                "key": "placeholder",
+                "typeId": "store"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "stores",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "key": "placeholder",
+            "typeId": "store"
+          }
+        ],
+        "description": "Stores"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setTitle": {
+    "name": "SetTitle",
+    "value": "setTitle",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTitle",
+            "title": "Dr"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "example": "Dr",
+        "description": "Title"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  },
+  "setVatId": {
+    "name": "SetVatId",
+    "value": "setVatId",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setVatId",
+            "vatId": "vatId"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "vatId",
+        "type": "string",
+        "required": false,
+        "example": "vatId",
+        "description": "Vat Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
+    "folder": "Customers",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresVersion": true
+  }
+}

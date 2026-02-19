@@ -1,10 +1,46 @@
-import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from "n8n-workflow";
-import { AWSResponse } from "./awsInfra.utils";
-import { customerEvents, orderEvents, productEvents, categoryEvents, cartEvents } from "../properties/subscription.properties";
+/**
+ * subscription.utils.ts
+ *
+ * Utilities for managing commercetools subscriptions as n8n triggers.
+ *
+ * Routing logic:
+ *   Each event value in subscriptionEvents has an explicit `subscriptionType`:
+ *     'message' → CT messages[] array  (MessageSubscription)
+ *     'change'  → CT changes[] array   (ChangeSubscription — no types, whole resource)
+ *     'event'   → CT events[] array    (EventSubscription)
+ *
+ *   Special value prefixes:
+ *     'change:{resourceTypeId}'  → synthetic key for change-only resources
+ *     'message:{resourceTypeId}' → catch-all: subscribe to ALL messages for resource (omit types[])
+ *     anything else              → literal CT message or event type string
+ *
+ *   This module reads subscriptionType directly from the event registry —
+ *   no manual prefix tables or guesswork.
+ */
 
-export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
+import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from 'n8n-workflow';
+import { AWSResponse } from './awsInfra.utils';
+import {
+    subscriptionEvents,
+    MESSAGE_SUBSCRIPTION_RESOURCES,
+    CHANGE_SUBSCRIPTION_RESOURCES,
+    EVENT_SUBSCRIPTION_RESOURCES,
+    SubscriptionEvent,
+} from '../properties/subscription.properties';
+
+// ─── Event lookup map ─────────────────────────────────────────────────────────
+// Built once at module load: value string → SubscriptionEvent
+
+const EVENT_MAP = new Map<string, SubscriptionEvent>(
+    subscriptionEvents.map(e => [e.value, e]),
+);
+
+// ─── HTTP helpers ─────────────────────────────────────────────────────────────
+
+export async function getBaseUrl(
+    this: IHookFunctions | IWebhookFunctions,
+): Promise<string> {
     const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
-
     const projectKey = credentials.projectKey as string;
     const region = (credentials.region as string) || 'australia-southeast1.gcp';
 
@@ -15,22 +51,144 @@ export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Prom
     return `https://api.${region}.commercetools.com/${projectKey}`;
 }
 
-export async function fetchSubscription(this: IHookFunctions, baseUrl: string, subscriptionId: string) {
+export async function fetchSubscription(
+    this: IHookFunctions,
+    baseUrl: string,
+    subscriptionId: string,
+) {
     return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
         method: 'GET',
         url: `${baseUrl}/subscriptions/${subscriptionId}`,
     });
 }
 
-export async function deleteSubscription(this: IHookFunctions, baseUrl: string, subscriptionId: string, version: number) {
+export async function deleteSubscription(
+    this: IHookFunctions,
+    baseUrl: string,
+    subscriptionId: string,
+    version: number,
+) {
     return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
         method: 'DELETE',
         url: `${baseUrl}/subscriptions/${subscriptionId}`,
-        qs: {
-            version,
-        },
+        qs: { version },
     });
 }
+
+// ─── Subscription body builder ────────────────────────────────────────────────
+
+interface SubscriptionBody {
+    messages: IDataObject[];
+    changes: IDataObject[];
+    events: IDataObject[];
+}
+
+/**
+ * Convert selected event values into CT SubscriptionDraft arrays.
+ *
+ * CT API shapes:
+ *   messages: [{ resourceTypeId: 'product', types: ['ProductPublished', ...] }]
+ *   changes:  [{ resourceTypeId: 'cart' }]   ← NO types array, ever
+ *   events:   [{ resourceTypeId: 'checkout', types: ['CheckoutPaymentAuthorized', ...] }]
+ */
+function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
+    // Per-resource buckets for message type strings
+    const messageTypesByResource = new Map<string, string[]>();
+    // Resources where the user selected the catch-all "all messages" option
+    const messageAllResources = new Set<string>();
+    // Per-resource buckets for event type strings
+    const eventTypesByResource = new Map<string, string[]>();
+    // Change-only resourceTypeIds
+    const changeResourceIds = new Set<string>();
+
+    for (const value of selectedValues) {
+        const event = EVENT_MAP.get(value);
+        if (!event) {
+            console.warn(`[CT Trigger] Unknown event value "${value}" — skipping`);
+            continue;
+        }
+
+        switch (event.subscriptionType) {
+            case 'message':
+                if (value.startsWith('message:')) {
+                    // Catch-all: subscribe to ALL messages for this resource (no types[] filter)
+                    messageAllResources.add(event.resourceTypeId);
+                } else {
+                    const types = messageTypesByResource.get(event.resourceTypeId) ?? [];
+                    types.push(value);
+                    messageTypesByResource.set(event.resourceTypeId, types);
+                }
+                break;
+
+            case 'change':
+                changeResourceIds.add(event.resourceTypeId);
+                break;
+
+            case 'event':
+                const etypes = eventTypesByResource.get(event.resourceTypeId) ?? [];
+                etypes.push(value);
+                eventTypesByResource.set(event.resourceTypeId, etypes);
+                break;
+        }
+    }
+
+    // ── Build messages[] ──────────────────────────────────────────────────────
+
+    const messages: IDataObject[] = [];
+
+    // Resources with specific types selected
+    for (const [resourceTypeId, types] of messageTypesByResource.entries()) {
+        if (!MESSAGE_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
+            console.warn(`[CT Trigger] "${resourceTypeId}" not in MessageSubscriptionResourceTypeId — skipping`);
+            continue;
+        }
+        if (messageAllResources.has(resourceTypeId)) {
+            // Catch-all also selected for this resource: omit types[] (receives everything)
+            messages.push({ resourceTypeId });
+        } else {
+            messages.push({ resourceTypeId, types });
+        }
+    }
+
+    // Resources where only the catch-all was selected (not already added above)
+    for (const resourceTypeId of messageAllResources) {
+        if (messageTypesByResource.has(resourceTypeId)) continue;
+        if (!MESSAGE_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
+            console.warn(`[CT Trigger] "${resourceTypeId}" not in MessageSubscriptionResourceTypeId — skipping`);
+            continue;
+        }
+        messages.push({ resourceTypeId }); // no types = CT sends all message types
+    }
+
+    // ── Build changes[] ───────────────────────────────────────────────────────
+    // CT ChangeSubscription has NO types array — it's whole-resource only
+
+    const changes: IDataObject[] = [];
+
+    for (const resourceTypeId of changeResourceIds) {
+        if (!CHANGE_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
+            console.warn(`[CT Trigger] "${resourceTypeId}" not in ChangeSubscriptionResourceTypeId — skipping`);
+            continue;
+        }
+        changes.push({ resourceTypeId });
+    }
+
+    // ── Build events[] ────────────────────────────────────────────────────────
+
+    const events: IDataObject[] = [];
+
+    for (const [resourceTypeId, types] of eventTypesByResource.entries()) {
+        if (!EVENT_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
+            console.warn(`[CT Trigger] "${resourceTypeId}" not in EventSubscriptionResourceTypeId — skipping`);
+            continue;
+        }
+        events.push({ resourceTypeId, types });
+    }
+
+    return { messages, changes, events };
+}
+
+// ─── Public: create subscription ─────────────────────────────────────────────
 
 export async function createSubscription(
     this: IHookFunctions,
@@ -41,115 +199,45 @@ export async function createSubscription(
         events: string[];
         useAWS: boolean;
     },
-) {
+): Promise<unknown> {
     const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
 
-    // Separate events by resource type using dynamic filtering
-    const selectedProductEvents = events.filter(event => 
-        productEvents.find((x: { value: string }) => x.value === event)
-    );
-    
-    const selectedCustomerEvents = events.filter(event => 
-        customerEvents.find((x: { value: string }) => x.value === event)
-    );
-    
-    const selectedCategoryEvents = events.filter(event => 
-        categoryEvents.find((x: { value: string }) => x.value === event)
-    );
-    
-    const selectedOrderEvents = events.filter(event => 
-        orderEvents.find((x: { value: string }) => x.value === event)
-    );
-    const selectedCartEvents = events.filter(event => 
-        cartEvents.find((x: { value: string }) => x.value === event)
-    );
+    const { messages, changes, events: eventSubs } = buildSubscriptionBody(events);
 
-    // Create messages array for each resource type that has events
-    const messages: IDataObject[] = [];
-    const changes: IDataObject[] = [];
-    
-    if (selectedProductEvents.length > 0) {
-        messages.push({
-            resourceTypeId: 'product',
-            types: selectedProductEvents,
-        });
-    }
-    
-    if (selectedCustomerEvents.length > 0) {
-        messages.push({
-            resourceTypeId: 'customer',
-            types: selectedCustomerEvents,
-        });
-    }
-    
-    if (selectedCategoryEvents.length > 0) {
-       messages.push({
-            resourceTypeId: 'category',
-            types: selectedCategoryEvents,
-        });
+    if (messages.length === 0 && changes.length === 0 && eventSubs.length === 0) {
+        throw new NodeOperationError(
+            this.getNode(),
+            'No valid events selected — could not map any selected event to a CT subscription entry',
+        );
     }
 
-    if (selectedOrderEvents.length > 0) {
-       messages.push({
-            resourceTypeId: 'order',
-            types: selectedOrderEvents,
-        });
-    }
-    
-    if (selectedCartEvents.length > 0) {
-        changes.push({
-            resourceTypeId: 'cart',
-            types: selectedCartEvents,
-        });
-    }
+    // ── Destination ───────────────────────────────────────────────────────────
 
-    // Ensure we have at least one message
-    if (messages.length === 0 && changes.length === 0) {
-        throw new NodeOperationError(this.getNode(), 'No valid events selected');
-    }
-
-    let body: IDataObject;
+    let destination: IDataObject;
 
     if (useAWS && awsInfrastructure) {
-        // Use SQS destination with proper CommerceTools API structure
-        const destination: IDataObject = {
+        destination = {
             type: 'SQS',
             queueUrl: awsInfrastructure.queueUrl,
             region: awsInfrastructure.region,
         };
-
         if (awsInfrastructure.accessKeyId && awsInfrastructure.secretAccessKey) {
-            // Use Credentials authentication mode with proper field names
             destination.authenticationMode = 'Credentials';
-            destination.accessKey = awsInfrastructure.accessKeyId;      // AccessKey ID
-            destination.accessSecret = awsInfrastructure.secretAccessKey;  // Secret Access Key
+            destination.accessKey = awsInfrastructure.accessKeyId;
+            destination.accessSecret = awsInfrastructure.secretAccessKey;
         } else {
-            // For IAM role-based auth, credentials must be omitted
             destination.authenticationMode = 'IAM';
         }
-
-        body = { destination };
-        if (messages.length > 0) {
-            body.messages = messages;
-        }
-        if (changes.length > 0) {
-            body.changes = changes;
-        }
     } else {
-        // Use HTTP webhook destination
-        body = {
-            destination: {
-                type: 'HTTP',
-                url: webhookUrl,
-            },
-        };
-        if (messages.length > 0) {
-            body.messages = messages;
-        }
-        if (changes.length > 0) {
-            body.changes = changes;
-        }
+        destination = { type: 'HTTP', url: webhookUrl };
     }
+
+    // ── Draft ─────────────────────────────────────────────────────────────────
+
+    const body: IDataObject = { destination };
+    if (messages.length > 0) body.messages = messages;
+    if (changes.length > 0) body.changes = changes;
+    if (eventSubs.length > 0) body.events = eventSubs;
 
     return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
         method: 'POST',

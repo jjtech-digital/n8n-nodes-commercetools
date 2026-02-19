@@ -1,15 +1,13 @@
 {
   "name": "n8n-nodes-commercetools",
-  "version": "0.1.32",
-  "description": "Custom n8n node for Commercetools integration",
+  "version": "1.0.0",
+  "description": "n8n custom node for commercetools — auto-generated from official Postman collection",
   "license": "MIT",
   "homepage": "",
   "keywords": [
     "n8n-community-node-package",
     "commercetools",
-    "integrations",
-    "middleware",
-    "automation"
+    "ecommerce"
   ],
   "author": {
     "name": "Koteswara Rao Mudila",
@@ -20,18 +18,20 @@
     "url": "https://github.com/jjtech-digital/n8n-nodes-commercetools.git"
   },
   "scripts": {
+    "generate": "ts-node scripts/generateFromCollection.ts",
     "build": "n8n-node build",
     "build:watch": "tsc --watch",
+    "update": "npm run generate && npm run build",
     "dev": "n8n-node dev",
     "lint": "n8n-node lint",
     "lint:fix": "n8n-node lint --fix",
     "release": "git fetch --tags --prune && n8n-node release",
-    "prepublishOnly": "n8n-node prerelease",
+    "prepublishOnly": "npm run update && n8n-node prerelease",
     "check:changelog": "node -e \"const fs=require('fs');const pkg=require('./package.json');const version='v'+pkg.version;const changelog=fs.readFileSync('CHANGELOG.md','utf8');if(!changelog.includes('#### ['+version+']')){console.error('Changelog missing section for',version);process.exit(1);}const {spawnSync}=require('child_process');const result=spawnSync('git',['tag',version],{stdio:'ignore'});if(result.status!==0){console.error('Git tag missing for',version);process.exit(result.status||1);}\""
   },
   "files": [
     "dist",
-    "icons"
+    "package.json"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
@@ -40,24 +40,25 @@
       "dist/credentials/CommerceToolsOAuth2Api.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Commercetools/Commercetools.node.js",
-      "dist/nodes/Commercetools/CommercetoolsTrigger.node.js"
+      "dist/nodes/Commercetools/Commercetools.node.js"
     ]
   },
   "dependencies": {
+    "@commercetools/platform-sdk": "^8.24.0",
     "adm-zip": "^0.5.16",
     "aws-sdk": "^2.1692.0"
   },
   "devDependencies": {
     "@n8n/node-cli": "^0.17.0",
     "@types/adm-zip": "^0.5.7",
-    "@types/node": "^25.0.3",
+    "@types/node": "^18.0.0",
     "auto-changelog": "^2.5.0",
-    "eslint": "^9.39.2",
+    "eslint": "^8.0.0",
     "n8n-workflow": "^2.3.0",
+    "ts-node": "^10.9.1",
     "prettier": "^3.7.4",
     "release-it": "^19.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
     "n8n-workflow": "*"

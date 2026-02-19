@@ -1,3 +1,13 @@
+/**
+ * CommerceToolsOAuth2Api.credentials.ts
+ *
+ * Credentials definition for the commercetools node.
+ * Uses OAuth2 client credentials flow with project key + region.
+ *
+ * The authUrl and accessTokenUrl are dynamically built from the selected region,
+ * so switching region in the UI automatically updates the token endpoint.
+ */
+
 import type { ICredentialType, INodeProperties, Icon } from 'n8n-workflow';
 
 export class CommerceToolsOAuth2Api implements ICredentialType {
@@ -13,13 +23,14 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 	documentationUrl = 'https://docs.commercetools.com/api/authorization';
 
 	properties: INodeProperties[] = [
+		// ── commercetools core credentials ────────────────────────────────────
 		{
 			displayName: 'Project Key',
 			name: 'projectKey',
 			type: 'string',
 			default: '',
 			placeholder: 'your-project-key',
-			description: 'The project key from commercetools',
+			description: 'The project key from commercetools Merchant Center',
 			required: true,
 		},
 		{
@@ -42,26 +53,26 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			],
 			default: 'australia-southeast1.gcp',
 			description:
-				'Region-specific auth host; determines the OAuth token endpoint used for client credentials grants',
+				'The commercetools region. Determines both the OAuth token endpoint and the API base URL.',
 		},
+
+		// ── AWS credentials (optional — for SQS/SNS subscription destinations) ─
 		{
 			displayName: 'AWS Client Access Key',
 			name: 'awsAccessKeyId',
 			type: 'string',
 			default: '',
 			placeholder: 'your-aws-client-id',
-			description: 'AWS Client ID for authentication',
+			description: 'AWS Access Key ID — only needed when using AWS SQS/SNS as subscription destination',
 		},
 		{
 			displayName: 'AWS Client Secret',
 			name: 'awsSecretAccessKey',
 			type: 'string',
-			typeOptions: {
-				password: true,
-			},
+			typeOptions: { password: true },
 			default: '',
 			placeholder: 'your-aws-client-secret',
-			description: 'AWS Client Secret for authentication',
+			description: 'AWS Secret Access Key — only needed when using AWS SQS/SNS as subscription destination',
 		},
 		{
 			displayName: 'AWS Region',
@@ -69,8 +80,10 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			type: 'string',
 			default: 'us-east-1',
 			placeholder: 'us-east-1',
-			description: 'AWS Region for authentication',
+			description: 'AWS Region — only needed when using AWS SQS/SNS as subscription destination',
 		},
+
+		// ── OAuth2 hidden fields — auto-computed from region selection ────────
 		{
 			displayName: 'Grant Type',
 			name: 'grantType',
@@ -81,6 +94,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			displayName: 'Authorization URL',
 			name: 'authUrl',
 			type: 'hidden',
+			// Dynamically uses the selected region value
 			default: '={{ `https://auth.${$self["region"]}.commercetools.com` }}',
 		},
 		{
