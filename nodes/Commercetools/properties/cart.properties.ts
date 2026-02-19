@@ -53,7 +53,8 @@ export const cartOperations: INodeProperties[] = [
 				name: 'Check if Cart Exists in Store By Query',
 				value: 'headInStoreByQuery',
 				action: 'Check if any cart matches the query in store',
-				description: 'Send a HEAD request with query predicates to check for matches in a specific store',
+				description:
+					'Send a HEAD request with query predicates to check for matches in a specific store',
 			},
 			{
 				name: 'Create Cart',
@@ -194,7 +195,7 @@ export const cartOperations: INodeProperties[] = [
 				resource: ['cart'],
 			},
 		},
-	}
+	},
 ];
 
 export const cartIdentificationFields: INodeProperties[] = [
@@ -312,7 +313,8 @@ export const cartDraftFields: INodeProperties[] = [
 				operation: ['create', 'createInStore'],
 			},
 		},
-		description: 'JSON representation of the cart draft to create, e.g. <code>{"currency":"USD","customerID":"customer-ID","lineItems":[{"productID":"product-ID","variant":{"ID":1},"quantity":1}]}</code>',
+		description:
+			'JSON representation of the cart draft to create, e.g. <code>{"currency":"USD","customerID":"customer-ID","lineItems":[{"productID":"product-ID","variant":{"ID":1},"quantity":1}]}</code>',
 	},
 	{
 		displayName: 'Replica Cart Draft (JSON)',
@@ -425,14 +427,16 @@ export const cartAdditionalFields: INodeProperties[] = [
 				name: 'sort',
 				type: 'string',
 				default: '',
-				description: 'Sort the results. Supported fields depend on the endpoint. Pass multiple sort parameters by separating with comma',
+				description:
+					'Sort the results. Supported fields depend on the endpoint. Pass multiple sort parameters by separating with comma',
 			},
 			{
 				displayName: 'Where',
 				name: 'where',
 				type: 'string',
 				default: '',
-				description: 'Query predicates. See <a href="https://docs.commercetools.com/api/predicates/query" target="_blank">documentation</a>.',
+				description:
+					'Query predicates. See <a href="https://docs.commercetools.com/api/predicates/query" target="_blank">documentation</a>.',
 			},
 			{
 				displayName: 'With Total',
@@ -557,7 +561,7 @@ export const cartAdditionalFields: INodeProperties[] = [
 				],
 			},
 		],
-	}
+	},
 ];
 
 export const cartUpdateFields: INodeProperties[] = [
@@ -593,7 +597,10 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Add Custom Line Item',
 								value: 'addCustomLineItem',
 							},
-							
+							{
+								name: 'Add Custom ShippingMethod',
+								value: 'addCustomShippingMethod',
+							},
 							{
 								name: 'Add DiscountCode',
 								value: 'addDiscountCode',
@@ -602,22 +609,62 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Add ItemShippingAddress',
 								value: 'addItemShippingAddress',
 							},
-						
+							{
+								name: 'Add Line Item',
+								value: 'addLineItem',
+							},
 							{
 								name: 'Add Payment',
 								value: 'addPayment',
 							},
-							
+							{
+								name: 'Add Shopping List',
+								value: 'addShoppingList',
+							},
+							{
+								name: 'Change LineItem Quantity',
+								value: 'changeLineItemQuantity',
+							},
+							{
+								name: 'Change Price RoundingMode',
+								value: 'changePriceRoundingMode',
+							},
+							{
+								name: 'Change TaxCalculationMode',
+								value: 'changeTaxCalculationMode',
+							},
+							{
+								name: 'Change TaxMode',
+								value: 'changeTaxMode',
+							},
+							{
+								name: 'Change Tax RoundingMode',
+								value: 'changeTaxRoundingMode',
+							},
+							{
+								name: 'Freeze Cart',
+								value: 'freezeCart',
+							},
 							{
 								name: 'Lock Cart',
 								value: 'lockCart',
 							},
-							
+							{
+								name: 'Recalculate',
+								value: 'recalculate',
+							},
+							{
+								name: 'Remove Custom Line',
+								value: 'removeCustomLineItem',
+							},
 							{
 								name: 'Remove DiscountCode',
 								value: 'removeDiscountCode',
 							},
-							
+							{
+								name: 'Remove ItemShippingAddress',
+								value: 'removeItemShippingAddress',
+							},
 							{
 								name: 'Set Anonymous ID',
 								value: 'setAnonymousId',
@@ -626,12 +673,18 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set Billing Address',
 								value: 'setBillingAddress',
 							},
-							
+							{
+								name: 'Set Cart Total Tax',
+								value: 'setCartTotalTax',
+							},
 							{
 								name: 'Set Country',
 								value: 'setCountry',
 							},
-							
+							{
+								name: 'Set Custom ShippingMethod',
+								value: 'setCustomShippingMethod',
+							},
 							{
 								name: 'Set Customer Email',
 								value: 'setCustomerEmail',
@@ -644,7 +697,6 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set Customer ID',
 								value: 'setCustomerId',
 							},
-							
 							{
 								name: 'Set DeleteDaysAfterLastModification',
 								value: 'setDeleteDaysAfterLastModification',
@@ -653,12 +705,42 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Set DirectDiscounts',
 								value: 'setDirectDiscounts',
 							},
-							
 							{
 								name: 'Set Key',
 								value: 'setKey',
 							},
-							
+							{
+								name: 'Set LineItem Custom Type',
+								value: 'setLineItemCustomType',
+							},
+							{
+								name: 'Set LineItem DistributionChannel',
+								value: 'setLineItemDistributionChannel',
+							},
+							{
+								name: 'Set LineItem Price',
+								value: 'setLineItemPrice',
+							},
+							{
+								name: 'Set LineItem ShippingDetails',
+								value: 'setLineItemShippingDetails',
+							},
+							{
+								name: 'Set LineItem SupplyChannel',
+								value: 'setLineItemSupplyChannel',
+							},
+							{
+								name: 'Set LineItem TaxAmount',
+								value: 'setLineItemTaxAmount',
+							},
+							{
+								name: 'Set LineItem TaxRate',
+								value: 'setLineItemTaxRate',
+							},
+							{
+								name: 'Set LineItem TotalPrice',
+								value: 'setLineItemTotalPrice',
+							},
 							{
 								name: 'Set Locale',
 								value: 'setLocale',
@@ -666,24 +748,32 @@ export const cartUpdateFields: INodeProperties[] = [
 							{
 								name: 'Set Purchase Order Number',
 								value: 'setPurchaseOrderNumber',
-
 							},
 							{
 								name: 'Set Shipping Address',
 								value: 'setShippingAddress',
 							},
-							
 							{
 								name: 'Set ShippingMethod',
 								value: 'setShippingMethod',
 							},
-							
+							{
+								name: 'Set ShippingRateInput',
+								value: 'setShippingRateInput',
+							},
+							{
+								name: 'Unfreeze Cart',
+								value: 'unfreezeCart',
+							},
 							{
 								name: 'Unlock Cart',
 								value: 'unlockCart',
 							},
-							
-						]
+							{
+								name: 'Update ItemShippingAddress',
+								value: 'updateItemShippingAddress',
+							},
+						],
 					},
 					{
 						displayName: 'Additional Address Info',
@@ -693,7 +783,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Additional address information',
@@ -706,7 +801,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Additional street information',
@@ -811,7 +911,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Apartment, suite, unit, etc',
@@ -824,7 +929,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Building name or number',
@@ -866,7 +976,7 @@ export const cartUpdateFields: INodeProperties[] = [
 										default: 'business-unit',
 										description: 'Type of the reference',
 									},
-								]
+								],
 							},
 						],
 						description: 'New Business Unit to assign to the Cart',
@@ -879,7 +989,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'City name',
@@ -907,7 +1022,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Company name',
@@ -920,7 +1040,13 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress', 'setCountry'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+									'setCountry',
+								],
 							},
 						},
 						description: 'Country code (e.g., DE, US, GB)',
@@ -971,7 +1097,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setCustomField'],
 							},
 						},
-						description: 'If value is absent or null, this field will be removed if it exists. Removing a field that does not exist returns an InvalidOperation error. If value is provided, it is set for the field defined by name.',
+						description:
+							'If value is absent or null, this field will be removed if it exists. Removing a field that does not exist returns an InvalidOperation error. If value is provided, it is set for the field defined by name.',
 					},
 					{
 						displayName: 'Custom Field Value',
@@ -990,7 +1117,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						},
-						description: 'Value to set for the Custom Field. If null or absent, this field will be removed if it exists.',
+						description:
+							'Value to set for the Custom Field. If null or absent, this field will be removed if it exists.',
 					},
 					{
 						displayName: 'Custom Fields',
@@ -1073,14 +1201,16 @@ export const cartUpdateFields: INodeProperties[] = [
 								removeCustomLineItemSelection: ['id'],
 							},
 						},
-						description: 'ID of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
+						description:
+							'ID of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
 					},
 					{
 						displayName: 'Custom Line Item ID',
 						name: 'customLineItemId',
 						type: 'string',
 						default: '',
-						description: 'ID of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
+						description:
+							'ID of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
 						displayOptions: {
 							show: {
 								action: [
@@ -1111,14 +1241,16 @@ export const cartUpdateFields: INodeProperties[] = [
 								removeCustomLineItemSelection: ['key'],
 							},
 						},
-						description: 'Key of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
+						description:
+							'Key of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
 					},
 					{
 						displayName: 'Custom Line Item Key',
 						name: 'customLineItemKey',
 						type: 'string',
 						default: '',
-						description: 'Key of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
+						description:
+							'Key of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
 						displayOptions: {
 							show: {
 								action: [
@@ -1183,7 +1315,6 @@ export const cartUpdateFields: INodeProperties[] = [
 						description: 'Choose whether to identify the Custom Line Item by ID or Key',
 					},
 
-
 					{
 						displayName: 'Custom Line Item Selection',
 						name: 'customLineItemSelection',
@@ -1239,10 +1370,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: [
-									'setLineItemCustomType',
-									'setCustomLineItemCustomType',
-								],
+								action: ['setLineItemCustomType', 'setCustomLineItemCustomType'],
 								lineItemCustomTypeSelection: ['id'],
 							},
 						},
@@ -1256,16 +1384,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: 'type-key',
 						displayOptions: {
 							show: {
-								action: [
-									'setLineItemCustomType',
-									'setCustomLineItemCustomType',
-								],
+								action: ['setLineItemCustomType', 'setCustomLineItemCustomType'],
 								lineItemCustomTypeSelection: ['key'],
 							},
 						},
 						description: 'Key of the Type. Either Custom Type ID or Custom Type Key is required.',
 					},
-
 
 					{
 						displayName: 'Custom Type Reference',
@@ -1307,7 +1431,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						],
-						description: 'Defines the Type that extends the Cart with Custom Fields. If absent, any existing Type and Custom Fields are removed from the Cart.',
+						description:
+							'Defines the Type that extends the Cart with Custom Fields. If absent, any existing Type and Custom Fields are removed from the Cart.',
 					},
 					{
 						displayName: 'Customer Group',
@@ -1346,7 +1471,7 @@ export const cartUpdateFields: INodeProperties[] = [
 										default: 'customer-group',
 										description: 'Type of the reference',
 									},
-								]
+								],
 							},
 						],
 						description: 'Customer Group to set. If empty, any existing value is removed.',
@@ -1362,7 +1487,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setCustomerId'],
 							},
 						},
-						description: 'ID of an existing Customer. If the Customer is assigned to a CustomerGroup, this update action also sets the value for the customerGroup field. If empty, the update action removes the value for both customerId and customerGroup.',
+						description:
+							'ID of an existing Customer. If the Customer is assigned to a CustomerGroup, this update action also sets the value for the customerGroup field. If empty, the update action removes the value for both customerId and customerGroup.',
 					},
 					{
 						displayName: 'Deliveries',
@@ -1375,7 +1501,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['addCustomShippingMethod'],
 							},
 						},
-						description: 'Array of DeliveryDraft - Deliveries to be shipped with the custom Shipping Method as JSON string',
+						description:
+							'Array of DeliveryDraft - Deliveries to be shipped with the custom Shipping Method as JSON string',
 					},
 					{
 						displayName: 'Department',
@@ -1385,10 +1512,14 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
-
 					},
 					{
 						displayName: 'Discount Code',
@@ -1443,7 +1574,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setDirectDiscounts'],
 							},
 						},
-						description: 'Array of DirectDiscountDraft. If set, all existing Direct Discounts are replaced. The discounts apply in the order they are added to the list. If empty, all existing Direct Discounts are removed and all affected prices on the Cart or Order are recalculated.',
+						description:
+							'Array of DirectDiscountDraft. If set, all existing Direct Discounts are replaced. The discounts apply in the order they are added to the list. If empty, all existing Direct Discounts are removed and all affected prices on the Cart or Order are recalculated.',
 					},
 					{
 						displayName: 'Distribution Channel',
@@ -1498,7 +1630,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setLineItemDistributionChannel'],
 							},
 						},
-						description: 'ID of the Channel. If present, a Reference to the Channel is set for the LineItem specified by lineItemId.',
+						description:
+							'ID of the Channel. If present, a Reference to the Channel is set for the LineItem specified by lineItemId.',
 					},
 					{
 						displayName: 'Email',
@@ -1521,7 +1654,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Email address for this address',
@@ -1535,7 +1673,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'External ID for the address',
@@ -1575,7 +1718,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						],
-						description: 'Value to set. If externalPrice is not given and the priceMode is ExternalPrice, the external price is unset and the priceMode is set to Platform.',
+						description:
+							'Value to set. If externalPrice is not given and the priceMode is ExternalPrice, the external price is unset and the priceMode is set to Platform.',
 					},
 					{
 						displayName: 'External Tax Amount',
@@ -1681,7 +1825,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setCartTotalTax'],
 							},
 						},
-						description: 'Array of TaxPortionDraft. Set if the externalTotalGross price is a sum of portions with different tax rates.',
+						description:
+							'Array of TaxPortionDraft. Set if the externalTotalGross price is a sum of portions with different tax rates.',
 					},
 					{
 						displayName: 'External Tax Rate',
@@ -1693,11 +1838,7 @@ export const cartUpdateFields: INodeProperties[] = [
 						},
 						displayOptions: {
 							show: {
-								action: [
-									'setLineItemTaxRate',
-									'setShippingMethodTaxRate',
-									'addlineItem',
-								],
+								action: ['setLineItemTaxRate', 'setShippingMethodTaxRate', 'addlineItem'],
 							},
 						},
 						options: [
@@ -1877,7 +2018,7 @@ export const cartUpdateFields: INodeProperties[] = [
 										placeholder: '',
 										description: 'Money amount in cents',
 									},
-								]
+								],
 							},
 						],
 						description: 'The total gross amount of the Cart, including tax',
@@ -1956,7 +2097,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						],
-						description: 'Value to set. If externalTotalPrice is not given and the priceMode is ExternalTotal, the external price is unset and the priceMode is set to Platform.',
+						description:
+							'Value to set. If externalTotalPrice is not given and the priceMode is ExternalTotal, the external price is unset and the priceMode is set to Platform.',
 					},
 					{
 						displayName: 'Fax',
@@ -1966,7 +2108,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Fax number',
@@ -1979,10 +2126,14 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
-
 					},
 					{
 						displayName: 'Freeze Strategy',
@@ -2030,7 +2181,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setLineItemInventoryMode'],
 							},
 						},
-						description: 'Inventory mode specific to the Line Item only. Set only if the inventory mode should be different from the inventoryMode specified on the Cart.',
+						description:
+							'Inventory mode specific to the Line Item only. Set only if the inventory mode should be different from the inventoryMode specified on the Cart.',
 					},
 					{
 						displayName: 'Key',
@@ -2040,7 +2192,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Key for the address',
@@ -2066,10 +2223,14 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
-
 					},
 					{
 						displayName: 'Line Item Custom Type Selection',
@@ -2098,10 +2259,26 @@ export const cartUpdateFields: INodeProperties[] = [
 						name: 'lineItemId',
 						type: 'string',
 						default: '',
-						description: 'ID of the LineItem - Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+						description:
+							'ID of the LineItem - Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 						displayOptions: {
 							show: {
-								action: ['changeLineItemQuantity', 'setLineItemDistributionChannel', 'setLineItemTotalPrice', 'setLineItemPrice', 'setLineItemTaxAmount', 'setLineItemTaxRate', 'setLineItemShippingDetails', 'applyDeltaToLineItemShippingDetailsTargets', 'setLineItemSupplyChannel', 'setLineItemInventoryMode', 'setLineItemCustomField', 'setLineItemCustomType', 'setLineItemRecurrenceInfo', 'removeLineItem'],
+								action: [
+									'changeLineItemQuantity',
+									'setLineItemDistributionChannel',
+									'setLineItemTotalPrice',
+									'setLineItemPrice',
+									'setLineItemTaxAmount',
+									'setLineItemTaxRate',
+									'setLineItemShippingDetails',
+									'applyDeltaToLineItemShippingDetailsTargets',
+									'setLineItemSupplyChannel',
+									'setLineItemInventoryMode',
+									'setLineItemCustomField',
+									'setLineItemCustomType',
+									'setLineItemRecurrenceInfo',
+									'removeLineItem',
+								],
 								lineItemSelection: ['id'],
 							},
 						},
@@ -2114,7 +2291,22 @@ export const cartUpdateFields: INodeProperties[] = [
 						description: 'Key of the LineItem',
 						displayOptions: {
 							show: {
-								action: ['changeLineItemQuantity', 'setLineItemTaxAmount', 'setLineItemPrice', 'setLineItemDistributionChannel', 'setLineItemTotalPrice', 'setLineItemTaxRate', 'setLineItemSupplyChannel', 'setLineItemShippingDetails', 'applyDeltaToLineItemShippingDetailsTargets', 'setLineItemRecurrenceInfo', 'setLineItemCustomField', 'setLineItemCustomType', 'setLineItemInventoryMode', 'removeLineItem'],
+								action: [
+									'changeLineItemQuantity',
+									'setLineItemTaxAmount',
+									'setLineItemPrice',
+									'setLineItemDistributionChannel',
+									'setLineItemTotalPrice',
+									'setLineItemTaxRate',
+									'setLineItemSupplyChannel',
+									'setLineItemShippingDetails',
+									'applyDeltaToLineItemShippingDetailsTargets',
+									'setLineItemRecurrenceInfo',
+									'setLineItemCustomField',
+									'setLineItemCustomType',
+									'setLineItemInventoryMode',
+									'removeLineItem',
+								],
 								lineItemSelection: ['key'],
 							},
 						},
@@ -2136,7 +2328,21 @@ export const cartUpdateFields: INodeProperties[] = [
 						],
 						displayOptions: {
 							show: {
-								action: ['changeLineItemQuantity', 'setLineItemDistributionChannel', 'setLineItemTotalPrice', 'setLineItemPrice', 'setLineItemTaxAmount', 'setLineItemTaxRate', 'setLineItemShippingDetails', 'applyDeltaToLineItemShippingDetailsTargets', 'setLineItemSupplyChannel', 'setLineItemInventoryMode', 'setLineItemCustomField', 'setLineItemCustomType', 'setLineItemRecurrenceInfo'],
+								action: [
+									'changeLineItemQuantity',
+									'setLineItemDistributionChannel',
+									'setLineItemTotalPrice',
+									'setLineItemPrice',
+									'setLineItemTaxAmount',
+									'setLineItemTaxRate',
+									'setLineItemShippingDetails',
+									'applyDeltaToLineItemShippingDetailsTargets',
+									'setLineItemSupplyChannel',
+									'setLineItemInventoryMode',
+									'setLineItemCustomField',
+									'setLineItemCustomType',
+									'setLineItemRecurrenceInfo',
+								],
 							},
 						},
 					},
@@ -2152,7 +2358,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setLocale'],
 							},
 						},
-						description: 'Value to set. Must be one of the Project\'s languages. If empty, any existing value will be removed.',
+						description:
+							"Value to set. Must be one of the Project's languages. If empty, any existing value will be removed.",
 					},
 
 					{
@@ -2163,7 +2370,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Mobile phone number',
@@ -2200,7 +2412,7 @@ export const cartUpdateFields: INodeProperties[] = [
 										placeholder: '',
 										description: 'Money amount in cents',
 									},
-								]
+								],
 							},
 						],
 						description: 'Money value of the Custom Line Item. The value can be negative.',
@@ -2227,7 +2439,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Post office box',
@@ -2269,10 +2486,11 @@ export const cartUpdateFields: INodeProperties[] = [
 										default: 'payment',
 										description: 'Type of the reference',
 									},
-								]
+								],
 							},
 						],
-						description: 'Payment to add to the Cart. Must not be assigned to another Order or active Cart already.',
+						description:
+							'Payment to add to the Cart. Must not be assigned to another Order or active Cart already.',
 					},
 					{
 						displayName: 'Payment',
@@ -2311,7 +2529,7 @@ export const cartUpdateFields: INodeProperties[] = [
 										default: 'payment',
 										description: 'Type of the reference',
 									},
-								]
+								],
 							},
 						],
 						description: 'Payment to remove from the Cart',
@@ -2324,7 +2542,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Phone number',
@@ -2337,10 +2560,14 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
-
 					},
 
 					{
@@ -2405,7 +2632,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['addCustomLineItem', 'changeCustomLineItemQuantity', 'addLineItem'],
 							},
 						},
-						description: 'Number of Custom Line Items to add or set. If 0, the Custom Line Item is removed from the Cart.',
+						description:
+							'Number of Custom Line Items to add or set. If 0, the Custom Line Item is removed from the Cart.',
 					},
 					{
 						displayName: 'Quantity',
@@ -2474,10 +2702,14 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
-
 					},
 					{
 						displayName: 'Salutation',
@@ -2487,10 +2719,14 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
-
 					},
 					{
 						displayName: 'Set Delete Days After Last Modification',
@@ -2506,7 +2742,8 @@ export const cartUpdateFields: INodeProperties[] = [
 							minValue: 1,
 							maxValue: 365250,
 						},
-						description: 'Value to set. If not provided, the default value for this field configured in Project settings is assigned.',
+						description:
+							'Value to set. If not provided, the default value for this field configured in Project settings is assigned.',
 					},
 					{
 						displayName: 'Shipping Address',
@@ -2660,7 +2897,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						],
-						description: 'BaseAddress that determines shipping rate and Tax Rate of associated Line Items',
+						description:
+							'BaseAddress that determines shipping rate and Tax Rate of associated Line Items',
 					},
 					{
 						displayName: 'Shipping Custom Type ID',
@@ -2713,7 +2951,6 @@ export const cartUpdateFields: INodeProperties[] = [
 						description: 'Choose whether to identify the Type by ID or Key',
 					},
 
-
 					{
 						displayName: 'Shipping Details',
 						name: 'shippingDetails',
@@ -2724,7 +2961,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setLineItemShippingDetails'],
 							},
 						},
-						description: 'ItemShippingDetailsDraft as JSON. Value to set. If empty, the existing value is removed.',
+						description:
+							'ItemShippingDetailsDraft as JSON. Value to set. If empty, the existing value is removed.',
 					},
 					{
 						displayName: 'Shipping Key',
@@ -2737,7 +2975,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['addShippingMethod'],
 							},
 						},
-						description: 'User-defined identifier for the Shipping that must be unique across the Cart',
+						description:
+							'User-defined identifier for the Shipping that must be unique across the Cart',
 					},
 					{
 						displayName: 'Shipping Key',
@@ -2750,7 +2989,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['removeShippingMethod'],
 							},
 						},
-						description: 'User-defined unique identifier of the Shipping Method to remove from the Cart',
+						description:
+							'User-defined unique identifier of the Shipping Method to remove from the Cart',
 					},
 					{
 						displayName: 'Shipping Key',
@@ -2768,7 +3008,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						},
-						description: 'Key of the ShippingMethod used for this Line Item. This is required for Carts with Multiple ShippingMode.',
+						description:
+							'Key of the ShippingMethod used for this Line Item. This is required for Carts with Multiple ShippingMode.',
 					},
 					{
 						displayName: 'Shipping Key',
@@ -2781,7 +3022,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setLineItemTaxAmount', 'setShippingMethodTaxAmount'],
 							},
 						},
-						description: 'Key of the ShippingMethod used for this Line Item. This is required for Carts with Multiple ShippingMode.',
+						description:
+							'Key of the ShippingMethod used for this Line Item. This is required for Carts with Multiple ShippingMode.',
 					},
 					{
 						displayName: 'Shipping Key Custom',
@@ -2794,7 +3036,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['addCustomShippingMethod'],
 							},
 						},
-						description: 'User-defined identifier for the custom Shipping Method that must be unique across the Cart',
+						description:
+							'User-defined identifier for the custom Shipping Method that must be unique across the Cart',
 					},
 					{
 						displayName: 'Shipping Method',
@@ -2947,7 +3190,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setShippingRateInput'],
 							},
 						},
-						description: 'ShippingRateInputDraft as JSON string. Data type depends on shippingRateInputType.type configured in Project: CartClassification = ClassificationShippingRateInputDraft, CartScore = ScoreShippingRateInputDraft, CartValue = cannot be set.',
+						description:
+							'ShippingRateInputDraft as JSON string. Data type depends on shippingRateInputType.type configured in Project: CartClassification = ClassificationShippingRateInputDraft, CartScore = ScoreShippingRateInputDraft, CartValue = cannot be set.',
 					},
 					{
 						displayName: 'Shipping Rate Input',
@@ -3031,12 +3275,11 @@ export const cartUpdateFields: INodeProperties[] = [
 										default: 'shopping-list',
 										description: 'Type of the reference',
 									},
-								]
+								],
 							},
 						],
 						description: 'Shopping List that contains the Line Items to be added',
 					},
-
 
 					{
 						displayName: 'Slug',
@@ -3059,7 +3302,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'State or province',
@@ -3072,7 +3320,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 					},
@@ -3084,7 +3337,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 					},
@@ -3141,7 +3399,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['setLineItemSupplyChannel'],
 							},
 						},
-						description: 'ID of the Channel. If present, a Reference to the Channel is set for the LineItem specified by lineItemId. If not present, the current Channel is removed from the LineItem.',
+						description:
+							'ID of the Channel. If present, a Reference to the Channel is set for the LineItem specified by lineItemId. If not present, the current Channel is removed from the LineItem.',
 					},
 					{
 						displayName: 'Targets Delta',
@@ -3154,7 +3413,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						},
 						displayOptions: {
 							show: {
-								action: ['applyDeltaToLineItemShippingDetailsTargets', 'applyDeltaToCustomLineItemShippingDetailsTargets', 'addLineItem', 'setCustomLineItemShippingDetails'],
+								action: [
+									'applyDeltaToLineItemShippingDetailsTargets',
+									'applyDeltaToCustomLineItemShippingDetailsTargets',
+									'addLineItem',
+									'setCustomLineItemShippingDetails',
+								],
 							},
 						},
 						options: [
@@ -3178,7 +3442,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						],
-						description: 'ItemShippingTarget entries. Using positive or negative quantities increases or decreases the number of items shipped to an address.',
+						description:
+							'ItemShippingTarget entries. Using positive or negative quantities increases or decreases the number of items shipped to an address.',
 					},
 					{
 						displayName: 'Tax Calculation Mode',
@@ -3255,7 +3520,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								],
 							},
 						],
-						description: 'Tax Category used to determine shipping Tax Rate when Cart has Platform TaxMode',
+						description:
+							'Tax Category used to determine shipping Tax Rate when Cart has Platform TaxMode',
 					},
 					{
 						displayName: 'Tax Mode',
@@ -3321,7 +3587,12 @@ export const cartUpdateFields: INodeProperties[] = [
 						placeholder: '',
 						displayOptions: {
 							show: {
-								action: ['setBillingAddress', 'setShippingAddress', 'updateItemShippingAddress', 'addItemShippingAddress'],
+								action: [
+									'setBillingAddress',
+									'setShippingAddress',
+									'updateItemShippingAddress',
+									'addItemShippingAddress',
+								],
 							},
 						},
 						description: 'Address title',
@@ -3336,7 +3607,8 @@ export const cartUpdateFields: INodeProperties[] = [
 								action: ['recalculate'],
 							},
 						},
-						description: 'Whether to update the Product data (such as name, variant, productType, and Product Attributes) of the Line Items. If false, only the Prices and TaxRates of the Line Items will be updated.',
+						description:
+							'Whether to update the Product data (such as name, variant, productType, and Product Attributes) of the Line Items. If false, only the Prices and TaxRates of the Line Items will be updated.',
 					},
 					{
 						displayName: 'Variant ID',
@@ -4184,7 +4456,8 @@ export const cartUpdateActions: INodeProperties[] = [
 				removeCustomLineItemSelection: ['id'],
 			},
 		},
-		description: 'ID of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
+		description:
+			'ID of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
 	},
 	{
 		displayName: 'Custom Line Item Key',
@@ -4200,7 +4473,8 @@ export const cartUpdateActions: INodeProperties[] = [
 				removeCustomLineItemSelection: ['key'],
 			},
 		},
-		description: 'Key of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
+		description:
+			'Key of the CustomLineItem to update. Either customLineItemId or customLineItemKey is required.',
 	},
 	{
 		displayName: 'Custom Line Item Selection',
@@ -4281,7 +4555,8 @@ export const cartUpdateActions: INodeProperties[] = [
 				updateAction: ['setCartTotalTax'],
 			},
 		},
-		description: 'Array of TaxPortionDraft. Set if the externalTotalGross price is a sum of portions with different tax rates.',
+		description:
+			'Array of TaxPortionDraft. Set if the externalTotalGross price is a sum of portions with different tax rates.',
 	},
 	// Set Anonymous ID action fields
 	{
@@ -4345,7 +4620,8 @@ export const cartUpdateActions: INodeProperties[] = [
 				],
 			},
 		],
-		description: 'New Business Unit to assign to the Cart, which must have access to the Store that is set on the Cart',
+		description:
+			'New Business Unit to assign to the Cart, which must have access to the Store that is set on the Cart',
 	},
 	// Set Customer Email action fields
 	{
@@ -4425,7 +4701,8 @@ export const cartUpdateActions: INodeProperties[] = [
 				updateAction: ['setCustomerId'],
 			},
 		},
-		description: 'ID of an existing Customer. If the Customer is assigned to a CustomerGroup, this update action also sets the value for the customerGroup field. If empty, the update action removes the value for both customerId and customerGroup.',
+		description:
+			'ID of an existing Customer. If the Customer is assigned to a CustomerGroup, this update action also sets the value for the customerGroup field. If empty, the update action removes the value for both customerId and customerGroup.',
 	},
 	// Set Key action fields
 	{
@@ -4463,5 +4740,4 @@ export const cartUpdateActions: INodeProperties[] = [
 		},
 		description: 'Value to set. If empty, any existing value is removed.',
 	},
-
 ];
