@@ -630,6 +630,10 @@ export const cartUpdateFields: INodeProperties[] = [
 								value: 'changePriceRoundingMode',
 							},
 							{
+								name: 'Change Tax RoundingMode',
+								value: 'changeTaxRoundingMode',
+							},
+							{
 								name: 'Change TaxCalculationMode',
 								value: 'changeTaxCalculationMode',
 							},
@@ -637,10 +641,7 @@ export const cartUpdateFields: INodeProperties[] = [
 								name: 'Change TaxMode',
 								value: 'changeTaxMode',
 							},
-							{
-								name: 'Change Tax RoundingMode',
-								value: 'changeTaxRoundingMode',
-							},
+
 							{
 								name: 'Freeze Cart',
 								value: 'freezeCart',
