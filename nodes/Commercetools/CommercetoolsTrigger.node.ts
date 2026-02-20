@@ -24,7 +24,8 @@ export class CommercetoolsTrigger implements INodeType {
 		icon: 'file:Commercetools.svg',
 		group: ['trigger'],
 		version: 1,
-		description: 'Listen for commercetools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
+		description:
+			'Listen for commercetools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
 		defaults: {
 			name: 'commercetools Trigger',
 		},
@@ -53,9 +54,7 @@ export class CommercetoolsTrigger implements INodeType {
 			},
 		],
 		usableAsTool: true,
-		properties: [
-			...triggerProperties
-		],
+		properties: [...triggerProperties],
 	};
 
 	webhookMethods = triggerMethods;
@@ -78,7 +77,6 @@ export class CommercetoolsTrigger implements INodeType {
 			return {
 				workflowData: [this.helpers.returnJsonArray(processedBody)],
 			};
-
 		} catch {
 			// Return raw body as fallback
 			return {
