@@ -18,7 +18,7 @@
     "url": "https://github.com/jjtech-digital/n8n-nodes-commercetools.git"
   },
   "scripts": {
-    "generate": "ts-node scripts/generateFromCollection.ts",
+    "generate": "ts-node scripts/generate.ts",
     "build": "n8n-node build",
     "build:watch": "tsc --watch",
     "update": "npm run generate && npm run build",
