@@ -769,6 +769,51 @@ export const orderUpdateActions: INodeProperties[] = [
 						default: 'setOrderNumber',
 						options: [
 							{
+								name: 'Add Delivery',
+								value: 'addDelivery',
+							},
+							{
+								name: 'Add Item Shipping Address',
+								value: 'addItemShippingAddress',
+							},
+							{
+								name: 'Add Payment',
+								value: 'addPayment',
+							},
+							{
+                                name: 'Change Payment State',
+                                value: 'changePaymentState',
+                            },
+							{
+								name: 'Remove Delivery',
+								value: 'removeDelivery',
+							},
+							{
+                                name: 'Remove Item Shipping Address',
+                                value: 'removeItemShippingAddress',
+                            },
+							
+							{
+								name: 'Remove Payment',
+								value: 'removePayment',
+							},
+							{
+                               name: 'Set Billing Address',
+                               value: 'setBillingAddress',
+                            },
+							{
+								name: 'Set Business Unit',
+								value: 'setBusinessUnit',
+							},
+							{
+								name: 'Set Customer Email',
+								value: 'setCustomerEmail',
+							},
+							{
+								name: 'Set Customer ID',
+								value: 'setCustomerId',
+							},
+							{
 								name: 'Set Order Number',
 								value: 'setOrderNumber',
 							},
@@ -777,11 +822,78 @@ export const orderUpdateActions: INodeProperties[] = [
 								value: 'setPurchaseOrderNumber',
 							},
 							{
-								name: 'Set Business Unit',
-								value: 'setBusinessUnit',
+								name: 'Set Shipping Address',
+								value: 'setShippingAddress',
+							},
+							{
+								name: 'Update Item Shipping Address',
+								value: 'updateItemShippingAddress',
 							},
 						],
 					},
+					
+					{
+                      displayName: 'Additional Address Info',
+                      name: 'billingAddress_additionalAddressInfo',
+                      type: 'string',
+                      default: '',
+                      description: 'Additional address information',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+					
+                    {
+                      displayName: 'Additional Street Info',
+                      name: 'billingAddress_additionalStreetInfo',
+                      type: 'string',
+                      default: '',
+                      description: 'Additional street information (e.g. "Backhouse")',
+                      displayOptions: { 
+						  show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+					{
+						displayName: 'Address Key',
+						name: 'addressKey',
+                        type: 'string',
+                        required: true,
+                        default: '',
+                        description: 'The key of the address to remove from itemShippingAddresses',
+                        displayOptions: {
+                             show: {
+                                action: ['removeItemShippingAddress'],
+                            },
+                        },
+                    },
+                    {
+                      displayName: 'Apartment',
+                      name: 'billingAddress_apartment',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+					
+                    {
+                      displayName: 'Building',
+                      name: 'billingAddress_building',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							  action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+					
 					{
 						displayName: 'Business Unit ID',
 						name: 'businessUnitId',
@@ -809,6 +921,248 @@ export const orderUpdateActions: INodeProperties[] = [
 						},
 					},
 					{
+                        displayName: 'City',
+                        name: 'billingAddress_city',
+                        type: 'string',
+                        default: '',
+                        displayOptions: { 
+							show: { 
+								action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                        displayName: 'Company',
+                        name: 'billingAddress_company',
+                        type: 'string',
+                        default: '',
+                        displayOptions: { 
+							show: { 
+								action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                        displayName: 'Country',
+                        name: 'billingAddress_country',
+                        type: 'string',
+                        default: '',
+                        description: 'Two-letter ISO 3166-1 alpha-2 country code (e.g. "DE", "US")',
+                        displayOptions: { 
+							show: { 
+								action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+					{
+						displayName: 'Customer Email',
+						name: 'email',
+						type: 'string',
+						default: '',
+						placeholder: 'name@email.com',
+						description: 'Value to set. If empty, any existing value is removed.',
+						displayOptions: {
+							show: {
+								action: ['setCustomerEmail'],
+							},
+						},
+					},
+					{
+						displayName: 'Customer ID',
+						name: 'customerId',
+						type: 'string',
+						default: '',
+						description: 'ID of an existing Customer. If empty, any existing value is removed.',
+						displayOptions: {
+							show: {
+								action: ['setCustomerId'],
+							},
+						},
+					},
+					{
+						displayName: 'Delivery ID',
+						name: 'deliveryId',
+						type: 'string',
+						default: '',
+						description: 'ID of the Delivery to remove',
+						displayOptions: {
+							show: {
+								action: ['removeDelivery'],
+								deliveryIdentifyBy: ['id'],
+							},
+						},
+					},
+					{
+						displayName: 'Delivery Items',
+						name: 'deliveryItems',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						placeholder: 'Add Item',
+						displayOptions: {
+							show: {
+								action: ['addDelivery'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Item',
+								name: 'item',
+								values: [
+									{
+										displayName: 'Line Item ID',
+										name: 'lineItemId',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Quantity',
+										name: 'quantity',
+										type: 'number',
+										default: 1,
+									},
+								],
+							},
+						],
+						description: 'Line items to include in the Delivery',
+					},
+					{
+						displayName: 'Delivery Key',
+						name: 'deliveryKey',
+						type: 'string',
+						default: '',
+						description: 'Key of the Delivery to remove',
+						displayOptions: {
+							show: {
+								action: ['removeDelivery'],
+								deliveryIdentifyBy: ['key'],
+							},
+						},
+					},
+					{
+						displayName: 'Delivery Parcels',
+						name: 'deliveryParcels',
+						type: 'fixedCollection',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						placeholder: 'Add Parcel',
+						displayOptions: {
+							show: {
+								action: ['addDelivery'],
+							},
+						},
+						options: [
+							{
+								displayName: 'Parcel',
+								name: 'parcel',
+								values: [
+									{
+										displayName: 'Carrier',
+										name: 'carrier',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Height In Millimeter',
+										name: 'heightInMillimeter',
+										type: 'number',
+										default: 0,
+									},
+									{
+										displayName: 'Is Return',
+										name: 'isReturn',
+										type: 'boolean',
+										default: false,
+									},
+									{
+										displayName: 'Provider',
+										name: 'provider',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Provider Transaction',
+										name: 'providerTransaction',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Tracking ID',
+										name: 'trackingId',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Width In Millimeter',
+										name: 'widthInMillimeter',
+										type: 'number',
+										default: 0,
+									},
+								],
+							},
+						],
+						description: 'Parcels for the Delivery',
+					},
+					{
+                      displayName: 'Department',
+                      name: 'billingAddress_department',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+                    {
+                      displayName: 'Email',
+                      name: 'billingAddress_email',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+                    {
+                      displayName: 'External ID',
+                      name: 'billingAddress_externalId',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+                    {
+                      displayName: 'Fax',
+                      name: 'billingAddress_fax',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+                    {
+                      displayName: 'First Name',
+                      name: 'billingAddress_firstName',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+					{
 						displayName: 'Identify Business Unit By',
 						name: 'businessUnitIdentifyBy',
 						type: 'options',
@@ -831,6 +1185,84 @@ export const orderUpdateActions: INodeProperties[] = [
 						},
 					},
 					{
+						displayName: 'Identify Delivery By',
+						name: 'deliveryIdentifyBy',
+						type: 'options',
+						options: [
+							{
+								name: 'ID',
+								value: 'id',
+							},
+							{
+								name: 'Key',
+								value: 'key',
+							},
+						],
+						default: 'id',
+						description: 'Whether to identify the Delivery by ID or key',
+						displayOptions: {
+							show: {
+								action: ['removeDelivery'],
+							},
+						},
+					},
+					{
+						displayName: 'Identify Payment By',
+						name: 'paymentIdentifyBy',
+						type: 'options',
+						options: [
+							{
+								name: 'ID',
+								value: 'id',
+							},
+							{
+								name: 'Key',
+								value: 'key',
+							},
+						],
+						default: 'id',
+						description: 'Whether to identify the Payment by ID or key',
+						displayOptions: {
+							show: {
+								action: ['addPayment','removePayment'],
+							},
+						},
+					},
+					{
+                      displayName: 'Key',
+                      name: 'billingAddress_key',
+                      type: 'string',
+                      default: '',
+                      description: 'User-defined unique identifier for the address',
+                      displayOptions: { 
+						    show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						   } 
+					    },
+                    },
+                    {
+                      displayName: 'Last Name',
+                      name: 'billingAddress_lastName',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                      displayName: 'Mobile',
+                      name: 'billingAddress_mobile',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+					{
 						displayName: 'Order Number',
 						name: 'orderNumber',
 						type: 'string',
@@ -842,7 +1274,105 @@ export const orderUpdateActions: INodeProperties[] = [
 							},
 						},
 					},
-
+                    {
+						displayName: 'Payment ID',
+						name: 'paymentId',
+						type: 'string',
+						default: '',
+						description: 'ID of the Payment to add to the Order. Must not be assigned to another Order or active Cart.',
+						displayOptions: {
+							show: {
+								action: ['addPayment','removePayment'],
+								paymentIdentifyBy: ['id'],
+							},
+						},
+					},
+					{
+						displayName: 'Payment Key',
+						name: 'paymentKey',
+						type: 'string',
+						default: '',
+						description: 'Key of the Payment to add to the Order. Must not be assigned to another Order or active Cart.',
+						displayOptions: {
+							show: {
+								action: ['addPayment','removePayment'],
+								paymentIdentifyBy: ['key'],
+							},
+						},
+					},
+					{
+                      displayName: 'Payment State',
+                      name: 'paymentState',
+                      type: 'options',
+                      required: true,
+                      options: [
+                            {
+                              name: 'Balance Due',
+                              value: 'BalanceDue',
+                              description: 'Payment balance is due for the Order',
+                            },
+                            {
+                             name: 'Credit Owed',
+                             value: 'CreditOwed',
+                             description: 'Payment for the Order is made on a credit basis',
+                            },
+                            {
+                             name: 'Failed',
+                             value: 'Failed',
+                             description: 'Payment for the Order has failed',
+                            },
+                            {
+                             name: 'Paid',
+                             value: 'Paid',
+                             description: 'The Order is paid for',
+                            },
+                            {
+                             name: 'Pending',
+                             value: 'Pending',
+                             description: 'Payment for the Order is pending',
+                            },
+                        ],
+                        default: 'Pending',
+                        description: 'New payment status of the Order',
+                        displayOptions: {
+                            show: {
+                               action: ['changePaymentState'],
+                            },
+                        },
+                    },
+                    {
+                      displayName: 'Phone',
+                      name: 'billingAddress_phone',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						    show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+                    {
+                      displayName: 'PO Box',
+                      name: 'billingAddress_pOBox',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						    show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
+                    {
+                      displayName: 'Postal Code',
+                      name: 'billingAddress_postalCode',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						    show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+						    } 
+					    },
+                    },
 					{
 						displayName: 'Purchase Order Number',
 						name: 'purchaseOrderNumber',
@@ -854,7 +1384,75 @@ export const orderUpdateActions: INodeProperties[] = [
 								action: ['setPurchaseOrderNumber'],
 							},
 						},
-					},	
+					},
+					{
+                      displayName: 'Region',
+                      name: 'billingAddress_region',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                      displayName: 'Salutation',
+                      name: 'billingAddress_salutation',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                      displayName: 'State',
+                      name: 'billingAddress_state',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                      displayName: 'Street Name',
+                      name: 'billingAddress_streetName',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                      displayName: 'Street Number',
+                      name: 'billingAddress_streetNumber',
+                      type: 'string',
+                      default: '',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+                    {
+                      displayName: 'Title',
+                      name: 'billingAddress_title',
+                      type: 'string',
+                      default: '',
+                      description: 'Title of the contact (e.g. "Mr.", "Ms.")',
+                      displayOptions: { 
+						   show: { 
+							 action: ['setBillingAddress','setShippingAddress','addItemShippingAddress','updateItemShippingAddress','addDelivery'] 
+							} 
+						},
+                    },
+	
 				],
 			},
 		],

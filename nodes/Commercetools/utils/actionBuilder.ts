@@ -17,42 +17,21 @@ import {
   handleSetCustomType,
   handleAddAsset
 } from './product.utils';
-
-// Helper functions to reduce repetitive code
-const parseNumericValue = (value: unknown): number | undefined => {
-  if (typeof value === 'number') return value;
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : undefined;
-  }
-  return undefined;
-};
-
-const cleanupFields = (obj: IDataObject, fieldsToDelete: string[]) => {
-  const cleaned = { ...obj };
-  fieldsToDelete.forEach(field => delete (cleaned as Record<string, unknown>)[field]);
-  return cleaned;
-};
-
-const validateRequiredFields = (context: IExecuteFunctions, fields: Record<string, unknown>, message: string) => {
-  if (Object.entries(fields).some(([, value]) => value === undefined || value === '')) {
-    throw new NodeOperationError(context.getNode(), message);
-  }
-};
-
-const safeJsonParseArrayOnly = (value: string): unknown[] | null => {
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-};
-
-const createRelativeDiscount = (permyriad: number, predicate: string) => [{
-  value: { type: 'relative', permyriad },
-  target: { type: 'lineItems', predicate }
-}];
+import { handleSetOrderNumber, 
+  handleSetPurchaseOrderNumber, 
+  handleSetBusinessUnit,
+  handleSetCustomerId,
+  handleSetCustomerEmail,
+  handleAddPayment,
+  handleRemovePayment,
+  handleChangePaymentState,
+  handleSetBillingAddress,
+  handleSetShippingAddress,
+  handleAddItemShippingAddress,
+  handleUpdateItemShippingAddress,
+  handleRemoveItemShippingAddress,
+  handleRemoveDelivery,
+  handleAddDelivery } from './order.utils';
 
 export const buildActionsFromUi = (
   context: IExecuteFunctions,
@@ -74,6 +53,13 @@ export const buildActionsFromUi = (
     
     // Apply category transformations
     let finalAction = transformFlatCategoryId(localized);
+
+    // Apply order-specific transformations that need raw UI fields
+    finalAction = handleSetBillingAddress(finalAction);
+    finalAction = handleSetShippingAddress(finalAction);
+    finalAction = handleAddItemShippingAddress(finalAction);
+    finalAction = handleUpdateItemShippingAddress(finalAction);
+    finalAction = handleAddDelivery(finalAction);
     
     // Apply all product-specific transformations
     finalAction = handleAttributeActions(finalAction);
@@ -104,6 +90,15 @@ export const buildActionsFromUi = (
     finalAction = handleSetOrderNumber(finalAction);
     finalAction = handleSetPurchaseOrderNumber(finalAction);
     finalAction = handleSetBusinessUnit(finalAction);
+    finalAction = handleSetCustomerId(finalAction);
+    finalAction = handleSetCustomerEmail(finalAction);
+    finalAction = handleAddPayment(finalAction);
+    finalAction = handleRemovePayment(finalAction);
+    finalAction = handleChangePaymentState(finalAction);
+    finalAction = handleRemoveItemShippingAddress(finalAction);
+    finalAction = handleRemoveDelivery(finalAction);
+    console.log('Final action after order transformations:', finalAction);
+
 
     // Clean up identifyBy field if present
     if (finalAction?.identifyBy) {
@@ -120,25 +115,20 @@ const handleSetDirectDiscounts = (
   context: IExecuteFunctions,
   action: IDataObject,
 ): IDataObject => {
-  if (action?.action !== 'setDirectDiscounts') return action;
-
-  const targetPredicate = (typeof action.discountPredicate === 'string' ? action.discountPredicate.trim() : '') || '';
-  const resolvedPermyriad = parseNumericValue(action.discountPermyriad);
-  const baseAction = cleanupFields(action, ['discountPredicate', 'discountPermyriad']);
-
-  const { discounts: rawDiscounts } = action;
-
-  // Handle empty or null discounts
-  if (!rawDiscounts || rawDiscounts === '') {
-    return { ...baseAction, discounts: [] };
+  if (action?.action !== 'setDirectDiscounts') {
+    return action;
   }
 
-  // Handle array discounts
+  const rawDiscounts = action.discounts;
+
+  if (rawDiscounts === undefined || rawDiscounts === null || rawDiscounts === '') {
+    return { ...action, discounts: [] };
+  }
+
   if (Array.isArray(rawDiscounts)) {
-    return { ...baseAction, discounts: rawDiscounts };
+    return { ...action, discounts: rawDiscounts };
   }
 
-  // Handle string discounts
   if (typeof rawDiscounts === 'string') {
     const trimmed = rawDiscounts.trim();
     if (!trimmed) {
@@ -163,7 +153,6 @@ const handleSetDirectDiscounts = (
       }
       throw new Error('Discounts must be a JSON array');
     } catch {
-      // Fallback to default relative discount for any non-JSON string input.
       return {
         ...action,
         discounts: [
@@ -187,68 +176,79 @@ const handleSetDirectDiscounts = (
 
   throw new NodeOperationError(
     context.getNode(),
-    'Discounts must be a JSON array of DirectDiscountDraft objects'
+    'Discounts must be a JSON array of DirectDiscountDraft objects',
   );
-};
-
-const safeParseJson = (value: unknown, label = 'field'): unknown => {
-  if (!value || value === '') return undefined;
-  
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (!trimmed) return undefined;
-    
-    try {
-      return JSON.parse(trimmed);
-    } catch {
-      throw new Error(`${label} must be valid JSON when provided as a string`);
-    }
-  }
-  
-  return typeof value === 'object' ? value : undefined;
 };
 
 const handleAddShippingMethod = (
   context: IExecuteFunctions,
   action: IDataObject,
 ): IDataObject => {
-  if (action?.action !== 'addShippingMethod') return action;
+  if (action?.action !== 'addShippingMethod') {
+    return action;
+  }
 
-  const shippingMethodId = (typeof action.shippingMethodId === 'string' ? action.shippingMethodId.trim() : '') || '';
-  const shippingMethodKey = (typeof action.shippingMethodKey === 'string' ? action.shippingMethodKey.trim() : '') || '';
+  const shippingMethodId = typeof action.shippingMethodId === 'string'
+    ? action.shippingMethodId.trim()
+    : '';
+  const shippingMethodKey = typeof action.shippingMethodKey === 'string'
+    ? action.shippingMethodKey.trim()
+    : '';
 
-  try {
-    const optionalFields = {
-      shippingAddress: safeParseJson(action.shippingAddress, 'Shipping Address'),
-      shippingRateInput: safeParseJson(action.shippingRateInput, 'Shipping Rate Input'),
-      externalTaxRate: safeParseJson(action.externalTaxRate, 'External Tax Rate'),
-      deliveries: safeParseJson(action.deliveries, 'Deliveries'),
-      custom: safeParseJson(action.custom, 'Custom Fields')
-    };
-
-    const finalAction = {
-      ...action,
-      ...Object.fromEntries(
-        Object.entries(optionalFields).filter(([, value]) => value !== undefined)
-      )
-    } as IDataObject;
-
-    // Set shipping method reference
-    if (!finalAction.shippingMethod) {
-      if (!shippingMethodId && !shippingMethodKey) {
+  const parseOptionalJson = (value: unknown, label: string): unknown => {
+    if (value === undefined || value === null || value === '') {
+      return undefined;
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return undefined;
+      }
+      try {
+        return JSON.parse(trimmed);
+      } catch {
         throw new NodeOperationError(
           context.getNode(),
-          'Add Shipping Method requires a Shipping Method ID or Key'
+          `${label} must be valid JSON when provided as a string`,
         );
       }
-      finalAction.shippingMethod = {
-        typeId: 'shipping-method',
-        ...(shippingMethodId ? { id: shippingMethodId } : { key: shippingMethodKey })
-      };
     }
+    if (typeof value === 'object') {
+      return value;
+    }
+    throw new NodeOperationError(context.getNode(), `${label} must be a JSON object or array`);
+  };
 
-    return cleanupFields(finalAction, ['shippingMethodId', 'shippingMethodKey', 'shippingMethodSelection']);
-  } catch (error) {
-    throw new NodeOperationError(context.getNode(), (error as Error).message);
+  const shippingAddress = parseOptionalJson(action.shippingAddress, 'Shipping Address');
+  const shippingRateInput = parseOptionalJson(action.shippingRateInput, 'Shipping Rate Input');
+  const externalTaxRate = parseOptionalJson(action.externalTaxRate, 'External Tax Rate');
+  const deliveries = parseOptionalJson(action.deliveries, 'Deliveries');
+  const custom = parseOptionalJson(action.custom, 'Custom Fields');
+
+  const finalAction: IDataObject = {
+    ...action,
+    ...(shippingAddress !== undefined ? { shippingAddress } : {}),
+    ...(shippingRateInput !== undefined ? { shippingRateInput } : {}),
+    ...(externalTaxRate !== undefined ? { externalTaxRate } : {}),
+    ...(deliveries !== undefined ? { deliveries } : {}),
+    ...(custom !== undefined ? { custom } : {}),
+  };
+
+  if (!finalAction.shippingMethod) {
+    if (shippingMethodId) {
+      finalAction.shippingMethod = { id: shippingMethodId, typeId: 'shipping-method' };
+    } else if (shippingMethodKey) {
+      finalAction.shippingMethod = { key: shippingMethodKey, typeId: 'shipping-method' };
+    } else {
+      throw new NodeOperationError(
+        context.getNode(),
+        'Add Shipping Method requires a Shipping Method ID or Key',
+      );
+    }
   }
+
+  delete (finalAction as IDataObject & { shippingMethodId?: unknown }).shippingMethodId;
+  delete (finalAction as IDataObject & { shippingMethodKey?: unknown }).shippingMethodKey;
+
+  return finalAction;
 };

@@ -260,6 +260,7 @@ export async function executeOrderOperation(
 		const actions = [...uiActions, ...jsonActions];
 
 		const body: IDataObject = { version, actions };
+		const safeBody: IDataObject = JSON.parse(JSON.stringify(body));
 
 		let url: string;
 		if (operation === 'update') {
@@ -270,10 +271,12 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
+		// Debug: log the final body sent to the API
+		console.log('Order update body:', JSON.stringify(safeBody));
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',
 			url,
-			body,
+			body: safeBody,
 		})) as IDataObject;
 
 		results.push({ json: response });
@@ -295,6 +298,7 @@ export async function executeOrderOperation(
 		const actions = [...uiActions, ...jsonActions];
 
 		const body: IDataObject = { version, actions };
+		const safeBody: IDataObject = JSON.parse(JSON.stringify(body));
 
 		let url: string;
 		if (operation === 'updateInStore') {
@@ -305,10 +309,12 @@ export async function executeOrderOperation(
 			url = `${baseUrl}/in-store/key=${encodeURIComponent(storeKey)}/orders/order-number=${encodeURIComponent(orderNumber)}`;
 		}
 
+		// Debug: log the final body sent to the API
+		console.log('Order update body:', JSON.stringify(safeBody));
 		const response = (await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 			method: 'POST',
 			url,
-			body,
+			body: safeBody,
 		})) as IDataObject;
 
 		results.push({ json: response });
