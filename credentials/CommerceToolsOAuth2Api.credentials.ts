@@ -63,7 +63,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			type: 'string',
 			default: '',
 			placeholder: 'your-aws-client-id',
-			description: 'AWS Access Key ID — only needed when using AWS SQS/SNS as subscription destination',
+			description:
+				'AWS Access Key ID — only needed when using AWS SQS/SNS as subscription destination',
 		},
 		{
 			displayName: 'AWS Client Secret',
@@ -72,7 +73,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			typeOptions: { password: true },
 			default: '',
 			placeholder: 'your-aws-client-secret',
-			description: 'AWS Secret Access Key — only needed when using AWS SQS/SNS as subscription destination',
+			description:
+				'AWS Secret Access Key — only needed when using AWS SQS/SNS as subscription destination',
 		},
 		{
 			displayName: 'AWS Region',

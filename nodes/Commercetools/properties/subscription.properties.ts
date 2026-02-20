@@ -24,26 +24,26 @@
 
 import { INodeProperties } from 'n8n-workflow';
 import {
-    MessageSubscriptionResourceTypeIdValues,
-    ChangeSubscriptionResourceTypeIdValues,
-    EventSubscriptionResourceTypeIdValues,
+	MessageSubscriptionResourceTypeIdValues,
+	ChangeSubscriptionResourceTypeIdValues,
+	EventSubscriptionResourceTypeIdValues,
 } from '@commercetools/platform-sdk';
 
 // ─── SDK-derived resource type sets (live, not hardcoded) ────────────────────
 
 /** Resources supporting CT messages[] — MessageSubscriptionResourceTypeId */
 export const MESSAGE_SUBSCRIPTION_RESOURCES = new Set<string>(
-    Object.values(MessageSubscriptionResourceTypeIdValues),
+	Object.values(MessageSubscriptionResourceTypeIdValues),
 );
 
 /** Resources supporting CT changes[] — ChangeSubscriptionResourceTypeId */
 export const CHANGE_SUBSCRIPTION_RESOURCES = new Set<string>(
-    Object.values(ChangeSubscriptionResourceTypeIdValues),
+	Object.values(ChangeSubscriptionResourceTypeIdValues),
 );
 
 /** Resources supporting CT events[] — EventSubscriptionResourceTypeId */
 export const EVENT_SUBSCRIPTION_RESOURCES = new Set<string>(
-    Object.values(EventSubscriptionResourceTypeIdValues),
+	Object.values(EventSubscriptionResourceTypeIdValues),
 );
 
 // ─── Event type ───────────────────────────────────────────────────────────────
@@ -51,97 +51,449 @@ export const EVENT_SUBSCRIPTION_RESOURCES = new Set<string>(
 export type SubscriptionType = 'message' | 'change' | 'event';
 
 export type SubscriptionEvent = {
-    name: string;
-    /**
-     * One of:
-     *   'ProductPublished'          → specific message type  → messages[].types[]
-     *   'message:customer-group'    → all messages for resource → messages[] (no types filter)
-     *   'change:cart'               → change resource        → changes[]
-     *   'CheckoutPaymentAuthorized' → event type             → events[].types[]
-     */
-    value:            string;
-    resourceTypeId:   string;
-    subscriptionType: SubscriptionType;
-    description:      string;
+	name: string;
+	/**
+	 * One of:
+	 *   'ProductPublished'          → specific message type  → messages[].types[]
+	 *   'message:customer-group'    → all messages for resource → messages[] (no types filter)
+	 *   'change:cart'               → change resource        → changes[]
+	 *   'CheckoutPaymentAuthorized' → event type             → events[].types[]
+	 */
+	value: string;
+	resourceTypeId: string;
+	subscriptionType: SubscriptionType;
+	description: string;
 };
 
 // ─── Generated event list ─────────────────────────────────────────────────────
 
 export const subscriptionEvents: SubscriptionEvent[] = [
-    // ── customer (message) ──
-    { name: 'Customer Address Added', value: 'CustomerAddressAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address added event' },
-    { name: 'Customer Address Changed', value: 'CustomerAddressChanged', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address changed event' },
-    { name: 'Customer Address Custom Field Added', value: 'CustomerAddressCustomFieldAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address custom field added event' },
-    { name: 'Customer Address Custom Field Changed', value: 'CustomerAddressCustomFieldChanged', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address custom field changed event' },
-    { name: 'Customer Address Custom Field Removed', value: 'CustomerAddressCustomFieldRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address custom field removed event' },
-    { name: 'Customer Address Custom Type Removed', value: 'CustomerAddressCustomTypeRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address custom type removed event' },
-    { name: 'Customer Address Custom Type Set', value: 'CustomerAddressCustomTypeSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address custom type set event' },
-    { name: 'Customer Address Removed', value: 'CustomerAddressRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer address removed event' },
-    { name: 'Customer Billing Address Added', value: 'CustomerBillingAddressAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer billing address added event' },
-    { name: 'Customer Billing Address Removed', value: 'CustomerBillingAddressRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer billing address removed event' },
-    { name: 'Customer Company Name Set', value: 'CustomerCompanyNameSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer company name set event' },
-    { name: 'Customer Created', value: 'CustomerCreated', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer created event' },
-    { name: 'Customer Custom Field Added', value: 'CustomerCustomFieldAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer custom field added event' },
-    { name: 'Customer Custom Field Changed', value: 'CustomerCustomFieldChanged', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer custom field changed event' },
-    { name: 'Customer Custom Field Removed', value: 'CustomerCustomFieldRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer custom field removed event' },
-    { name: 'Customer Custom Type Removed', value: 'CustomerCustomTypeRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer custom type removed event' },
-    { name: 'Customer Custom Type Set', value: 'CustomerCustomTypeSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer custom type set event' },
-    { name: 'Customer Date Of Birth Set', value: 'CustomerDateOfBirthSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer date of birth set event' },
-    { name: 'Customer Default Billing Address Set', value: 'CustomerDefaultBillingAddressSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer default billing address set event' },
-    { name: 'Customer Default Shipping Address Set', value: 'CustomerDefaultShippingAddressSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer default shipping address set event' },
-    { name: 'Customer Deleted', value: 'CustomerDeleted', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer deleted event' },
-    { name: 'Customer Email Changed', value: 'CustomerEmailChanged', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer email changed event' },
-    { name: 'Customer Email Verified', value: 'CustomerEmailVerified', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer email verified event' },
-    { name: 'Customer External Id Set', value: 'CustomerExternalIdSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer external id set event' },
-    { name: 'Customer First Name Set', value: 'CustomerFirstNameSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer first name set event' },
-    { name: 'Customer Last Name Set', value: 'CustomerLastNameSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer last name set event' },
-    { name: 'Customer Password Updated', value: 'CustomerPasswordUpdated', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer password updated event' },
-    { name: 'Customer Shipping Address Added', value: 'CustomerShippingAddressAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer shipping address added event' },
-    { name: 'Customer Shipping Address Removed', value: 'CustomerShippingAddressRemoved', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer shipping address removed event' },
-    { name: 'Customer Stores Set', value: 'CustomerStoresSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer stores set event' },
-    { name: 'Customer Title Set', value: 'CustomerTitleSet', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggered on customer title set event' },
+	// ── customer (message) ──
+	{
+		name: 'Customer Address Added',
+		value: 'CustomerAddressAdded',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address added event',
+	},
+	{
+		name: 'Customer Address Changed',
+		value: 'CustomerAddressChanged',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address changed event',
+	},
+	{
+		name: 'Customer Address Custom Field Added',
+		value: 'CustomerAddressCustomFieldAdded',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address custom field added event',
+	},
+	{
+		name: 'Customer Address Custom Field Changed',
+		value: 'CustomerAddressCustomFieldChanged',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address custom field changed event',
+	},
+	{
+		name: 'Customer Address Custom Field Removed',
+		value: 'CustomerAddressCustomFieldRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address custom field removed event',
+	},
+	{
+		name: 'Customer Address Custom Type Removed',
+		value: 'CustomerAddressCustomTypeRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address custom type removed event',
+	},
+	{
+		name: 'Customer Address Custom Type Set',
+		value: 'CustomerAddressCustomTypeSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address custom type set event',
+	},
+	{
+		name: 'Customer Address Removed',
+		value: 'CustomerAddressRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer address removed event',
+	},
+	{
+		name: 'Customer Billing Address Added',
+		value: 'CustomerBillingAddressAdded',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer billing address added event',
+	},
+	{
+		name: 'Customer Billing Address Removed',
+		value: 'CustomerBillingAddressRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer billing address removed event',
+	},
+	{
+		name: 'Customer Company Name Set',
+		value: 'CustomerCompanyNameSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer company name set event',
+	},
+	{
+		name: 'Customer Created',
+		value: 'CustomerCreated',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer created event',
+	},
+	{
+		name: 'Customer Custom Field Added',
+		value: 'CustomerCustomFieldAdded',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer custom field added event',
+	},
+	{
+		name: 'Customer Custom Field Changed',
+		value: 'CustomerCustomFieldChanged',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer custom field changed event',
+	},
+	{
+		name: 'Customer Custom Field Removed',
+		value: 'CustomerCustomFieldRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer custom field removed event',
+	},
+	{
+		name: 'Customer Custom Type Removed',
+		value: 'CustomerCustomTypeRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer custom type removed event',
+	},
+	{
+		name: 'Customer Custom Type Set',
+		value: 'CustomerCustomTypeSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer custom type set event',
+	},
+	{
+		name: 'Customer Date Of Birth Set',
+		value: 'CustomerDateOfBirthSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer date of birth set event',
+	},
+	{
+		name: 'Customer Default Billing Address Set',
+		value: 'CustomerDefaultBillingAddressSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer default billing address set event',
+	},
+	{
+		name: 'Customer Default Shipping Address Set',
+		value: 'CustomerDefaultShippingAddressSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer default shipping address set event',
+	},
+	{
+		name: 'Customer Deleted',
+		value: 'CustomerDeleted',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer deleted event',
+	},
+	{
+		name: 'Customer Email Changed',
+		value: 'CustomerEmailChanged',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer email changed event',
+	},
+	{
+		name: 'Customer Email Verified',
+		value: 'CustomerEmailVerified',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer email verified event',
+	},
+	{
+		name: 'Customer External Id Set',
+		value: 'CustomerExternalIdSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer external id set event',
+	},
+	{
+		name: 'Customer First Name Set',
+		value: 'CustomerFirstNameSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer first name set event',
+	},
+	{
+		name: 'Customer Last Name Set',
+		value: 'CustomerLastNameSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer last name set event',
+	},
+	{
+		name: 'Customer Password Updated',
+		value: 'CustomerPasswordUpdated',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer password updated event',
+	},
+	{
+		name: 'Customer Shipping Address Added',
+		value: 'CustomerShippingAddressAdded',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer shipping address added event',
+	},
+	{
+		name: 'Customer Shipping Address Removed',
+		value: 'CustomerShippingAddressRemoved',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer shipping address removed event',
+	},
+	{
+		name: 'Customer Stores Set',
+		value: 'CustomerStoresSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer stores set event',
+	},
+	{
+		name: 'Customer Title Set',
+		value: 'CustomerTitleSet',
+		resourceTypeId: 'customer',
+		subscriptionType: 'message',
+		description: 'Triggered on customer title set event',
+	},
 
-    // ── product (message) ──
-    { name: 'Product Added To Category', value: 'ProductAddedToCategory', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product added to category event' },
-    { name: 'Product Created', value: 'ProductCreated', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product created event' },
-    { name: 'Product Deleted', value: 'ProductDeleted', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product deleted event' },
-    { name: 'Product Image Added', value: 'ProductImageAdded', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product image added event' },
-    { name: 'Product Price Added', value: 'ProductPriceAdded', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price added event' },
-    { name: 'Product Price Changed', value: 'ProductPriceChanged', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price changed event' },
-    { name: 'Product Price Custom Field Added', value: 'ProductPriceCustomFieldAdded', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price custom field added event' },
-    { name: 'Product Price Custom Field Changed', value: 'ProductPriceCustomFieldChanged', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price custom field changed event' },
-    { name: 'Product Price Custom Field Removed', value: 'ProductPriceCustomFieldRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price custom field removed event' },
-    { name: 'Product Price Custom Fields Removed', value: 'ProductPriceCustomFieldsRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price custom fields removed event' },
-    { name: 'Product Price Custom Fields Set', value: 'ProductPriceCustomFieldsSet', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price custom fields set event' },
-    { name: 'Product Price Discounts Set', value: 'ProductPriceDiscountsSet', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price discounts set event' },
-    { name: 'Product Price External Discount Set', value: 'ProductPriceExternalDiscountSet', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price external discount set event' },
-    { name: 'Product Price Key Set', value: 'ProductPriceKeySet', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price key set event' },
-    { name: 'Product Price Mode Set', value: 'ProductPriceModeSet', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price mode set event' },
-    { name: 'Product Price Removed', value: 'ProductPriceRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product price removed event' },
-    { name: 'Product Prices Set', value: 'ProductPricesSet', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product prices set event' },
-    { name: 'Product Published', value: 'ProductPublished', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product published event' },
-    { name: 'Product Removed From Category', value: 'ProductRemovedFromCategory', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product removed from category event' },
-    { name: 'Product Reverted Staged Changes', value: 'ProductRevertedStagedChanges', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product reverted staged changes event' },
-    { name: 'Product Slug Changed', value: 'ProductSlugChanged', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product slug changed event' },
-    { name: 'Product State Transition', value: 'ProductStateTransition', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product state transition event' },
-    { name: 'Product Unpublished', value: 'ProductUnpublished', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product unpublished event' },
-    { name: 'Product Variant Added', value: 'ProductVariantAdded', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product variant added event' },
-    { name: 'Product Variant Deleted', value: 'ProductVariantDeleted', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product variant deleted event' },
-    { name: 'Product Variant Tailoring Added', value: 'ProductVariantTailoringAdded', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product variant tailoring added event' },
-    { name: 'Product Variant Tailoring Removed', value: 'ProductVariantTailoringRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggered on product variant tailoring removed event' },
+	// ── product (message) ──
+	{
+		name: 'Product Added To Category',
+		value: 'ProductAddedToCategory',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product added to category event',
+	},
+	{
+		name: 'Product Created',
+		value: 'ProductCreated',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product created event',
+	},
+	{
+		name: 'Product Deleted',
+		value: 'ProductDeleted',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product deleted event',
+	},
+	{
+		name: 'Product Image Added',
+		value: 'ProductImageAdded',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product image added event',
+	},
+	{
+		name: 'Product Price Added',
+		value: 'ProductPriceAdded',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price added event',
+	},
+	{
+		name: 'Product Price Changed',
+		value: 'ProductPriceChanged',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price changed event',
+	},
+	{
+		name: 'Product Price Custom Field Added',
+		value: 'ProductPriceCustomFieldAdded',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price custom field added event',
+	},
+	{
+		name: 'Product Price Custom Field Changed',
+		value: 'ProductPriceCustomFieldChanged',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price custom field changed event',
+	},
+	{
+		name: 'Product Price Custom Field Removed',
+		value: 'ProductPriceCustomFieldRemoved',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price custom field removed event',
+	},
+	{
+		name: 'Product Price Custom Fields Removed',
+		value: 'ProductPriceCustomFieldsRemoved',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price custom fields removed event',
+	},
+	{
+		name: 'Product Price Custom Fields Set',
+		value: 'ProductPriceCustomFieldsSet',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price custom fields set event',
+	},
+	{
+		name: 'Product Price Discounts Set',
+		value: 'ProductPriceDiscountsSet',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price discounts set event',
+	},
+	{
+		name: 'Product Price External Discount Set',
+		value: 'ProductPriceExternalDiscountSet',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price external discount set event',
+	},
+	{
+		name: 'Product Price Key Set',
+		value: 'ProductPriceKeySet',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price key set event',
+	},
+	{
+		name: 'Product Price Mode Set',
+		value: 'ProductPriceModeSet',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price mode set event',
+	},
+	{
+		name: 'Product Price Removed',
+		value: 'ProductPriceRemoved',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product price removed event',
+	},
+	{
+		name: 'Product Prices Set',
+		value: 'ProductPricesSet',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product prices set event',
+	},
+	{
+		name: 'Product Published',
+		value: 'ProductPublished',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product published event',
+	},
+	{
+		name: 'Product Removed From Category',
+		value: 'ProductRemovedFromCategory',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product removed from category event',
+	},
+	{
+		name: 'Product Reverted Staged Changes',
+		value: 'ProductRevertedStagedChanges',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product reverted staged changes event',
+	},
+	{
+		name: 'Product Slug Changed',
+		value: 'ProductSlugChanged',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product slug changed event',
+	},
+	{
+		name: 'Product State Transition',
+		value: 'ProductStateTransition',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product state transition event',
+	},
+	{
+		name: 'Product Unpublished',
+		value: 'ProductUnpublished',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product unpublished event',
+	},
+	{
+		name: 'Product Variant Added',
+		value: 'ProductVariantAdded',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product variant added event',
+	},
+	{
+		name: 'Product Variant Deleted',
+		value: 'ProductVariantDeleted',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product variant deleted event',
+	},
+	{
+		name: 'Product Variant Tailoring Added',
+		value: 'ProductVariantTailoringAdded',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product variant tailoring added event',
+	},
+	{
+		name: 'Product Variant Tailoring Removed',
+		value: 'ProductVariantTailoringRemoved',
+		resourceTypeId: 'product',
+		subscriptionType: 'message',
+		description: 'Triggered on product variant tailoring removed event',
+	},
 ];
 
 // ─── n8n property ─────────────────────────────────────────────────────────────
 
 export const triggerProperties: INodeProperties[] = [
-    {
-        displayName:      'Events',
-        name:             'events',
-        type:             'multiOptions',
-        noDataExpression: true,
-        required:         true,
-        options:          subscriptionEvents.map(({ name, value, description }) => ({ name, value, description })),
-        default:          ['ProductPublished'],
-        description:      'Select which commercetools events should trigger this workflow',
-    },
+	{
+		displayName: 'Events',
+		name: 'events',
+		type: 'multiOptions',
+		noDataExpression: true,
+		required: true,
+		options: subscriptionEvents.map(({ name, value, description }) => ({
+			name,
+			value,
+			description,
+		})),
+		default: ['ProductPublished'],
+		description: 'Select which commercetools events should trigger this workflow',
+	},
 ];

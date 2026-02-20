@@ -32,16 +32,18 @@ export interface ParsedOperation {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 export function slugify(name: string): string {
-	return name
-		// Split PascalCase/camelCase words BEFORE stripping non-alpha chars
-		// e.g. "SetMetaTitle" → "Set Meta Title", "addPrice" → "add Price"
-		.replace(/([a-z])([A-Z])/g, '$1 $2')
-		.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-		.replace(/[^a-zA-Z0-9\s]/g, '')
-		.trim()
-		.split(/\s+/)
-		.map((w, i) => (i === 0 ? w.toLowerCase() : w[0].toUpperCase() + w.slice(1).toLowerCase()))
-		.join('');
+	return (
+		name
+			// Split PascalCase/camelCase words BEFORE stripping non-alpha chars
+			// e.g. "SetMetaTitle" → "Set Meta Title", "addPrice" → "add Price"
+			.replace(/([a-z])([A-Z])/g, '$1 $2')
+			.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+			.replace(/[^a-zA-Z0-9\s]/g, '')
+			.trim()
+			.split(/\s+/)
+			.map((w, i) => (i === 0 ? w.toLowerCase() : w[0].toUpperCase() + w.slice(1).toLowerCase()))
+			.join('')
+	);
 }
 
 function formatLabel(dotPath: string): string {
@@ -77,9 +79,7 @@ function extractFields(obj: Record<string, unknown>, prefix = '', depth = 0): Bo
 			fields.push({
 				name: path,
 				type:
-					typeof value === 'number' ? 'number' :
-						typeof value === 'boolean' ? 'boolean' :
-							'string',
+					typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : 'string',
 				required: depth === 0,
 				example: value,
 				description: formatLabel(path),
@@ -109,13 +109,26 @@ function extractActionBodyFields(rawBodyObj: Record<string, unknown>): BodyField
 		if (SKIP.has(key)) continue;
 
 		if (Array.isArray(value)) {
-			fields.push({ name: key, type: 'json', required: false, example: value, description: formatLabel(key) });
+			fields.push({
+				name: key,
+				type: 'json',
+				required: false,
+				example: value,
+				description: formatLabel(key),
+			});
 		} else if (value !== null && typeof value === 'object') {
-			fields.push({ name: key, type: 'json', required: false, example: value, description: formatLabel(key) });
+			fields.push({
+				name: key,
+				type: 'json',
+				required: false,
+				example: value,
+				description: formatLabel(key),
+			});
 		} else {
 			fields.push({
 				name: key,
-				type: typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : 'string',
+				type:
+					typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : 'string',
 				required: false,
 				example: value,
 				description: formatLabel(key),
@@ -152,9 +165,13 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const walkItems = (items: any[], parentFolder: string, subFolderName: string, isActionSubFolder: boolean) => {
+		const walkItems = (
+			items: any[],
+			parentFolder: string,
+			subFolderName: string,
+			isActionSubFolder: boolean,
+		) => {
 			for (const item of items) {
-
 				// ── Sub-folder ───────────────────────────────────────────────
 				if (Array.isArray(item.item)) {
 					const childIsActionFolder = isUpdateActionsSubFolder(item.name);
@@ -176,7 +193,9 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 				const rawBodyRaw: string =
 					typeof req.body?.raw === 'string'
 						? req.body.raw
-						: (req.body?.raw ? JSON.stringify(req.body.raw) : '');
+						: req.body?.raw
+							? JSON.stringify(req.body.raw)
+							: '';
 
 				try {
 					if (rawBodyRaw) {
@@ -224,32 +243,20 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 				// requiresVersion
 				const requiresVersion =
 					method === 'DELETE' ||
-					(
-						['POST', 'PUT', 'PATCH'].includes(method) &&
-						(
-							rawBodyObj?.version !== undefined ||
+					(['POST', 'PUT', 'PATCH'].includes(method) &&
+						(rawBodyObj?.version !== undefined ||
 							/"version"\s*:/.test(rawBodyRaw) ||
-							/\bversion\b/.test(rawBodyRaw)
-						)
-					);
+							/\bversion\b/.test(rawBodyRaw)));
 
 				// ── Determine isUpdateAction ─────────────────────────────────
 				const bodyHasActionsArray = bodyFields.some((f) => f.name === 'actions');
 
 				const isLikelyMainUpdate =
-					method === 'POST' &&
-					requiresId &&
-					bodyHasActionsArray &&
-					/\bupdate\b/i.test(item.name);
+					method === 'POST' && requiresId && bodyHasActionsArray && /\bupdate\b/i.test(item.name);
 
 				const isUpdateAction =
 					isActionSubFolder ||
-					(
-						method === 'POST' &&
-						requiresId &&
-						bodyHasActionsArray &&
-						!isLikelyMainUpdate
-					);
+					(method === 'POST' && requiresId && bodyHasActionsArray && !isLikelyMainUpdate);
 
 				operations.push({
 					name: item.name,
@@ -260,9 +267,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					actionBodyFields,
 					queryParams,
 					description:
-						typeof req.description === 'string'
-							? req.description
-							: req.description?.content || '',
+						typeof req.description === 'string' ? req.description : req.description?.content || '',
 					folder: parentFolder,
 					subFolder: subFolderName,
 					isUpdateAction,
