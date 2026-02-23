@@ -12,10 +12,12 @@ import {
 	deleteAWSInfrastructure,
 } from './awsInfra.utils';
 import { StaticSubscriptionData } from '../CommercetoolsTrigger.node';
-import { createGCPInfrastructure, deleteGCPInfrastructure, GCPResponse } from './gcpInfra.utils';
-import { PubSub } from '@google-cloud/pubsub';
-import { Storage } from '@google-cloud/storage';
-import { google } from 'googleapis';
+import {
+	createGCPInfrastructure,
+	deleteGCPInfrastructure,
+	GCPResponse,
+	initializeGcp,
+} from './gcpInfra.utils';
 
 // Helper function to generate configuration hash
 function generateConfigHash(events: string[], hasAWS: boolean, hasGCP: boolean): string {
@@ -35,7 +37,7 @@ export const triggerMethods = {
 				string
 			>;
 			const hasAWSCredentials = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			const hasGCPCredentials = !!(credentials.gcpProjectId && credentials.gcpTopicName);
+			const hasGCPCredentials = !!(credentials.gcpServiceAccountJson && credentials.gcpTopicName);
 			const currentConfigHash = generateConfigHash(
 				currentEvents,
 				hasAWSCredentials,
@@ -148,32 +150,24 @@ export const triggerMethods = {
 						return false;
 					}
 				} else if (webhookData.gcpInfrastructure) {
-					const auth = await google.auth.getClient({
-						scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-					});
-					const cloudfunctions = google.cloudfunctions({ version: 'v2', auth });
-					const functionFullName = `projects/${webhookData.gcpInfrastructure.projectId}/locations/${credentials.region}/functions/${webhookData.gcpInfrastructure.functionName}`;
+					const { pubSub, storage, cloudFunctions, projectId } = initializeGcp(
+						credentials.gcpServiceAccountJson,
+					);
+					const functionFullName = `projects/${projectId}/locations/${credentials.gcpRegion}/functions/${webhookData.gcpInfrastructure.functionName}`;
 
 					// Check if Cloud Function exists
 					try {
-						await cloudfunctions.projects.locations.functions.get({ name: functionFullName });
-					} catch (err: any) {
-						if (err.code === 5) {
-							// Function not found, need to recreate
-							delete webhookData.subscriptionId;
-							delete webhookData.awsInfrastructure;
-							delete webhookData.gcpInfrastructure;
-							delete webhookData.configHash;
-							delete webhookData.events;
-							return false;
-						} else {
-							// Another error occurred
-							throw err;
-						}
+						await cloudFunctions.projects.locations.functions.get({ name: functionFullName });
+					} catch {
+						delete webhookData.subscriptionId;
+						delete webhookData.awsInfrastructure;
+						delete webhookData.gcpInfrastructure;
+						delete webhookData.configHash;
+						delete webhookData.events;
+						return false;
 					}
 
-					const pubsub = new PubSub({ projectId: credentials.gcpProjectId });
-					const topicExists = await pubsub.topic(webhookData.gcpInfrastructure.topicName).exists();
+					const topicExists = await pubSub.topic(webhookData.gcpInfrastructure.topicName).exists();
 					if (!topicExists) {
 						// Topic doesn't exist, need to recreate
 						delete webhookData.subscriptionId;
@@ -183,7 +177,6 @@ export const triggerMethods = {
 						delete webhookData.events;
 						return false;
 					}
-					const storage = new Storage({ projectId: credentials.gcpProjectId });
 					const [bucketExists] = await storage
 						.bucket(webhookData.gcpInfrastructure.bucketName)
 						.exists();

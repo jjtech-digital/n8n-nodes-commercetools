@@ -6,9 +6,32 @@ import { google } from 'googleapis';
 
 export type GCPResponse = {
 	topicName: string;
-	projectId: string;
 	bucketName: string;
 	functionName: string;
+	projectId: string;
+};
+
+export const initializeGcp = (gcpServiceAccount: string) => {
+	const gcpServiceAccountJson = JSON.parse(gcpServiceAccount);
+	const clientConfig = {
+		projectId: gcpServiceAccountJson.project_id,
+		credentials: gcpServiceAccountJson,
+	};
+
+	const pubsub = new PubSub(clientConfig);
+	const storage = new Storage(clientConfig);
+	const auth = new google.auth.GoogleAuth({
+		credentials: gcpServiceAccountJson,
+		scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+	});
+	const cloudfunctions = google.cloudfunctions({ version: 'v2', auth });
+
+	return {
+		pubSub: pubsub,
+		storage: storage,
+		cloudFunctions: cloudfunctions,
+		projectId: gcpServiceAccountJson.project_id,
+	};
 };
 
 export async function createGCPInfrastructure(
@@ -16,28 +39,31 @@ export async function createGCPInfrastructure(
 	webhookUrl: string,
 ): Promise<GCPResponse> {
 	try {
-		const pubsub = new PubSub({ projectId: gcpCredentials.gcpProjectId });
+		const { pubSub, storage, cloudFunctions, projectId } = initializeGcp(
+			gcpCredentials.gcpServiceAccountJson,
+		);
+
 		const timestamp = Date.now();
 
 		// -------------------------------
 		// 1️⃣ Create topic (if not exists)
 		// -------------------------------
 		const topicName = `ct-${gcpCredentials.gcpTopicName}-${timestamp}`;
-		await pubsub.topic(topicName).get({ autoCreate: true });
+		await pubSub.topic(topicName).get({ autoCreate: true });
 
 		// -------------------------------
-		// 2️⃣ Create push subscription
+		// 2️⃣ Adjust webhook URL if localhost
 		// -------------------------------
 		const url = new URL(webhookUrl);
 
-		if (url.hostname === 'localhost') {
-			url.hostname = 'valeric-brantley-perfumy.ngrok-free.app';
-			url.protocol = 'https';
-			url.port = '';
-		}
+		// if (url.hostname === 'localhost') {
+		// 	url.hostname = 'valeric-brantley-perfumy.ngrok-free.app';
+		// 	url.protocol = 'https';
+		// 	url.port = '';
+		// }
 
 		// -------------------------------
-		// 3️⃣ Create TypeScript function code
+		// 3️⃣ Create Cloud Function code
 		// -------------------------------
 		const jsCode = `
 const functions = require('@google-cloud/functions-framework');
@@ -111,7 +137,6 @@ functions.cloudEvent('cloudFunctionCode', (cloudEvent) => {
 		// -------------------------------
 		const bucketName = `ct-${gcpCredentials.gcpTopicName}-bucket-${timestamp}`;
 		const functionName = `ct-${gcpCredentials.gcpTopicName}-cloud-function-code-${timestamp}`;
-		const storage = new Storage({ projectId: gcpCredentials.gcpProjectId });
 		const bucket = storage.bucket(bucketName);
 
 		const [bucketExists] = await bucket.exists();
@@ -128,15 +153,11 @@ functions.cloudEvent('cloudFunctionCode', (cloudEvent) => {
 		// -------------------------------
 		// 7️⃣ Deploy Gen2 Cloud Function
 		// -------------------------------
-		const auth = await google.auth.getClient({
-			scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-		});
-		const cloudfunctions = google.cloudfunctions({ version: 'v2', auth });
 
-		const parent = `projects/${gcpCredentials.gcpProjectId}/locations/${gcpCredentials.gcpRegion}`;
+		const parent = `projects/${projectId}/locations/${gcpCredentials.gcpRegion}`;
 		const fullName = `${parent}/functions/${functionName}`;
 
-		const createOperationResponse = await cloudfunctions.projects.locations.functions.create({
+		const createOperationResponse = await cloudFunctions.projects.locations.functions.create({
 			parent,
 			functionId: functionName,
 			requestBody: {
@@ -160,7 +181,7 @@ functions.cloudEvent('cloudFunctionCode', (cloudEvent) => {
 				eventTrigger: {
 					triggerRegion: gcpCredentials.gcpRegion,
 					eventType: 'google.cloud.pubsub.topic.v1.messagePublished',
-					pubsubTopic: `projects/${gcpCredentials.gcpProjectId}/topics/${topicName}`,
+					pubsubTopic: `projects/${projectId}/topics/${topicName}`,
 					retryPolicy: 'RETRY_POLICY_RETRY',
 				},
 			},
@@ -168,7 +189,7 @@ functions.cloudEvent('cloudFunctionCode', (cloudEvent) => {
 
 		// Poll the operation until it's done
 		while (true) {
-			const operation = await cloudfunctions.projects.locations.operations.get({
+			const operation = await cloudFunctions.projects.locations.operations.get({
 				name: createOperationResponse.data.name!,
 			});
 
@@ -186,10 +207,11 @@ functions.cloudEvent('cloudFunctionCode', (cloudEvent) => {
 		return {
 			topicName,
 			bucketName,
-			projectId: gcpCredentials.gcpProjectId,
 			functionName,
+			//needed to create the subscription
+			projectId: projectId,
 		};
-	} catch (err: any) {
+	} catch (err) {
 		throw new NodeOperationError(
 			{} as INode,
 			`Failed to create GCP infrastructure: ${err.message || err}`,
@@ -202,37 +224,34 @@ export async function deleteGCPInfrastructure(
 	infrastructure: GCPResponse,
 ): Promise<void> {
 	try {
-		const auth = await google.auth.getClient({
-			scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-		});
-		const cloudfunctions = google.cloudfunctions({ version: 'v2', auth });
+		const { pubSub, storage, cloudFunctions, projectId } = initializeGcp(
+			gcpCredentials.gcpServiceAccountJson,
+		);
 
-		const functionFullName = `projects/${infrastructure.projectId}/locations/${gcpCredentials.gcpRegion}/functions/${infrastructure.functionName}`;
+		const functionFullName = `projects/${projectId}/locations/${gcpCredentials.gcpRegion}/functions/${infrastructure.functionName}`;
 		try {
-			await cloudfunctions.projects.locations.functions.delete({ name: functionFullName });
-		} catch (err: any) {
+			await cloudFunctions.projects.locations.functions.delete({ name: functionFullName });
+		} catch (err) {
 			if (err.code !== 5) {
 				throw err;
 			}
 		}
 
-		const pubsub = new PubSub({ projectId: gcpCredentials.gcpProjectId });
 		try {
-			await pubsub.topic(infrastructure.topicName).delete();
-		} catch (err: any) {
+			await pubSub.topic(infrastructure.topicName).delete();
+		} catch (err) {
 			if (err.code !== 5) {
 				// 5 = NOT_FOUND
 				throw err;
 			}
 		}
-		const storage = new Storage({ projectId: gcpCredentials.gcpProjectId });
 		try {
 			const bucket = storage.bucket(infrastructure.bucketName);
 			// Forcefully delete all files in the bucket first.
 			await bucket.deleteFiles({ force: true });
 			// Now delete the empty bucket.
 			await bucket.delete();
-		} catch (err: any) {
+		} catch (err) {
 			if (err.code !== 5) {
 				// 5 = NOT_FOUND
 				throw err;

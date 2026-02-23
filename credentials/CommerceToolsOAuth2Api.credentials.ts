@@ -180,6 +180,24 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			},
 		},
 		{
+			displayName: 'GCP Service Account JSON',
+			name: 'gcpServiceAccountJson',
+			type: 'string',
+			typeOptions: {
+				multiLine: true,
+			},
+			default: '',
+			required: true,
+			placeholder:
+				'{\n  "type": "service_account",\n  "project_id": "...",\n  "private_key_id": "...",\n  "private_key": "...",\n  "client_email": "...",\n  "client_id": "...",\n  "auth_uri": "...",\n  "token_uri": "...",\n  "auth_provider_x509_cert_url": "...",\n  "client_x509_cert_url": "..."\n}',
+			description: 'Paste the entire JSON content of your GCP service account key file.',
+			displayOptions: {
+				show: {
+					eventProvider: ['gcp'],
+				},
+			},
+		},
+		{
 			displayName: 'Grant Type',
 			name: 'grantType',
 			type: 'hidden',
