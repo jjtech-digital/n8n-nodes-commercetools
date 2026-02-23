@@ -218,19 +218,19 @@ export function generateSubscriptionProperties(
 		throw new Error('Could not parse SDK enums from subscription.d.ts — format may have changed');
 	}
 
-	console.log(`  ✓  Message resources:  ${messageResources.size}`);
-	console.log(`  ✓  Change resources:   ${changeResources.size}`);
-	console.log(`  ✓  Event resources:    ${eventResources.size}`);
-	console.log(`  ✓  Event types:        ${eventTypeValues.length}`);
+	console.info(`  ✓  Message resources:  ${messageResources.size}`);
+	console.info(`  ✓  Change resources:   ${changeResources.size}`);
+	console.info(`  ✓  Event resources:    ${eventResources.size}`);
+	console.info(`  ✓  Event types:        ${eventTypeValues.length}`);
 
 	// Resources in changes[] but not in messages[] → no message types, change-only
 	const changeOnlyResources = [...changeResources].filter((r) => !messageResources.has(r)).sort();
-	console.log(`  ✓  Change-only:        ${changeOnlyResources.length}`);
+	console.info(`  ✓  Change-only:        ${changeOnlyResources.length}`);
 
 	// ── Parse message type discriminators from message.d.ts ───────────────────
 
 	const allMessageTypes = parseMessageTypeValues(msgSrc);
-	console.log(`  ✓  Message types:      ${allMessageTypes.length}`);
+	console.info(`  ✓  Message types:      ${allMessageTypes.length}`);
 
 	const events: EventEntry[] = [];
 	const unmapped: string[] = [];
@@ -332,8 +332,8 @@ export function generateSubscriptionProperties(
 			events.length,
 			...events.filter((e) => allowedResources.has(e.resourceTypeId)),
 		);
-		console.log(`\n  ✂️   Filtered: kept ${events.length} of ${before} events`);
-		console.log(`       Resources: ${[...allowedResources].sort().join(', ')}`);
+		console.info(`\n  ✂️   Filtered: kept ${events.length} of ${before} events`);
+		console.info(`       Resources: ${[...allowedResources].sort().join(', ')}`);
 	}
 
 	// ── Summary ───────────────────────────────────────────────────────────────
@@ -341,7 +341,7 @@ export function generateSubscriptionProperties(
 	const msgCount = events.filter((e) => e.subscriptionType === 'message').length;
 	const chgCount = events.filter((e) => e.subscriptionType === 'change').length;
 	const evtCount = events.filter((e) => e.subscriptionType === 'event').length;
-	console.log(
+	console.info(
 		`\n  ✅  Total: ${events.length} events (${msgCount} message, ${chgCount} change, ${evtCount} event)`,
 	);
 
@@ -471,18 +471,18 @@ export const triggerProperties: INodeProperties[] = [
 
 	fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 	fs.writeFileSync(outputPath, ts, 'utf8');
-	console.log(`  ✅  Wrote ${outputPath}`);
+	console.info(`  ✅  Wrote ${outputPath}`);
 }
 
 // ─── Standalone entry point ───────────────────────────────────────────────────
 // Only runs when invoked directly: npx ts-node scripts/generateSubscriptionProperties.ts
 
 if (require.main === module) {
-	console.log('\n🔔  Running subscription property generator (standalone)');
-	console.log(`    ${new Date().toISOString()}\n`);
+	console.info('\n🔔  Running subscription property generator (standalone)');
+	console.info(`    ${new Date().toISOString()}\n`);
 	try {
 		generateSubscriptionProperties();
-		console.log('\n✅  Done. Now run: npm run build\n');
+		console.info('\n✅  Done. Now run: npm run build\n');
 	} catch (err) {
 		console.error('❌  Failed:', err);
 		process.exit(1);

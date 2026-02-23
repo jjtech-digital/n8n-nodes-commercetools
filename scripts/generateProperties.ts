@@ -268,7 +268,7 @@ export function generateActionsUiField(
 			// inside actions[0] in the Postman body, with `action`/`version` stripped.
 			const fields = op.actionBodyFields;
 
-			console.log(
+			console.info(
 				`OP: ${op.name} | actionBodyFields:`,
 				fields.map((f) => `${f.name}(${f.type})`),
 			);

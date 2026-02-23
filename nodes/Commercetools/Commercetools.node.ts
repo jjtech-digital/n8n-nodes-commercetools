@@ -139,9 +139,9 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			if (actions.length === 0) {
 				// Debug: log the raw fixedCollection value so we can see its shape
 				const rawUiValue = safeGet<unknown>(this, `actionsUi__${resource}`, i, '__NOT_FOUND__');
-				console.log(`[CT DEBUG] actionsUi__${resource} raw value:`, JSON.stringify(rawUiValue));
+				console.info(`[CT DEBUG] actionsUi__${resource} raw value:`, JSON.stringify(rawUiValue));
 				actions = buildActionsFromUi(this, i, resource);
-				console.log(`[CT DEBUG] built actions:`, JSON.stringify(actions));
+				console.info(`[CT DEBUG] built actions:`, JSON.stringify(actions));
 			}
 
 			// Require at least one action — CT rejects empty actions arrays
