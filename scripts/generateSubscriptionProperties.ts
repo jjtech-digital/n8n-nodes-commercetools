@@ -177,7 +177,7 @@ const EVENT_PREFIX_MAP: Record<string, string> = {
  *   ['product', 'cart', 'checkout']           ← products + cart changes + checkout events
  *   null                                       ← everything (full list)
  */
-export const RESOURCES_TO_GENERATE: string[] = ['product', 'customer'];
+export const RESOURCES_TO_GENERATE: string[] = ['product', 'customer', 'cart', 'order'];
 
 // ─── Main exported function ───────────────────────────────────────────────────
 

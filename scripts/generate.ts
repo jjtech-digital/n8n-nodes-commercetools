@@ -46,7 +46,7 @@ const OUTPUT_DIR = path.resolve(__dirname, '../nodes/Commercetools/generated');
  * Folder names must exactly match the Postman collection folder names.
  * Add/remove entries here to include/exclude resources from the node.
  */
-const FOLDERS_TO_GENERATE = ['Products', 'Customers'];
+const FOLDERS_TO_GENERATE = ['Products', 'Customers', 'Carts', 'Orders'];
 
 // ─── Download helper ──────────────────────────────────────────────────────────
 
