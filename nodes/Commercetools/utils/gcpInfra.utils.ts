@@ -105,14 +105,15 @@ export async function buildAuthClient(raw: Record<string, string>) {
 export async function createGCPInfrastructure(
 	gcpCredentials: Record<string, string>,
 	webhookUrl: string,
+	eventType: string,
 ): Promise<GCPResponse> {
 	try {
 		const { grpcAuth, restAuth } = await buildAuthClient(gcpCredentials);
 		const projectId = parseCredentials(gcpCredentials).projectId;
 		const timestamp = Date.now();
-		const topicName = `ct-${gcpCredentials.gcpTopicName}-${timestamp}`;
-		const bucketName = `ct-${gcpCredentials.gcpTopicName}-bucket-${timestamp}`;
-		const fnName = `ct-${gcpCredentials.gcpTopicName}-fn-${timestamp}`;
+		const topicName = `ct-${eventType.toLowerCase()}-${timestamp}`;
+		const bucketName = `ct-${eventType.toLowerCase()}-bucket-${timestamp}`;
+		const fnName = `ct-${eventType.toLowerCase()}-fn-${timestamp}`;
 		// ── 1. Pub/Sub topic ─────────────────────────────────────────────────
 		// authClient passed directly — PubSub never touches the raw key bytes.
 		const pubsub = new PubSub({ projectId, authClient: grpcAuth });

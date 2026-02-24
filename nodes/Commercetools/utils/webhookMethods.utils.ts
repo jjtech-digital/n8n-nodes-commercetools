@@ -187,7 +187,7 @@ export const triggerMethods = {
 				webhookData.awsInfrastructure = awsInfrastructure;
 				useAWS = true;
 			} else if (hasGCP) {
-				gcpInfrastructure = await createGCPInfrastructure(credentials, webhookUrl);
+				gcpInfrastructure = await createGCPInfrastructure(credentials, webhookUrl, events[0]);
 				webhookData.gcpInfrastructure = gcpInfrastructure;
 				useGCP = true;
 			}
