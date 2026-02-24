@@ -7,6 +7,7 @@ import {
 	categoryEvents,
 	cartEvents,
 } from '../properties/subscription.properties';
+import { GCPResponse } from './gcpInfra.utils';
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
 	const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -53,11 +54,14 @@ export async function createSubscription(
 		baseUrl: string;
 		webhookUrl?: string;
 		awsInfrastructure?: AWSResponse;
+		gcpInfrastructure?: GCPResponse;
 		events: string[];
 		useAWS: boolean;
+		useGCP: boolean;
 	},
 ) {
-	const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
+	const { baseUrl, webhookUrl, awsInfrastructure, gcpInfrastructure, events, useAWS, useGCP } =
+		params;
 
 	// Separate events by resource type using dynamic filtering
 	const selectedProductEvents = events.filter((event) =>
@@ -112,9 +116,9 @@ export async function createSubscription(
 	}
 
 	if (selectedCartEvents.length > 0) {
+		// changes[] entries never take a types array — CT API rejects it
 		changes.push({
 			resourceTypeId: 'cart',
-			types: selectedCartEvents,
 		});
 	}
 
@@ -124,9 +128,7 @@ export async function createSubscription(
 	}
 
 	let body: IDataObject;
-
 	if (useAWS && awsInfrastructure) {
-		// Use SQS destination with proper CommerceTools API structure
 		const destination: IDataObject = {
 			type: 'SQS',
 			queueUrl: awsInfrastructure.queueUrl,
@@ -134,36 +136,35 @@ export async function createSubscription(
 		};
 
 		if (awsInfrastructure.accessKeyId && awsInfrastructure.secretAccessKey) {
-			// Use Credentials authentication mode with proper field names
 			destination.authenticationMode = 'Credentials';
-			destination.accessKey = awsInfrastructure.accessKeyId; // AccessKey ID
-			destination.accessSecret = awsInfrastructure.secretAccessKey; // Secret Access Key
+			destination.accessKey = awsInfrastructure.accessKeyId;
+			destination.accessSecret = awsInfrastructure.secretAccessKey;
 		} else {
-			// For IAM role-based auth, credentials must be omitted
 			destination.authenticationMode = 'IAM';
 		}
 
 		body = { destination };
-		if (messages.length > 0) {
-			body.messages = messages;
-		}
-		if (changes.length > 0) {
-			body.changes = changes;
-		}
+	} else if (useGCP && gcpInfrastructure) {
+		body = {
+			destination: {
+				type: 'GoogleCloudPubSub',
+				projectId: gcpInfrastructure.projectId, // ← separate field
+				topic: gcpInfrastructure.topicName, // ← bare name only, not full path
+			},
+		};
 	} else {
-		// Use HTTP webhook destination
 		body = {
 			destination: {
 				type: 'HTTP',
 				url: webhookUrl,
 			},
 		};
-		if (messages.length > 0) {
-			body.messages = messages;
-		}
-		if (changes.length > 0) {
-			body.changes = changes;
-		}
+	}
+	if (messages.length > 0) {
+		body.messages = messages;
+	}
+	if (changes.length > 0) {
+		body.changes = changes;
 	}
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
