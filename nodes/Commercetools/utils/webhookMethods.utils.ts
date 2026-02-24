@@ -171,7 +171,11 @@ export const triggerMethods = {
 				string
 			>;
 			const hasAWS = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			const hasGCP = !!(credentials.gcpProjectId && credentials.gcpTopicName);
+			const hasGCP = !!(
+				credentials.gcpProjectId &&
+				credentials.privateKey &&
+				credentials.clientEmail
+			);
 			const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 			const baseUrl = await getBaseUrl.call(this);
 			const webhookUrl = this.getNodeWebhookUrl('default');
