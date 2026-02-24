@@ -5,6 +5,8 @@
  * operations per resource folder.
  */
 
+import { clear } from "console";
+
 export interface BodyField {
 	name: string;
 	type: 'string' | 'number' | 'boolean' | 'json';
@@ -139,15 +141,47 @@ function extractActionBodyFields(rawBodyObj: Record<string, unknown>): BodyField
 	return fields;
 }
 
+/**
+ * Finds a resource folder by name within the CT Postman collection.
+ *
+ * The collection structure is:
+ *   collection.item
+ *     Authorization/
+ *     Project/
+ *       As-associate/
+ *         Carts/       ← WRONG — associate-scoped endpoints, wrong URLs
+ *         Orders/      ← WRONG
+ *         ...
+ *       In-business-unit/
+ *         Carts/       ← WRONG
+ *         ...
+ *       Carts/         ← CORRECT — direct project endpoints we want
+ *       Orders/        ← CORRECT
+ *       Products/      ← CORRECT
+ *       Customers/     ← CORRECT
+ *
+ * Strategy: find the top-level "Project" folder first, then search only its
+ * DIRECT children (depth = 1). This skips the As-associate and In-business-unit
+ * sub-trees entirely, so e.g. "Carts" resolves to Project > Carts, not
+ * Project > As-associate > Carts.
+ *
+ * Configurable via the optional `projectFolderName` param for future-proofing.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function findFolder(items: any[], folderName: string): any | null {
-	for (const item of items) {
+function findFolder(items: any[], folderName: string, projectFolderName = 'Project'): any | null {
+	// Step 1: find the top-level project container
+	const projectFolder = items.find(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(item: any) => item.name === projectFolderName && Array.isArray(item.item),
+	);
+
+	// Step 2: search its direct children only
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const searchIn: any[] = projectFolder ? projectFolder.item : items;
+	for (const item of searchIn) {
 		if (item.name === folderName && Array.isArray(item.item)) return item;
-		if (Array.isArray(item.item)) {
-			const found = findFolder(item.item, folderName);
-			if (found) return found;
-		}
 	}
+clear
 	return null;
 }
 
