@@ -6,7 +6,7 @@ import type {
 	IWebhookResponseData,
 } from 'n8n-workflow';
 import { NodeConnectionTypes } from 'n8n-workflow';
-import { triggerProperties } from './properties/subscription.properties';
+import { triggerProperties } from './generated/subscription.properties';
 import { triggerMethods } from './utils/webhookMethods.utils';
 import { AWSResponse } from './utils/awsInfra.utils';
 

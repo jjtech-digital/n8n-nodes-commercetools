@@ -26,7 +26,7 @@ import {
 	CHANGE_SUBSCRIPTION_RESOURCES,
 	EVENT_SUBSCRIPTION_RESOURCES,
 	SubscriptionEvent,
-} from '../properties/subscription.properties';
+} from '../generated/subscription.properties';
 
 // ─── Event lookup map ─────────────────────────────────────────────────────────
 // Built once at module load: value string → SubscriptionEvent

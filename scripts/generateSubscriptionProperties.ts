@@ -2,7 +2,7 @@
  * scripts/generateSubscriptionProperties.ts
  *
  * Reads @commercetools/platform-sdk type declarations and writes
- * nodes/Commercetools/properties/subscription.properties.ts
+ * nodes/Commercetools/generated/subscription.properties.ts
  *
  * Sources:
  *   subscription.d.ts → MessageSubscriptionResourceTypeIdValues (enum)

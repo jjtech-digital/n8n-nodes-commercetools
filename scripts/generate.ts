@@ -13,7 +13,7 @@
  *               nodes/Commercetools/generated/operations.json
  *
  *   Step 2 — Reads @commercetools/platform-sdk .d.ts files and writes:
- *               nodes/Commercetools/properties/subscription.properties.ts
+ *               nodes/Commercetools/generated/subscription.properties.ts
  *
  * After running: npm run build
  *
