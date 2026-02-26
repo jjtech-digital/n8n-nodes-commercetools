@@ -150,19 +150,6 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			},
 		},
 		{
-			displayName: 'Pub/Sub Topic Name',
-			name: 'gcpTopicName',
-			type: 'string',
-			default: '',
-			placeholder: 'your-pub-sub-topic-name',
-			description: 'Name of the Google Cloud Pub/Sub topic',
-			displayOptions: {
-				show: {
-					eventProvider: ['gcp'],
-				},
-			},
-		},
-		{
 			displayName: 'GCP Region',
 			name: 'gcpRegion',
 			type: 'options',
