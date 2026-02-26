@@ -27,6 +27,26 @@ export interface ParsedOperation {
 	isUpdateAction: boolean;
 	requiresId: boolean;
 	requiresVersion: boolean;
+	/**
+	 * Human-readable label for the path parameter when the URL uses a
+	 * non-standard /segment={{value}} pattern, e.g. /customer-id={{customerId}}.
+	 * Examples: "Customer ID", "Email", "Password Token".
+	 * Undefined for standard /{{id}} and /key={{key}} endpoints.
+	 */
+	pathParamLabel?: string;
+	/**
+	 * The camelCase variable name extracted from the URL placeholder,
+	 * used as the n8n input field name. e.g. 'customerId', 'email'.
+	 * Undefined for standard /{{id}} and /key={{key}} endpoints.
+	 */
+	pathParamName?: string;
+	/**
+	 * The raw URL segment string before the = sign, e.g. 'customer-id'.
+	 * Used by the executor to perform the URL substitution:
+	 *   customer-id={{customer-id}} → customer-id=<value>
+	 * Undefined for standard /{{id}} and /key={{key}} endpoints.
+	 */
+	pathParamSegment?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -55,18 +75,25 @@ function formatLabel(dotPath: string): string {
 }
 
 /**
- * FIX A: Tightened regex — previously `/update\s*action|action/i` was far too broad,
- * matching folder names like "Action Types", "In-Action", "Transaction Actions", etc.
- * and incorrectly flagging their contents as update-action sub-items.
+ * FIX A (v2): Match any folder whose name ENDS with the word "Action" or "Actions".
  *
- * Now matches only:
- *   - Folders whose full name IS "Actions" or "Action" (common CT pattern)
- *   - Folders that START with "Update Action" (e.g. "Update Actions", "Update Action Types")
- * This avoids false positives on any folder that merely contains the word "action".
+ * Previous fix (`/^actions?$/i | /^update\s+actions?/i`) was still too narrow —
+ * it missed CT sub-folders like:
+ *   "Cart in Store Update Actions"   → action folder ✗ (was missed)
+ *   "Product Update Actions"         → action folder ✗ (was missed)
+ *   "Order Update Actions"           → action folder ✗ (was missed)
+ *
+ * These undetected folders caused their operations (e.g. "Add Custom Line Item",
+ * "Add Discount Code") to leak into topLevelOps with isUpdateAction=false,
+ * producing duplicate slugs in the operation dropdown and making ALL cart/product
+ * fields invisible (selecting one of those leaked ops showed zero inputs).
+ *
+ * New rule: if the folder name ends with the standalone word "Action" or "Actions"
+ * (word boundary \b ensures "Interactions", "Transactions", "Abstractions" don't match),
+ * treat it as an update-actions sub-folder.
  */
 function isUpdateActionsSubFolder(folderName: string): boolean {
-	const name = folderName.trim();
-	return /^actions?$/i.test(name) || /^update\s+actions?/i.test(name);
+	return /\bactions?$/i.test(folderName.trim());
 }
 
 function extractFields(obj: Record<string, unknown>, prefix = '', depth = 0): BodyField[] {
@@ -286,7 +313,35 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 
 				const requiresKey = /\/key=/.test(urlTemplate) || /key=\{\{/.test(urlTemplate);
 
-				const requiresId = requiresIdFromUrl || requiresKey;
+				// Detect non-standard path params like /customer-id={{customer-id}}.
+				// These use a /segment={{value}} pattern instead of /{{value}} or /key={{value}}.
+				// The URL placeholder name (e.g. 'customer-id') may itself contain hyphens,
+				// so we convert both the segment AND the placeholder to camelCase for use as
+				// an n8n field name (hyphens are invalid in n8n parameter names).
+				const pathParamMatch = urlTemplate.match(/\/([a-z][a-z-]*)=\{\{([^}]+)\}\}/);
+				// Only treat as custom path param if NOT the 'key=' pattern (already handled).
+				const hasCustomPathParam = pathParamMatch !== null && pathParamMatch[1] !== 'key';
+
+				let pathParamLabel: string | undefined;
+				let pathParamName: string | undefined;
+				let pathParamSegment: string | undefined;
+				if (hasCustomPathParam) {
+					// 'customer-id' → 'Customer ID', 'email' → 'Email', 'password-token' → 'Password Token'
+					pathParamLabel = pathParamMatch![1]
+						.split('-')
+						.map((w) => (w === 'id' ? 'ID' : w[0].toUpperCase() + w.slice(1)))
+						.join(' ');
+					// Convert hyphenated segment to camelCase for a valid n8n field name.
+					// 'customer-id' → 'customerId', 'password-token' → 'passwordToken'
+					pathParamName = pathParamMatch![1].replace(/-([a-z])/g, (_, c: string) =>
+						c.toUpperCase(),
+					);
+					// Keep the raw URL segment (e.g. 'customer-id') so the executor can
+					// reconstruct the substitution: customer-id={{customer-id}} → customer-id=VALUE
+					pathParamSegment = pathParamMatch![1];
+				}
+
+				const requiresId = requiresIdFromUrl || requiresKey || hasCustomPathParam;
 
 				// requiresVersion
 				const requiresVersion =
@@ -326,6 +381,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					isUpdateAction,
 					requiresId,
 					requiresVersion,
+					...(pathParamLabel ? { pathParamLabel, pathParamName, pathParamSegment } : {}),
 				});
 			}
 		};

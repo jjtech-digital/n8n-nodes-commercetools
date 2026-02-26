@@ -180,11 +180,13 @@ export function generateIdFields(
 
 	for (const folder of folders) {
 		const resourceValue = slugify(folder);
-		const singular = toSingular(folder); // FIX C applied here
+		const singular = toSingular(folder);
 		const topLevelOps = operations.filter((op) => op.folder === folder && !op.isUpdateAction);
 
+		// ── Standard /:id endpoints ────────────────────────────────────────
+		// Exclude "by key" ops and ops with a custom path param (handled separately below).
 		const opsNeedingId = topLevelOps
-			.filter((op) => op.requiresId && !/by\s*key/i.test(op.name))
+			.filter((op) => op.requiresId && !op.pathParamName && !/by\s*key/i.test(op.name))
 			.map((op) => op.value);
 
 		if (opsNeedingId.length > 0) {
@@ -198,8 +200,9 @@ export function generateIdFields(
 			});
 		}
 
+		// ── /key={{key}} endpoints ─────────────────────────────────────────
 		const opsNeedingKey = topLevelOps
-			.filter((op) => /by\s*key/i.test(op.name) && op.requiresId)
+			.filter((op) => /by\s*key/i.test(op.name) && op.requiresId && !op.pathParamName)
 			.map((op) => op.value);
 
 		if (opsNeedingKey.length > 0) {
@@ -210,6 +213,30 @@ export function generateIdFields(
 				default: '',
 				required: true,
 				displayOptions: { show: { resource: [resourceValue], operation: opsNeedingKey } },
+			});
+		}
+
+		// ── Non-standard path param endpoints ─────────────────────────────
+		// e.g. /customer-id={{customerId}}, /email={{email}}, /password-token={{passwordToken}}
+		// Each gets its own uniquely-named field so they don't collide with resourceId.
+		// Group ops that share the same pathParamName (same field, multiple operations).
+		const customParamOps = topLevelOps.filter((op) => op.requiresId && op.pathParamName);
+		const byParamName = new Map<string, { label: string; opValues: string[] }>();
+		for (const op of customParamOps) {
+			const key = op.pathParamName!;
+			if (!byParamName.has(key)) {
+				byParamName.set(key, { label: op.pathParamLabel!, opValues: [] });
+			}
+			byParamName.get(key)!.opValues.push(op.value);
+		}
+		for (const [paramName, { label, opValues }] of byParamName) {
+			props.push({
+				displayName: label,
+				name: paramName,
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: opValues } },
 			});
 		}
 	}
@@ -458,11 +485,14 @@ export function generateQueryParamProperties(
 		const resourceValue = slugify(folder);
 
 		// Match GET and HEAD ops with query params.
+		// Exclude ops that use a custom path param (e.g. customer-id=) — those get
+		// their own dedicated input field from generateIdFields and have no extra filters.
 		// Note: parseCollection now normalises methods to uppercase, so comparison is safe.
 		const eligibleOps = operations.filter(
 			(op) =>
 				op.folder === folder &&
 				!op.isUpdateAction &&
+				!op.pathParamName &&
 				['GET', 'HEAD'].includes(op.method) &&
 				op.queryParams.length > 0,
 		);
