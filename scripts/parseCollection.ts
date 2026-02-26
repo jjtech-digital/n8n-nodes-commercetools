@@ -5,8 +5,6 @@
  * operations per resource folder.
  */
 
-import { clear } from "console";
-
 export interface BodyField {
 	name: string;
 	type: 'string' | 'number' | 'boolean' | 'json';
@@ -56,8 +54,19 @@ function formatLabel(dotPath: string): string {
 		.replace(/^./, (c) => c.toUpperCase());
 }
 
+/**
+ * FIX A: Tightened regex — previously `/update\s*action|action/i` was far too broad,
+ * matching folder names like "Action Types", "In-Action", "Transaction Actions", etc.
+ * and incorrectly flagging their contents as update-action sub-items.
+ *
+ * Now matches only:
+ *   - Folders whose full name IS "Actions" or "Action" (common CT pattern)
+ *   - Folders that START with "Update Action" (e.g. "Update Actions", "Update Action Types")
+ * This avoids false positives on any folder that merely contains the word "action".
+ */
 function isUpdateActionsSubFolder(folderName: string): boolean {
-	return /update\s*action|action/i.test(folderName);
+	const name = folderName.trim();
+	return /^actions?$/i.test(name) || /^update\s+actions?/i.test(name);
 }
 
 function extractFields(obj: Record<string, unknown>, prefix = '', depth = 0): BodyField[] {
@@ -181,7 +190,7 @@ function findFolder(items: any[], folderName: string, projectFolderName = 'Proje
 	for (const item of searchIn) {
 		if (item.name === folderName && Array.isArray(item.item)) return item;
 	}
-clear
+
 	return null;
 }
 
@@ -266,13 +275,18 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					.replace(/https?:\/\/api\.[^/]+\.commercetools\.com/, '')
 					.split('?')[0];
 
-				// Detect if URL requires an ID or key
-				const requiresId =
+				// Detect if URL requires an ID or key.
+				// Note: requiresKey is OR'd into requiresId so that all downstream
+				// logic (generateIdFields, generateVersionField, etc.) works correctly
+				// for both "by ID" and "by Key" endpoints using the single requiresId flag.
+				const requiresIdFromUrl =
 					/\/\{\{[^}]*[Ii][Dd]\}\}/.test(urlTemplate) ||
 					urlTemplate.includes('{{ID}}') ||
 					/\/\{[^}]*[Ii][Dd]\}/.test(urlTemplate);
 
 				const requiresKey = /\/key=/.test(urlTemplate) || /key=\{\{/.test(urlTemplate);
+
+				const requiresId = requiresIdFromUrl || requiresKey;
 
 				// requiresVersion
 				const requiresVersion =
@@ -283,14 +297,19 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 							/\bversion\b/.test(rawBodyRaw)));
 
 				// ── Determine isUpdateAction ─────────────────────────────────
-				const bodyHasActionsArray = bodyFields.some((f) => f.name === 'actions');
-
-				const isLikelyMainUpdate =
-					method === 'POST' && requiresId && bodyHasActionsArray && /\bupdate\b/i.test(item.name);
-
-				const isUpdateAction =
-					isActionSubFolder ||
-					(method === 'POST' && requiresId && bodyHasActionsArray && !isLikelyMainUpdate);
+				//
+				// FIX B: The previous heuristic was too aggressive:
+				//   isUpdateAction = isActionSubFolder
+				//                  || (POST && requiresId && hasActions && !isLikelyMainUpdate)
+				//
+				// The fallback condition (POST + requiresId + hasActions + !update in name)
+				// caught legitimate top-level endpoints like "Replicate Cart" if they happened
+				// to have an actions-like body, hiding them from the operation dropdown entirely.
+				//
+				// New rule: an operation is an update action ONLY if it lives inside a folder
+				// that was explicitly identified as an update-actions sub-folder (isActionSubFolder).
+				// The name/body heuristic is removed — the folder structure is the source of truth.
+				const isUpdateAction = isActionSubFolder;
 
 				operations.push({
 					name: item.name,
@@ -305,7 +324,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					folder: parentFolder,
 					subFolder: subFolderName,
 					isUpdateAction,
-					requiresId: requiresId || requiresKey,
+					requiresId,
 					requiresVersion,
 				});
 			}

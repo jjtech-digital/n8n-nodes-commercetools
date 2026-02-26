@@ -55,13 +55,71 @@ const LOCALIZED_FIELDS = new Set([
 ]);
 
 /**
+ * FIX C: Proper singular form for folder names.
+ *
+ * The previous /s$/ strip mangled irregular plurals:
+ *   Addresses → Addresse   (should be Address)
+ *   Categories → Categorie (should be Category)
+ *   Inventories → Inventorie (should be Inventory)
+ *
+ * This lookup covers all CT resource folder names. Falls back to simple
+ * trailing-s strip for any unlisted name so new resources still work.
+ */
+const SINGULAR_MAP: Record<string, string> = {
+	Addresses: 'Address',
+	Categories: 'Category',
+	Inventories: 'Inventory',
+	Entries: 'Entry',
+	Deliveries: 'Delivery',
+	Queries: 'Query',
+	Currencies: 'Currency',
+	Countries: 'Country',
+	Territories: 'Territory',
+	// Standard -s plurals that the fallback handles fine but are listed for clarity:
+	Carts: 'Cart',
+	Orders: 'Order',
+	Products: 'Product',
+	Customers: 'Customer',
+	Payments: 'Payment',
+	Channels: 'Channel',
+	Reviews: 'Review',
+	Stores: 'Store',
+	Quotes: 'Quote',
+	Zones: 'Zone',
+	Types: 'Type',
+	States: 'State',
+	Messages: 'Message',
+	Subscriptions: 'Subscription',
+	Extensions: 'Extension',
+	Taxe: 'Tax', // 'Taxes' → 'Taxe' via /s$/, so map 'Taxes' explicitly:
+	Taxes: 'Tax',
+	ShoppingLists: 'Shopping List',
+	DiscountCodes: 'Discount Code',
+	ProductSelections: 'Product Selection',
+	ProductTypes: 'Product Type',
+	Projects: 'Project',
+	BusinessUnits: 'Business Unit',
+	AssociateRoles: 'Associate Role',
+	ApprovalRules: 'Approval Rule',
+	ApprovalFlows: 'Approval Flow',
+	StagedQuotes: 'Staged Quote',
+	QuoteRequests: 'Quote Request',
+	StandalonePrices: 'Standalone Price',
+	RecurringOrders: 'Recurring Order',
+};
+
+function toSingular(folderName: string): string {
+	return SINGULAR_MAP[folderName] ?? folderName.replace(/ies$/, 'y').replace(/(?<=[^s])s$/, '');
+}
+
+/**
  * Identifies the main "Update <Resource> by ID/Key" endpoint.
  * Robust: matches by name OR by body structure (has `actions` array).
  */
 function isMainUpdateOp(op: ParsedOperation): boolean {
 	if (op.isUpdateAction) return false;
 	if (/\bupdate\b/i.test(op.name)) return true;
-	// Fallback: POST to /{id} with an `actions` array in the body
+	// Fallback: POST to /:id with an `actions` array in the body
 	return op.method === 'POST' && op.requiresId && op.bodyFields.some((f) => f.name === 'actions');
 }
 
@@ -74,7 +132,7 @@ export function generateResourceProperty(folders: string[]): INodeProperties {
 		type: 'options',
 		noDataExpression: true,
 		options: folders.map((f) => ({
-			name: f.replace(/s$/, ''),
+			name: toSingular(f),
 			value: slugify(f),
 		})),
 		default: slugify(folders[0]),
@@ -122,7 +180,7 @@ export function generateIdFields(
 
 	for (const folder of folders) {
 		const resourceValue = slugify(folder);
-		const singular = folder.replace(/s$/, '');
+		const singular = toSingular(folder); // FIX C applied here
 		const topLevelOps = operations.filter((op) => op.folder === folder && !op.isUpdateAction);
 
 		const opsNeedingId = topLevelOps
@@ -343,7 +401,52 @@ export function generateCreateBodyFields(
 	return props;
 }
 
-// ─── 8. Query param filters ───────────────────────────────────────────────────
+// ─── 8. Generic POST body fields (non-create, non-update operations) ──────────
+//
+// FIX D: Previously, POST operations whose names didn't match /\bcreate\b/ or
+// /\bupdate\b/ (e.g. "Replicate Cart", "Add Line Item to Cart in Store") had no
+// body fields generated at all — they appeared in the operation dropdown but
+// showed zero input fields, making them unusable.
+//
+// This section generates body fields for those remaining POST operations.
+
+export function generateMiscPostBodyFields(
+	operations: ParsedOperation[],
+	folders: string[],
+): INodeProperties[] {
+	const props: INodeProperties[] = [];
+
+	for (const folder of folders) {
+		const resourceValue = slugify(folder);
+
+		const miscPostOps = operations.filter(
+			(op) =>
+				op.folder === folder &&
+				!op.isUpdateAction &&
+				op.method === 'POST' &&
+				!/\bcreate\b/i.test(op.name) &&
+				!isMainUpdateOp(op) &&
+				op.bodyFields.length > 0,
+		);
+
+		for (const op of miscPostOps) {
+			for (const field of op.bodyFields) {
+				if (field.name === 'version') continue;
+				props.push(
+					makeFieldProperty(
+						`body__misc__${resourceValue}__${op.value}__${field.name.replace(/\./g, '__')}`,
+						field,
+						{ show: { resource: [resourceValue], operation: [op.value] } },
+					),
+				);
+			}
+		}
+	}
+
+	return props;
+}
+
+// ─── 9. Query param filters ───────────────────────────────────────────────────
 
 export function generateQueryParamProperties(
 	operations: ParsedOperation[],
@@ -407,6 +510,7 @@ export function generateAllNodeProperties(
 		...generateActionsJsonField(operations, folders),
 		...generateActionsUiField(operations, folders),
 		...generateCreateBodyFields(operations, folders),
+		...generateMiscPostBodyFields(operations, folders), // FIX D
 		...generateQueryParamProperties(operations, folders),
 	];
 }

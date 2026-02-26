@@ -84,7 +84,8 @@ jobs:
       - name: Commit regenerated files
         if: >
           steps.check_diff.outputs.changed == 'true' ||
-          github.event_name == 'workflow_dispatch'
+          github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -92,6 +93,7 @@ jobs:
             collection.json \
             nodes/Commercetools/generated/properties.ts \
             nodes/Commercetools/generated/operations.json \
+            nodes/Commercetools/generated/subscription.properties.ts \
             dist/
           git diff --staged --quiet || git commit -m \
             "chore: auto-update from Postman collection [$(date -u +%Y-%m-%d)]"

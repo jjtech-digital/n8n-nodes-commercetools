@@ -38,7 +38,7 @@ const MESSAGE_DTS = path.join(SDK_BASE, 'message.d.ts');
 
 export const SUBSCRIPTION_PROPERTIES_PATH = path.resolve(
 	__dirname,
-	'../nodes/Commercetools/properties/subscription.properties.ts',
+	'../nodes/Commercetools/generated/subscription.properties.ts',
 );
 
 // ─── SDK .d.ts parsing ────────────────────────────────────────────────────────
@@ -119,6 +119,10 @@ const RESOURCE_PREFIXES: Array<[prefix: string, resourceTypeId: string]> = [
 	['Quote', 'quote'],
 	// Recurring
 	['RecurringOrder', 'recurring-order'],
+	// Discount
+	['DiscountCode', 'discount-code'],
+	['DiscountGroup', 'discount-group'],
+	['CartDiscount', 'cart-discount'],
 ];
 
 function resourceTypeFromMessageType(t: string): string | null {
@@ -185,7 +189,7 @@ export const RESOURCES_TO_GENERATE: string[] = ['product', 'customer', 'cart', '
  * Parse the SDK .d.ts files and write subscription.properties.ts.
  * Called by generate.ts, or directly when run as standalone.
  *
- * @param outputPath     Where to write the generated file
+ * @param outputPath          Where to write the generated file
  * @param resourcesToInclude  Filter to specific resourceTypeIds; null = include all
  */
 export function generateSubscriptionProperties(
@@ -223,10 +227,6 @@ export function generateSubscriptionProperties(
 	console.info(`  ✓  Event resources:    ${eventResources.size}`);
 	console.info(`  ✓  Event types:        ${eventTypeValues.length}`);
 
-	// Resources in changes[] but not in messages[] → no message types, change-only
-	const changeOnlyResources = [...changeResources].filter((r) => !messageResources.has(r)).sort();
-	console.info(`  ✓  Change-only:        ${changeOnlyResources.length}`);
-
 	// ── Parse message type discriminators from message.d.ts ───────────────────
 
 	const allMessageTypes = parseMessageTypeValues(msgSrc);
@@ -236,18 +236,43 @@ export function generateSubscriptionProperties(
 	const unmapped: string[] = [];
 
 	// 1. Individual message type events
+	//
+	// Key insight: MessageSubscriptionResourceTypeIdValues in subscription.d.ts is
+	// sometimes INCOMPLETE — e.g. 'cart' is absent from that enum even though
+	// CartFrozen / CartUnfrozen / CartPurchaseOrderNumberSet exist as message types
+	// in message.d.ts, and the CT API happily accepts them in messages[].types[].
+	//
+	// Strategy:
+	//   - If resourceTypeId is in messageResources → normal case, include as message.
+	//   - If resourceTypeId is NOT in messageResources but IS in changeResources →
+	//     the SDK enum is stale/incomplete; still include as message type (CT API
+	//     accepts types[] on these resources too).
+	//   - If resourceTypeId is in neither → truly unknown, warn and skip.
 	for (const value of allMessageTypes) {
 		const resourceTypeId = resourceTypeFromMessageType(value);
 		if (!resourceTypeId) {
 			unmapped.push(value);
 			continue;
 		}
-		if (!messageResources.has(resourceTypeId)) {
+
+		const knownToMessage = messageResources.has(resourceTypeId);
+		const knownToChange = changeResources.has(resourceTypeId);
+
+		if (!knownToMessage && !knownToChange) {
 			console.warn(
-				`  ⚠️  "${value}" → "${resourceTypeId}" not in MessageSubscriptionResourceTypeId — skipping`,
+				`  ⚠️  "${value}" → "${resourceTypeId}" is unknown to all CT subscription resource enums — skipping`,
 			);
 			continue;
 		}
+
+		if (!knownToMessage && knownToChange) {
+			// SDK MessageSubscriptionResourceTypeIdValues enum is incomplete for this
+			// resource (e.g. 'cart'). The CT API still accepts messages[].types[] for it.
+			console.info(
+				`  ℹ️  "${value}" → "${resourceTypeId}" absent from MessageSubscriptionResourceTypeIdValues but present in changes — including as message`,
+			);
+		}
+
 		events.push({
 			value,
 			name: humanize(value),
@@ -280,6 +305,18 @@ export function generateSubscriptionProperties(
 	}
 
 	// 3. Change-only events (one entry per resource, no types array in CT API)
+	//
+	// A resource is "change-only" only if it has NO message type entries at all
+	// (neither from messageResources nor promoted from changeResources in step 1).
+	// This prevents 'cart' from being double-listed as both individual message
+	// types AND a catch-all change entry.
+	const coveredByMessages = new Set(
+		events.filter((e) => e.subscriptionType === 'message').map((e) => e.resourceTypeId),
+	);
+	const changeOnlyResources = [...changeResources].filter((r) => !coveredByMessages.has(r)).sort();
+
+	console.info(`  ✓  Change-only:        ${changeOnlyResources.length}`);
+
 	for (const resourceTypeId of changeOnlyResources) {
 		const hr = humanizeResource(resourceTypeId);
 		events.push({
