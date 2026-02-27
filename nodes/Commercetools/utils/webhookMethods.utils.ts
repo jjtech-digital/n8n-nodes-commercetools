@@ -222,27 +222,7 @@ export const triggerMethods = {
 						accessKeyId: credentials.awsAccessKeyId,
 						secretAccessKey: credentials.awsSecretAccessKey,
 						region: awsInfrastructure.region,
-					});
-					const lambda = new AWS.Lambda();
-					await lambda
-						.invoke({
-							FunctionName: awsInfrastructure.lambdaFunctionName as string,
-							InvocationType: 'RequestResponse',
-							Payload: JSON.stringify({
-								Records: [
-									{
-										body: JSON.stringify({
-											type: 'AWSInfrastructureTest',
-											resource: {
-												message: 'Subscription connectivity established',
-												timestamp: new Date().toISOString(),
-											},
-										}),
-									},
-								],
-							}),
-						})
-						.promise();
+					});	
 				} catch {
 					/* best-effort */
 				}
