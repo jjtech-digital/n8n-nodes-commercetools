@@ -85,11 +85,22 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		.replace(/\{\{projectKey\}\}/g, projectKey);
 
 	if (opDef.requiresId) {
-		if (/by\s*key/i.test(opDef.name)) {
+		if (opDef.pathParamSegment && opDef.pathParamName) {
+			// ── Non-standard path param: /customer-id={{customer-id}} ──────
+			// e.g. GET /carts/customer-id=<value>
+			//      POST /carts/customer-id=<value>/merge
+			const paramValue = safeGet<string>(this, opDef.pathParamName, i, '');
+			urlPath = urlPath.replace(
+				new RegExp(opDef.pathParamSegment + '=\\{\\{[^}]+\\}\\}'),
+				`${opDef.pathParamSegment}=${paramValue}`,
+			);
+		} else if (/by\s*key/i.test(opDef.name)) {
+			// ── /key={{key}} endpoints ────────────────────────────────────
 			const key = safeGet<string>(this, 'resourceKey', i, '');
 			urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
 			urlPath = urlPath.replace(/\{\{[^}]*[Kk]ey\}\}/, key);
 		} else {
+			// ── Standard /{{ID}} endpoints ────────────────────────────────
 			const id = safeGet<string>(this, 'resourceId', i, '');
 			urlPath = urlPath.replace(/\{\{[^}]*[Ii][Dd]\}\}/g, id).replace(/\/:id/g, `/${id}`);
 		}
@@ -158,6 +169,15 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			for (const field of opDef.bodyFields) {
 				if (field.name === 'version') continue;
 				const pname = `body__create__${resource}__${operation}__${field.name.replace(/\./g, '__')}`;
+				const val = safeGet<unknown>(this, pname, i, null);
+				if (val === null || val === '' || val === 0) continue;
+				setNested(body, field.name, tryParseJson(val));
+			}
+		} else {
+			// ── Misc POST (Replicate Cart, Merge Cart, etc.) ───────────────
+			for (const field of opDef.bodyFields) {
+				if (field.name === 'version') continue;
+				const pname = `body__misc__${resource}__${operation}__${field.name.replace(/\./g, '__')}`;
 				const val = safeGet<unknown>(this, pname, i, null);
 				if (val === null || val === '' || val === 0) continue;
 				setNested(body, field.name, tryParseJson(val));
