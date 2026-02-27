@@ -251,7 +251,6 @@ export async function createRealAWSInfrastructure(
             console.log('═══════════════════════════════════════════════════════════');
             console.log('🎯 LAMBDA FUNCTION TRIGGERED');
             console.log('═══════════════════════════════════════════════════════════');
-            console.log('📋 Request ID:', context.requestId);
             console.log('📋 Function Name:', context.functionName);
             console.log('📋 Function Version:', context.functionVersion);
             console.log('📋 Memory Limit:', context.memoryLimitInMB, 'MB');
@@ -283,89 +282,30 @@ export async function createRealAWSInfrastructure(
                         ? JSON.parse(record.body) 
                         : record.body;
                     
-                    console.log('📦 Event Type:', messageBody.type);
-                    
-                    const receivedEventType = messageBody.type;
+                    const receivedEventType = messageBody.type ?? eventType;
+                    const webhookPayload = {
+                        eventType: receivedEventType,
+                        rawMessage: messageBody,
+                        source: 'CommerceTools-Lambda',
+                        processed: true,
+                        message: \`Product ${eventType && typeof eventType === 'string' ? eventType.toLowerCase() : 'unknown'} event processed successfully\`,
+                        timestamp: new Date().toISOString(),
+                        projectKey: projectKey
+                    };
+                    await webhookSendingAck(webhookUrl, webhookPayload);
+
+                        // Simulate business processing
+                    await new Promise(resolve => setTimeout(resolve, 100));
 
                     // Check if event type matches what we're configured for
-                    if (receivedEventType === eventType) {
-                        console.log('✅ Event type matches:', eventType);
-                        
-                        // Extract product data
-                        const product = messageBody?.productProjection || messageBody?.resource || {};
-                        
-                        // Prepare webhook payload
-                        const webhookPayload = {
-                            eventType: receivedEventType,
-                            product: product,
-                            rawMessage: messageBody,
-                            source: 'CommerceTools-Lambda',
-                            processed: true,
-                            message: \`Product ${eventType && typeof eventType === 'string' ? eventType.toLowerCase() : 'unknown'} event processed successfully\`,
-                            timestamp: new Date().toISOString(),
-                            projectKey: projectKey
-                        };
-                        
-                        console.log('📦 Webhook Payload Prepared');
-
-                        await webhookSendingAck(webhookUrl, webhookPayload);
-
-                        // Simulate business processing
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        
-                        results.push({
-                            status: 'success',
-                            processedAt: new Date().toISOString(),
-                            projectKey: projectKey,
-                            eventType: receivedEventType,
-                            productId: product.id || 'N/A',
-                            webhookStatus: webhookPayload.webhookStatus
-                        });
-                        
-                        console.log('✅ Record processed successfully');
-                        
-                    } else if (receivedEventType === "AWSInfrastructureTest") {
-
-                        // Prepare webhook payload
-                        const webhookPayload = {
-                            eventType: receivedEventType,
-                            rawMessage: messageBody,
-                            source: 'CommerceTools-Lambda',
-                            processed: true,
-                            message: \`Subscription connectivity established successfully\`,
-                            timestamp: new Date().toISOString(),
-                            projectKey: projectKey
-                        };
-                        
-                        console.log('📦 Webhook Payload Prepared');
-
-                        await webhookSendingAck(webhookUrl, webhookPayload);
-
-                        // Simulate business processing
-                        await new Promise(resolve => setTimeout(resolve, 100));
-
-                      results.push({
-                            status: 'success',
-                            eventType: receivedEventType,
-                            reason: '',
-                            timestamp: new Date().toISOString()
-                        });
-
-                    } else {
-                        console.log('⚠️  Event type mismatch');
-                        console.log('   Expected:', eventType);
-                        console.log('   Received:', receivedEventType);
-                        
-                        results.push({
-                            status: 'ignored',
-                            eventType: receivedEventType,
-                            expectedEventType: eventType,
-                            reason: 'Event type not configured for processing',
-                            timestamp: new Date().toISOString()
-                        });
-                    }
-                    
-                } catch (error) {
+                    results.push({
+                        status: 'success',
+                        processedAt: new Date().toISOString(),
+                        projectKey: projectKey,
+                        eventType: receivedEventType,
+                        id: messageBody?.resource?.id || 'N/A',
+                    });
+					                } catch (error) {
                     console.error('❌ Error processing record');
                     console.error('Error Message:', error.message);
                     console.error('Error Stack:', error.stack);
@@ -385,7 +325,6 @@ export async function createRealAWSInfrastructure(
             console.log('═══════════════════════════════════════════════════════════');
             console.log('Total Records:', results.length);
             console.log('Successful:', results.filter(r => r.status === 'success').length);
-            console.log('Ignored:', results.filter(r => r.status === 'ignored').length);
             console.log('Errors:', results.filter(r => r.status === 'error').length);
             console.log('═══════════════════════════════════════════════════════════');
 
@@ -395,9 +334,6 @@ export async function createRealAWSInfrastructure(
                 body: JSON.stringify({
                     message: \`CommerceTools ${eventType} events processed successfully\`,
                     processedEvents: results.length,
-                    successfulEvents: results.filter(r => r.status === 'success').length,
-                    ignoredEvents: results.filter(r => r.status === 'ignored').length,
-                    errorEvents: results.filter(r => r.status === 'error').length,
                     webhookUrl: webhookUrl ? 'configured' : 'not configured',
                     results: results,
                     timestamp: new Date().toISOString()
