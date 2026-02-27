@@ -137,7 +137,7 @@ export async function createGCPInfrastructure(
 		});
 		// ── 2. Resolve webhook URL ────────────────────────────────────────────
 		const url = new URL(webhookUrl);
-		
+
 		// ── 3. Cloud Function source ──────────────────────────────────────────
 		const jsCode = `
 			const functions = require('@google-cloud/functions-framework');

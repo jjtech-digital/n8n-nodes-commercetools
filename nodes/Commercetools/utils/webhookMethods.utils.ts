@@ -222,7 +222,7 @@ export const triggerMethods = {
 						accessKeyId: credentials.awsAccessKeyId,
 						secretAccessKey: credentials.awsSecretAccessKey,
 						region: awsInfrastructure.region,
-					});	
+					});
 				} catch {
 					/* best-effort */
 				}
