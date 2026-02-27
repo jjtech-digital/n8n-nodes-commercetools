@@ -137,11 +137,7 @@ export async function createGCPInfrastructure(
 		});
 		// ── 2. Resolve webhook URL ────────────────────────────────────────────
 		const url = new URL(webhookUrl);
-		if (url.hostname === 'localhost') {
-			url.hostname = '59d7-103-120-60-7.ngrok-free.app';
-			url.protocol = 'https';
-			url.port = '';
-		}
+		
 		// ── 3. Cloud Function source ──────────────────────────────────────────
 		const jsCode = `
 			const functions = require('@google-cloud/functions-framework');
