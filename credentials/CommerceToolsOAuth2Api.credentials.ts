@@ -108,45 +108,21 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			},
 		},
 		{
-			displayName: 'Google Cloud Project ID',
-			name: 'gcpProjectId',
+			displayName: 'Service Account JSON',
+			name: 'serviceAccountJson',
 			type: 'string',
-			default: '',
-			placeholder: 'your-gcp-project-id',
-			description: 'ID of your Google Cloud project for Pub/Sub',
-			displayOptions: {
-				show: {
-					eventProvider: ['gcp'],
-				},
-			},
-		},
-		{
-			displayName: 'Client Email',
-			name: 'clientEmail',
-			type: 'string',
-			default: '',
-			placeholder: 'my-sa@my-project.iam.gserviceaccount.com',
-			description: 'Email of your Google Cloud project',
-			displayOptions: {
-				show: {
-					eventProvider: ['gcp'],
-				},
-			},
-		},
-		{
-			displayName: 'private Key',
-			name: 'privateKey',
-			type: 'string',
-			default: '',
-			placeholder: 'your-gcp-project-id',
-			description: 'private Key of your Google Cloud project',
-			displayOptions: {
-				show: {
-					eventProvider: ['gcp'],
-				},
-			},
 			typeOptions: {
-				password: true,
+				rows: 6,
+			},
+			default: '',
+			placeholder:
+				'Paste the entire contents of your downloaded GCP service account .json key file',
+			description:
+				'The full JSON key file downloaded from GCP Console → IAM → Service Accounts → Keys',
+			displayOptions: {
+				show: {
+					eventProvider: ['gcp'],
+				},
 			},
 		},
 		{

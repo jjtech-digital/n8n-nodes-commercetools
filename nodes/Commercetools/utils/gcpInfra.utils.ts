@@ -1,35 +1,49 @@
 import { INode, NodeOperationError } from 'n8n-workflow';
 import { PubSub } from '@google-cloud/pubsub';
 import AdmZip from 'adm-zip';
-import { Storage, StorageOptions } from '@google-cloud/storage';
+import { Storage } from '@google-cloud/storage';
 import { google } from 'googleapis';
 import { GoogleAuth, OAuth2Client } from 'google-auth-library';
+
 export type GCPResponse = {
 	topicName: string;
 	projectId: string;
 	bucketName: string;
 	functionName: string;
 };
+
 // ─── Credential helpers ───────────────────────────────────────────────────────
 type ParsedGCPCreds = {
 	projectId: string;
 	clientEmail: string;
 	privateKey: string;
 };
+
+/**
+ * Ensures a PEM private key has real newlines, not escaped \n literals.
+ * Handles all common storage/transport mangling formats n8n may produce.
+ */
+function normalizePrivateKey(key: string): string {
+	return key
+		.trim()
+		.replace(/\\n/g, '\n') // literal \n text → real newline
+		.replace(/\\r/g, '') // strip any \r artifacts
+		.replace(/\r\n/g, '\n') // Windows line endings → Unix
+		.replace(/\r/g, '\n'); // stray \r → newline
+}
+
 /**
  * Normalise credentials from n8n into the three fields we need.
  *
- * n8n encrypts individual credential fields, so values like `privateKey`
- * arrive as an opaque hash rather than the original PEM content.
+ * Preferred shape: paste the entire GCP service account JSON into a single
+ * `serviceAccountJson` credential field. n8n treats it as opaque text and
+ * passes it through unchanged. JSON.parse then recovers the real private_key
+ * PEM string with newlines already correct.
  *
- * Solution: store the entire GCP service account JSON in a single
- * `serviceAccountJson` credential field. n8n treats it as opaque text
- * and passes it through unchanged. JSON.parse then recovers the real
- * private_key PEM string with newlines already correct.
- *
- * Users paste the full contents of the downloaded .json key file.
+ * Exported so other files (e.g. triggerMethods) can parse credentials without
+ * duplicating logic.
  */
-function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
+export function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 	// Shape 1: full service account JSON in a single field (preferred)
 	const jsonStr = raw.serviceAccountJson ?? raw.serviceAccountKey ?? '';
 	if (jsonStr) {
@@ -43,18 +57,23 @@ function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 		}
 		const projectId = parsed.project_id ?? raw.gcpProjectId ?? '';
 		const clientEmail = parsed.client_email ?? '';
-		const privateKey = parsed.private_key ?? '';
+		// JSON.parse restores real newlines automatically; normalizePrivateKey
+		// handles any edge-case double-encoding that may survive the round-trip.
+		const privateKey = normalizePrivateKey(parsed.private_key ?? '');
+
 		if (!projectId) throw new Error('GCP service account JSON missing project_id');
 		if (!clientEmail) throw new Error('GCP service account JSON missing client_email');
 		if (!privateKey) throw new Error('GCP service account JSON missing private_key');
+		if (!privateKey.includes('-----BEGIN')) {
+			throw new Error('GCP private_key in JSON does not look like a valid PEM key');
+		}
 		return { projectId, clientEmail, privateKey };
 	}
-	// Shape 2: separate fields — clientEmail + privateKey stored individually.
-	// n8n hashes credential fields individually, so privateKey may arrive as
-	// an opaque hash. If it looks like a valid PEM key, use it directly.
+
+	// Shape 2: separate fields (legacy / fallback)
 	const projectId = raw.gcpProjectId ?? '';
 	const clientEmail = raw.clientEmail ?? raw.client_email ?? '';
-	const privateKey = (raw.privateKey ?? raw.private_key ?? '').trim().replace(/\\n/g, '\n'); // literal \\n text (stored by n8n) → real newline
+	const privateKey = normalizePrivateKey(raw.privateKey ?? raw.private_key ?? '');
 	if (!projectId) throw new Error('GCP credential missing gcpProjectId');
 	if (!clientEmail) throw new Error('GCP credential missing clientEmail');
 	if (!privateKey) throw new Error('GCP credential missing privateKey');
@@ -67,20 +86,11 @@ function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 	}
 	return { projectId, clientEmail, privateKey };
 }
+
 /**
- * Build auth clients for GCP services.
- *
- * Two separate clients are needed:
- *   - JWT         → gRPC-based clients (PubSub, Storage) via authClient option
- *   - GoogleAuth  → googleapis REST client (Cloud Functions) via auth option
- *
- * The JWT is passed via `authClient:` to gRPC libs, bypassing their internal
- * credential plugin chain (which hits OpenSSL directly and throws DECODER errors).
- *
- * GoogleAuth is used for googleapis REST calls — it correctly manages token
- * lifecycle, refresh, and Authorization header injection. Passing a raw JWT
- * directly to `googleapis`'s `auth:` option can result in "Login Required"
- * if the library calls getAccessToken() in a way that bypasses the JWT's cache.
+ * Build a GoogleAuth client and eagerly pre-fetch the access token so all
+ * subsequent API calls can reuse it without each triggering their own token
+ * round-trip to the metadata/token endpoint (~200-400 ms saved).
  */
 export async function buildAuthClient(raw: Record<string, string>) {
 	const creds = parseCredentials(raw);
@@ -91,16 +101,111 @@ export async function buildAuthClient(raw: Record<string, string>) {
 		},
 		scopes: ['https://www.googleapis.com/auth/cloud-platform'],
 		projectId: creds.projectId,
-		clientOptions: {
-			quotaProjectId: creds.projectId,
-		},
+		clientOptions: { quotaProjectId: creds.projectId },
 	});
 	const client = await auth.getClient();
-	return {
-		grpcAuth: client,
-		restAuth: client as OAuth2Client,
-	};
+	// Pre-warm: sign the JWT and exchange it for an access token now so every
+	// subsequent googleapis call hits the cache instead of the token endpoint.
+	await (client as OAuth2Client).getAccessToken();
+	return { restAuth: client as OAuth2Client };
 }
+
+// ─── Cloud Function source (static) ──────────────────────────────────────────
+// The webhook URL is injected via the WEBHOOK_URL env var at deploy time, so
+// the source itself never changes between calls. Define it once as a constant
+// and pre-build the zip at module-load time — no zip work on the hot path.
+const FUNCTION_SOURCE = `
+const functions = require('@google-cloud/functions-framework');
+const https = require('https');
+const http = require('http');
+
+functions.cloudEvent('cloudFunctionCode', async (cloudEvent) => {
+	const webhookUrl = process.env.WEBHOOK_URL;
+	if (!webhookUrl) {
+		console.error('FATAL: WEBHOOK_URL env var is not set');
+		return;
+	}
+
+	const base64data = cloudEvent.data?.message?.data;
+	if (!base64data) {
+		console.warn('No Pub/Sub message data found in cloudEvent:', JSON.stringify(cloudEvent));
+		return;
+	}
+
+	const decoded = Buffer.from(base64data, 'base64').toString('utf-8');
+	console.log('Decoded Pub/Sub message:', decoded);
+
+	let parsed;
+	try {
+		parsed = JSON.parse(decoded);
+	} catch (e) {
+		console.error('Pub/Sub message is not valid JSON:', decoded);
+		return;
+	}
+
+	const body = JSON.stringify(parsed);
+	const bodyBuffer = Buffer.from(body, 'utf-8');
+
+	return new Promise((resolve, reject) => {
+		const parsedUrl = new URL(webhookUrl);
+		const client = parsedUrl.protocol === 'https:' ? https : http;
+		const req = client.request(webhookUrl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Content-Length': bodyBuffer.length,
+			},
+		}, (res) => {
+			let responseBody = '';
+			res.setEncoding('utf-8');
+			res.on('data', (chunk) => { responseBody += chunk; });
+			res.on('end', () => {
+				if (res.statusCode >= 200 && res.statusCode < 300) {
+					console.log('Webhook delivered successfully, status:', res.statusCode);
+					resolve();
+				} else {
+					console.error('Webhook returned error status:', res.statusCode, 'body:', responseBody);
+					reject(new Error('Webhook returned status ' + res.statusCode + ': ' + responseBody));
+				}
+			});
+		});
+		req.on('error', (err) => {
+			console.error('HTTP request to webhook failed:', err.message);
+			reject(err);
+		});
+		req.write(bodyBuffer);
+		req.end();
+	});
+});
+`;
+
+const PACKAGE_JSON = JSON.stringify(
+	{
+		name: 'n8n-ct-webhook',
+		version: '1.0.0',
+		main: 'index.js',
+		dependencies: { '@google-cloud/functions-framework': '^3.0.0' },
+	},
+	null,
+	2,
+);
+
+// Pre-build the zip once at module load — reused across every deployment call.
+const PREBUILT_ZIP: Buffer = (() => {
+	const zip = new AdmZip();
+	zip.addFile('index.js', Buffer.from(FUNCTION_SOURCE, 'utf8'));
+	zip.addFile('package.json', Buffer.from(PACKAGE_JSON, 'utf8'));
+	return zip.toBuffer();
+})();
+
+const REQUIRED_APIS = [
+	'cloudfunctions.googleapis.com',
+	'cloudbuild.googleapis.com',
+	'artifactregistry.googleapis.com',
+	'run.googleapis.com',
+	'eventarc.googleapis.com',
+];
+
 // ─── Create ───────────────────────────────────────────────────────────────────
 export async function createGCPInfrastructure(
 	gcpCredentials: Record<string, string>,
@@ -108,112 +213,86 @@ export async function createGCPInfrastructure(
 	eventType: string,
 ): Promise<GCPResponse> {
 	try {
-		const { grpcAuth, restAuth } = await buildAuthClient(gcpCredentials);
-		const projectId = parseCredentials(gcpCredentials).projectId;
-		const timestamp = Date.now();
-		const topicName = `ct-${eventType.toLowerCase()}-${timestamp}`;
-		const bucketName = `ct-${eventType.toLowerCase()}-bucket-${timestamp}`;
-		const fnName = `ct-${eventType.toLowerCase()}-fn-${timestamp}`;
-		// ── 1. Pub/Sub topic ─────────────────────────────────────────────────
-		// authClient passed directly — PubSub never touches the raw key bytes.
-		const pubsub = new PubSub({ projectId, authClient: grpcAuth });
-		await pubsub.topic(topicName).get({ autoCreate: true });
-		// Grant CT's service account publish permission on the topic
-		const pubsubApi = google.pubsub({ version: 'v1', auth: restAuth });
-		await pubsubApi.projects.topics.setIamPolicy({
-			resource: `projects/${projectId}/topics/${topicName}`,
-			requestBody: {
-				policy: {
-					bindings: [
-						{
-							role: 'roles/pubsub.publisher',
-							members: [
-								'serviceAccount:subscriptions@commercetools-platform.iam.gserviceaccount.com',
-							],
-						},
-					],
-				},
-			},
-		});
-		// ── 2. Resolve webhook URL ────────────────────────────────────────────
-		const url = new URL(webhookUrl);
-
-		// ── 3. Cloud Function source ──────────────────────────────────────────
-		const jsCode = `
-			const functions = require('@google-cloud/functions-framework');
-			const https = require('https');
-			const http = require('http');
-			functions.cloudEvent('cloudFunctionCode', (cloudEvent) => {
-				const webhookUrl = process.env.WEBHOOK_URL;
-				if (!webhookUrl) {
-					console.error('FATAL: WEBHOOK_URL not set');
-					return;
-				}
-				const base64data = cloudEvent.data?.message?.data;
-				if (!base64data) {
-					console.warn('No Pub/Sub message data');
-					return;
-				}
-				const body = Buffer.from(base64data, 'base64').toString('utf-8');
-				return new Promise((resolve, reject) => {
-					const parsedUrl = new URL(webhookUrl);
-					const client    = parsedUrl.protocol === 'https:' ? https : http;
-					const req = client.request(webhookUrl, {
-						method: 'POST',
-						headers: {
-							'Content-Type':   'application/json',
-							'Content-Length': Buffer.byteLength(body),
-						},
-					}, (res) => { res.resume(); res.on('end', resolve); });
-					req.on('error', reject);
-					req.write(body);
-					req.end();
-				});
-			});
-			`;
-		const packageJson = {
-			name: 'n8n-ct-webhook',
-			version: '1.0.0',
-			main: 'index.js',
-			dependencies: { '@google-cloud/functions-framework': '^3.0.0' },
-		};
-		// ── 4. Zip ────────────────────────────────────────────────────────────
-		const zip = new AdmZip();
-		zip.addFile('index.js', Buffer.from(jsCode, 'utf8'));
-		zip.addFile('package.json', Buffer.from(JSON.stringify(packageJson, null, 2), 'utf8'));
-		const zipBuffer = zip.toBuffer();
-		// ── 5. GCS bucket + upload ─────────────────────────────────
+		// Parse credentials synchronously, then kick off auth token pre-warm
+		// immediately so JWT-sign + token-exchange runs while we do other setup.
 		const creds = parseCredentials(gcpCredentials);
+		const authPromise = buildAuthClient(gcpCredentials);
+
+		const eventLower = eventType.toLowerCase();
+		const timestamp = Date.now();
+		const topicName = `ct-${eventLower}-${timestamp}`;
+		const bucketName = `ct-${eventLower}-bucket-${timestamp}`;
+		const fnName = `ct-${eventLower}-fn-${timestamp}`;
+		const zipObject = `${fnName}.zip`;
+		const url = new URL(webhookUrl);
+		const { projectId, clientEmail, privateKey } = creds;
+
+		// Await auth — likely already resolved by the time we reach this line
+		const { restAuth } = await authPromise;
+
+		const pubsub = new PubSub({
+			projectId,
+			credentials: { client_email: clientEmail, private_key: privateKey },
+		});
 		const storage = new Storage({
 			projectId,
-			credentials: {
-				client_email: creds.clientEmail,
-				private_key: creds.privateKey,
-			},
+			credentials: { client_email: clientEmail, private_key: privateKey },
 		});
+		const pubsubApi = google.pubsub({ version: 'v1', auth: restAuth });
 		const bucket = storage.bucket(bucketName);
-		const [exists] = await bucket.exists();
-		if (!exists) {
-			await bucket.create({ location: gcpCredentials.gcpRegion });
-		}
-		const zipObject = `${fnName}.zip`;
-		await bucket.file(zipObject).save(zipBuffer, {
-			contentType: 'application/zip',
-			resumable: false,
-		});
 
-		// ── 6. Deploy Cloud Function (Gen2) ───────────────────────────────────
-		// restAuth is GoogleAuth — googleapis calls .getClient() internally,
-		// which correctly manages token refresh and Authorization headers.
-		await enableRequiredApis(restAuth, projectId);
+		// ── All independent setup in parallel ─────────────────────────────────
+		await Promise.all([
+			// 1. Create Pub/Sub topic then grant CT publish permission
+			pubsub
+				.topic(topicName)
+				.get({ autoCreate: true })
+				.then(() =>
+					pubsubApi.projects.topics.setIamPolicy({
+						resource: `projects/${projectId}/topics/${topicName}`,
+						requestBody: {
+							policy: {
+								bindings: [
+									{
+										role: 'roles/pubsub.publisher',
+										members: [
+											'serviceAccount:subscriptions@commercetools-platform.iam.gserviceaccount.com',
+										],
+									},
+								],
+							},
+						},
+					}),
+				),
+
+			// 2. Create bucket (ignore 409 already-exists) then upload the
+			//    pre-built zip — no zip construction on the hot path
+			bucket
+				.create({ location: gcpCredentials.gcpRegion })
+				.catch((err) => {
+					if (err.code !== 409) throw err;
+				})
+				.then(() =>
+					bucket.file(zipObject).save(PREBUILT_ZIP, {
+						contentType: 'application/zip',
+						resumable: false,
+					}),
+				),
+
+			// 3. Enable required GCP APIs — checks current state first so
+			//    already-enabled APIs skip the enable round-trip entirely
+			enableRequiredApis(restAuth, projectId),
+		]);
+
+		// ── Deploy Cloud Function (Gen2) ──────────────────────────────────────
 		const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
 		const parent = `projects/${projectId}/locations/${gcpCredentials.gcpRegion}`;
-		const fullName = `${parent}/functions/${fnName}`;
+
 		const createOp = await cloudfunctions.projects.locations.functions.create({
 			parent,
 			functionId: fnName,
 			requestBody: {
-				name: fullName,
+				name: `${parent}/functions/${fnName}`,
 				buildConfig: {
 					runtime: 'nodejs20',
 					entryPoint: 'cloudFunctionCode',
@@ -231,16 +310,20 @@ export async function createGCPInfrastructure(
 				},
 			},
 		});
-		while (true) {
-			const op = await cloudfunctions.projects.locations.operations.get({
-				name: createOp.data.name!,
-			});
-			if (op.data.done) {
-				if (op.data.error) throw new Error(`Deployment failed: ${JSON.stringify(op.data.error)}`);
-				break;
-			}
-			await new Promise((r) => setTimeout(r, 3000));
-		}
+
+		// ── Poll with immediate first check + exponential backoff ─────────────
+		// initialDelayMs: 0 → checks immediately after create() returns in case
+		// GCP already finished (common for warm projects).
+		// The sleep timer and status GET run concurrently so GET latency doesn't
+		// compound on top of the delay: cadence = max(delay, getLatency).
+		await pollUntilDone(
+			() =>
+				cloudfunctions.projects.locations.operations.get({
+					name: createOp.data.name!,
+				}),
+			{ initialDelayMs: 0, stepMs: 1000, maxDelayMs: 5000, backoffFactor: 1.5 },
+		);
+
 		return { topicName, bucketName, projectId, functionName: fnName };
 	} catch (err) {
 		throw new NodeOperationError(
@@ -249,36 +332,60 @@ export async function createGCPInfrastructure(
 		);
 	}
 }
+
 // ─── Delete ───────────────────────────────────────────────────────────────────
 export async function deleteGCPInfrastructure(
 	gcpCredentials: Record<string, string>,
 	infrastructure: GCPResponse,
 ): Promise<void> {
 	try {
-		const { grpcAuth, restAuth } = await buildAuthClient(gcpCredentials);
+		const creds = parseCredentials(gcpCredentials);
+		const { restAuth } = await buildAuthClient(gcpCredentials);
+		const { clientEmail, privateKey } = creds;
+
 		const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
-		const fnFullName = `projects/${infrastructure.projectId}/locations/${gcpCredentials.gcpRegion}/functions/${infrastructure.functionName}`;
-		try {
-			await cloudfunctions.projects.locations.functions.delete({ name: fnFullName });
-		} catch (err) {
-			if (err.code !== 5) throw err;
-		}
-		const pubsub = new PubSub({ projectId: infrastructure.projectId, authClient: grpcAuth });
-		try {
-			await pubsub.topic(infrastructure.topicName).delete();
-		} catch (err) {
-			if (err.code !== 5) throw err;
-		}
+		const pubsub = new PubSub({
+			projectId: infrastructure.projectId,
+			credentials: { client_email: clientEmail, private_key: privateKey },
+		});
 		const storage = new Storage({
 			projectId: infrastructure.projectId,
-			authClient: grpcAuth,
-		} as unknown as StorageOptions);
-		try {
-			const bucket = storage.bucket(infrastructure.bucketName);
-			await bucket.deleteFiles({ force: true });
-			await bucket.delete();
-		} catch (err) {
-			if (err.code !== 5) throw err;
+			credentials: { client_email: clientEmail, private_key: privateKey },
+		});
+
+		// Delete all three resources in parallel — none depend on each other.
+		// allSettled ensures a single failure doesn't suppress the other deletions.
+		const results = await Promise.allSettled([
+			// Cloud Function
+			cloudfunctions.projects.locations.functions
+				.delete({
+					name: `projects/${infrastructure.projectId}/locations/${gcpCredentials.gcpRegion}/functions/${infrastructure.functionName}`,
+				})
+				.catch((err) => {
+					if (err.code !== 5) throw err; // 5 = NOT_FOUND, already gone
+				}),
+
+			// Pub/Sub topic
+			pubsub
+				.topic(infrastructure.topicName)
+				.delete()
+				.catch((err) => {
+					if (err.code !== 5) throw err;
+				}),
+
+			// GCS bucket — files must be purged before the bucket itself
+			(async () => {
+				const bucket = storage.bucket(infrastructure.bucketName);
+				await bucket.deleteFiles({ force: true });
+				await bucket.delete();
+			})().catch((err) => {
+				if (err.code !== 5) throw err;
+			}),
+		]);
+
+		const failed = results.filter((r) => r.status === 'rejected');
+		if (failed.length) {
+			throw new Error(failed.map((f) => f.reason?.message ?? f.reason).join('; '));
 		}
 	} catch (error) {
 		throw new NodeOperationError(
@@ -287,23 +394,57 @@ export async function deleteGCPInfrastructure(
 		);
 	}
 }
-async function enableRequiredApis(auth: OAuth2Client, projectId: string) {
-	const serviceusage = google.serviceusage({
-		version: 'v1',
-		auth,
-	});
-	const services = [
-		'cloudfunctions.googleapis.com',
-		'cloudbuild.googleapis.com',
-		'artifactregistry.googleapis.com',
-		'run.googleapis.com',
-		'eventarc.googleapis.com',
-	];
-	for (const service of services) {
-		await serviceusage.services
-			.enable({
-				name: `projects/${projectId}/services/${service}`,
-			})
-			.catch(() => {});
+
+// ─── Internal helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Enable all required GCP APIs in parallel.
+ * Checks current state first — already-enabled APIs are skipped entirely,
+ * saving one enable round-trip per service on every subsequent deployment.
+ */
+async function enableRequiredApis(auth: OAuth2Client, projectId: string): Promise<void> {
+	const serviceusage = google.serviceusage({ version: 'v1', auth });
+
+	await Promise.all(
+		REQUIRED_APIS.map(async (service) => {
+			const name = `projects/${projectId}/services/${service}`;
+			try {
+				const { data } = await serviceusage.services.get({ name });
+				if (data.state === 'ENABLED') return; // already active — skip enable call
+			} catch {
+				// get() failure is non-fatal; fall through and attempt enable
+			}
+			await serviceusage.services.enable({ name }).catch(() => {});
+		}),
+	);
+}
+
+/**
+ * Generic long-operation poller with configurable exponential backoff.
+ *
+ * Key behaviour:
+ * - initialDelayMs: 0  → first status check fires immediately after create()
+ * - The sleep timer and the GET request run via Promise.all so the GET's
+ *   network latency doesn't stack on top of the delay:
+ *   effective cadence = max(delayMs, getLatency) not delayMs + getLatency
+ */
+async function pollUntilDone(
+	getFn: () => Promise<{ data: { done?: boolean | null; error?: unknown } }>,
+	opts: {
+		initialDelayMs: number;
+		stepMs: number;
+		maxDelayMs: number;
+		backoffFactor: number;
+	},
+): Promise<void> {
+	let delay = opts.initialDelayMs;
+	while (true) {
+		const [op] = await Promise.all([getFn(), new Promise<void>((r) => setTimeout(r, delay))]);
+		if (op.data.done) {
+			if (op.data.error) throw new Error(`Deployment failed: ${JSON.stringify(op.data.error)}`);
+			return;
+		}
+		delay =
+			delay === 0 ? opts.stepMs : Math.min(Math.ceil(delay * opts.backoffFactor), opts.maxDelayMs);
 	}
 }

@@ -17,9 +17,10 @@ import {
 	createGCPInfrastructure,
 	deleteGCPInfrastructure,
 	GCPResponse,
+	parseCredentials,
 } from './gcpInfra.utils';
 import { PubSub } from '@google-cloud/pubsub';
-import { Storage, StorageOptions } from '@google-cloud/storage';
+import { Storage } from '@google-cloud/storage';
 import { google } from 'googleapis';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function generateConfigHash(events: string[], hasAWS: boolean, hasGCP: boolean): string {
@@ -46,7 +47,7 @@ export const triggerMethods = {
 			const eventsRaw = this.getNodeParameter('events') as string[] | string;
 			const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
 			const hasAWS = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			const hasGCP = !!credentials.gcpProjectId;
+			const hasGCP = !!credentials.serviceAccountJson; // updated: check for JSON field
 			const currentHash = generateConfigHash(currentEvents, hasAWS, hasGCP);
 			// No subscription stored yet
 			if (!webhookData.subscriptionId) return false;
@@ -118,11 +119,16 @@ export const triggerMethods = {
 						return false;
 					}
 				} else if (webhookData.gcpInfrastructure) {
-					// ── Verify GCP — use authClient, never bare google.auth.getClient() ──
+					// ── Verify GCP ────────────────────────────────────────────
 					try {
-						const { grpcAuth, restAuth } = await buildAuthClient(credentials);
-						const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
+						// Parse creds once — privateKey is normalised inside parseCredentials
+						const creds = parseCredentials(credentials);
+						const { restAuth } = await buildAuthClient(credentials);
+
 						const infra = webhookData.gcpInfrastructure as GCPResponse;
+
+						// Check Cloud Function
+						const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
 						const fnFullName = `projects/${infra.projectId}/locations/${credentials.gcpRegion}/functions/${infra.functionName}`;
 						try {
 							await cloudfunctions.projects.locations.functions.get({ name: fnFullName });
@@ -133,16 +139,29 @@ export const triggerMethods = {
 							}
 							throw err;
 						}
-						const pubsub = new PubSub({ projectId: infra.projectId, authClient: grpcAuth });
+
+						// Check Pub/Sub topic — credentials: {} avoids gRPC/OpenSSL path
+						const pubsub = new PubSub({
+							projectId: infra.projectId,
+							credentials: {
+								client_email: creds.clientEmail,
+								private_key: creds.privateKey,
+							},
+						});
 						const [topicExists] = await pubsub.topic(infra.topicName).exists();
 						if (!topicExists) {
 							clearWebhookData(webhookData);
 							return false;
 						}
+
+						// Check GCS bucket — credentials: {} avoids gRPC/OpenSSL path
 						const storage = new Storage({
 							projectId: infra.projectId,
-							authClient: grpcAuth,
-						} as unknown as StorageOptions);
+							credentials: {
+								client_email: creds.clientEmail,
+								private_key: creds.privateKey,
+							},
+						});
 						const [bucketExists] = await storage.bucket(infra.bucketName).exists();
 						if (!bucketExists) {
 							clearWebhookData(webhookData);
@@ -171,11 +190,9 @@ export const triggerMethods = {
 				string
 			>;
 			const hasAWS = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			const hasGCP = !!(
-				credentials.gcpProjectId &&
-				credentials.privateKey &&
-				credentials.clientEmail
-			);
+			// Updated: detect GCP by presence of serviceAccountJson (the new single-field approach)
+			const hasGCP = !!credentials.serviceAccountJson;
+
 			const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 			const baseUrl = await getBaseUrl.call(this);
 			const webhookUrl = this.getNodeWebhookUrl('default');
