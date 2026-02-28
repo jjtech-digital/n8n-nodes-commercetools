@@ -356,7 +356,6 @@ Recent Highlights:
 * v0.1.32 — Cart update actions & lint styling
 * v0.1.31 — Standardized capitalization
 * v0.1.30 — All Commercetools regions included
-* v0.1.29 — Order operations added
 
 ---
 
