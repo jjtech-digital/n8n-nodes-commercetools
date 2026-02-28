@@ -1,7 +1,7 @@
 import { INode, NodeOperationError } from 'n8n-workflow';
 import { PubSub } from '@google-cloud/pubsub';
 import AdmZip from 'adm-zip';
-import { Storage, StorageOptions } from '@google-cloud/storage';
+import { Storage } from '@google-cloud/storage';
 import { google } from 'googleapis';
 import { GoogleAuth, OAuth2Client } from 'google-auth-library';
 export type GCPResponse = {
@@ -16,20 +16,32 @@ type ParsedGCPCreds = {
 	clientEmail: string;
 	privateKey: string;
 };
+
+/**
+ * Ensures a PEM private key has real newlines, not escaped \n literals.
+ * Handles all common storage/transport mangling formats n8n may produce.
+ */
+function normalizePrivateKey(key: string): string {
+	return key
+		.trim()
+		.replace(/\\n/g, '\n') // literal \n text → real newline
+		.replace(/\\r/g, '') // strip any \r artifacts
+		.replace(/\r\n/g, '\n') // Windows line endings → Unix
+		.replace(/\r/g, '\n'); // stray \r → newline
+}
+
 /**
  * Normalise credentials from n8n into the three fields we need.
  *
- * n8n encrypts individual credential fields, so values like `privateKey`
- * arrive as an opaque hash rather than the original PEM content.
+ * Preferred shape: paste the entire GCP service account JSON into a single
+ * `serviceAccountJson` credential field. n8n treats it as opaque text and
+ * passes it through unchanged. JSON.parse then recovers the real private_key
+ * PEM string with newlines already correct.
  *
- * Solution: store the entire GCP service account JSON in a single
- * `serviceAccountJson` credential field. n8n treats it as opaque text
- * and passes it through unchanged. JSON.parse then recovers the real
- * private_key PEM string with newlines already correct.
- *
- * Users paste the full contents of the downloaded .json key file.
+ * Exported so other files (e.g. triggerMethods) can parse credentials without
+ * duplicating logic.
  */
-function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
+export function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 	// Shape 1: full service account JSON in a single field (preferred)
 	const jsonStr = raw.serviceAccountJson ?? raw.serviceAccountKey ?? '';
 	if (jsonStr) {
@@ -43,18 +55,23 @@ function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 		}
 		const projectId = parsed.project_id ?? raw.gcpProjectId ?? '';
 		const clientEmail = parsed.client_email ?? '';
-		const privateKey = parsed.private_key ?? '';
+		// JSON.parse restores real newlines automatically; normalizePrivateKey
+		// handles any edge-case double-encoding that may survive the round-trip.
+		const privateKey = normalizePrivateKey(parsed.private_key ?? '');
+
 		if (!projectId) throw new Error('GCP service account JSON missing project_id');
 		if (!clientEmail) throw new Error('GCP service account JSON missing client_email');
 		if (!privateKey) throw new Error('GCP service account JSON missing private_key');
+		if (!privateKey.includes('-----BEGIN')) {
+			throw new Error('GCP private_key in JSON does not look like a valid PEM key');
+		}
 		return { projectId, clientEmail, privateKey };
 	}
-	// Shape 2: separate fields — clientEmail + privateKey stored individually.
-	// n8n hashes credential fields individually, so privateKey may arrive as
-	// an opaque hash. If it looks like a valid PEM key, use it directly.
+
+	// Shape 2: separate fields (legacy / fallback)
 	const projectId = raw.gcpProjectId ?? '';
 	const clientEmail = raw.clientEmail ?? raw.client_email ?? '';
-	const privateKey = (raw.privateKey ?? raw.private_key ?? '').trim().replace(/\\n/g, '\n'); // literal \\n text (stored by n8n) → real newline
+	const privateKey = normalizePrivateKey(raw.privateKey ?? raw.private_key ?? '');
 	if (!projectId) throw new Error('GCP credential missing gcpProjectId');
 	if (!clientEmail) throw new Error('GCP credential missing clientEmail');
 	if (!privateKey) throw new Error('GCP credential missing privateKey');
@@ -68,19 +85,12 @@ function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 	return { projectId, clientEmail, privateKey };
 }
 /**
- * Build auth clients for GCP services.
+ * Build a GoogleAuth client for REST-based googleapis calls (Cloud Functions,
+ * Pub/Sub IAM policy, Service Usage).
  *
- * Two separate clients are needed:
- *   - JWT         → gRPC-based clients (PubSub, Storage) via authClient option
- *   - GoogleAuth  → googleapis REST client (Cloud Functions) via auth option
- *
- * The JWT is passed via `authClient:` to gRPC libs, bypassing their internal
- * credential plugin chain (which hits OpenSSL directly and throws DECODER errors).
- *
- * GoogleAuth is used for googleapis REST calls — it correctly manages token
- * lifecycle, refresh, and Authorization header injection. Passing a raw JWT
- * directly to `googleapis`'s `auth:` option can result in "Login Required"
- * if the library calls getAccessToken() in a way that bypasses the JWT's cache.
+ * PubSub and Storage are instantiated with `credentials: {}` directly —
+ * this bypasses the gRPC auth-plugin chain that hits OpenSSL and throws
+ * the DECODER routines::unsupported error when the key has encoding issues.
  */
 export async function buildAuthClient(raw: Record<string, string>) {
 	const creds = parseCredentials(raw);
@@ -97,7 +107,6 @@ export async function buildAuthClient(raw: Record<string, string>) {
 	});
 	const client = await auth.getClient();
 	return {
-		grpcAuth: client,
 		restAuth: client as OAuth2Client,
 	};
 }
@@ -108,15 +117,22 @@ export async function createGCPInfrastructure(
 	eventType: string,
 ): Promise<GCPResponse> {
 	try {
-		const { grpcAuth, restAuth } = await buildAuthClient(gcpCredentials);
-		const projectId = parseCredentials(gcpCredentials).projectId;
+		const creds = parseCredentials(gcpCredentials);
+		const { restAuth } = await buildAuthClient(gcpCredentials);
+		const { projectId, clientEmail, privateKey } = creds;
 		const timestamp = Date.now();
 		const topicName = `ct-${eventType.toLowerCase()}-${timestamp}`;
 		const bucketName = `ct-${eventType.toLowerCase()}-bucket-${timestamp}`;
 		const fnName = `ct-${eventType.toLowerCase()}-fn-${timestamp}`;
 		// ── 1. Pub/Sub topic ─────────────────────────────────────────────────
-		// authClient passed directly — PubSub never touches the raw key bytes.
-		const pubsub = new PubSub({ projectId, authClient: grpcAuth });
+		// Use credentials: {} directly — avoids the gRPC auth plugin / OpenSSL path
+		const pubsub = new PubSub({
+			projectId,
+			credentials: {
+				client_email: clientEmail,
+				private_key: privateKey,
+			},
+		});
 		await pubsub.topic(topicName).get({ autoCreate: true });
 		// Grant CT's service account publish permission on the topic
 		const pubsubApi = google.pubsub({ version: 'v1', auth: restAuth });
@@ -182,13 +198,13 @@ export async function createGCPInfrastructure(
 		zip.addFile('index.js', Buffer.from(jsCode, 'utf8'));
 		zip.addFile('package.json', Buffer.from(JSON.stringify(packageJson, null, 2), 'utf8'));
 		const zipBuffer = zip.toBuffer();
-		// ── 5. GCS bucket + upload ─────────────────────────────────
-		const creds = parseCredentials(gcpCredentials);
+		// ── 5. GCS bucket + upload ────────────────────────────────────────────
+		// Use credentials: {} directly — same reason as PubSub above
 		const storage = new Storage({
 			projectId,
 			credentials: {
-				client_email: creds.clientEmail,
-				private_key: creds.privateKey,
+				client_email: clientEmail,
+				private_key: privateKey,
 			},
 		});
 		const bucket = storage.bucket(bucketName);
@@ -203,8 +219,6 @@ export async function createGCPInfrastructure(
 		});
 
 		// ── 6. Deploy Cloud Function (Gen2) ───────────────────────────────────
-		// restAuth is GoogleAuth — googleapis calls .getClient() internally,
-		// which correctly manages token refresh and Authorization headers.
 		await enableRequiredApis(restAuth, projectId);
 		const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
 		const parent = `projects/${projectId}/locations/${gcpCredentials.gcpRegion}`;
@@ -255,7 +269,10 @@ export async function deleteGCPInfrastructure(
 	infrastructure: GCPResponse,
 ): Promise<void> {
 	try {
-		const { grpcAuth, restAuth } = await buildAuthClient(gcpCredentials);
+		const creds = parseCredentials(gcpCredentials);
+		const { restAuth } = await buildAuthClient(gcpCredentials);
+		const { clientEmail, privateKey } = creds;
+		// ── Cloud Function ────────────────────────────────────────────────────
 		const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
 		const fnFullName = `projects/${infrastructure.projectId}/locations/${gcpCredentials.gcpRegion}/functions/${infrastructure.functionName}`;
 		try {
@@ -263,16 +280,27 @@ export async function deleteGCPInfrastructure(
 		} catch (err) {
 			if (err.code !== 5) throw err;
 		}
-		const pubsub = new PubSub({ projectId: infrastructure.projectId, authClient: grpcAuth });
+		// ── Pub/Sub topic ─────────────────────────────────────────────────────
+		const pubsub = new PubSub({
+			projectId: infrastructure.projectId,
+			credentials: {
+				client_email: clientEmail,
+				private_key: privateKey,
+			},
+		});
 		try {
 			await pubsub.topic(infrastructure.topicName).delete();
 		} catch (err) {
 			if (err.code !== 5) throw err;
 		}
+		// ── GCS bucket ────────────────────────────────────────────────────────
 		const storage = new Storage({
 			projectId: infrastructure.projectId,
-			authClient: grpcAuth,
-		} as unknown as StorageOptions);
+			credentials: {
+				client_email: clientEmail,
+				private_key: privateKey,
+			},
+		});
 		try {
 			const bucket = storage.bucket(infrastructure.bucketName);
 			await bucket.deleteFiles({ force: true });
@@ -287,11 +315,9 @@ export async function deleteGCPInfrastructure(
 		);
 	}
 }
+// ─── Internal helpers ─────────────────────────────────────────────────────────
 async function enableRequiredApis(auth: OAuth2Client, projectId: string) {
-	const serviceusage = google.serviceusage({
-		version: 'v1',
-		auth,
-	});
+	const serviceusage = google.serviceusage({ version: 'v1', auth });
 	const services = [
 		'cloudfunctions.googleapis.com',
 		'cloudbuild.googleapis.com',
@@ -301,9 +327,7 @@ async function enableRequiredApis(auth: OAuth2Client, projectId: string) {
 	];
 	for (const service of services) {
 		await serviceusage.services
-			.enable({
-				name: `projects/${projectId}/services/${service}`,
-			})
+			.enable({ name: `projects/${projectId}/services/${service}` })
 			.catch(() => {});
 	}
 }
