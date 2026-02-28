@@ -352,6 +352,7 @@ Contributions are welcome. Open an issue or pull request.
 ## Changelog
 
 Recent Highlights:
+* v0.1.33 — Adding GCP event source
 * v0.1.32 — Cart update actions & lint styling
 * v0.1.31 — Standardized capitalization
 * v0.1.30 — All Commercetools regions included
