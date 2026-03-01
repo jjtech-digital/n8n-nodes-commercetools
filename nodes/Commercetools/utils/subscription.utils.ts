@@ -26,8 +26,8 @@ import {
 	MESSAGE_SUBSCRIPTION_RESOURCES,
 	CHANGE_SUBSCRIPTION_RESOURCES,
 	EVENT_SUBSCRIPTION_RESOURCES,
-} from './generated/subscription.properties';
-import type { SubscriptionEvent } from './generated/subscription.properties';
+} from '../generated/subscription.properties';
+import type { SubscriptionEvent } from '../generated/subscription.properties';
 
 // ─── Event lookup map (value → event entry) ───────────────────────────────────
 // Built once at module load from the generated event list.
