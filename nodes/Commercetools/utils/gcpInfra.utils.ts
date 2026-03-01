@@ -3,7 +3,7 @@ import { PubSub } from '@google-cloud/pubsub';
 import AdmZip from 'adm-zip';
 import { Storage } from '@google-cloud/storage';
 import { google } from 'googleapis';
-import { GoogleAuth, OAuth2Client } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 
 export type GCPResponse = {
 	topicName: string;
@@ -88,26 +88,46 @@ export function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 }
 
 /**
- * Build a GoogleAuth client and eagerly pre-fetch the access token so all
- * subsequent API calls can reuse it without each triggering their own token
- * round-trip to the metadata/token endpoint (~200-400 ms saved).
+ * Build a GoogleAuth client, eagerly exchange the JWT for an access token,
+ * and validate the token is actually present before returning.
+ *
+ * In production n8n the service account JSON can arrive via secrets managers
+ * or env vars that stringify differently from local. We build an explicit
+ * JWT-based client so there is no ambiguity about which credential path the
+ * googleapis library takes — it always uses the token we hand it directly.
+ *
+ * Using google.auth.JWT + authorize() instead of GoogleAuth ensures:
+ * 1. The JWT is signed with our private key unconditionally (no ADC fallback)
+ * 2. The resulting token is validated before any infrastructure calls are made
+ * 3. google.options({ auth }) propagates the token to every subsequent client
  */
 export async function buildAuthClient(raw: Record<string, string>) {
 	const creds = parseCredentials(raw);
-	const auth = new GoogleAuth({
-		credentials: {
-			client_email: creds.clientEmail,
-			private_key: creds.privateKey,
-		},
+
+	// Build a JWT client directly so we fully control the sign → exchange flow,
+	// bypassing GoogleAuth's internal credential-detection that can fall through
+	// to ADC / metadata server in production container environments.
+	const jwtClient = new google.auth.JWT({
+		email: creds.clientEmail,
+		key: creds.privateKey,
 		scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-		projectId: creds.projectId,
-		clientOptions: { quotaProjectId: creds.projectId },
 	});
-	const client = await auth.getClient();
-	// Pre-warm: sign the JWT and exchange it for an access token now so every
-	// subsequent googleapis call hits the cache instead of the token endpoint.
-	await (client as OAuth2Client).getAccessToken();
-	return { restAuth: client as OAuth2Client };
+
+	// Exchange JWT for an OAuth2 access token now (pre-warm + validation).
+	const tokenResponse = await jwtClient.authorize();
+
+	if (!tokenResponse?.access_token) {
+		throw new Error(
+			'GCP authentication failed: JWT authorize() returned no access_token. ' +
+				'Check that the service account key is valid and has not been revoked.',
+		);
+	}
+
+	// Set as the global default so every google.* client created after this
+	// automatically carries the same pre-warmed credential.
+	google.options({ auth: jwtClient });
+
+	return { restAuth: jwtClient as unknown as OAuth2Client };
 }
 
 // ─── Cloud Function source (static) ──────────────────────────────────────────
