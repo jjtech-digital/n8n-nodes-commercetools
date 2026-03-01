@@ -20,20 +20,21 @@
 
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from 'n8n-workflow';
 import { AWSResponse } from './awsInfra.utils';
+import { GCPResponse } from './gcpInfra.utils';
 import {
 	subscriptionEvents,
 	MESSAGE_SUBSCRIPTION_RESOURCES,
 	CHANGE_SUBSCRIPTION_RESOURCES,
 	EVENT_SUBSCRIPTION_RESOURCES,
-	SubscriptionEvent,
-} from '../generated/subscription.properties';
+} from './generated/subscription.properties';
+import type { SubscriptionEvent } from './generated/subscription.properties';
 
-// ─── Event lookup map ─────────────────────────────────────────────────────────
-// Built once at module load: value string → SubscriptionEvent
+// ─── Event lookup map (value → event entry) ───────────────────────────────────
+// Built once at module load from the generated event list.
 
 const EVENT_MAP = new Map<string, SubscriptionEvent>(subscriptionEvents.map((e) => [e.value, e]));
 
-// ─── HTTP helpers ─────────────────────────────────────────────────────────────
+// ─── Base URL helper ──────────────────────────────────────────────────────────
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
 	const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
@@ -46,6 +47,8 @@ export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Prom
 
 	return `https://api.${region}.commercetools.com/${projectKey}`;
 }
+
+// ─── Subscription CRUD helpers ────────────────────────────────────────────────
 
 export async function fetchSubscription(
 	this: IHookFunctions,
@@ -200,20 +203,19 @@ export async function createSubscription(
 		baseUrl: string;
 		webhookUrl?: string;
 		awsInfrastructure?: AWSResponse;
+		gcpInfrastructure?: GCPResponse;
 		events: string[];
 		useAWS: boolean;
+		useGCP: boolean;
 	},
 ): Promise<unknown> {
-	const { baseUrl, webhookUrl, awsInfrastructure, events, useAWS } = params;
+	const { baseUrl, webhookUrl, awsInfrastructure, gcpInfrastructure, events, useAWS, useGCP } =
+		params;
 
-	const { messages, changes, events: eventSubs } = buildSubscriptionBody(events);
-
-	if (messages.length === 0 && changes.length === 0 && eventSubs.length === 0) {
-		throw new NodeOperationError(
-			this.getNode(),
-			'No valid events selected — could not map any selected event to a CT subscription entry',
-		);
-	}
+	// Build all three CT subscription arrays from the selected event values.
+	// This replaces the old per-resource manual filtering — all routing is
+	// driven by the subscriptionType field on each generated event entry.
+	const { messages, changes, events: eventsList } = buildSubscriptionBody(events);
 
 	// ── Destination ───────────────────────────────────────────────────────────
 
@@ -232,16 +234,27 @@ export async function createSubscription(
 		} else {
 			destination.authenticationMode = 'IAM';
 		}
+	} else if (useGCP && gcpInfrastructure) {
+		destination = {
+			type: 'GoogleCloudPubSub',
+			projectId: gcpInfrastructure.projectId,
+			topic: gcpInfrastructure.topicName,
+		};
 	} else {
-		destination = { type: 'HTTP', url: webhookUrl };
+		destination = {
+			type: 'HTTP',
+			url: webhookUrl,
+		};
 	}
 
-	// ── Draft ─────────────────────────────────────────────────────────────────
+	// ── Assemble body ─────────────────────────────────────────────────────────
+	// Only include non-empty arrays — CT rejects empty messages/changes/events.
 
 	const body: IDataObject = { destination };
+
 	if (messages.length > 0) body.messages = messages;
 	if (changes.length > 0) body.changes = changes;
-	if (eventSubs.length > 0) body.events = eventSubs;
+	if (eventsList.length > 0) body.events = eventsList;
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 		method: 'POST',
