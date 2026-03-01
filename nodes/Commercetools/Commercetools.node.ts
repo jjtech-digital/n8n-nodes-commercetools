@@ -66,8 +66,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 	const resource = this.getNodeParameter('resource', i) as string;
 	const operation = this.getNodeParameter('operation', i) as string;
-
-	const opDef = (operationsMap as Record<string, ParsedOperation>)[operation];
+	const opDef = (operationsMap as unknown as Record<string, ParsedOperation>)[operation];
 	if (!opDef) {
 		throw new NodeOperationError(
 			this.getNode(),
@@ -94,7 +93,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 				new RegExp(opDef.pathParamSegment + '=\\{\\{[^}]+\\}\\}'),
 				`${opDef.pathParamSegment}=${paramValue}`,
 			);
-		} else if (/by\s*key/i.test(opDef.name)) {
+		} else if (opDef.requiresKey) {
 			// ── /key={{key}} endpoints ────────────────────────────────────
 			const key = safeGet<string>(this, 'resourceKey', i, '');
 			urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
@@ -143,7 +142,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			body.version = safeGet<number>(this, 'version', i, 1);
 
 			// Priority 1: raw JSON override (non-empty array only)
-			const rawJson = safeGet<string>(this, `actionsJson__${resource}`, i, '[]');
+			const rawJson = safeGet<unknown>(this, `actionsJson__${resource}`, i, '[]');
 			let actions: unknown[] = tryParseArray(rawJson);
 
 			// Priority 2: UI builder
@@ -174,9 +173,10 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 				setNested(body, field.name, tryParseJson(val));
 			}
 		} else {
-			// ── Misc POST (Replicate Cart, Merge Cart, etc.) ───────────────
+			// ── Misc POST (Replicate Cart, Merge Cart, Change Password, etc.) ──
+			// NOTE: do NOT skip 'version' here — some misc POSTs (e.g. Change Password)
+			// require version in the request body. Only create ops skip version.
 			for (const field of opDef.bodyFields) {
-				if (field.name === 'version') continue;
 				const pname = `body__misc__${resource}__${operation}__${field.name.replace(/\./g, '__')}`;
 				const val = safeGet<unknown>(this, pname, i, null);
 				if (val === null || val === '' || val === 0) continue;
@@ -192,10 +192,45 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		url: fullUrl,
 		qs: Object.keys(queryParams).length > 0 ? queryParams : undefined,
 		json: true,
+		// Explicitly set Content-Type for mutation requests.
+		// n8n's requestWithAuthentication with json:true should set this automatically,
+		// but some versions require it to be explicit to avoid CT's 'invalid JSON' error.
+		headers: ['POST', 'PUT', 'PATCH'].includes(opDef.method)
+			? { 'Content-Type': 'application/json' }
+			: undefined,
 	};
 
 	if (body && Object.keys(body).length > 0) {
 		options.body = body;
+	}
+
+	// HEAD requests never return a body — the HTTP spec forbids it.
+	// Intercept HEAD calls: send the request with resolveWithFullResponse so we
+	// can read the status code, then return a descriptive result object instead
+	// of an empty body (which would look like a silent failure in n8n).
+	if (opDef.method === 'HEAD') {
+		try {
+			const headOptions: IRequestOptions = {
+				...options,
+				resolveWithFullResponse: true,
+				simple: false, // don't throw on 4xx — let us inspect the status
+			};
+			const response = await this.helpers.requestWithAuthentication.call(
+				this,
+				'commerceToolsOAuth2Api',
+				headOptions,
+			);
+			const statusCode: number = response.statusCode ?? response.status ?? 0;
+			return {
+				exists: statusCode >= 200 && statusCode < 300,
+				statusCode,
+				url: fullUrl,
+			};
+		} catch (err) {
+			throw new NodeApiError(this.getNode(), err, {
+				message: `[${opDef.name}]: ${(err as Error).message}`,
+			});
+		}
 	}
 
 	try {
@@ -296,8 +331,13 @@ function tryParseJson(value: unknown): unknown {
 	return value;
 }
 
-function tryParseArray(raw: string): unknown[] {
-	if (!raw || raw.trim() === '' || raw.trim() === '[]') return [];
+function tryParseArray(raw: unknown): unknown[] {
+	// n8n json-type fields can return either a string '[]' OR an already-parsed [] array.
+	// Handle both to avoid 'raw.trim is not a function' crashes.
+	if (!raw) return [];
+	if (Array.isArray(raw)) return raw.length > 0 ? raw : [];
+	if (typeof raw !== 'string') return [];
+	if (raw.trim() === '' || raw.trim() === '[]') return [];
 	try {
 		const parsed = JSON.parse(raw);
 		return Array.isArray(parsed) && parsed.length > 0 ? parsed : [];

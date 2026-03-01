@@ -184,9 +184,12 @@ export function generateIdFields(
 		const topLevelOps = operations.filter((op) => op.folder === folder && !op.isUpdateAction);
 
 		// ── Standard /:id endpoints ────────────────────────────────────────
-		// Exclude "by key" ops and ops with a custom path param (handled separately below).
+		// Use op.requiresKey (URL-derived flag) NOT the operation name to distinguish
+		// ID vs Key endpoints. Name-based checks like /by\s*key/i fail for operations
+		// named e.g. "Query Product Selections for Product by Product Key" where the
+		// word "Product" sits between "by" and "Key".
 		const opsNeedingId = topLevelOps
-			.filter((op) => op.requiresId && !op.pathParamName && !/by\s*key/i.test(op.name))
+			.filter((op) => op.requiresId && !op.requiresKey && !op.pathParamName)
 			.map((op) => op.value);
 
 		if (opsNeedingId.length > 0) {
@@ -202,7 +205,7 @@ export function generateIdFields(
 
 		// ── /key={{key}} endpoints ─────────────────────────────────────────
 		const opsNeedingKey = topLevelOps
-			.filter((op) => /by\s*key/i.test(op.name) && op.requiresId && !op.pathParamName)
+			.filter((op) => op.requiresKey && !op.pathParamName)
 			.map((op) => op.value);
 
 		if (opsNeedingKey.length > 0) {

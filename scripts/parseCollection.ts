@@ -26,6 +26,14 @@ export interface ParsedOperation {
 	subFolder: string;
 	isUpdateAction: boolean;
 	requiresId: boolean;
+	/**
+	 * True when the URL uses a /key={{key}} or key={{key}} path pattern.
+	 * Stored separately so the executor can route to the key branch even when
+	 * the operation name does not follow the "by Key" naming convention
+	 * (e.g. "Query Product Selections for Product by Product Key" has "Product Key"
+	 * not "by Key", so /by\s*key/i fails to match).
+	 */
+	requiresKey: boolean;
 	requiresVersion: boolean;
 	/**
 	 * Human-readable label for the path parameter when the URL uses a
@@ -380,6 +388,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					subFolder: subFolderName,
 					isUpdateAction,
 					requiresId,
+					requiresKey,
 					requiresVersion,
 					...(pathParamLabel ? { pathParamLabel, pathParamName, pathParamSegment } : {}),
 				});
