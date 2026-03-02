@@ -1,24 +1,29 @@
 /**
  * scripts/generate.ts
  *
- * SINGLE ENTRY POINT — run whenever the Postman collection or CT SDK updates:
+ * SINGLE ENTRY POINT — run whenever:
+ *   - The Postman collection updates
+ *   - The commercetools SDK updates
  *
  *   npx ts-node scripts/generate.ts
  *   # or: npm run generate
  *
  * What it does:
- *   Step 1 — Downloads the latest commercetools Postman collection, parses
- *             configured resource folders, and writes:
- *               nodes/Commercetools/generated/properties.ts
- *               nodes/Commercetools/generated/operations.json
  *
- *   Step 2 — Reads @commercetools/platform-sdk .d.ts files and writes:
- *               nodes/Commercetools/generated/subscription.properties.ts
+ *   STEP 1 — Postman collection → operation properties
+ *       Generates:
+ *         nodes/Commercetools/generated/properties.ts
+ *         nodes/Commercetools/generated/operations.json
+ *
+ *   STEP 2 — SDK .d.ts → event registry
+ *       Generates:
+ *         nodes/Commercetools/generated/ctp-event-registry.json
+ *
+ *   STEP 3 — Event registry → subscription.properties.ts
+ *       Generates:
+ *         nodes/Commercetools/generated/subscription.properties.ts
  *
  * After running: npm run build
- *
- * Individual generators can also be run standalone:
- *   npx ts-node scripts/generateSubscriptionProperties.ts
  */
 
 import * as fs from 'fs';
@@ -27,13 +32,13 @@ import * as https from 'https';
 
 import { parseCollection } from './parseCollection';
 import { generateAllNodeProperties } from './generateProperties';
-import {
-	generateSubscriptionProperties,
-	SUBSCRIPTION_PROPERTIES_PATH,
-	RESOURCES_TO_GENERATE,
-} from './generateSubscriptionProperties';
 
-// ─── Configuration ────────────────────────────────────────────────────────────
+import { generateCtpEventRegistry } from './generateCtpRegistry';
+import { generateSubscriptionProperties } from './generateSubscriptionProperties';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Configuration
+// ─────────────────────────────────────────────────────────────────────────────
 
 const COLLECTION_URL =
 	'https://raw.githubusercontent.com/commercetools/commercetools-postman-collection/master/api/collection.json';
@@ -42,25 +47,25 @@ const COLLECTION_LOCAL_PATH = path.resolve(__dirname, '../collection.json');
 
 const OUTPUT_DIR = path.resolve(__dirname, '../nodes/Commercetools/generated');
 
-/**
- * Folder names must exactly match the Postman collection folder names.
- * Add/remove entries here to include/exclude resources from the node.
- */
 const FOLDERS_TO_GENERATE = ['Products', 'Customers', 'Carts', 'Orders'];
 
-// ─── Download helper ──────────────────────────────────────────────────────────
+const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order'];
+// ─────────────────────────────────────────────────────────────────────────────
+// Download helper
+// ─────────────────────────────────────────────────────────────────────────────
 
 function downloadFile(url: string, dest: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const file = fs.createWriteStream(dest);
+
 		https
 			.get(url, (response) => {
-				// Follow redirects
 				if (response.statusCode === 301 || response.statusCode === 302) {
 					file.close();
 					downloadFile(response.headers.location!, dest).then(resolve).catch(reject);
 					return;
 				}
+
 				response.pipe(file);
 				file.on('finish', () => file.close(() => resolve()));
 			})
@@ -71,12 +76,13 @@ function downloadFile(url: string, dest: string): Promise<void> {
 	});
 }
 
-// ─── Step 1: Postman collection → operation properties ───────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 1 — Postman → Node operation properties
+// ─────────────────────────────────────────────────────────────────────────────
 
 async function generateFromCollection(): Promise<void> {
 	banner('STEP 1 — Postman Collection → Operation Properties');
 
-	// Download with local cache fallback
 	console.info('  🔄  Downloading latest Postman collection...');
 	try {
 		await downloadFile(COLLECTION_URL, COLLECTION_LOCAL_PATH);
@@ -89,87 +95,91 @@ async function generateFromCollection(): Promise<void> {
 		}
 	}
 
-	// Parse
-	console.info(`  📦  Parsing folders: ${FOLDERS_TO_GENERATE.join(', ')}`);
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const collection = require(COLLECTION_LOCAL_PATH);
+
+	console.info(`  📦  Parsing folders: ${FOLDERS_TO_GENERATE.join(', ')}`);
 	const operations = parseCollection(collection, FOLDERS_TO_GENERATE);
+
 	console.info(`  ✅  Found ${operations.length} operations`);
 
 	const nodeProperties = generateAllNodeProperties(operations, FOLDERS_TO_GENERATE);
+
 	console.info(`  ✅  Generated ${nodeProperties.length} property definitions`);
 
-	// Write outputs
 	fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-	// properties.ts — imported by the node at TypeScript build time
 	const propertiesTs = `/**
-		* AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
-		* Generated by: scripts/generate.ts
-		* Source: ${COLLECTION_URL}
-		* Generated at: ${new Date().toISOString()}
-		*
-		* Regenerate: npm run generate
-		*/
+ * AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
+ * Generated by: scripts/generate.ts
+ * Source: ${COLLECTION_URL}
+ * Generated at: ${new Date().toISOString()}
+ */
 
-		import type { INodeProperties } from 'n8n-workflow';
+import type { INodeProperties } from 'n8n-workflow';
 
-		export const generatedProperties: INodeProperties[] = ${JSON.stringify(nodeProperties, null, 2)};
-	`;
+export const generatedProperties: INodeProperties[] = ${JSON.stringify(nodeProperties, null, 2)};
+`;
+
 	fs.writeFileSync(path.join(OUTPUT_DIR, 'properties.ts'), propertiesTs);
-	console.info('  ✅  Wrote nodes/Commercetools/generated/properties.ts');
 
-	// operations.json — runtime lookup: operationValue → ParsedOperation
 	const opsMap: Record<string, unknown> = {};
 	for (const op of operations) opsMap[op.value] = op;
+
 	fs.writeFileSync(path.join(OUTPUT_DIR, 'operations.json'), JSON.stringify(opsMap, null, 2));
-	console.info('  ✅  Wrote nodes/Commercetools/generated/operations.json');
 
-	// Summary
-	console.info('\n  📋  Operations by folder:');
-	for (const folder of FOLDERS_TO_GENERATE) {
-		const names = operations
-			.filter((o) => o.folder === folder && !o.isUpdateAction)
-			.map((o) => o.name);
-		console.info(`      ${folder}: ${names.join(', ')}`);
-	}
+	console.info('  ✅  Wrote operation property files');
 }
 
-// ─── Step 2: SDK .d.ts → subscription.properties.ts ─────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 2 — SDK → Registry JSON
+// ─────────────────────────────────────────────────────────────────────────────
 
-function runSubscriptionGenerator(): void {
-	banner('STEP 2 — SDK .d.ts → Subscription Properties');
-	// Delegate entirely to the dedicated module — no logic duplicated here.
-	// RESOURCES_TO_GENERATE is the filter; edit it in generateSubscriptionProperties.ts.
-	generateSubscriptionProperties(SUBSCRIPTION_PROPERTIES_PATH, RESOURCES_TO_GENERATE);
+function generateRegistry(): void {
+	banner('STEP 2 — SDK .d.ts → Event Registry');
+
+	generateCtpEventRegistry(OUTPUT_DIR, {allowedResources: RESOURCES_TO_GENERATE});
+
+	console.info('  ✅  Event registry generated');
 }
 
-// ─── Utilities ────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 3 — Registry → subscription.properties.ts
+// ─────────────────────────────────────────────────────────────────────────────
+
+function generateSubscriptions(): void {
+	banner('STEP 3 — Event Registry → Subscription Properties');
+
+	generateSubscriptionProperties();
+
+	console.info('  ✅  Subscription properties generated');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────────────────────────
 
 function banner(title: string): void {
-	const line = '━'.repeat(56);
+	const line = '━'.repeat(60);
 	console.info(`\n${line}`);
 	console.info(`  ${title}`);
 	console.info(line);
 }
 
-// ─── Entry point ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Entry point
+// ─────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-	console.info('\n🚀  commercetools n8n node — property generator');
+	console.info('\n🚀  commercetools n8n node — unified generator');
 	console.info(`    ${new Date().toISOString()}`);
 
 	try {
 		await generateFromCollection();
+		generateRegistry();
+		generateSubscriptions();
 	} catch (err) {
-		console.error('\n❌  Collection generation failed:', err);
-		process.exit(1);
-	}
-
-	try {
-		runSubscriptionGenerator();
-	} catch (err) {
-		console.error('\n❌  Subscription generation failed:', err);
+		console.error('\n❌  Generation failed:', err);
 		process.exit(1);
 	}
 

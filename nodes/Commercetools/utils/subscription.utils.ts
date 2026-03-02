@@ -1,21 +1,13 @@
 /**
- * subscription.utils.ts
- *
- * Utilities for managing commercetools subscriptions as n8n triggers.
- *
  * Routing logic:
- *   Each event value in subscriptionEvents has an explicit `subscriptionType`:
- *     'message' → CT messages[] array  (MessageSubscription)
- *     'change'  → CT changes[] array   (ChangeSubscription — no types, whole resource)
- *     'event'   → CT events[] array    (EventSubscription)
+ *   Each event in subscriptionEvents contains:
  *
- *   Special value prefixes:
- *     'change:{resourceTypeId}'  → synthetic key for change-only resources
- *     'message:{resourceTypeId}' → catch-all: subscribe to ALL messages for resource (omit types[])
- *     anything else              → literal CT message or event type string
+ *     subscriptionType:
+ *       'message' → CT messages[]
+ *       'change'  → CT changes[]
  *
- *   This module reads subscriptionType directly from the event registry —
- *   no manual prefix tables or guesswork.
+ *   The generated registry is the single source of truth.
+ *   No prefixes, heuristics, or string parsing are used.
  */
 
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from 'n8n-workflow';
@@ -23,17 +15,17 @@ import { AWSResponse } from './awsInfra.utils';
 import { GCPResponse } from './gcpInfra.utils';
 import {
 	subscriptionEvents,
-	MESSAGE_SUBSCRIPTION_RESOURCES,
-	CHANGE_SUBSCRIPTION_RESOURCES,
-	EVENT_SUBSCRIPTION_RESOURCES,
 } from '../generated/subscription.properties';
 import type { SubscriptionEvent } from '../generated/subscription.properties';
 
 // ─── Event lookup map (value → event entry) ───────────────────────────────────
 // Built once at module load from the generated event list.
 
-const EVENT_MAP = new Map<string, SubscriptionEvent>(subscriptionEvents.map((e) => [e.value, e]));
+const EVENT_MAP = new Map<string, SubscriptionEvent>();
 
+for (const e of subscriptionEvents) {
+  EVENT_MAP.set(e.value, e);
+}
 // ─── Base URL helper ──────────────────────────────────────────────────────────
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
@@ -79,122 +71,61 @@ export async function deleteSubscription(
 interface SubscriptionBody {
 	messages: IDataObject[];
 	changes: IDataObject[];
-	events: IDataObject[];
 }
 
-/**
- * Convert selected event values into CT SubscriptionDraft arrays.
- *
- * CT API shapes:
- *   messages: [{ resourceTypeId: 'product', types: ['ProductPublished', ...] }]
- *   changes:  [{ resourceTypeId: 'cart' }]   ← NO types array, ever
- *   events:   [{ resourceTypeId: 'checkout', types: ['CheckoutPaymentAuthorized', ...] }]
- */
 function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
-	// Per-resource buckets for message type strings
-	const messageTypesByResource = new Map<string, string[]>();
-	// Resources where the user selected the catch-all "all messages" option
-	const messageAllResources = new Set<string>();
-	// Per-resource buckets for event type strings
-	const eventTypesByResource = new Map<string, string[]>();
-	// Change-only resourceTypeIds
-	const changeResourceIds = new Set<string>();
+  const messageTypesByResource = new Map<string, Set<string>>();
+  const changeResourceIds = new Set<string>();
 
-	for (const value of selectedValues) {
-		const event = EVENT_MAP.get(value);
-		if (!event) {
-			console.warn(`[CT Trigger] Unknown event value "${value}" — skipping`);
-			continue;
-		}
+  for (const value of selectedValues) {
+    const event = EVENT_MAP.get(value);
 
-		switch (event.subscriptionType) {
-			case 'message':
-				if (value.startsWith('message:')) {
-					// Catch-all: subscribe to ALL messages for this resource (no types[] filter)
-					messageAllResources.add(event.resourceTypeId);
-				} else {
-					const types = messageTypesByResource.get(event.resourceTypeId) ?? [];
-					types.push(value);
-					messageTypesByResource.set(event.resourceTypeId, types);
-				}
-				break;
+    if (!event) {
+      console.warn(`[CT Trigger] Unknown event "${value}" — skipping`);
+      continue;
+    }
 
-			case 'change':
-				changeResourceIds.add(event.resourceTypeId);
-				break;
+    const { resourceTypeId, subscriptionType } = event;
 
-			case 'event':
-				const etypes = eventTypesByResource.get(event.resourceTypeId) ?? [];
-				etypes.push(value);
-				eventTypesByResource.set(event.resourceTypeId, etypes);
-				break;
-		}
-	}
+    if (!resourceTypeId) {
+      console.warn(`[CT Trigger] Event "${value}" missing resourceTypeId`);
+      continue;
+    }
 
-	// ── Build messages[] ──────────────────────────────────────────────────────
+    switch (subscriptionType) {
+      case 'message': {
+        const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
+        types.add(value); // ✅ dedupe automatically
+        messageTypesByResource.set(resourceTypeId, types);
+        break;
+      }
+      case 'change': {
+        changeResourceIds.add(resourceTypeId);
+        break;
+      }
+      default: {
+        // ✅ compile-time exhaustiveness safety
+        const _never: never = subscriptionType;
+        console.warn(`[CT Trigger] Unsupported subscription type "${_never}"`);
+      }
+    }
+  }
 
-	const messages: IDataObject[] = [];
+  const messages: IDataObject[] = Array.from(messageTypesByResource.entries()).map(
+    ([resourceTypeId, types]) => ({
+      resourceTypeId,
+      types: Array.from(types),
+    }),
+  );
 
-	// Resources with specific types selected
-	for (const [resourceTypeId, types] of messageTypesByResource.entries()) {
-		if (!MESSAGE_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
-			console.warn(
-				`[CT Trigger] "${resourceTypeId}" not in MessageSubscriptionResourceTypeId — skipping`,
-			);
-			continue;
-		}
-		if (messageAllResources.has(resourceTypeId)) {
-			// Catch-all also selected for this resource: omit types[] (receives everything)
-			messages.push({ resourceTypeId });
-		} else {
-			messages.push({ resourceTypeId, types });
-		}
-	}
+  const changes: IDataObject[] = Array.from(changeResourceIds).map(
+    (resourceTypeId) => ({
+      resourceTypeId,
+    }),
+  );
 
-	// Resources where only the catch-all was selected (not already added above)
-	for (const resourceTypeId of messageAllResources) {
-		if (messageTypesByResource.has(resourceTypeId)) continue;
-		if (!MESSAGE_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
-			console.warn(
-				`[CT Trigger] "${resourceTypeId}" not in MessageSubscriptionResourceTypeId — skipping`,
-			);
-			continue;
-		}
-		messages.push({ resourceTypeId }); // no types = CT sends all message types
-	}
-
-	// ── Build changes[] ───────────────────────────────────────────────────────
-	// CT ChangeSubscription has NO types array — it's whole-resource only
-
-	const changes: IDataObject[] = [];
-
-	for (const resourceTypeId of changeResourceIds) {
-		if (!CHANGE_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
-			console.warn(
-				`[CT Trigger] "${resourceTypeId}" not in ChangeSubscriptionResourceTypeId — skipping`,
-			);
-			continue;
-		}
-		changes.push({ resourceTypeId });
-	}
-
-	// ── Build events[] ────────────────────────────────────────────────────────
-
-	const events: IDataObject[] = [];
-
-	for (const [resourceTypeId, types] of eventTypesByResource.entries()) {
-		if (!EVENT_SUBSCRIPTION_RESOURCES.has(resourceTypeId)) {
-			console.warn(
-				`[CT Trigger] "${resourceTypeId}" not in EventSubscriptionResourceTypeId — skipping`,
-			);
-			continue;
-		}
-		events.push({ resourceTypeId, types });
-	}
-
-	return { messages, changes, events };
+  return { messages, changes };
 }
-
 // ─── Public: create subscription ─────────────────────────────────────────────
 
 export async function createSubscription(
@@ -215,7 +146,7 @@ export async function createSubscription(
 	// Build all three CT subscription arrays from the selected event values.
 	// This replaces the old per-resource manual filtering — all routing is
 	// driven by the subscriptionType field on each generated event entry.
-	const { messages, changes, events: eventsList } = buildSubscriptionBody(events);
+	const { messages, changes } = buildSubscriptionBody(events);
 
 	// ── Destination ───────────────────────────────────────────────────────────
 
@@ -254,7 +185,13 @@ export async function createSubscription(
 
 	if (messages.length > 0) body.messages = messages;
 	if (changes.length > 0) body.changes = changes;
-	if (eventsList.length > 0) body.events = eventsList;
+
+	if (!messages.length && !changes.length) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'No valid subscription events selected.',
+		);
+	}
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 		method: 'POST',
