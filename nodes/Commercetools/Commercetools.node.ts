@@ -66,7 +66,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 	const resource = this.getNodeParameter('resource', i) as string;
 	const operation = this.getNodeParameter('operation', i) as string;
-	const opDef = (operationsMap as unknown as Record<string, ParsedOperation>)[operation];
+	const opDef = (operationsMap as Record<string, ParsedOperation>)[operation];
 	if (!opDef) {
 		throw new NodeOperationError(
 			this.getNode(),
@@ -95,6 +95,8 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			);
 		} else if (opDef.requiresKey) {
 			// ── /key={{key}} endpoints ────────────────────────────────────
+			// Use opDef.requiresKey (from URL pattern) NOT the operation name,
+			// because names like "by Product Key" don't match /by\s*key/i.
 			const key = safeGet<string>(this, 'resourceKey', i, '');
 			urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
 			urlPath = urlPath.replace(/\{\{[^}]*[Kk]ey\}\}/, key);

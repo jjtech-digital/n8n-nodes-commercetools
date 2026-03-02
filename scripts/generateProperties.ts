@@ -461,7 +461,9 @@ export function generateMiscPostBodyFields(
 
 		for (const op of miscPostOps) {
 			for (const field of op.bodyFields) {
-				if (field.name === 'version') continue;
+				// NOTE: do NOT skip 'version' here — unlike create/update ops which have a
+				// dedicated Version field, misc POST ops like "Change Password" require version
+				// inside the request body itself and have no separate version UI field.
 				props.push(
 					makeFieldProperty(
 						`body__misc__${resourceValue}__${op.value}__${field.name.replace(/\./g, '__')}`,
