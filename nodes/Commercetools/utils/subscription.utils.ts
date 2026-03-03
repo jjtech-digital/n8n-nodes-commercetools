@@ -75,7 +75,7 @@ interface SubscriptionBody {
 
 function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
   const messageTypesByResource = new Map<string, Set<string>>();
-  const changeResourceIds = new Set<string>();
+  const changeResourceIds = new Map<string, Set<string>>();
 
   for (const value of selectedValues) {
     const event = EVENT_MAP.get(value);
@@ -100,7 +100,9 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
         break;
       }
       case 'change': {
-        changeResourceIds.add(resourceTypeId);
+		const types = changeResourceIds.get(resourceTypeId) ?? new Set<string>();
+		types.add(value); // ✅ dedupe automatically
+		changeResourceIds.set(resourceTypeId, types);
         break;
       }
       default: {
