@@ -97,10 +97,13 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
         const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
         types.add(value); // ✅ dedupe automatically
         messageTypesByResource.set(resourceTypeId, types);
+
         break;
       }
       case 'change': {
-		changeResourceIds.add(resourceTypeId) ?? new Set<string>();
+		const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
+		types.add(value); // ✅ dedupe automatically
+		messageTypesByResource.set(resourceTypeId, types);
         break;
       }
       default: {
