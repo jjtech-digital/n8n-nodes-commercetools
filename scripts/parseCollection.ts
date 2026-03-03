@@ -55,6 +55,23 @@ export interface ParsedOperation {
 	 * Undefined for standard /{{id}} and /key={{key}} endpoints.
 	 */
 	pathParamSegment?: string;
+
+	/**
+	 * When requiresKey=true, the exact Postman placeholder variable name
+	 * inside the key={{...}} part of the URL, e.g. 'product-key', 'cart-key'.
+	 *
+	 * The standard executor always substitutes `resourceKey` (a generic field),
+	 * but some endpoints use a resource-specific placeholder like {{product-key}}
+	 * instead of the generic {{key}}. This field lets the executor know the
+	 * exact regex pattern to replace so the URL substitution always works
+	 * regardless of the placeholder name used in the Postman collection.
+	 *
+	 * Examples:
+	 *   key={{key}}          → keyPlaceholder = 'key'
+	 *   key={{product-key}}  → keyPlaceholder = 'product-key'
+	 *   key={{cart-key}}     → keyPlaceholder = 'cart-key'
+	 */
+	keyPlaceholder?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -229,6 +246,25 @@ function findFolder(items: any[], folderName: string, projectFolderName = 'Proje
 	return null;
 }
 
+/**
+ * Extracts the placeholder variable name from inside a key={{...}} URL segment.
+ *
+ * The Postman collection is inconsistent — some endpoints use the generic
+ * {{key}} placeholder, while others use a resource-scoped name like
+ * {{product-key}}, {{cart-key}}, {{customer-key}}, etc.
+ *
+ * Examples:
+ *   "/products/key={{key}}/..."         → 'key'
+ *   "/products/key={{product-key}}/..." → 'product-key'
+ *   "/carts/key={{cart-key}}"           → 'cart-key'
+ *
+ * Returns undefined if no key= pattern is found.
+ */
+function extractKeyPlaceholder(urlTemplate: string): string | undefined {
+	const match = urlTemplate.match(/key=\{\{([^}]+)\}\}/);
+	return match ? match[1] : undefined;
+}
+
 // ─── Main Parser ──────────────────────────────────────────────────────────────
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -321,6 +357,11 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 
 				const requiresKey = /\/key=/.test(urlTemplate) || /key=\{\{/.test(urlTemplate);
 
+				// Extract the exact placeholder name inside key={{...}} so the executor
+				// can substitute the correct variable regardless of naming convention.
+				// e.g. key={{product-key}} → 'product-key', key={{key}} → 'key'
+				const keyPlaceholder = requiresKey ? extractKeyPlaceholder(urlTemplate) : undefined;
+
 				// Detect non-standard path params like /customer-id={{customer-id}}.
 				// These use a /segment={{value}} pattern instead of /{{value}} or /key={{value}}.
 				// The URL placeholder name (e.g. 'customer-id') may itself contain hyphens,
@@ -390,6 +431,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					requiresId,
 					requiresKey,
 					requiresVersion,
+					...(keyPlaceholder ? { keyPlaceholder } : {}),
 					...(pathParamLabel ? { pathParamLabel, pathParamName, pathParamSegment } : {}),
 				});
 			}

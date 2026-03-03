@@ -94,12 +94,42 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 				`${opDef.pathParamSegment}=${paramValue}`,
 			);
 		} else if (opDef.requiresKey) {
-			// ── /key={{key}} endpoints ────────────────────────────────────
-			// Use opDef.requiresKey (from URL pattern) NOT the operation name,
-			// because names like "by Product Key" don't match /by\s*key/i.
+			// ── /key={{...}} endpoints ────────────────────────────────────
+			//
+			// FIX: The Postman collection is inconsistent about the placeholder
+			// name inside key={{...}}. Some use the generic {{key}}, others use
+			// a resource-scoped name like {{product-key}}, {{cart-key}}, etc.
+			//
+			// Previously the executor used a single hardcoded regex:
+			//   /key=\{\{[^}]+\}\}/  → replaced with key=<value>   ✅ correct
+			//   /\{\{[^}]*[Kk]ey\}\}/ → attempted second substitution ⚠️ redundant
+			//
+			// This worked for simple URLs like /products/key={{key}} but silently
+			// produced malformed URLs for compound endpoints like:
+			//   /products/key={{product-key}}/product-selections
+			// because the second regex (/\{\{[^}]*[Kk]ey\}\}/) could match
+			// {{product-key}} a second time if the first replace didn't consume it,
+			// or match nothing and leave the placeholder unreplaced — which was then
+			// silently wiped by the trailing "strip unreplaced {{var}}" step,
+			// yielding:  /products/key=/product-selections  (empty key → 404).
+			//
+			// Fix: use opDef.keyPlaceholder (parsed from the URL at generate-time)
+			// to build a precise regex that matches exactly the right placeholder.
+			// Fall back to the generic [^}]+ pattern for older operations.json
+			// entries that predate this field.
 			const key = safeGet<string>(this, 'resourceKey', i, '');
-			urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
-			urlPath = urlPath.replace(/\{\{[^}]*[Kk]ey\}\}/, key);
+			if (opDef.keyPlaceholder) {
+				// Escape hyphens in the placeholder name for use in a RegExp.
+				// e.g. 'product-key' → /key=\{\{product-key\}\}/
+				const escapedPlaceholder = opDef.keyPlaceholder.replace(/-/g, '\\-');
+				urlPath = urlPath.replace(
+					new RegExp(`key=\\{\\{${escapedPlaceholder}\\}\\}`),
+					`key=${key}`,
+				);
+			} else {
+				// Legacy fallback: match any key={{...}} pattern.
+				urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
+			}
 		} else {
 			// ── Standard /{{ID}} endpoints ────────────────────────────────
 			const id = safeGet<string>(this, 'resourceId', i, '');
@@ -107,7 +137,9 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		}
 	}
 
-	// Strip any remaining unreplaced {{variable}} placeholders to avoid broken URLs
+	// Strip any remaining unreplaced {{variable}} placeholders to avoid broken URLs.
+	// This is intentionally the last step so earlier branches can rely on precise
+	// substitutions without the strip interfering.
 	urlPath = urlPath.replace(/\{\{[^}]+\}\}/g, '');
 
 	const fullUrl = `${baseUrl}${urlPath}`;
