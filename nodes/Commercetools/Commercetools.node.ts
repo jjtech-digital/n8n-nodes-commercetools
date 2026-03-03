@@ -5,6 +5,7 @@
  */
 
 import type {
+	IBinaryData,
 	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
@@ -75,9 +76,6 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	}
 
 	// ── Build URL ─────────────────────────────────────────────────────────────
-	//
-	// Postman collection uses {{project-key}} (kebab-case).
-	// Replace both variants to be safe.
 
 	let urlPath = opDef.urlTemplate
 		.replace(/\{\{project-key\}\}/g, projectKey)
@@ -86,8 +84,6 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	if (opDef.requiresId) {
 		if (opDef.pathParamSegment && opDef.pathParamName) {
 			// ── Non-standard path param: /customer-id={{customer-id}} ──────
-			// e.g. GET /carts/customer-id=<value>
-			//      POST /carts/customer-id=<value>/merge
 			const paramValue = safeGet<string>(this, opDef.pathParamName, i, '');
 			urlPath = urlPath.replace(
 				new RegExp(opDef.pathParamSegment + '=\\{\\{[^}]+\\}\\}'),
@@ -96,38 +92,18 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		} else if (opDef.requiresKey) {
 			// ── /key={{...}} endpoints ────────────────────────────────────
 			//
-			// FIX: The Postman collection is inconsistent about the placeholder
-			// name inside key={{...}}. Some use the generic {{key}}, others use
-			// a resource-scoped name like {{product-key}}, {{cart-key}}, etc.
-			//
-			// Previously the executor used a single hardcoded regex:
-			//   /key=\{\{[^}]+\}\}/  → replaced with key=<value>   ✅ correct
-			//   /\{\{[^}]*[Kk]ey\}\}/ → attempted second substitution ⚠️ redundant
-			//
-			// This worked for simple URLs like /products/key={{key}} but silently
-			// produced malformed URLs for compound endpoints like:
+			// Use opDef.keyPlaceholder (the exact variable name parsed from
+			// the Postman URL at generate-time) so compound URLs like
 			//   /products/key={{product-key}}/product-selections
-			// because the second regex (/\{\{[^}]*[Kk]ey\}\}/) could match
-			// {{product-key}} a second time if the first replace didn't consume it,
-			// or match nothing and leave the placeholder unreplaced — which was then
-			// silently wiped by the trailing "strip unreplaced {{var}}" step,
-			// yielding:  /products/key=/product-selections  (empty key → 404).
-			//
-			// Fix: use opDef.keyPlaceholder (parsed from the URL at generate-time)
-			// to build a precise regex that matches exactly the right placeholder.
-			// Fall back to the generic [^}]+ pattern for older operations.json
-			// entries that predate this field.
+			// are substituted correctly regardless of placeholder naming.
 			const key = safeGet<string>(this, 'resourceKey', i, '');
 			if (opDef.keyPlaceholder) {
-				// Escape hyphens in the placeholder name for use in a RegExp.
-				// e.g. 'product-key' → /key=\{\{product-key\}\}/
 				const escapedPlaceholder = opDef.keyPlaceholder.replace(/-/g, '\\-');
 				urlPath = urlPath.replace(
 					new RegExp(`key=\\{\\{${escapedPlaceholder}\\}\\}`),
 					`key=${key}`,
 				);
 			} else {
-				// Legacy fallback: match any key={{...}} pattern.
 				urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
 			}
 		} else {
@@ -137,26 +113,29 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		}
 	}
 
-	// Strip any remaining unreplaced {{variable}} placeholders to avoid broken URLs.
-	// This is intentionally the last step so earlier branches can rely on precise
-	// substitutions without the strip interfering.
+	// Strip any remaining unreplaced {{variable}} placeholders.
 	urlPath = urlPath.replace(/\{\{[^}]+\}\}/g, '');
 
 	const fullUrl = `${baseUrl}${urlPath}`;
+
+	// ── Image Upload — binary body, not JSON ──────────────────────────────────
+	//
+	// POST /products/{id}/images sends raw binary (application/octet-stream or
+	// image/*), not a JSON payload. Handle it separately before the JSON path.
+	if (opDef.isImageUpload) {
+		return await executeImageUpload.call(this, i, opDef, fullUrl);
+	}
 
 	// ── Build query string ────────────────────────────────────────────────────
 
 	const queryParams: Record<string, string> = {};
 
-	// DELETE: version goes in query string
 	if (opDef.method === 'DELETE') {
 		queryParams.version = String(safeGet<number>(this, 'version', i, 1));
 	}
 
-	// GET / HEAD: merge filters collection
 	if (['GET', 'HEAD'].includes(opDef.method)) {
 		const filters = safeGet<Record<string, string>>(this, `queryParams__${operation}`, i, {});
-		// Only add non-empty filter values
 		for (const [k, v] of Object.entries(filters)) {
 			if (v !== null && v !== undefined && v !== '') {
 				queryParams[k] = String(v);
@@ -171,24 +150,45 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	if (['POST', 'PUT', 'PATCH'].includes(opDef.method)) {
 		body = {};
 
-		if (isMainUpdateOp(opDef)) {
+		if (opDef.isSearch) {
+			// ── Search endpoint (POST .../search) ─────────────────────────
+			//
+			// Product Search (POST /products/search) and Order Search
+			// (POST /orders/search) accept a free-form SearchRequest JSON
+			// body (query, sort, limit, offset, markMatchingVariants, etc.).
+			//
+			// The Postman entries for these have an *empty* body, so
+			// bodyFields = [] and the field-by-field assembly produces {}.
+			// CT rejects an empty body with a 400 error.
+			//
+			// Fix: expose a single "Search Request Body (JSON)" textarea in
+			// the n8n UI (field name: searchBody__<resource>__<operation>)
+			// and pass the parsed JSON through directly as the POST body.
+			const rawSearchBody = safeGet<unknown>(
+				this,
+				`searchBody__${resource}__${operation}`,
+				i,
+				'{}',
+			);
+			const parsed = tryParseJson(rawSearchBody);
+			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+				body = parsed as Record<string, unknown>;
+			}
+			// If empty / invalid, send empty body — CT allows {} for search (returns all results)
+		} else if (isMainUpdateOp(opDef)) {
 			// ── Main update endpoint: build actions array ──────────────────
 			body.version = safeGet<number>(this, 'version', i, 1);
 
-			// Priority 1: raw JSON override (non-empty array only)
 			const rawJson = safeGet<unknown>(this, `actionsJson__${resource}`, i, '[]');
 			let actions: unknown[] = tryParseArray(rawJson);
 
-			// Priority 2: UI builder
 			if (actions.length === 0) {
-				// Debug: log the raw fixedCollection value so we can see its shape
 				const rawUiValue = safeGet<unknown>(this, `actionsUi__${resource}`, i, '__NOT_FOUND__');
 				console.info(`[CT DEBUG] actionsUi__${resource} raw value:`, JSON.stringify(rawUiValue));
 				actions = buildActionsFromUi(this, i, resource);
 				console.info(`[CT DEBUG] built actions:`, JSON.stringify(actions));
 			}
 
-			// Require at least one action — CT rejects empty actions arrays
 			if (actions.length === 0) {
 				throw new NodeOperationError(
 					this.getNode(),
@@ -207,9 +207,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 				setNested(body, field.name, tryParseJson(val));
 			}
 		} else {
-			// ── Misc POST (Replicate Cart, Merge Cart, Change Password, etc.) ──
-			// NOTE: do NOT skip 'version' here — some misc POSTs (e.g. Change Password)
-			// require version in the request body. Only create ops skip version.
+			// ── Misc POST (Replicate Cart, Change Password, etc.) ──────────
 			for (const field of opDef.bodyFields) {
 				const pname = `body__misc__${resource}__${operation}__${field.name.replace(/\./g, '__')}`;
 				const val = safeGet<unknown>(this, pname, i, null);
@@ -226,9 +224,6 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		url: fullUrl,
 		qs: Object.keys(queryParams).length > 0 ? queryParams : undefined,
 		json: true,
-		// Explicitly set Content-Type for mutation requests.
-		// n8n's requestWithAuthentication with json:true should set this automatically,
-		// but some versions require it to be explicit to avoid CT's 'invalid JSON' error.
 		headers: ['POST', 'PUT', 'PATCH'].includes(opDef.method)
 			? { 'Content-Type': 'application/json' }
 			: undefined,
@@ -238,16 +233,12 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		options.body = body;
 	}
 
-	// HEAD requests never return a body — the HTTP spec forbids it.
-	// Intercept HEAD calls: send the request with resolveWithFullResponse so we
-	// can read the status code, then return a descriptive result object instead
-	// of an empty body (which would look like a silent failure in n8n).
 	if (opDef.method === 'HEAD') {
 		try {
 			const headOptions: IRequestOptions = {
 				...options,
 				resolveWithFullResponse: true,
-				simple: false, // don't throw on 4xx — let us inspect the status
+				simple: false,
 			};
 			const response = await this.helpers.requestWithAuthentication.call(
 				this,
@@ -280,36 +271,117 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	}
 }
 
-// ─── isMainUpdateOp (mirrors the generator logic) ────────────────────────────
+// ─── Image Upload ─────────────────────────────────────────────────────────────
+
+/**
+ * Executes the CT image upload: POST /products/{id}/images
+ *
+ * CT expects:
+ *   - Raw binary body (the image bytes)
+ *   - Content-Type: <image mime type> or application/octet-stream
+ *   - Query params: variantId OR sku (required), staged (optional), filename (optional)
+ *
+ * In n8n, binary data comes from a preceding node (Read Binary File, HTTP
+ * Request, etc.) and is accessed via item.binary[propertyName].
+ *
+ * The operation exposes these n8n fields (set by generateProperties):
+ *   binaryPropertyName  — which binary property holds the image (default: "data")
+ *   variantId           — variant to attach the image to (number, optional)
+ *   sku                 — alternative to variantId (string, optional)
+ *   staged              — whether to stage (boolean, default true)
+ *   filename            — suggested filename (string, optional)
+ */
+async function executeImageUpload(
+	this: IExecuteFunctions,
+	i: number,
+	opDef: ParsedOperation,
+	fullUrl: string,
+): Promise<unknown> {
+	const binaryPropertyName = safeGet<string>(this, 'binaryPropertyName', i, 'data');
+	const variantId = safeGet<number>(this, 'variantId', i, 0);
+	const sku = safeGet<string>(this, 'sku', i, '');
+	const staged = safeGet<boolean>(this, 'staged', i, true);
+	const filename = safeGet<string>(this, 'filename', i, '');
+
+	// Get binary data from the current input item
+	const items = this.getInputData();
+	const item = items[i];
+
+	if (!item.binary || !item.binary[binaryPropertyName]) {
+		throw new NodeOperationError(
+			this.getNode(),
+			`No binary data found on property "${binaryPropertyName}". ` +
+				`Connect a node that outputs binary data (e.g. Read Binary File) ` +
+				`and ensure the Binary Property Name matches.`,
+		);
+	}
+
+	const binaryData: IBinaryData = item.binary[binaryPropertyName];
+	const mimeType: string = binaryData.mimeType || 'application/octet-stream';
+
+	// CT requires variantId or sku
+	const qs: Record<string, string> = {};
+	if (variantId > 0) {
+		qs.variantId = String(variantId);
+	} else if (sku) {
+		qs.sku = sku;
+	} else {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Image upload requires either a Variant ID or a SKU to identify which product variant to attach the image to.',
+		);
+	}
+	qs.staged = String(staged);
+	if (filename) qs.filename = filename;
+
+	// Read the raw binary buffer
+	const binaryBuffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+
+	const options: IRequestOptions = {
+		method: 'POST',
+		url: fullUrl,
+		qs,
+		// Do NOT set json:true — we're sending raw binary
+		headers: { 'Content-Type': mimeType },
+		body: binaryBuffer,
+		encoding: null, // prevent n8n from treating the body as a string
+	};
+
+	try {
+		const response = await this.helpers.requestWithAuthentication.call(
+			this,
+			'commerceToolsOAuth2Api',
+			options,
+		);
+		// CT returns the updated Product as JSON; parse if returned as string
+		if (typeof response === 'string') {
+			try {
+				return JSON.parse(response);
+			} catch {
+				return { raw: response };
+			}
+		}
+		return response;
+	} catch (err) {
+		throw new NodeApiError(this.getNode(), err, {
+			message: `[${opDef.name}]: ${(err as Error).message}`,
+		});
+	}
+}
+
+// ─── isMainUpdateOp ───────────────────────────────────────────────────────────
 
 function isMainUpdateOp(op: ParsedOperation): boolean {
 	if (op.isUpdateAction) return false;
+	if (op.isSearch) return false;
+	if (op.isImageUpload) return false;
 	if (/\bupdate\b/i.test(op.name)) return true;
 	return op.method === 'POST' && op.requiresId && op.bodyFields.some((f) => f.name === 'actions');
 }
 
 // ─── Build actions[] from UI fixedCollection ──────────────────────────────────
 
-/**
- * Reads the fixedCollection UI data and builds the CT `actions` array.
- *
- * fixedCollection structure (one option group per action type):
- *   actionsUi__products = {
- *     changeName:  [{ name: {"en":"..."} }],
- *     addPrice:    [{ variantId: 1, price: {...} }],
- *     publish:     [{ _notice: '' }],   ← zero-param actions
- *   }
- */
 function buildActionsFromUi(ctx: IExecuteFunctions, i: number, resource: string): unknown[] {
-	// n8n returns fixedCollection (multipleValues) data in two possible shapes
-	// depending on version/context:
-	//
-	//   Shape A (object keyed by option name):
-	//     { setMetaTitle: [{ metaTitle: '...', staged: false }], ... }
-	//
-	//   Shape B (some n8n versions wrap in a 'values' key or similar)
-	//
-	// We use the raw parameter value and handle both.
 	const uiData = safeGet<Record<string, Array<Record<string, unknown>>>>(
 		ctx,
 		`actionsUi__${resource}`,
@@ -326,12 +398,8 @@ function buildActionsFromUi(ctx: IExecuteFunctions, i: number, resource: string)
 			const actionPayload: Record<string, unknown> = { action: actionType };
 
 			for (const [key, value] of Object.entries(item)) {
-				// Skip the notice placeholder (zero-param actions like Publish)
 				if (key === '_notice') continue;
-				// Skip empty / null / undefined values — but keep false and 0
 				if (value === null || value === undefined || value === '') continue;
-
-				// Parse JSON strings back to objects/arrays
 				actionPayload[key] = tryParseJson(value);
 			}
 
@@ -366,8 +434,6 @@ function tryParseJson(value: unknown): unknown {
 }
 
 function tryParseArray(raw: unknown): unknown[] {
-	// n8n json-type fields can return either a string '[]' OR an already-parsed [] array.
-	// Handle both to avoid 'raw.trim is not a function' crashes.
 	if (!raw) return [];
 	if (Array.isArray(raw)) return raw.length > 0 ? raw : [];
 	if (typeof raw !== 'string') return [];
