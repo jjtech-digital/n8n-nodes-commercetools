@@ -55,26 +55,26 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 
 #### Resources
 
-| Resource | Available Operations |
-|---|---|
-| **Product** | Create, Get by ID, Get by Key, Query, Update, Delete, Upload Image, Search, Query Product Selections by ID, Query Product Selections by Key, HEAD checks |
+| Resource     | Available Operations                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Product**  | Create, Get by ID, Get by Key, Query, Update, Delete, Upload Image, Search, Query Product Selections by ID, Query Product Selections by Key, HEAD checks   |
 | **Customer** | Create, Authenticate (global & in-store), Get by ID / Key / Email / Password Token, Query, Update, Delete, Password reset, Email verification, HEAD checks |
-| **Cart** | Create (regular & in-store), Get by ID / Customer ID, Query, Update, Delete, Replicate, Merge, HEAD checks |
-| **Order** | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks |
+| **Cart**     | Create (regular & in-store), Get by ID / Customer ID, Query, Update, Delete, Replicate, Merge, HEAD checks                                                 |
+| **Order**    | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks                                    |
 
 #### How field generation works
 
 Each operation type generates a different set of UI fields:
 
-| Operation type | Generated fields |
-|---|---|
-| **Create** | Individual typed fields from the Postman request body |
-| **Update** | Version + Actions (JSON) override + Actions (UI) builder |
-| **Get / Query / HEAD** | Resource ID or Key + optional Filters collection |
-| **Delete** | Resource ID + Version |
-| **Search** | `query.and` (JSON), `sort` (JSON), `limit` (number), `offset` (number) |
-| **Upload Product image** | Image URL + `filename`, `variant`, `sku`, `staged` query params |
-| **Misc POST** | Individual typed fields from the Postman request body |
+| Operation type           | Generated fields                                                       |
+| ------------------------ | ---------------------------------------------------------------------- |
+| **Create**               | Individual typed fields from the Postman request body                  |
+| **Update**               | Version + Actions (JSON) override + Actions (UI) builder               |
+| **Get / Query / HEAD**   | Resource ID or Key + optional Filters collection                       |
+| **Delete**               | Resource ID + Version                                                  |
+| **Search**               | `query.and` (JSON), `sort` (JSON), `limit` (number), `offset` (number) |
+| **Upload Product image** | Image URL + `filename`, `variant`, `sku`, `staged` query params        |
+| **Misc POST**            | Individual typed fields from the Postman request body                  |
 
 #### Update actions
 
@@ -86,12 +86,12 @@ Alternatively, paste a raw JSON array directly into **Actions (JSON)** to bypass
 
 The commercetools Search API accepts a `SearchRequest` body. The node exposes these fields:
 
-| Field | Type | Notes |
-|---|---|---|
-| Query › And | JSON array | Filter predicates. Leave empty to return all results. |
-| Sort | JSON array | Sort descriptors. |
-| Limit | number | Max results per page. |
-| Offset | number | Pagination offset. `0` is sent explicitly (not skipped). |
+| Field       | Type       | Notes                                                    |
+| ----------- | ---------- | -------------------------------------------------------- |
+| Query › And | JSON array | Filter predicates. Leave empty to return all results.    |
+| Sort        | JSON array | Sort descriptors.                                        |
+| Limit       | number     | Max results per page.                                    |
+| Offset      | number     | Pagination offset. `0` is sent explicitly (not skipped). |
 
 > **Note:** Sending `query: { and: [] }` is rejected by commercetools with "exhausted input". Leaving Query › And empty omits the field entirely, which returns all results.
 
@@ -105,14 +105,14 @@ The node handles this transparently:
 2. Derives the `Content-Type` from the file extension (`.jpg`/`.jpeg` → `image/jpeg`, `.png` → `image/png`, `.gif` → `image/gif`, unknown → `image/jpeg`)
 3. POSTs the raw buffer to commercetools with the correct `Content-Type`
 
-| Field | Type | Notes |
-|---|---|---|
-| Product ID | string | Required |
-| Image URL | string | Required — direct link to a JPEG, PNG, or GIF (max 10 MB) |
-| Filename | string | Optional filename stored with the image |
-| Variant ID | number | `0` = Master Variant (default) |
-| SKU | string | Alternative to Variant ID |
-| Staged | boolean | `true` = staged data (default), `false` = current |
+| Field      | Type    | Notes                                                     |
+| ---------- | ------- | --------------------------------------------------------- |
+| Product ID | string  | Required                                                  |
+| Image URL  | string  | Required — direct link to a JPEG, PNG, or GIF (max 10 MB) |
+| Filename   | string  | Optional filename stored with the image                   |
+| Variant ID | number  | `0` = Master Variant (default)                            |
+| SKU        | string  | Alternative to Variant ID                                 |
+| Staged     | boolean | `true` = staged data (default), `false` = current         |
 
 ---
 
@@ -164,6 +164,7 @@ When `awsAccessKeyId` and `awsSecretAccessKey` are present in the credential, th
 The Lambda forwards each SQS message to the n8n webhook URL as a POST request. All resources are deleted when the trigger is deactivated or its configuration changes.
 
 **Requirements:**
+
 - Publicly reachable n8n webhook URL
 - AWS credentials with permissions for: SQS, Lambda, IAM, CloudWatch Logs
 
@@ -179,6 +180,7 @@ When `serviceAccountJson` is present in the credential, the node automatically p
 - All required GCP APIs are enabled automatically (`cloudfunctions`, `cloudbuild`, `artifactregistry`, `run`, `eventarc`)
 
 **Event flow:**
+
 ```
 commercetools → Pub/Sub topic → Cloud Function (Gen2) → n8n webhook
 ```
@@ -186,6 +188,7 @@ commercetools → Pub/Sub topic → Cloud Function (Gen2) → n8n webhook
 All resources are deleted when the trigger is deactivated or reconfigured.
 
 **Requirements:**
+
 - Billing-enabled GCP project
 - Publicly reachable n8n webhook URL
 - Service account with: Pub/Sub Admin, Cloud Functions Admin, Storage Admin, IAM Policy Editor, Service Usage Admin
@@ -198,13 +201,13 @@ All resources are deleted when the trigger is deactivated or reconfigured.
 
 ### commercetools OAuth2 (required for both nodes)
 
-| Field | Notes |
-|---|---|
-| Project Key | From commercetools Merchant Center |
-| Region | `australia-southeast1.gcp`, `europe-west1.gcp`, or `us-central1.gcp` |
-| Client ID / Secret | OAuth2 client credentials from Merchant Center |
-| Scopes | e.g. `manage_project:{projectKey}` |
-| Event Provider | `None`, `AWS EventBridge`, or `Google Cloud Pub/Sub` |
+| Field              | Notes                                                                |
+| ------------------ | -------------------------------------------------------------------- |
+| Project Key        | From commercetools Merchant Center                                   |
+| Region             | `australia-southeast1.gcp`, `europe-west1.gcp`, or `us-central1.gcp` |
+| Client ID / Secret | OAuth2 client credentials from Merchant Center                       |
+| Scopes             | e.g. `manage_project:{projectKey}`                                   |
+| Event Provider     | `None`, `AWS EventBridge`, or `Google Cloud Pub/Sub`                 |
 
 The OAuth2 token URL is built automatically from the selected region — no manual URL entry needed.
 
@@ -212,18 +215,18 @@ Selecting an **Event Provider** reveals the relevant sub-fields:
 
 ### AWS sub-fields
 
-| Field | Notes |
-|---|---|
-| AWS Client Access Key | IAM user access key ID |
-| AWS Client Secret | IAM user secret access key |
-| AWS Region | e.g. `us-east-1` |
+| Field                 | Notes                      |
+| --------------------- | -------------------------- |
+| AWS Client Access Key | IAM user access key ID     |
+| AWS Client Secret     | IAM user secret access key |
+| AWS Region            | e.g. `us-east-1`           |
 
 ### GCP sub-fields
 
-| Field | Notes |
-|---|---|
-| Service Account JSON | Paste the **entire** downloaded `.json` key file as-is |
-| GCP Region | Deployment region for Pub/Sub and Cloud Functions (full list of GCP regions available) |
+| Field                | Notes                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| Service Account JSON | Paste the **entire** downloaded `.json` key file as-is                                 |
+| GCP Region           | Deployment region for Pub/Sub and Cloud Functions (full list of GCP regions available) |
 
 > **Important:** Use the **Service Account JSON** field — paste the complete downloaded key file. Do not split it into separate `clientEmail` / `privateKey` fields. n8n's encrypted credential storage mangles PEM line breaks in individual fields; the JSON field is treated as opaque text and preserves the key exactly.
 
@@ -324,28 +327,28 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 ## Error Handling & Troubleshooting
 
-| Problem | Solution |
-|---|---|
-| Authentication errors | Verify Client ID, Secret, and Scopes in Merchant Center; check that the token URL region matches your project |
-| `version conflict` on update | Fetch the resource first to get the current version number |
-| Unknown operation error at runtime | Run `npm run generate && npm run build` to sync `operations.json` |
-| Webhook not receiving events | Ensure n8n has a public URL; verify the subscription exists in Merchant Center → Subscriptions |
-| Image upload: `Unsupported Content-Type: application/json` | Ensure Image URL is a direct link to a JPEG, PNG, or GIF file, not an HTML page |
-| Search: `exhausted input` | Leave **Query › And** empty — sending `{ and: [] }` is rejected by commercetools |
-| GCP: private key / PEM errors | Use the **Service Account JSON** field; paste the entire `.json` key file, not individual fields |
-| GCP: deploy timeout on first activation | GCP API enablement takes time on cold projects — retry after a minute |
-| Node not visible in n8n | Run `npm install` then `npm run dev` |
+| Problem                                                    | Solution                                                                                                      |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Authentication errors                                      | Verify Client ID, Secret, and Scopes in Merchant Center; check that the token URL region matches your project |
+| `version conflict` on update                               | Fetch the resource first to get the current version number                                                    |
+| Unknown operation error at runtime                         | Run `npm run generate && npm run build` to sync `operations.json`                                             |
+| Webhook not receiving events                               | Ensure n8n has a public URL; verify the subscription exists in Merchant Center → Subscriptions                |
+| Image upload: `Unsupported Content-Type: application/json` | Ensure Image URL is a direct link to a JPEG, PNG, or GIF file, not an HTML page                               |
+| Search: `exhausted input`                                  | Leave **Query › And** empty — sending `{ and: [] }` is rejected by commercetools                              |
+| GCP: private key / PEM errors                              | Use the **Service Account JSON** field; paste the entire `.json` key file, not individual fields              |
+| GCP: deploy timeout on first activation                    | GCP API enablement takes time on cold projects — retry after a minute                                         |
+| Node not visible in n8n                                    | Run `npm install` then `npm run dev`                                                                          |
 
 ---
 
 ## Changelog
 
-| Version | Changes |
-|---|---|
+| Version | Changes                                                                    |
+| ------- | -------------------------------------------------------------------------- |
 | v0.1.35 | Improve GCP authentication by using JWT client for access token management |
-| v0.1.34 | Fix: GCP Credential service handling |
-| v0.1.33 | GCP Pub/Sub + Cloud Functions event source |
-| v0.1.32 | Cart update actions and lint fixes |
+| v0.1.34 | Fix: GCP Credential service handling                                       |
+| v0.1.33 | GCP Pub/Sub + Cloud Functions event source                                 |
+| v0.1.32 | Cart update actions and lint fixes                                         |
 
 ---
 
