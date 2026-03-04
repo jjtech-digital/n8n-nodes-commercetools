@@ -143,11 +143,11 @@ async function main(): Promise<void> {
 		await generateFromCollection();
 		generateRegistry();
 		generateSubscriptions();
-	} catch (err) {
+	} catch {
 		process.exit(1);
 	}
 }
 
-main().catch((err) => {
+main().catch(() => {
 	process.exit(1);
 });
