@@ -342,11 +342,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes |
 |---|---|
-| latest | Image upload binary pipeline, Search Products/Orders structured fields, `isSearch`/`isImageUpload` detection in `parseCollection`, `generateImageUploadFields` and `generateSearchBodyFields` in `generateProperties` |
+| v0.1.35 | Improve GCP authentication by using JWT client for access token management |
+| v0.1.34 | Fix: GCP Credential service handling |
 | v0.1.33 | GCP Pub/Sub + Cloud Functions event source |
 | v0.1.32 | Cart update actions and lint fixes |
-| v0.1.31 | Standardised capitalisation |
-| v0.1.30 | All commercetools regions |
 
 ---
 
