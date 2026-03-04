@@ -79,14 +79,12 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
 		const event = EVENT_MAP.get(value);
 
 		if (!event) {
-			console.warn(`[CT Trigger] Unknown event "${value}" — skipping`);
 			continue;
 		}
 
 		const { resourceTypeId, subscriptionType } = event;
 
 		if (!resourceTypeId) {
-			console.warn(`[CT Trigger] Event "${value}" missing resourceTypeId`);
 			continue;
 		}
 
@@ -102,9 +100,8 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
 				break;
 			}
 			default: {
-				// ✅ compile-time exhaustiveness safety
-				const _never: never = subscriptionType;
-				console.warn(`[CT Trigger] Unsupported subscription type "${_never}"`);
+				const _exhaustive = subscriptionType;
+				console.error(`Unhandled subscription type: ${_exhaustive}`);
 			}
 		}
 	}

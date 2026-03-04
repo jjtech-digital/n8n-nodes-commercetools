@@ -230,12 +230,11 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 	for (const folderName of folders) {
 		const folder = findFolder(collection.item, folderName);
 		if (!folder) {
-			console.warn(`⚠️  Folder "${folderName}" not found in collection`);
 			continue;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const walkItems = (
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			items: any[],
 			parentFolder: string,
 			subFolderName: string,

@@ -31,6 +31,7 @@ export class Commercetools implements INodeType {
 		inputs: ['main'],
 		outputs: ['main'],
 		credentials: [{ name: 'commerceToolsOAuth2Api', required: true }],
+		usableAsTool: true,
 		properties: generatedProperties,
 	};
 
@@ -183,10 +184,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			let actions: unknown[] = tryParseArray(rawJson);
 
 			if (actions.length === 0) {
-				const rawUiValue = safeGet<unknown>(this, `actionsUi__${resource}`, i, '__NOT_FOUND__');
-				console.info(`[CT DEBUG] actionsUi__${resource} raw value:`, JSON.stringify(rawUiValue));
 				actions = buildActionsFromUi(this, i, resource);
-				console.info(`[CT DEBUG] built actions:`, JSON.stringify(actions));
 			}
 
 			if (actions.length === 0) {
@@ -284,7 +282,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
  *   "Unsupported Content-Type: application/json. The supported formats are
  *    image/jpeg, image/png and image/gif."
  *
- * Strategy: download the image from imageUrl first using n8n's helpers.request,
+ * Strategy: download the image from imageUrl first using n8n's helpers.httpRequest,
  * then POST the raw buffer to CT with the correct Content-Type.
  *
  * Query params: variant OR sku (optional), staged (optional), filename (optional)
@@ -313,17 +311,16 @@ async function executeImageUpload(
 	// Derive Content-Type from the URL extension, defaulting to image/jpeg.
 	// CT requires one of: image/jpeg, image/png, image/gif.
 	const ext = imageUrl.split('?')[0].split('.').pop()?.toLowerCase() ?? '';
-	const mimeType = ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : 'image/jpeg'; // default covers .jpg, .jpeg, and unknown
+	const mimeType = ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : 'image/jpeg';
 
 	let imageBuffer: Buffer;
 	try {
 		imageBuffer = (await this.helpers.httpRequest({
 			method: 'GET',
 			url: imageUrl,
-			encoding: null, // return raw Buffer, not string
+			encoding: null,
 			resolveWithFullResponse: false,
-		} as unknown as IHttpRequestOptions
-	)) as Buffer;
+		} as unknown as IHttpRequestOptions)) as Buffer;
 	} catch (err) {
 		throw new NodeOperationError(
 			this.getNode(),
@@ -338,7 +335,6 @@ async function executeImageUpload(
 	} else if (sku) {
 		qs.sku = sku;
 	}
-	// If neither is provided, CT defaults to the Master Variant — no param needed
 	qs.staged = String(staged);
 	if (filename) qs.filename = filename;
 
@@ -347,7 +343,6 @@ async function executeImageUpload(
 		method: 'POST',
 		url: fullUrl,
 		qs,
-		// Do NOT use json:true — we are sending raw binary, not JSON
 		headers: { 'Content-Type': mimeType },
 		body: imageBuffer,
 		encoding: null,
@@ -359,7 +354,6 @@ async function executeImageUpload(
 			'commerceToolsOAuth2Api',
 			options,
 		);
-		// CT returns the updated Product as JSON string when encoding:null is set
 		if (typeof response === 'string') {
 			try {
 				return JSON.parse(response);
@@ -386,8 +380,6 @@ async function executeImageUpload(
 
 function isMainUpdateOp(op: ParsedOperation): boolean {
 	if (op.isUpdateAction) return false;
-	// Guard against search/image ops whether detected by flag (post-regenerate)
-	// or by URL pattern (pre-regenerate, current state).
 	if (op.isSearch || /\/search$/.test(op.urlTemplate)) return false;
 	if (op.isImageUpload || /\/images$/.test(op.urlTemplate)) return false;
 	if (/\bupdate\b/i.test(op.name)) return true;

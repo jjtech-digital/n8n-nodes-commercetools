@@ -42,7 +42,7 @@ const pascalToKebab = (str: string) => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2'
  * Walk directory recursively
  */
 function walk(dir: string): string[] {
-	let files: string[] = [];
+	const files: string[] = [];
 
 	for (const file of fs.readdirSync(dir)) {
 		const full = path.join(dir, file);
@@ -73,28 +73,28 @@ export function generateCtpEventRegistry(OUTPUT_DIR: string, options: GenerateOp
 	/**
 	 * Infer resource
 	 */
-const inferResourceType = (message: string): string | undefined => {
-	const kebab = pascalToKebab(message);
+	const inferResourceType = (message: string): string | undefined => {
+		const kebab = pascalToKebab(message);
 
-	// ✅ Combine BOTH resource sets
-	const allResources = Array.from(new Set([...messageResourceTypeIds, ...changeResourceTypeIds]));
+		// ✅ Combine BOTH resource sets
+		const allResources = Array.from(new Set([...messageResourceTypeIds, ...changeResourceTypeIds]));
 
-	// Longest prefix match first
-	const direct = allResources
-		.filter((r) => kebab.startsWith(r))
-		.sort((a, b) => b.length - a.length)[0];
+		// Longest prefix match first
+		const direct = allResources
+			.filter((r) => kebab.startsWith(r))
+			.sort((a, b) => b.length - a.length)[0];
 
-	if (direct) return direct;
+		if (direct) return direct;
 
-	// Fallback to explicit overrides only if nothing matched
-	const subMatch = Object.keys(subResourceToParent)
-		.filter((k) => kebab.startsWith(k))
-		.sort((a, b) => b.length - a.length)[0];
+		// Fallback to explicit overrides only if nothing matched
+		const subMatch = Object.keys(subResourceToParent)
+			.filter((k) => kebab.startsWith(k))
+			.sort((a, b) => b.length - a.length)[0];
 
-	if (subMatch) return subResourceToParent[subMatch];
+		if (subMatch) return subResourceToParent[subMatch];
 
-	return undefined;
-};
+		return undefined;
+	};
 
 	/**
 	 * Parse AST
