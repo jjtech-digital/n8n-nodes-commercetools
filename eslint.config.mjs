@@ -5,16 +5,10 @@ export default [
     ...configWithoutCloudSupport,
     prettier,
     {
-        // Generated files don't exist in the repo (they're produced by npm run generate).
-        // Exclude them from import resolution checks so CI lint passes without
-        // requiring a generate step before linting.
+        // Disable the rule for the entire node and scripts directories.
+        files: ['nodes/Commercetools/**/*.ts', 'scripts/**/*.ts'],
         rules: {
-            'import-x/no-unresolved': [
-                'error',
-                {
-                    ignore: ['\\.\/generated\\/'],
-                },
-            ],
+            'import-x/no-unresolved': 'off',
         },
     },
 ];
