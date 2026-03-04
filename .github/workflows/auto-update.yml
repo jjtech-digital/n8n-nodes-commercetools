@@ -1,0 +1,118 @@
+# .github/workflows/auto-update.yml
+#
+# This workflow runs:
+#   1. Daily at 06:00 UTC — checks if Postman collection has changed
+#   2. On every push to main — rebuilds and publishes
+#
+# If the collection has new endpoints or fields, the node is automatically
+# regenerated, built, and published. Zero manual development needed.
+
+name: Auto-Update from Postman Collection
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  push:
+    branches: [main]
+  workflow_dispatch:
+    # Allow manual trigger from GitHub UI
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download latest Postman collection
+        run: |
+          curl -sL \
+            "https://raw.githubusercontent.com/commercetools/commercetools-postman-collection/master/api/collection.json" \
+            -o collection.json
+          echo "Downloaded collection at $(date -u)"
+
+      - name: Check if collection changed
+        id: check_diff
+        run: |
+          if git diff --quiet collection.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "✅ Collection unchanged — skipping regeneration"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "🔄 Collection has changed — regenerating node properties"
+          fi
+
+      - name: Generate node properties from collection
+        # Always regenerate on push to main; on schedule only if changed
+        if: >
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          steps.check_diff.outputs.changed == 'true'
+        run: npm run generate
+
+      - name: Build
+        if: >
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          steps.check_diff.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Show what changed
+        if: steps.check_diff.outputs.changed == 'true'
+        run: |
+          echo "=== Changed files ==="
+          git diff --stat
+          echo ""
+          echo "=== New/modified operations ==="
+          git diff nodes/Commercetools/generated/operations.json | grep '^\+.*"name"' | head -20 || true
+
+      - name: Commit regenerated files
+        if: >
+          steps.check_diff.outputs.changed == 'true' ||
+          github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add \
+            collection.json \
+            nodes/Commercetools/generated/properties.ts \
+            nodes/Commercetools/generated/operations.json \
+            nodes/Commercetools/generated/subscription.properties.ts \
+            dist/
+          git diff --staged --quiet || git commit -m \
+            "chore: auto-update from Postman collection [$(date -u +%Y-%m-%d)]"
+          git push
+
+      # ── Optional: publish to npm ──────────────────────────────────────────
+      # Uncomment and add NPM_TOKEN secret to enable automatic npm publish
+
+      # - name: Bump patch version and publish
+      #   if: steps.check_diff.outputs.changed == 'true'
+      #   run: |
+      #     npm version patch --no-git-tag-version
+      #     npm publish --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## Auto-Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Collection changed: ${{ steps.check_diff.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Triggered by: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Timestamp: $(date -u)" >> $GITHUB_STEP_SUMMARY
