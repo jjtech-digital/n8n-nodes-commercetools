@@ -1,3 +1,13 @@
+/**
+ * CommerceToolsOAuth2Api.credentials.ts
+ *
+ * Credentials definition for the commercetools node.
+ * Uses OAuth2 client credentials flow with project key + region.
+ *
+ * The authUrl and accessTokenUrl are dynamically built from the selected region,
+ * so switching region in the UI automatically updates the token endpoint.
+ */
+
 import type { ICredentialType, INodeProperties, Icon } from 'n8n-workflow';
 
 export class CommerceToolsOAuth2Api implements ICredentialType {
@@ -8,18 +18,19 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 	// eslint-disable-next-line n8n-nodes-base/cred-class-field-display-name-miscased
 	displayName = 'commercetools OAuth2 API';
 
-	icon: Icon = 'file:../icons/Commercetools.svg';
+	icon: Icon = 'file:../nodes/Commercetools/Commercetools.svg';
 
 	documentationUrl = 'https://docs.commercetools.com/api/authorization';
 
 	properties: INodeProperties[] = [
+		// ── commercetools core credentials ────────────────────────────────────
 		{
 			displayName: 'Project Key',
 			name: 'projectKey',
 			type: 'string',
 			default: '',
 			placeholder: 'your-project-key',
-			description: 'The project key from commercetools',
+			description: 'The project key from commercetools Merchant Center',
 			required: true,
 		},
 		{
@@ -42,7 +53,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			],
 			default: 'australia-southeast1.gcp',
 			description:
-				'Region-specific auth host; determines the OAuth token endpoint used for client credentials grants',
+				'The commercetools region. Determines both the OAuth token endpoint and the API base URL.',
 		},
 		{
 			displayName: 'Event Provider',
@@ -82,9 +93,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			displayName: 'AWS Client Secret',
 			name: 'awsSecretAccessKey',
 			type: 'string',
-			typeOptions: {
-				password: true,
-			},
+			typeOptions: { password: true },
 			default: '',
 			placeholder: 'your-aws-client-secret',
 			description: 'AWS Secret Access Key for EventBridge authentication',
@@ -171,6 +180,8 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 				},
 			},
 		},
+
+		// ── OAuth2 hidden fields — auto-computed from region selection ────────
 		{
 			displayName: 'Grant Type',
 			name: 'grantType',
@@ -181,6 +192,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			displayName: 'Authorization URL',
 			name: 'authUrl',
 			type: 'hidden',
+			// Dynamically uses the selected region value
 			default: '={{ `https://auth.${$self["region"]}.commercetools.com` }}',
 		},
 		{

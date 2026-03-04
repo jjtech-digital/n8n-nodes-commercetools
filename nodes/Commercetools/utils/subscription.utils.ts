@@ -1,17 +1,33 @@
+/**
+ * Routing logic:
+ *   Each event in subscriptionEvents contains:
+ *
+ *     subscriptionType:
+ *       'message' → CT messages[]
+ *       'change'  → CT changes[]
+ *
+ *   The generated registry is the single source of truth.
+ *   No prefixes, heuristics, or string parsing are used.
+ */
+
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from 'n8n-workflow';
 import { AWSResponse } from './awsInfra.utils';
-import {
-	customerEvents,
-	orderEvents,
-	productEvents,
-	categoryEvents,
-	cartEvents,
-} from '../properties/subscription.properties';
 import { GCPResponse } from './gcpInfra.utils';
+import { subscriptionEvents } from '../generated/subscription.properties';
+import type { SubscriptionEvent } from '../generated/subscription.properties';
+
+// ─── Event lookup map (value → event entry) ───────────────────────────────────
+// Built once at module load from the generated event list.
+
+const EVENT_MAP = new Map<string, SubscriptionEvent>();
+
+for (const e of subscriptionEvents) {
+	EVENT_MAP.set(e.value, e);
+}
+// ─── Base URL helper ──────────────────────────────────────────────────────────
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
 	const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
-
 	const projectKey = credentials.projectKey as string;
 	const region = (credentials.region as string) || 'australia-southeast1.gcp';
 
@@ -21,6 +37,8 @@ export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Prom
 
 	return `https://api.${region}.commercetools.com/${projectKey}`;
 }
+
+// ─── Subscription CRUD helpers ────────────────────────────────────────────────
 
 export async function fetchSubscription(
 	this: IHookFunctions,
@@ -42,11 +60,62 @@ export async function deleteSubscription(
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 		method: 'DELETE',
 		url: `${baseUrl}/subscriptions/${subscriptionId}`,
-		qs: {
-			version,
-		},
+		qs: { version },
 	});
 }
+
+// ─── Subscription body builder ────────────────────────────────────────────────
+
+interface SubscriptionBody {
+	messages: IDataObject[];
+	changes: IDataObject[];
+}
+
+function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
+	const messageTypesByResource = new Map<string, Set<string>>();
+	const changeResourceIds = new Set<string>();
+
+	for (const value of selectedValues) {
+		const event = EVENT_MAP.get(value);
+
+		if (!event) {
+			continue;
+		}
+
+		const { resourceTypeId, subscriptionType } = event;
+
+		if (!resourceTypeId) {
+			continue;
+		}
+
+		switch (subscriptionType) {
+			case 'message': {
+				const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
+				types.add(value); // ✅ dedupe automatically
+				messageTypesByResource.set(resourceTypeId, types);
+				break;
+			}
+			case 'change': {
+				changeResourceIds.add(resourceTypeId);
+				break;
+			}
+		}
+	}
+
+	const messages: IDataObject[] = Array.from(messageTypesByResource.entries()).map(
+		([resourceTypeId, types]) => ({
+			resourceTypeId,
+			types: Array.from(types),
+		}),
+	);
+
+	const changes: IDataObject[] = Array.from(changeResourceIds).map((resourceTypeId) => ({
+		resourceTypeId,
+	}));
+
+	return { messages, changes };
+}
+// ─── Public: create subscription ─────────────────────────────────────────────
 
 export async function createSubscription(
 	this: IHookFunctions,
@@ -59,82 +128,25 @@ export async function createSubscription(
 		useAWS: boolean;
 		useGCP: boolean;
 	},
-) {
+): Promise<unknown> {
 	const { baseUrl, webhookUrl, awsInfrastructure, gcpInfrastructure, events, useAWS, useGCP } =
 		params;
 
-	// Separate events by resource type using dynamic filtering
-	const selectedProductEvents = events.filter((event) =>
-		productEvents.find((x: { value: string }) => x.value === event),
-	);
+	// Build all three CT subscription arrays from the selected event values.
+	// This replaces the old per-resource manual filtering — all routing is
+	// driven by the subscriptionType field on each generated event entry.
+	const { messages, changes } = buildSubscriptionBody(events);
 
-	const selectedCustomerEvents = events.filter((event) =>
-		customerEvents.find((x: { value: string }) => x.value === event),
-	);
+	// ── Destination ───────────────────────────────────────────────────────────
 
-	const selectedCategoryEvents = events.filter((event) =>
-		categoryEvents.find((x: { value: string }) => x.value === event),
-	);
+	let destination: IDataObject;
 
-	const selectedOrderEvents = events.filter((event) =>
-		orderEvents.find((x: { value: string }) => x.value === event),
-	);
-	const selectedCartEvents = events.filter((event) =>
-		cartEvents.find((x: { value: string }) => x.value === event),
-	);
-
-	// Create messages array for each resource type that has events
-	const messages: IDataObject[] = [];
-	const changes: IDataObject[] = [];
-
-	if (selectedProductEvents.length > 0) {
-		messages.push({
-			resourceTypeId: 'product',
-			types: selectedProductEvents,
-		});
-	}
-
-	if (selectedCustomerEvents.length > 0) {
-		messages.push({
-			resourceTypeId: 'customer',
-			types: selectedCustomerEvents,
-		});
-	}
-
-	if (selectedCategoryEvents.length > 0) {
-		messages.push({
-			resourceTypeId: 'category',
-			types: selectedCategoryEvents,
-		});
-	}
-
-	if (selectedOrderEvents.length > 0) {
-		messages.push({
-			resourceTypeId: 'order',
-			types: selectedOrderEvents,
-		});
-	}
-
-	if (selectedCartEvents.length > 0) {
-		// changes[] entries never take a types array — CT API rejects it
-		changes.push({
-			resourceTypeId: 'cart',
-		});
-	}
-
-	// Ensure we have at least one message
-	if (messages.length === 0 && changes.length === 0) {
-		throw new NodeOperationError(this.getNode(), 'No valid events selected');
-	}
-
-	let body: IDataObject;
 	if (useAWS && awsInfrastructure) {
-		const destination: IDataObject = {
+		destination = {
 			type: 'SQS',
 			queueUrl: awsInfrastructure.queueUrl,
 			region: awsInfrastructure.region,
 		};
-
 		if (awsInfrastructure.accessKeyId && awsInfrastructure.secretAccessKey) {
 			destination.authenticationMode = 'Credentials';
 			destination.accessKey = awsInfrastructure.accessKeyId;
@@ -142,29 +154,29 @@ export async function createSubscription(
 		} else {
 			destination.authenticationMode = 'IAM';
 		}
-
-		body = { destination };
 	} else if (useGCP && gcpInfrastructure) {
-		body = {
-			destination: {
-				type: 'GoogleCloudPubSub',
-				projectId: gcpInfrastructure.projectId, // ← separate field
-				topic: gcpInfrastructure.topicName, // ← bare name only, not full path
-			},
+		destination = {
+			type: 'GoogleCloudPubSub',
+			projectId: gcpInfrastructure.projectId,
+			topic: gcpInfrastructure.topicName,
 		};
 	} else {
-		body = {
-			destination: {
-				type: 'HTTP',
-				url: webhookUrl,
-			},
+		destination = {
+			type: 'HTTP',
+			url: webhookUrl,
 		};
 	}
-	if (messages.length > 0) {
-		body.messages = messages;
-	}
-	if (changes.length > 0) {
-		body.changes = changes;
+
+	// ── Assemble body ─────────────────────────────────────────────────────────
+	// Only include non-empty arrays — CT rejects empty messages/changes/events.
+
+	const body: IDataObject = { destination };
+
+	if (messages.length > 0) body.messages = messages;
+	if (changes.length > 0) body.changes = changes;
+
+	if (!messages.length && !changes.length) {
+		throw new NodeOperationError(this.getNode(), 'No valid subscription events selected.');
 	}
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
