@@ -89,7 +89,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add collection.json
+          git add \
+            collection.json \
+            nodes/Commercetools/generated/ctp-event-registry.ts \
+            nodes/Commercetools/generated/operations.json \
+            nodes/Commercetools/generated/properties.ts \
+            nodes/Commercetools/generated/subscription.properties.ts
           git diff --staged --quiet || git commit -m \
             "chore: auto-update from Postman collection [$(date -u +%Y-%m-%d)]"
           git push
