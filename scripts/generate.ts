@@ -81,14 +81,10 @@ function downloadFile(url: string, dest: string): Promise<void> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function generateFromCollection(): Promise<void> {
-	banner('STEP 1 — Postman Collection → Operation Properties');
-
 	try {
 		await downloadFile(COLLECTION_URL, COLLECTION_LOCAL_PATH);
 	} catch {
-		if (fs.existsSync(COLLECTION_LOCAL_PATH)) {
-			console.warn('  ⚠️   Download failed — using cached collection.json');
-		} else {
+		if (!fs.existsSync(COLLECTION_LOCAL_PATH)) {
 			throw new Error('No network and no local collection.json found.');
 		}
 	}
@@ -127,8 +123,6 @@ export const generatedProperties: INodeProperties[] = ${JSON.stringify(nodePrope
 // ─────────────────────────────────────────────────────────────────────────────
 
 function generateRegistry(): void {
-	banner('STEP 2 — SDK .d.ts → Event Registry');
-
 	generateCtpEventRegistry(OUTPUT_DIR, { allowedResources: RESOURCES_TO_GENERATE });
 }
 
@@ -137,17 +131,7 @@ function generateRegistry(): void {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function generateSubscriptions(): void {
-	banner('STEP 3 — Event Registry → Subscription Properties');
-
 	generateSubscriptionProperties();
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Utilities
-// ─────────────────────────────────────────────────────────────────────────────
-
-function banner(title: string): void {
-	const line = '━'.repeat(60);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -160,14 +144,10 @@ async function main(): Promise<void> {
 		generateRegistry();
 		generateSubscriptions();
 	} catch (err) {
-		console.error('\n❌  Generation failed:', err);
 		process.exit(1);
 	}
-
-	banner('🎉  All done! Now run: npm run build');
 }
 
 main().catch((err) => {
-	console.error('❌  Fatal error:', err);
 	process.exit(1);
 });

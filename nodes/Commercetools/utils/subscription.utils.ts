@@ -96,12 +96,8 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
 				break;
 			}
 			case 'change': {
-				changeResourceIds.add(resourceTypeId) ?? new Set<string>();
+				changeResourceIds.add(resourceTypeId);
 				break;
-			}
-			default: {
-				const _exhaustive = subscriptionType;
-				console.error(`Unhandled subscription type: ${_exhaustive}`);
 			}
 		}
 	}
