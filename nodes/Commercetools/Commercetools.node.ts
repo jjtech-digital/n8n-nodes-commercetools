@@ -7,13 +7,12 @@
 import type {
 	IDataObject,
 	IExecuteFunctions,
+	IHttpRequestOptions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	IRequestOptions,
 } from 'n8n-workflow';
 import { NodeApiError, NodeOperationError } from 'n8n-workflow';
-
 import { generatedProperties } from './generated/properties';
 import type { ParsedOperation } from '../../scripts/parseCollection';
 import operationsMap from './generated/operations.json';
@@ -220,8 +219,8 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 	// ── Execute ───────────────────────────────────────────────────────────────
 
-	const options: IRequestOptions = {
-		method: opDef.method as IRequestOptions['method'],
+	const options: IHttpRequestOptions = {
+		method: opDef.method as IHttpRequestOptions['method'],
 		url: fullUrl,
 		qs: Object.keys(queryParams).length > 0 ? queryParams : undefined,
 		json: true,
@@ -238,12 +237,12 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 	if (opDef.method === 'HEAD') {
 		try {
-			const headOptions: IRequestOptions = {
+			const headOptions = {
 				...options,
 				resolveWithFullResponse: true,
 				simple: false,
-			};
-			const response = await this.helpers.requestWithAuthentication.call(
+			} as unknown as IHttpRequestOptions;
+			const response = await this.helpers.httpRequestWithAuthentication.call(
 				this,
 				'commerceToolsOAuth2Api',
 				headOptions,
@@ -262,7 +261,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	}
 
 	try {
-		return await this.helpers.requestWithAuthentication.call(
+		return await this.helpers.httpRequestWithAuthentication.call(
 			this,
 			'commerceToolsOAuth2Api',
 			options,
@@ -343,7 +342,7 @@ async function executeImageUpload(
 	if (filename) qs.filename = filename;
 
 	// ── Step 3: POST raw binary to CT ─────────────────────────────────────────
-	const options: IRequestOptions = {
+	const options = {
 		method: 'POST',
 		url: fullUrl,
 		qs,
@@ -351,10 +350,10 @@ async function executeImageUpload(
 		headers: { 'Content-Type': mimeType },
 		body: imageBuffer,
 		encoding: null,
-	};
+	} as unknown as IHttpRequestOptions;
 
 	try {
-		const response = await this.helpers.requestWithAuthentication.call(
+		const response = await this.helpers.httpRequestWithAuthentication.call(
 			this,
 			'commerceToolsOAuth2Api',
 			options,
