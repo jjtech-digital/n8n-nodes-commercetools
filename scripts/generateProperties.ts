@@ -322,11 +322,6 @@ export function generateActionsUiField(
 			const actionFields: INodeProperties[] = [];
 			const fields = op.actionBodyFields;
 
-			console.info(
-				`OP: ${op.name} | actionBodyFields:`,
-				fields.map((f) => `${f.name}(${f.type})`),
-			);
-
 			if (fields.length > 0) {
 				for (const field of fields) {
 					const isLocalized = LOCALIZED_FIELDS.has(field.name);

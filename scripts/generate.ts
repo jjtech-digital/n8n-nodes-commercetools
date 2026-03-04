@@ -83,10 +83,8 @@ function downloadFile(url: string, dest: string): Promise<void> {
 async function generateFromCollection(): Promise<void> {
 	banner('STEP 1 — Postman Collection → Operation Properties');
 
-	console.info('  🔄  Downloading latest Postman collection...');
 	try {
 		await downloadFile(COLLECTION_URL, COLLECTION_LOCAL_PATH);
-		console.info(`  ✅  Saved to ${COLLECTION_LOCAL_PATH}`);
 	} catch {
 		if (fs.existsSync(COLLECTION_LOCAL_PATH)) {
 			console.warn('  ⚠️   Download failed — using cached collection.json');
@@ -98,14 +96,9 @@ async function generateFromCollection(): Promise<void> {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const collection = require(COLLECTION_LOCAL_PATH);
 
-	console.info(`  📦  Parsing folders: ${FOLDERS_TO_GENERATE.join(', ')}`);
 	const operations = parseCollection(collection, FOLDERS_TO_GENERATE);
 
-	console.info(`  ✅  Found ${operations.length} operations`);
-
 	const nodeProperties = generateAllNodeProperties(operations, FOLDERS_TO_GENERATE);
-
-	console.info(`  ✅  Generated ${nodeProperties.length} property definitions`);
 
 	fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -127,8 +120,6 @@ export const generatedProperties: INodeProperties[] = ${JSON.stringify(nodePrope
 	for (const op of operations) opsMap[op.value] = op;
 
 	fs.writeFileSync(path.join(OUTPUT_DIR, 'operations.json'), JSON.stringify(opsMap, null, 2));
-
-	console.info('  ✅  Wrote operation property files');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -138,9 +129,7 @@ export const generatedProperties: INodeProperties[] = ${JSON.stringify(nodePrope
 function generateRegistry(): void {
 	banner('STEP 2 — SDK .d.ts → Event Registry');
 
-	generateCtpEventRegistry(OUTPUT_DIR, {allowedResources: RESOURCES_TO_GENERATE});
-
-	console.info('  ✅  Event registry generated');
+	generateCtpEventRegistry(OUTPUT_DIR, { allowedResources: RESOURCES_TO_GENERATE });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -151,8 +140,6 @@ function generateSubscriptions(): void {
 	banner('STEP 3 — Event Registry → Subscription Properties');
 
 	generateSubscriptionProperties();
-
-	console.info('  ✅  Subscription properties generated');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -161,9 +148,6 @@ function generateSubscriptions(): void {
 
 function banner(title: string): void {
 	const line = '━'.repeat(60);
-	console.info(`\n${line}`);
-	console.info(`  ${title}`);
-	console.info(line);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -171,9 +155,6 @@ function banner(title: string): void {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-	console.info('\n🚀  commercetools n8n node — unified generator');
-	console.info(`    ${new Date().toISOString()}`);
-
 	try {
 		await generateFromCollection();
 		generateRegistry();

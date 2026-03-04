@@ -13,9 +13,7 @@
 import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from 'n8n-workflow';
 import { AWSResponse } from './awsInfra.utils';
 import { GCPResponse } from './gcpInfra.utils';
-import {
-	subscriptionEvents,
-} from '../generated/subscription.properties';
+import { subscriptionEvents } from '../generated/subscription.properties';
 import type { SubscriptionEvent } from '../generated/subscription.properties';
 
 // ─── Event lookup map (value → event entry) ───────────────────────────────────
@@ -24,7 +22,7 @@ import type { SubscriptionEvent } from '../generated/subscription.properties';
 const EVENT_MAP = new Map<string, SubscriptionEvent>();
 
 for (const e of subscriptionEvents) {
-  EVENT_MAP.set(e.value, e);
+	EVENT_MAP.set(e.value, e);
 }
 // ─── Base URL helper ──────────────────────────────────────────────────────────
 
@@ -74,57 +72,55 @@ interface SubscriptionBody {
 }
 
 function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
-  const messageTypesByResource = new Map<string, Set<string>>();
-  const changeResourceIds = new Set<string>();
+	const messageTypesByResource = new Map<string, Set<string>>();
+	const changeResourceIds = new Set<string>();
 
-  for (const value of selectedValues) {
-    const event = EVENT_MAP.get(value);
+	for (const value of selectedValues) {
+		const event = EVENT_MAP.get(value);
 
-    if (!event) {
-      console.warn(`[CT Trigger] Unknown event "${value}" — skipping`);
-      continue;
-    }
+		if (!event) {
+			console.warn(`[CT Trigger] Unknown event "${value}" — skipping`);
+			continue;
+		}
 
-    const { resourceTypeId, subscriptionType } = event;
+		const { resourceTypeId, subscriptionType } = event;
 
-    if (!resourceTypeId) {
-      console.warn(`[CT Trigger] Event "${value}" missing resourceTypeId`);
-      continue;
-    }
+		if (!resourceTypeId) {
+			console.warn(`[CT Trigger] Event "${value}" missing resourceTypeId`);
+			continue;
+		}
 
-    switch (subscriptionType) {
-      case 'message': {
-        const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
-        types.add(value); // ✅ dedupe automatically
-        messageTypesByResource.set(resourceTypeId, types);
-        break;
-      }
-      case 'change': {
-		changeResourceIds.add(resourceTypeId) ?? new Set<string>();
-        break;
-      }
-      default: {
-        // ✅ compile-time exhaustiveness safety
-        const _never: never = subscriptionType;
-        console.warn(`[CT Trigger] Unsupported subscription type "${_never}"`);
-      }
-    }
-  }
+		switch (subscriptionType) {
+			case 'message': {
+				const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
+				types.add(value); // ✅ dedupe automatically
+				messageTypesByResource.set(resourceTypeId, types);
+				break;
+			}
+			case 'change': {
+				changeResourceIds.add(resourceTypeId) ?? new Set<string>();
+				break;
+			}
+			default: {
+				// ✅ compile-time exhaustiveness safety
+				const _never: never = subscriptionType;
+				console.warn(`[CT Trigger] Unsupported subscription type "${_never}"`);
+			}
+		}
+	}
 
-  const messages: IDataObject[] = Array.from(messageTypesByResource.entries()).map(
-    ([resourceTypeId, types]) => ({
-      resourceTypeId,
-      types: Array.from(types),
-    }),
-  );
+	const messages: IDataObject[] = Array.from(messageTypesByResource.entries()).map(
+		([resourceTypeId, types]) => ({
+			resourceTypeId,
+			types: Array.from(types),
+		}),
+	);
 
-  const changes: IDataObject[] = Array.from(changeResourceIds).map(
-    (resourceTypeId) => ({
-      resourceTypeId,
-    }),
-  );
+	const changes: IDataObject[] = Array.from(changeResourceIds).map((resourceTypeId) => ({
+		resourceTypeId,
+	}));
 
-  return { messages, changes };
+	return { messages, changes };
 }
 // ─── Public: create subscription ─────────────────────────────────────────────
 
@@ -187,10 +183,7 @@ export async function createSubscription(
 	if (changes.length > 0) body.changes = changes;
 
 	if (!messages.length && !changes.length) {
-		throw new NodeOperationError(
-			this.getNode(),
-			'No valid subscription events selected.',
-		);
+		throw new NodeOperationError(this.getNode(), 'No valid subscription events selected.');
 	}
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {

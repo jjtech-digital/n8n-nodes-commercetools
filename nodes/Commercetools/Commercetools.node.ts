@@ -317,12 +317,13 @@ async function executeImageUpload(
 
 	let imageBuffer: Buffer;
 	try {
-		imageBuffer = (await this.helpers.request({
+		imageBuffer = (await this.helpers.httpRequest({
 			method: 'GET',
 			url: imageUrl,
 			encoding: null, // return raw Buffer, not string
 			resolveWithFullResponse: false,
-		})) as Buffer;
+		} as unknown as IHttpRequestOptions
+	)) as Buffer;
 	} catch (err) {
 		throw new NodeOperationError(
 			this.getNode(),

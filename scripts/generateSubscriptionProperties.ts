@@ -136,8 +136,6 @@ export const triggerProperties: INodeProperties[] = [
 
 	fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
 	fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
-
-	console.log('✅ Generated subscription.properties.ts');
 }
 
 function escape(str: string): string {
