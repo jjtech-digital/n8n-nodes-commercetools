@@ -5,8 +5,10 @@ export default [
 	...configWithoutCloudSupport,
 	prettier,
 	{
-		// Disable the rule for the entire node and scripts directories.
-		files: ['nodes/Commercetools/generated/**/*.ts'],
+		ignores: ['nodes/Commercetools/generated/**'],
+	},
+	{
+		files: ['nodes/Commercetools/**/*.ts', 'scripts/**/*.ts'],
 		rules: {
 			'import-x/no-unresolved': 'off',
 		},
