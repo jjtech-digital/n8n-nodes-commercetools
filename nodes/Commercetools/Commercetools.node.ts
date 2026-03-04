@@ -5,7 +5,6 @@
  */
 
 import type {
-	IBinaryData,
 	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
@@ -122,7 +121,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	//
 	// POST /products/{id}/images sends raw binary (application/octet-stream or
 	// image/*), not a JSON payload. Handle it separately before the JSON path.
-	if (opDef.isImageUpload) {
+	if (opDef.isImageUpload || /\/images$/.test(opDef.urlTemplate)) {
 		return await executeImageUpload.call(this, i, opDef, fullUrl);
 	}
 
@@ -150,31 +149,33 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	if (['POST', 'PUT', 'PATCH'].includes(opDef.method)) {
 		body = {};
 
-		if (opDef.isSearch) {
+		if (opDef.isSearch || /\/search$/.test(opDef.urlTemplate)) {
 			// ── Search endpoint (POST .../search) ─────────────────────────
+			// Detected by opDef.isSearch flag (post-regenerate) OR by URL
+			// pattern (works without regenerating operations.json).
 			//
-			// Product Search (POST /products/search) and Order Search
-			// (POST /orders/search) accept a free-form SearchRequest JSON
-			// body (query, sort, limit, offset, markMatchingVariants, etc.).
+			// CT Search body fields: query.and (json array), sort (json array),
+			// limit (number), offset (number).
 			//
-			// The Postman entries for these have an *empty* body, so
-			// bodyFields = [] and the field-by-field assembly produces {}.
-			// CT rejects an empty body with a 400 error.
+			// Skip rules (differ from standard misc-POST):
+			//   • Skip null/undefined                      — same as always
+			//   • Skip empty arrays []                     — CT rejects { query: { and: [] } }
+			//                                                with "exhausted input"; omitting the
+			//                                                field entirely returns all results ✓
+			//   • KEEP 0  (offset=0 is valid, must be sent)
+			//   • KEEP '' (not applicable here but safe)
 			//
-			// Fix: expose a single "Search Request Body (JSON)" textarea in
-			// the n8n UI (field name: searchBody__<resource>__<operation>)
-			// and pass the parsed JSON through directly as the POST body.
-			const rawSearchBody = safeGet<unknown>(
-				this,
-				`searchBody__${resource}__${operation}`,
-				i,
-				'{}',
-			);
-			const parsed = tryParseJson(rawSearchBody);
-			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-				body = parsed as Record<string, unknown>;
+			// Always attach body even if it ends up as {} — CT accepts that
+			// for search and returns all results.
+			for (const field of opDef.bodyFields) {
+				const pname = `body__misc__${resource}__${operation}__${field.name.replace(/\./g, '__')}`;
+				const val = safeGet<unknown>(this, pname, i, null);
+				if (val === null || val === undefined) continue;
+				const parsed = tryParseJson(val);
+				// Skip empty arrays — CT search rejects { query: { and: [] } }
+				if (Array.isArray(parsed) && parsed.length === 0) continue;
+				setNested(body, field.name, parsed);
 			}
-			// If empty / invalid, send empty body — CT allows {} for search (returns all results)
 		} else if (isMainUpdateOp(opDef)) {
 			// ── Main update endpoint: build actions array ──────────────────
 			body.version = safeGet<number>(this, 'version', i, 1);
@@ -229,7 +230,9 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			: undefined,
 	};
 
-	if (body && Object.keys(body).length > 0) {
+	// For search ops, always send body even if empty ({} is valid — CT returns all results).
+	const isSearchOp = opDef.isSearch || /\/search$/.test(opDef.urlTemplate);
+	if (body && (isSearchOp || Object.keys(body).length > 0)) {
 		options.body = body;
 	}
 
@@ -276,20 +279,18 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 /**
  * Executes the CT image upload: POST /products/{id}/images
  *
- * CT expects:
- *   - Raw binary body (the image bytes)
- *   - Content-Type: <image mime type> or application/octet-stream
- *   - Query params: variantId OR sku (required), staged (optional), filename (optional)
+ * CT fetches the image from a publicly accessible URL provided in the request
+ * body as { url: "https://..." }. The Content-Type is application/json.
  *
- * In n8n, binary data comes from a preceding node (Read Binary File, HTTP
- * Request, etc.) and is accessed via item.binary[propertyName].
+ * Query params: variant OR sku (optional), staged (optional), filename (optional)
+ * If neither variant nor sku is given, CT uploads to the Master Variant.
  *
- * The operation exposes these n8n fields (set by generateProperties):
- *   binaryPropertyName  — which binary property holds the image (default: "data")
- *   variantId           — variant to attach the image to (number, optional)
- *   sku                 — alternative to variantId (string, optional)
- *   staged              — whether to stage (boolean, default true)
- *   filename            — suggested filename (string, optional)
+ * n8n fields (injected into node properties):
+ *   imageUrl  — publicly accessible URL of the image (required)
+ *   filename  — optional filename hint
+ *   variant   — variant ID (number, 0 = master)
+ *   sku       — alternative to variant
+ *   staged    — boolean, default true
  */
 async function executeImageUpload(
 	this: IExecuteFunctions,
@@ -297,54 +298,37 @@ async function executeImageUpload(
 	opDef: ParsedOperation,
 	fullUrl: string,
 ): Promise<unknown> {
-	const binaryPropertyName = safeGet<string>(this, 'binaryPropertyName', i, 'data');
-	const variantId = safeGet<number>(this, 'variantId', i, 0);
+	const imageUrl = safeGet<string>(this, 'imageUrl', i, '');
+	const variant = safeGet<number>(this, 'variant', i, 0);
 	const sku = safeGet<string>(this, 'sku', i, '');
 	const staged = safeGet<boolean>(this, 'staged', i, true);
 	const filename = safeGet<string>(this, 'filename', i, '');
 
-	// Get binary data from the current input item
-	const items = this.getInputData();
-	const item = items[i];
-
-	if (!item.binary || !item.binary[binaryPropertyName]) {
+	if (!imageUrl) {
 		throw new NodeOperationError(
 			this.getNode(),
-			`No binary data found on property "${binaryPropertyName}". ` +
-				`Connect a node that outputs binary data (e.g. Read Binary File) ` +
-				`and ensure the Binary Property Name matches.`,
+			'Image URL is required. Provide a publicly accessible URL to the image (JPEG, PNG, or GIF).',
 		);
 	}
 
-	const binaryData: IBinaryData = item.binary[binaryPropertyName];
-	const mimeType: string = binaryData.mimeType || 'application/octet-stream';
-
-	// CT requires variantId or sku
+	// Build query params
 	const qs: Record<string, string> = {};
-	if (variantId > 0) {
-		qs.variantId = String(variantId);
+	if (variant > 0) {
+		qs.variant = String(variant);
 	} else if (sku) {
 		qs.sku = sku;
-	} else {
-		throw new NodeOperationError(
-			this.getNode(),
-			'Image upload requires either a Variant ID or a SKU to identify which product variant to attach the image to.',
-		);
 	}
+	// If neither is provided, CT defaults to the Master Variant
 	qs.staged = String(staged);
 	if (filename) qs.filename = filename;
-
-	// Read the raw binary buffer
-	const binaryBuffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
 
 	const options: IRequestOptions = {
 		method: 'POST',
 		url: fullUrl,
 		qs,
-		// Do NOT set json:true — we're sending raw binary
-		headers: { 'Content-Type': mimeType },
-		body: binaryBuffer,
-		encoding: null, // prevent n8n from treating the body as a string
+		json: true,
+		headers: { 'Content-Type': 'application/json' },
+		body: { url: imageUrl },
 	};
 
 	try {
@@ -353,7 +337,6 @@ async function executeImageUpload(
 			'commerceToolsOAuth2Api',
 			options,
 		);
-		// CT returns the updated Product as JSON; parse if returned as string
 		if (typeof response === 'string') {
 			try {
 				return JSON.parse(response);
@@ -373,8 +356,10 @@ async function executeImageUpload(
 
 function isMainUpdateOp(op: ParsedOperation): boolean {
 	if (op.isUpdateAction) return false;
-	if (op.isSearch) return false;
-	if (op.isImageUpload) return false;
+	// Guard against search/image ops whether detected by flag (post-regenerate)
+	// or by URL pattern (pre-regenerate, current state).
+	if (op.isSearch || /\/search$/.test(op.urlTemplate)) return false;
+	if (op.isImageUpload || /\/images$/.test(op.urlTemplate)) return false;
 	if (/\bupdate\b/i.test(op.name)) return true;
 	return op.method === 'POST' && op.requiresId && op.bodyFields.some((f) => f.name === 'actions');
 }

@@ -51,14 +51,16 @@ export interface ParsedOperation {
 	/**
 	 * True when this is an image-upload endpoint (POST .../images).
 	 *
-	 * The CT image-upload endpoint (POST /products/{id}/images) requires
-	 * a raw binary body with Content-Type: <image mime type>, NOT JSON.
+	 * The CT image-upload endpoint (POST /products/{id}/images) accepts a
+	 * JSON body { url: "<image url>" } and fetches the image from that URL.
+	 * Query params: variant (number), sku (string), staged (boolean), filename (string).
 	 *
 	 * When isImageUpload=true:
-	 *   - generateProperties emits binaryPropertyName, variantId, sku,
-	 *     staged, and filename fields instead of bodyFields.
-	 *   - The executor reads binary data from the n8n item and sends it
-	 *     with the correct Content-Type header.
+	 *   - generateProperties (generateImageUploadFields) emits: imageUrl (required),
+	 *     filename, variant, sku, staged — as individual named fields.
+	 *   - The executor sends { url: imageUrl } as the JSON body with the
+	 *     query params assembled from those fields.
+	 *   - bodyFields is [] (Postman body is empty) and is intentionally ignored.
 	 */
 	isImageUpload?: boolean;
 }

@@ -24,6 +24,14 @@
  *   When Create is selected:
  *     body fields
  *
+ *   When Upload Product image is selected:
+ *     Product ID
+ *     Image URL        string  (required)
+ *     Filename         string  (optional)
+ *     Variant ID       number  (optional, 0 = master)
+ *     SKU              string  (optional, alternative to Variant ID)
+ *     Staged           boolean (default true)
+ *
  * No descriptions on any property — labels are self-explanatory.
  */
 
@@ -56,14 +64,6 @@ const LOCALIZED_FIELDS = new Set([
 
 /**
  * FIX C: Proper singular form for folder names.
- *
- * The previous /s$/ strip mangled irregular plurals:
- *   Addresses → Addresse   (should be Address)
- *   Categories → Categorie (should be Category)
- *   Inventories → Inventorie (should be Inventory)
- *
- * This lookup covers all CT resource folder names. Falls back to simple
- * trailing-s strip for any unlisted name so new resources still work.
  */
 const SINGULAR_MAP: Record<string, string> = {
 	Addresses: 'Address',
@@ -75,7 +75,6 @@ const SINGULAR_MAP: Record<string, string> = {
 	Currencies: 'Currency',
 	Countries: 'Country',
 	Territories: 'Territory',
-	// Standard -s plurals that the fallback handles fine but are listed for clarity:
 	Carts: 'Cart',
 	Orders: 'Order',
 	Products: 'Product',
@@ -91,7 +90,7 @@ const SINGULAR_MAP: Record<string, string> = {
 	Messages: 'Message',
 	Subscriptions: 'Subscription',
 	Extensions: 'Extension',
-	Taxe: 'Tax', // 'Taxes' → 'Taxe' via /s$/, so map 'Taxes' explicitly:
+	Taxe: 'Tax',
 	Taxes: 'Tax',
 	ShoppingLists: 'Shopping List',
 	DiscountCodes: 'Discount Code',
@@ -114,12 +113,10 @@ function toSingular(folderName: string): string {
 
 /**
  * Identifies the main "Update <Resource> by ID/Key" endpoint.
- * Robust: matches by name OR by body structure (has `actions` array).
  */
 function isMainUpdateOp(op: ParsedOperation): boolean {
 	if (op.isUpdateAction) return false;
 	if (/\bupdate\b/i.test(op.name)) return true;
-	// Fallback: POST to /:id with an `actions` array in the body
 	return op.method === 'POST' && op.requiresId && op.bodyFields.some((f) => f.name === 'actions');
 }
 
@@ -183,11 +180,6 @@ export function generateIdFields(
 		const singular = toSingular(folder);
 		const topLevelOps = operations.filter((op) => op.folder === folder && !op.isUpdateAction);
 
-		// ── Standard /:id endpoints ────────────────────────────────────────
-		// Use op.requiresKey (URL-derived flag) NOT the operation name to distinguish
-		// ID vs Key endpoints. Name-based checks like /by\s*key/i fail for operations
-		// named e.g. "Query Product Selections for Product by Product Key" where the
-		// word "Product" sits between "by" and "Key".
 		const opsNeedingId = topLevelOps
 			.filter((op) => op.requiresId && !op.requiresKey && !op.pathParamName)
 			.map((op) => op.value);
@@ -203,7 +195,6 @@ export function generateIdFields(
 			});
 		}
 
-		// ── /key={{key}} endpoints ─────────────────────────────────────────
 		const opsNeedingKey = topLevelOps
 			.filter((op) => op.requiresKey && !op.pathParamName)
 			.map((op) => op.value);
@@ -219,10 +210,6 @@ export function generateIdFields(
 			});
 		}
 
-		// ── Non-standard path param endpoints ─────────────────────────────
-		// e.g. /customer-id={{customerId}}, /email={{email}}, /password-token={{passwordToken}}
-		// Each gets its own uniquely-named field so they don't collide with resourceId.
-		// Group ops that share the same pathParamName (same field, multiple operations).
 		const customParamOps = topLevelOps.filter((op) => op.requiresId && op.pathParamName);
 		const byParamName = new Map<string, { label: string; opValues: string[] }>();
 		for (const op of customParamOps) {
@@ -311,24 +298,6 @@ export function generateActionsJsonField(
 }
 
 // ─── 6. Actions (UI) fixedCollection ─────────────────────────────────────────
-//
-// n8n fixedCollection does NOT support displayOptions inside values[].
-// Solution: one option group per action type. Each group has its own values[].
-//
-// FIELD STRATEGY — uses op.actionBodyFields (fields from inside actions[0]):
-//
-//   actionBodyFields is a flat list of the fields extracted from the first
-//   element of the `actions` array in the Postman body example. Each field is
-//   either:
-//     • scalar  (string/number/boolean)  → individual typed input
-//     • json    (object or array)        → individual JSON editor
-//
-//   This gives us e.g. for AddAsset:
-//     variantId  (number) → Number input
-//     asset      (json)   → JSON editor
-//
-//   For actions with no parseable body (empty actionBodyFields), we fall back
-//   to a single catch-all "Parameters" JSON editor so the group is never empty.
 
 export function generateActionsUiField(
 	operations: ParsedOperation[],
@@ -351,9 +320,6 @@ export function generateActionsUiField(
 
 		const optionGroups = updateActions.map((op) => {
 			const actionFields: INodeProperties[] = [];
-
-			// Use actionBodyFields — these are the fields extracted from
-			// inside actions[0] in the Postman body, with `action`/`version` stripped.
 			const fields = op.actionBodyFields;
 
 			console.info(
@@ -367,9 +333,6 @@ export function generateActionsUiField(
 					actionFields.push(makeActionFieldProperty(field.name, field, isLocalized));
 				}
 			} else {
-				// Zero-parameter actions (Publish, Unpublish, RevertStagedChanges…)
-				// n8n fixedCollection requires at least one field in values[].
-				// Use a notice so the user sees "No additional parameters" cleanly.
 				actionFields.push({
 					displayName: 'No additional parameters required for this action.',
 					name: '_notice',
@@ -379,8 +342,8 @@ export function generateActionsUiField(
 			}
 
 			return {
-				displayName: op.name, // "Add Asset"
-				name: op.value, // "addAsset"
+				displayName: op.name,
+				name: op.value,
 				values: actionFields,
 			};
 		});
@@ -431,14 +394,7 @@ export function generateCreateBodyFields(
 	return props;
 }
 
-// ─── 8. Generic POST body fields (non-create, non-update operations) ──────────
-//
-// FIX D: Previously, POST operations whose names didn't match /\bcreate\b/ or
-// /\bupdate\b/ (e.g. "Replicate Cart", "Add Line Item to Cart in Store") had no
-// body fields generated at all — they appeared in the operation dropdown but
-// showed zero input fields, making them unusable.
-//
-// This section generates body fields for those remaining POST operations.
+// ─── 8. Generic POST body fields (non-create, non-update, non-search, non-image) ──
 
 export function generateMiscPostBodyFields(
 	operations: ParsedOperation[],
@@ -456,14 +412,13 @@ export function generateMiscPostBodyFields(
 				op.method === 'POST' &&
 				!/\bcreate\b/i.test(op.name) &&
 				!isMainUpdateOp(op) &&
+				!op.isSearch &&
+				!op.isImageUpload &&
 				op.bodyFields.length > 0,
 		);
 
 		for (const op of miscPostOps) {
 			for (const field of op.bodyFields) {
-				// NOTE: do NOT skip 'version' here — unlike create/update ops which have a
-				// dedicated Version field, misc POST ops like "Change Password" require version
-				// inside the request body itself and have no separate version UI field.
 				props.push(
 					makeFieldProperty(
 						`body__misc__${resourceValue}__${op.value}__${field.name.replace(/\./g, '__')}`,
@@ -478,7 +433,141 @@ export function generateMiscPostBodyFields(
 	return props;
 }
 
-// ─── 9. Query param filters ───────────────────────────────────────────────────
+// ─── 9. Search body fields ────────────────────────────────────────────────────
+//
+// Search endpoints (POST .../search) have a structured JSON body
+// (query.and, sort, limit, offset). Generate individual typed fields
+// for each so users can fill them in without writing raw JSON.
+
+export function generateSearchBodyFields(
+	operations: ParsedOperation[],
+	folders: string[],
+): INodeProperties[] {
+	const props: INodeProperties[] = [];
+
+	for (const folder of folders) {
+		const resourceValue = slugify(folder);
+
+		const searchOps = operations.filter(
+			(op) => op.folder === folder && !op.isUpdateAction && op.isSearch,
+		);
+
+		for (const op of searchOps) {
+			for (const field of op.bodyFields) {
+				props.push(
+					makeFieldProperty(
+						`body__misc__${resourceValue}__${op.value}__${field.name.replace(/\./g, '__')}`,
+						field,
+						{ show: { resource: [resourceValue], operation: [op.value] } },
+					),
+				);
+			}
+		}
+	}
+
+	return props;
+}
+
+// ─── 10. Image upload fields ──────────────────────────────────────────────────
+//
+// POST .../images has no JSON body — instead it takes a URL plus query params.
+// The Postman collection lists filename, variant, sku, staged as (disabled)
+// query params. We emit them as proper typed input fields.
+//
+// Field mapping (matching CT HTTP API Playground):
+//   imageUrl  string   required  — URL CT will fetch the image from
+//   filename  string   optional  — filename hint
+//   variant   number   optional  — variant ID (0 = master variant)
+//   sku       string   optional  — alternative to variant
+//   staged    boolean  optional  — staged vs current (default true)
+
+export function generateImageUploadFields(
+	operations: ParsedOperation[],
+	folders: string[],
+): INodeProperties[] {
+	const props: INodeProperties[] = [];
+
+	for (const folder of folders) {
+		const resourceValue = slugify(folder);
+
+		const imageOps = operations.filter(
+			(op) => op.folder === folder && !op.isUpdateAction && op.isImageUpload,
+		);
+
+		for (const op of imageOps) {
+			// Image URL — required, not in Postman query params but needed by executor
+			props.push({
+				displayName: 'Image URL',
+				name: 'imageUrl',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: [op.value] } },
+				description:
+					'Publicly accessible URL of the image (JPEG, PNG, or GIF, max 10 MB). ' +
+					'commercetools fetches the image from this URL.',
+			});
+
+			// Query params from Postman: filename, variant, sku, staged
+			// Use known types — Postman has no type info on disabled params
+			const PARAM_DEFS: Array<{
+				key: string;
+				displayName: string;
+				type: 'string' | 'number' | 'boolean';
+				default: string | number | boolean;
+				description: string;
+			}> = [
+				{
+					key: 'filename',
+					displayName: 'Filename',
+					type: 'string',
+					default: '',
+					description: 'Optional filename to store with the image.',
+				},
+				{
+					key: 'variant',
+					displayName: 'Variant ID',
+					type: 'number',
+					default: 0,
+					description:
+						'ID of the ProductVariant to attach the image to. Leave 0 to use the Master Variant.',
+				},
+				{
+					key: 'sku',
+					displayName: 'SKU',
+					type: 'string',
+					default: '',
+					description: 'SKU of the ProductVariant. Alternative to Variant ID.',
+				},
+				{
+					key: 'staged',
+					displayName: 'Staged',
+					type: 'boolean',
+					default: true,
+					description: 'Whether to add the image to staged (true) or current (false) product data.',
+				},
+			];
+
+			for (const param of PARAM_DEFS) {
+				// Only emit params that are actually in the operation's queryParams list
+				if (!op.queryParams.includes(param.key)) continue;
+
+				props.push({
+					displayName: param.displayName,
+					name: param.key,
+					type: param.type,
+					default: param.default,
+					displayOptions: { show: { resource: [resourceValue], operation: [op.value] } },
+					description: param.description,
+				} as INodeProperties);
+			}
+		}
+	}
+
+	return props;
+}
+
+// ─── 11. Query param filters (GET / HEAD) ────────────────────────────────────
 
 export function generateQueryParamProperties(
 	operations: ParsedOperation[],
@@ -489,10 +578,6 @@ export function generateQueryParamProperties(
 	for (const folder of folders) {
 		const resourceValue = slugify(folder);
 
-		// Match GET and HEAD ops with query params.
-		// Exclude ops that use a custom path param (e.g. customer-id=) — those get
-		// their own dedicated input field from generateIdFields and have no extra filters.
-		// Note: parseCollection now normalises methods to uppercase, so comparison is safe.
 		const eligibleOps = operations.filter(
 			(op) =>
 				op.folder === folder &&
@@ -503,12 +588,10 @@ export function generateQueryParamProperties(
 		);
 
 		for (const op of eligibleOps) {
-			// Deduplicate and strip any remaining invalid param names
 			const cleanParams = [
 				...new Set(op.queryParams.filter((p) => p && !p.startsWith('/') && p.trim().length > 0)),
 			];
 
-			// Skip entirely if no usable params — avoids empty "Additional Fields" section
 			if (cleanParams.length === 0) continue;
 
 			props.push({
@@ -545,23 +628,20 @@ export function generateAllNodeProperties(
 		...generateActionsJsonField(operations, folders),
 		...generateActionsUiField(operations, folders),
 		...generateCreateBodyFields(operations, folders),
-		...generateMiscPostBodyFields(operations, folders), // FIX D
+		...generateMiscPostBodyFields(operations, folders),
+		...generateSearchBodyFields(operations, folders),
+		...generateImageUploadFields(operations, folders), // ← new
 		...generateQueryParamProperties(operations, folders),
 	];
 }
 
 // ─── Field property builders ──────────────────────────────────────────────────
 
-/**
- * Builds an INodeProperties for a field inside an action group (no displayOptions needed —
- * n8n fixedCollection values[] items don't support displayOptions).
- */
 function makeActionFieldProperty(
 	fieldName: string,
 	field: BodyField,
 	isLocalized: boolean,
 ): INodeProperties {
-	// For json fields: arrays default to '[]', objects default to '{}'
 	const jsonDefault = Array.isArray(field.example) ? '[]' : '{}';
 
 	const prop: INodeProperties = {
@@ -589,9 +669,6 @@ function makeActionFieldProperty(
 	return prop;
 }
 
-/**
- * Builds an INodeProperties for top-level body/create fields (with displayOptions).
- */
 function makeFieldProperty(
 	paramName: string,
 	field: BodyField,
