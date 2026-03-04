@@ -51,16 +51,24 @@ export interface ParsedOperation {
 	/**
 	 * True when this is an image-upload endpoint (POST .../images).
 	 *
-	 * The CT image-upload endpoint (POST /products/{id}/images) accepts a
-	 * JSON body { url: "<image url>" } and fetches the image from that URL.
-	 * Query params: variant (number), sku (string), staged (boolean), filename (string).
+	 * CT requires raw binary image bytes (image/jpeg, image/png, image/gif)
+	 * as the request body — NOT a JSON body. Sending JSON returns:
+	 *   "Unsupported Content-Type: application/json. The supported formats
+	 *    are image/jpeg, image/png and image/gif."
+	 *
+	 * The executor downloads the image from the user-supplied imageUrl, then
+	 * POSTs the raw buffer to CT with the correct Content-Type derived from
+	 * the URL file extension.
+	 *
+	 * Query params (variant, sku, staged, filename) come from op.queryParams,
+	 * populated from the Postman collection's (disabled) query param entries.
 	 *
 	 * When isImageUpload=true:
-	 *   - generateProperties (generateImageUploadFields) emits: imageUrl (required),
-	 *     filename, variant, sku, staged — as individual named fields.
-	 *   - The executor sends { url: imageUrl } as the JSON body with the
-	 *     query params assembled from those fields.
-	 *   - bodyFields is [] (Postman body is empty) and is intentionally ignored.
+	 *   - generateProperties (generateImageUploadFields) emits:
+	 *       imageUrl (string, required) — URL the executor downloads from
+	 *       filename, variant, sku, staged — passed as CT query params
+	 *   - The executor downloads imageUrl → POSTs binary buffer to CT.
+	 *   - generateMiscPostBodyFields excludes these ops (bodyFields is []).
 	 */
 	isImageUpload?: boolean;
 }

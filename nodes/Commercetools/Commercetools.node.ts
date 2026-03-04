@@ -279,18 +279,17 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 /**
  * Executes the CT image upload: POST /products/{id}/images
  *
- * CT fetches the image from a publicly accessible URL provided in the request
- * body as { url: "https://..." }. The Content-Type is application/json.
+ * CT requires raw binary image bytes in the body with Content-Type set to the
+ * image mime type (image/jpeg, image/png, or image/gif). It does NOT accept a
+ * JSON body with a URL — that returns:
+ *   "Unsupported Content-Type: application/json. The supported formats are
+ *    image/jpeg, image/png and image/gif."
+ *
+ * Strategy: download the image from imageUrl first using n8n's helpers.request,
+ * then POST the raw buffer to CT with the correct Content-Type.
  *
  * Query params: variant OR sku (optional), staged (optional), filename (optional)
  * If neither variant nor sku is given, CT uploads to the Master Variant.
- *
- * n8n fields (injected into node properties):
- *   imageUrl  — publicly accessible URL of the image (required)
- *   filename  — optional filename hint
- *   variant   — variant ID (number, 0 = master)
- *   sku       — alternative to variant
- *   staged    — boolean, default true
  */
 async function executeImageUpload(
 	this: IExecuteFunctions,
@@ -311,24 +310,47 @@ async function executeImageUpload(
 		);
 	}
 
-	// Build query params
+	// ── Step 1: Download the image from the URL ───────────────────────────────
+	// Derive Content-Type from the URL extension, defaulting to image/jpeg.
+	// CT requires one of: image/jpeg, image/png, image/gif.
+	const ext = imageUrl.split('?')[0].split('.').pop()?.toLowerCase() ?? '';
+	const mimeType = ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : 'image/jpeg'; // default covers .jpg, .jpeg, and unknown
+
+	let imageBuffer: Buffer;
+	try {
+		imageBuffer = (await this.helpers.request({
+			method: 'GET',
+			url: imageUrl,
+			encoding: null, // return raw Buffer, not string
+			resolveWithFullResponse: false,
+		})) as Buffer;
+	} catch (err) {
+		throw new NodeOperationError(
+			this.getNode(),
+			`Failed to download image from "${imageUrl}": ${(err as Error).message}`,
+		);
+	}
+
+	// ── Step 2: Build CT query params ─────────────────────────────────────────
 	const qs: Record<string, string> = {};
 	if (variant > 0) {
 		qs.variant = String(variant);
 	} else if (sku) {
 		qs.sku = sku;
 	}
-	// If neither is provided, CT defaults to the Master Variant
+	// If neither is provided, CT defaults to the Master Variant — no param needed
 	qs.staged = String(staged);
 	if (filename) qs.filename = filename;
 
+	// ── Step 3: POST raw binary to CT ─────────────────────────────────────────
 	const options: IRequestOptions = {
 		method: 'POST',
 		url: fullUrl,
 		qs,
-		json: true,
-		headers: { 'Content-Type': 'application/json' },
-		body: { url: imageUrl },
+		// Do NOT use json:true — we are sending raw binary, not JSON
+		headers: { 'Content-Type': mimeType },
+		body: imageBuffer,
+		encoding: null,
 	};
 
 	try {
@@ -337,11 +359,19 @@ async function executeImageUpload(
 			'commerceToolsOAuth2Api',
 			options,
 		);
+		// CT returns the updated Product as JSON string when encoding:null is set
 		if (typeof response === 'string') {
 			try {
 				return JSON.parse(response);
 			} catch {
 				return { raw: response };
+			}
+		}
+		if (Buffer.isBuffer(response)) {
+			try {
+				return JSON.parse(response.toString('utf8'));
+			} catch {
+				return { raw: response.toString('utf8') };
 			}
 		}
 		return response;
