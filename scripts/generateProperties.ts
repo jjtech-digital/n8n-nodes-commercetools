@@ -2,37 +2,6 @@
  * generateProperties.ts
  *
  * Converts ParsedOperation[] → INodeProperties[]
- *
- * UI structure:
- *   Resource           Product | Customer
- *   Operation          [real names — no update actions shown here]
- *
- *   When Update by ID/Key is selected:
- *     <Resource> ID    string
- *     Version          number
- *     Actions (JSON)   json  [raw override — paste full actions array]
- *     Actions (UI)     fixedCollection (multipleValues)
- *       Each action type = its own option group with:
- *         - scalar fields (staged, scope, variantId…) as individual inputs
- *         - object/array fields as individual JSON editors
- *       [+ Add Action]
- *
- *   When Get/Query/Delete/Check is selected:
- *     <Resource> ID or Key
- *     Filters (query params collection)
- *
- *   When Create is selected:
- *     body fields
- *
- *   When Upload Product image is selected:
- *     Product ID
- *     Image URL        string  (required)
- *     Filename         string  (optional)
- *     Variant ID       number  (optional, 0 = master)
- *     SKU              string  (optional, alternative to Variant ID)
- *     Staged           boolean (default true)
- *
- * No descriptions on any property — labels are self-explanatory.
  */
 
 import type { INodeProperties } from 'n8n-workflow';
@@ -53,18 +22,28 @@ function buildDisplayName(dotPath: string): string {
 	return dotPath.split('.').map(humanize).join(' › ');
 }
 
-const LOCALIZED_FIELDS = new Set([
-	'name',
-	'slug',
-	'description',
-	'metaTitle',
-	'metaDescription',
-	'metaKeywords',
-]);
-
 /**
- * FIX C: Proper singular form for folder names.
+ * Determine whether a BodyField is a LocalizedString by inspecting its
+ * example value from the Postman body.
+ *
+ * A field is localized if its example value is a plain object (not an array)
+ * whose keys all look like IETF locale tags (e.g. "en", "en-US", "de-DE").
+ *
+ * This replaces the old LOCALIZED_FIELDS hardcoded set, which incorrectly
+ * treated fields like BusinessUnit.name (plain string) as localized simply
+ * because their field name appeared in the set.
  */
+function isLocalizedField(field: BodyField): boolean {
+	if (field.type !== 'json' && field.type !== 'string') return false;
+	const ex = field.example;
+	if (!ex || typeof ex !== 'object' || Array.isArray(ex)) return false;
+	const keys = Object.keys(ex as Record<string, unknown>);
+	if (keys.length === 0) return false;
+	// All keys must match a locale tag pattern: 2-letter language, optional
+	// hyphen + 2-letter region (e.g. "en", "en-US", "de", "zh-CN")
+	return keys.every((k) => /^[a-z]{2}(-[A-Z]{2})?$/.test(k));
+}
+
 const SINGULAR_MAP: Record<string, string> = {
 	Addresses: 'Address',
 	Categories: 'Category',
@@ -98,6 +77,7 @@ const SINGULAR_MAP: Record<string, string> = {
 	ProductTypes: 'Product Type',
 	Projects: 'Project',
 	BusinessUnits: 'Business Unit',
+	'Business-units': 'Business Unit',
 	AssociateRoles: 'Associate Role',
 	ApprovalRules: 'Approval Rule',
 	ApprovalFlows: 'Approval Flow',
@@ -111,9 +91,6 @@ function toSingular(folderName: string): string {
 	return SINGULAR_MAP[folderName] ?? folderName.replace(/ies$/, 'y').replace(/(?<=[^s])s$/, '');
 }
 
-/**
- * Identifies the main "Update <Resource> by ID/Key" endpoint.
- */
 function isMainUpdateOp(op: ParsedOperation): boolean {
 	if (op.isUpdateAction) return false;
 	if (/\bupdate\b/i.test(op.name)) return true;
@@ -324,8 +301,7 @@ export function generateActionsUiField(
 
 			if (fields.length > 0) {
 				for (const field of fields) {
-					const isLocalized = LOCALIZED_FIELDS.has(field.name);
-					actionFields.push(makeActionFieldProperty(field.name, field, isLocalized));
+					actionFields.push(makeActionFieldProperty(field.name, field));
 				}
 			} else {
 				actionFields.push({
@@ -389,7 +365,7 @@ export function generateCreateBodyFields(
 	return props;
 }
 
-// ─── 8. Generic POST body fields (non-create, non-update, non-search, non-image) ──
+// ─── 8. Generic POST body fields ─────────────────────────────────────────────
 
 export function generateMiscPostBodyFields(
 	operations: ParsedOperation[],
@@ -429,10 +405,6 @@ export function generateMiscPostBodyFields(
 }
 
 // ─── 9. Search body fields ────────────────────────────────────────────────────
-//
-// Search endpoints (POST .../search) have a structured JSON body
-// (query.and, sort, limit, offset). Generate individual typed fields
-// for each so users can fill them in without writing raw JSON.
 
 export function generateSearchBodyFields(
 	operations: ParsedOperation[],
@@ -464,17 +436,6 @@ export function generateSearchBodyFields(
 }
 
 // ─── 10. Image upload fields ──────────────────────────────────────────────────
-//
-// POST .../images has no JSON body — instead it takes a URL plus query params.
-// The Postman collection lists filename, variant, sku, staged as (disabled)
-// query params. We emit them as proper typed input fields.
-//
-// Field mapping (matching CT HTTP API Playground):
-//   imageUrl  string   required  — URL CT will fetch the image from
-//   filename  string   optional  — filename hint
-//   variant   number   optional  — variant ID (0 = master variant)
-//   sku       string   optional  — alternative to variant
-//   staged    boolean  optional  — staged vs current (default true)
 
 export function generateImageUploadFields(
 	operations: ParsedOperation[],
@@ -490,7 +451,6 @@ export function generateImageUploadFields(
 		);
 
 		for (const op of imageOps) {
-			// Image URL — required, not in Postman query params but needed by executor
 			props.push({
 				displayName: 'Image URL',
 				name: 'imageUrl',
@@ -503,8 +463,6 @@ export function generateImageUploadFields(
 					'commercetools fetches the image from this URL.',
 			});
 
-			// Query params from Postman: filename, variant, sku, staged
-			// Use known types — Postman has no type info on disabled params
 			const PARAM_DEFS: Array<{
 				key: string;
 				displayName: string;
@@ -544,9 +502,7 @@ export function generateImageUploadFields(
 			];
 
 			for (const param of PARAM_DEFS) {
-				// Only emit params that are actually in the operation's queryParams list
 				if (!op.queryParams.includes(param.key)) continue;
-
 				props.push({
 					displayName: param.displayName,
 					name: param.key,
@@ -625,24 +581,21 @@ export function generateAllNodeProperties(
 		...generateCreateBodyFields(operations, folders),
 		...generateMiscPostBodyFields(operations, folders),
 		...generateSearchBodyFields(operations, folders),
-		...generateImageUploadFields(operations, folders), // ← new
+		...generateImageUploadFields(operations, folders),
 		...generateQueryParamProperties(operations, folders),
 	];
 }
 
 // ─── Field property builders ──────────────────────────────────────────────────
 
-function makeActionFieldProperty(
-	fieldName: string,
-	field: BodyField,
-	isLocalized: boolean,
-): INodeProperties {
+function makeActionFieldProperty(fieldName: string, field: BodyField): INodeProperties {
+	const localized = isLocalizedField(field);
 	const jsonDefault = Array.isArray(field.example) ? '[]' : '{}';
 
-	const prop: INodeProperties = {
+	return {
 		displayName: buildDisplayName(fieldName),
 		name: fieldName,
-		type: isLocalized
+		type: localized
 			? 'json'
 			: field.type === 'number'
 				? 'number'
@@ -651,7 +604,7 @@ function makeActionFieldProperty(
 					: field.type === 'json'
 						? 'json'
 						: 'string',
-		default: isLocalized
+		default: localized
 			? '{ "en": "" }'
 			: field.type === 'number'
 				? 0
@@ -661,7 +614,6 @@ function makeActionFieldProperty(
 						? jsonDefault
 						: '',
 	};
-	return prop;
 }
 
 function makeFieldProperty(
@@ -669,11 +621,11 @@ function makeFieldProperty(
 	field: BodyField,
 	displayOptions?: INodeProperties['displayOptions'],
 ): INodeProperties {
-	const isLocalized = LOCALIZED_FIELDS.has(field.name);
+	const localized = isLocalizedField(field);
 	const prop: INodeProperties = {
 		displayName: buildDisplayName(field.name),
 		name: paramName,
-		type: isLocalized
+		type: localized
 			? 'json'
 			: field.type === 'number'
 				? 'number'
@@ -682,7 +634,7 @@ function makeFieldProperty(
 					: field.type === 'json'
 						? 'json'
 						: 'string',
-		default: isLocalized
+		default: localized
 			? '{ "en": "" }'
 			: field.type === 'number'
 				? 0
