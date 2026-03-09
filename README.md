@@ -2,7 +2,7 @@
 
 # n8n-nodes-commercetools
 
-A custom n8n community node for integrating with commercetools. Provides full API coverage for Products, Customers, Carts, and Orders — plus a webhook trigger node with optional AWS SQS + Lambda or GCP Pub/Sub + Cloud Functions buffering for reliable event delivery.
+A custom n8n community node for integrating with commercetools. Provides full API coverage for Products, Customers, Carts, Orders, and Business Units — plus a webhook trigger node with optional AWS SQS + Lambda or GCP Pub/Sub + Cloud Functions buffering for reliable event delivery.
 
 Operations are **auto-generated** from the official commercetools Postman collection and kept in sync automatically via a daily GitHub Actions workflow.
 
@@ -26,10 +26,10 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, and Orders
+- Full CRUD coverage for Products, Customers, Carts, Orders, and Business Units
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
-- Product and Order search with structured query, sort, limit, and offset fields
+- Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
 - Update action UI builder — per-action typed field editors, no raw JSON required
 - Native commercetools webhook subscriptions
 - Optional AWS SQS + Lambda event buffering — fully auto-provisioned
@@ -55,12 +55,13 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 
 #### Resources
 
-| Resource     | Available Operations                                                                                                                                       |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Product**  | Create, Get by ID, Get by Key, Query, Update, Delete, Upload Image, Search, Query Product Selections by ID, Query Product Selections by Key, HEAD checks   |
-| **Customer** | Create, Authenticate (global & in-store), Get by ID / Key / Email / Password Token, Query, Update, Delete, Password reset, Email verification, HEAD checks |
-| **Cart**     | Create (regular & in-store), Get by ID / Customer ID, Query, Update, Delete, Replicate, Merge, HEAD checks                                                 |
-| **Order**    | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks                                    |
+| Resource          | Available Operations                                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Product**       | Create, Get by ID, Get by Key, Query, Update, Delete, Upload Image, Search, Query Product Selections by ID, Query Product Selections by Key, HEAD checks   |
+| **Customer**      | Create, Authenticate (global & in-store), Get by ID / Key / Email / Password Token, Query, Update, Delete, Password reset, Email verification, HEAD checks |
+| **Cart**          | Create (regular & in-store), Get by ID / Customer ID, Query, Update, Delete, Replicate, Merge, HEAD checks                                                 |
+| **Order**         | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks                                    |
+| **Business Unit** | Create, Get by ID, Get by Key, Query, Search, Update, Delete, HEAD checks                                                                                  |
 
 #### How field generation works
 
@@ -82,7 +83,7 @@ The update action builder exposes every action type as a labelled group with its
 
 Alternatively, paste a raw JSON array directly into **Actions (JSON)** to bypass the UI builder. When **Actions (JSON)** is non-empty it takes precedence.
 
-#### Search operations (Products & Orders)
+#### Search operations (Products, Orders & Business Units)
 
 The commercetools Search API accepts a `SearchRequest` body. The node exposes these fields:
 
@@ -94,6 +95,8 @@ The commercetools Search API accepts a `SearchRequest` body. The node exposes th
 | Offset      | number     | Pagination offset. `0` is sent explicitly (not skipped). |
 
 > **Note:** Sending `query: { and: [] }` is rejected by commercetools with "exhausted input". Leaving Query › And empty omits the field entirely, which returns all results.
+
+> **Note:** Business Unit Search requires the feature to be activated on your project. See [Troubleshooting](#error-handling--troubleshooting) for details.
 
 #### Upload Product image
 
@@ -138,6 +141,8 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Order** — created, deleted, imported, state transitions, customer updates, shipping and billing updates, line item changes, payments and deliveries, discount code updates, custom fields
 
 **Cart** — cart created (change notification)
+
+**Business Unit** — created, deleted, address added/changed/removed, associate added/changed/removed, status changed, name changed, contact email updated, store assignments changed, custom fields and types
 
 #### Subscription routing
 
@@ -296,7 +301,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     Filters to allowedResources: [product, customer, cart, order]
+│     Filters to allowedResources: [product, customer, cart, order, business-unit]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -335,6 +340,7 @@ New API endpoints and fields appear in the node automatically without manual dev
 | Webhook not receiving events                               | Ensure n8n has a public URL; verify the subscription exists in Merchant Center → Subscriptions                |
 | Image upload: `Unsupported Content-Type: application/json` | Ensure Image URL is a direct link to a JPEG, PNG, or GIF file, not an HTML page                               |
 | Search: `exhausted input`                                  | Leave **Query › And** empty — sending `{ and: [] }` is rejected by commercetools                              |
+| Business Unit Search: `Search Not Ready`                   | Business Unit Search must be activated on your project — call `PUT /{projectKey}/business-units/search/indexing-status` with `{ "activated": true }` then wait for indexing to complete |
 | GCP: private key / PEM errors                              | Use the **Service Account JSON** field; paste the entire `.json` key file, not individual fields              |
 | GCP: deploy timeout on first activation                    | GCP API enablement takes time on cold projects — retry after a minute                                         |
 | Node not visible in n8n                                    | Run `npm install` then `npm run dev`                                                                          |
@@ -343,12 +349,12 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 ## Changelog
 
-| Version | Changes                                                                    |
-| ------- | -------------------------------------------------------------------------- |
-| v0.1.35 | Improve GCP authentication by using JWT client for access token management |
-| v0.1.34 | Fix: GCP Credential service handling                                       |
-| v0.1.33 | GCP Pub/Sub + Cloud Functions event source                                 |
-| v0.1.32 | Cart update actions and lint fixes                                         |
+| Version | Changes                                                                                          |
+| ------- | ------------------------------------------------------------------------------------------------ |
+| v0.1.35 | Improve GCP authentication by using JWT client for access token management                       |
+| v0.1.34 | Fix: GCP Credential service handling                                                             |
+| v0.1.33 | GCP Pub/Sub + Cloud Functions event source                                                       |
+| v0.1.32 | Cart update actions and lint fixes                                                               |
 
 ---
 
