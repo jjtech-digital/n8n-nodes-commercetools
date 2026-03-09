@@ -351,10 +351,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.2  | Added missing triggers node to Package JSON.                                                     |
+| v1.0.1  | Automated the Node resources, properties and trigger properties creation.                        |
 | v0.1.35 | Improve GCP authentication by using JWT client for access token management                       |
 | v0.1.34 | Fix: GCP Credential service handling                                                             |
-| v0.1.33 | GCP Pub/Sub + Cloud Functions event source                                                       |
-| v0.1.32 | Cart update actions and lint fixes                                                               |
 
 ---
 
