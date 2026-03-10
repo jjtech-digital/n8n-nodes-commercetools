@@ -206,6 +206,34 @@ export function generateIdFields(
 				displayOptions: { show: { resource: [resourceValue], operation: opValues } },
 			});
 		}
+
+		// Secondary ID — for sub-resource endpoints like /business-units/{id}/associates/{associate-id}
+		const opsNeedingSecondaryId = topLevelOps
+			.filter((op) => op.secondaryIdPlaceholder)
+			.map((op) => ({ value: op.value, placeholder: op.secondaryIdPlaceholder! }));
+
+		// Group by placeholder name so identical placeholders share one field
+		const bySecondaryPlaceholder = new Map<string, string[]>();
+		for (const { value, placeholder } of opsNeedingSecondaryId) {
+			if (!bySecondaryPlaceholder.has(placeholder)) bySecondaryPlaceholder.set(placeholder, []);
+			bySecondaryPlaceholder.get(placeholder)!.push(value);
+		}
+		for (const [placeholder, opValues] of bySecondaryPlaceholder) {
+			const label =
+				placeholder
+					.replace(/-id$/i, '')
+					.split('-')
+					.map((w) => w[0].toUpperCase() + w.slice(1))
+					.join(' ') + ' ID';
+			props.push({
+				displayName: label,
+				name: 'secondaryId',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: opValues } },
+			});
+		}
 	}
 
 	return props;

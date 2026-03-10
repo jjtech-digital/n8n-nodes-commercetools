@@ -34,6 +34,7 @@ export interface ParsedOperation {
 	keyPlaceholder?: string;
 	isSearch?: boolean;
 	isImageUpload?: boolean;
+	secondaryIdPlaceholder?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -314,6 +315,16 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 				const isSearch = detectIsSearch(method, urlTemplate);
 				const isImageUpload = detectIsImageUpload(method, urlTemplate);
 
+				// Detect secondary ID placeholder — e.g. /business-units/{{business-unit-id}}/associates/{{associate-id}}
+				// Find all {{...-id}} or {{...-ID}} tokens in the URL, de-dupe, and if there are two
+				// the second one (after the primary resource ID) is the secondary.
+				const allIdPlaceholders = [...urlTemplate.matchAll(/\{\{([^}]*[Ii][Dd])\}\}/g)].map(
+					(m) => m[1],
+				);
+				const uniqueIdPlaceholders = [...new Set(allIdPlaceholders)];
+				const secondaryIdPlaceholder =
+					uniqueIdPlaceholders.length >= 2 ? uniqueIdPlaceholders[1] : undefined;
+
 				operations.push({
 					name: item.name,
 					value: slugify(item.name),
@@ -334,6 +345,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					...(pathParamLabel ? { pathParamLabel, pathParamName, pathParamSegment } : {}),
 					...(isSearch ? { isSearch: true } : {}),
 					...(isImageUpload ? { isImageUpload: true } : {}),
+					...(secondaryIdPlaceholder ? { secondaryIdPlaceholder } : {}),
 				});
 			}
 		};
