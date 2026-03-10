@@ -315,15 +315,24 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 				const isSearch = detectIsSearch(method, urlTemplate);
 				const isImageUpload = detectIsImageUpload(method, urlTemplate);
 
-				// Detect secondary ID placeholder — e.g. /business-units/{{business-unit-id}}/associates/{{associate-id}}
-				// Find all {{...-id}} or {{...-ID}} tokens in the URL, de-dupe, and if there are two
-				// the second one (after the primary resource ID) is the secondary.
+				// Detect secondary ID placeholder.
+				// Two cases:
+				//   1. Two {{...-id}} tokens: /business-units/{{business-unit-id}}/associates/{{associate-id}}
+				//      → secondaryId is the second token
+				//   2. One key= + one {{...-id}} token: /business-units/key={{associate-key}}/associates/{{associate-id}}
+				//      → the primary identifier is the key; the ID token is the secondary
 				const allIdPlaceholders = [...urlTemplate.matchAll(/\{\{([^}]*[Ii][Dd])\}\}/g)].map(
 					(m) => m[1],
 				);
 				const uniqueIdPlaceholders = [...new Set(allIdPlaceholders)];
-				const secondaryIdPlaceholder =
-					uniqueIdPlaceholders.length >= 2 ? uniqueIdPlaceholders[1] : undefined;
+				let secondaryIdPlaceholder: string | undefined;
+				if (uniqueIdPlaceholders.length >= 2) {
+					// Two ID tokens — second one is secondary
+					secondaryIdPlaceholder = uniqueIdPlaceholders[1];
+				} else if (requiresKey && uniqueIdPlaceholders.length === 1) {
+					// Key-based URL with an additional ID segment — that ID is secondary
+					secondaryIdPlaceholder = uniqueIdPlaceholders[0];
+				}
 
 				operations.push({
 					name: item.name,
