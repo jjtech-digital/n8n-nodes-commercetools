@@ -81,6 +81,18 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		.replace(/\{\{projectKey\}\}/g, projectKey);
 
 	if (opDef.requiresId) {
+		// ── Secondary ID — substitute first before any branch touches remaining {{...-id}} tokens ──
+		// Handles sub-resource URLs like:
+		//   /business-units/{{business-unit-id}}/associates/{{associate-id}}   (ID path)
+		//   /business-units/key={{associate-key}}/associates/{{associate-id}}  (key path)
+		if (opDef.secondaryIdPlaceholder) {
+			const secondaryId = safeGet<string>(this, 'secondaryId', i, '');
+			urlPath = urlPath.replace(
+				new RegExp(`\\{\\{${opDef.secondaryIdPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
+				secondaryId,
+			);
+		}
+
 		if (opDef.pathParamSegment && opDef.pathParamName) {
 			// ── Non-standard path param: /customer-id={{customer-id}} ──────
 			const paramValue = safeGet<string>(this, opDef.pathParamName, i, '');
@@ -105,25 +117,8 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			} else {
 				urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
 			}
-			if (opDef.secondaryIdPlaceholder) {
-				const secondaryId = safeGet<string>(this, 'secondaryId', i, '');
-				urlPath = urlPath.replace(
-					new RegExp(`\\{\\{${opDef.secondaryIdPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
-					secondaryId,
-				);
-			}
 		} else {
 			// ── Standard /{{ID}} endpoints ────────────────────────────────
-			// If this operation has a secondary ID placeholder (e.g. /business-units/{{business-unit-id}}/associates/{{associate-id}}),
-			// substitute it first with the dedicated secondaryId param so it doesn't get
-			// overwritten by the primary resourceId catch-all below.
-			if (opDef.secondaryIdPlaceholder) {
-				const secondaryId = safeGet<string>(this, 'secondaryId', i, '');
-				urlPath = urlPath.replace(
-					new RegExp(`\\{\\{${opDef.secondaryIdPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
-					secondaryId,
-				);
-			}
 			const id = safeGet<string>(this, 'resourceId', i, '');
 			urlPath = urlPath.replace(/\{\{[^}]*[Ii][Dd]\}\}/g, id).replace(/\/:id/g, `/${id}`);
 		}
