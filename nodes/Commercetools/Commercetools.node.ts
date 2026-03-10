@@ -105,6 +105,13 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			} else {
 				urlPath = urlPath.replace(/key=\{\{[^}]+\}\}/, `key=${key}`);
 			}
+			if (opDef.secondaryIdPlaceholder) {
+				const secondaryId = safeGet<string>(this, 'secondaryId', i, '');
+				urlPath = urlPath.replace(
+					new RegExp(`\\{\\{${opDef.secondaryIdPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
+					secondaryId,
+				);
+			}
 		} else {
 			// ── Standard /{{ID}} endpoints ────────────────────────────────
 			// If this operation has a secondary ID placeholder (e.g. /business-units/{{business-unit-id}}/associates/{{associate-id}}),
