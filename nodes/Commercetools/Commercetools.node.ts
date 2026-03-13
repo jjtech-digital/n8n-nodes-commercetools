@@ -258,9 +258,13 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 				return { exists: false, statusCode: 404, url: fullUrl };
 			}
 			// Re-throw unexpected errors (401, 500, etc.)
-			throw new NodeApiError(this.getNode(), { message: (err as Error).message }, {
-    			message: `[${opDef.name}]: ${(err as Error).message}`,
-			});
+			throw new NodeApiError(
+				this.getNode(),
+				{ message: (err as Error).message },
+				{
+					message: `[${opDef.name}]: ${(err as Error).message}`,
+				},
+			);
 		}
 	}
 
