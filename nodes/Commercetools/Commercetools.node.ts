@@ -252,14 +252,14 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			} as IHttpRequestOptions);
 			// If no error thrown, resource exists (2xx)
 			return { exists: true, statusCode: 200, url: fullUrl };
-		} catch (err: any) {
-			const statusCode = err?.cause?.statusCode ?? err?.statusCode ?? 404;
+		} catch (err: unknown) {
+			const statusCode = (err as Record<string, unknown>)?.statusCode ?? 404;
 			if (statusCode === 404) {
 				return { exists: false, statusCode: 404, url: fullUrl };
 			}
 			// Re-throw unexpected errors (401, 500, etc.)
-			throw new NodeApiError(this.getNode(), err, {
-				message: `[${opDef.name}]: ${(err as Error).message}`,
+			throw new NodeApiError(this.getNode(), { message: (err as Error).message }, {
+    			message: `[${opDef.name}]: ${(err as Error).message}`,
 			});
 		}
 	}
