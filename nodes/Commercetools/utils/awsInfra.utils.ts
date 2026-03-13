@@ -35,7 +35,7 @@ export async function createRealAWSInfrastructure(
 
 	// Generate unique names based on event and timestamp
 	const timestamp = Date.now();
-   	const eventSlug = eventType.toLowerCase().slice(0, 25);	
+	const eventSlug = eventType.toLowerCase().slice(0, 25);
 	const queueName = `ct-${eventSlug}-events-${timestamp}`;
 	const lambdaName = `ct-${eventSlug}-processor-${timestamp}`;
 	const roleName = `ct-${eventSlug}-lambda-role-${timestamp}`;
