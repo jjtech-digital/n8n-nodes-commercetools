@@ -244,29 +244,29 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	}
 
 	if (opDef.method === 'HEAD') {
-		try {
-			const headOptions = {
-				...options,
-				resolveWithFullResponse: true,
-				simple: false,
-			} as unknown as IHttpRequestOptions;
-			const response = await this.helpers.httpRequestWithAuthentication.call(
-				this,
-				'commerceToolsOAuth2Api',
-				headOptions,
-			);
-			const statusCode: number = response.statusCode ?? response.status ?? 0;
-			return {
-				exists: statusCode >= 200 && statusCode < 300,
-				statusCode,
-				url: fullUrl,
-			};
-		} catch (err) {
-			throw new NodeApiError(this.getNode(), err, {
-				message: `[${opDef.name}]: ${(err as Error).message}`,
-			});
-		}
-	}
+    try {
+        await this.helpers.httpRequestWithAuthentication.call(
+            this,
+            'commerceToolsOAuth2Api',
+            {
+                method: 'HEAD',
+                url: fullUrl,
+                qs: Object.keys(queryParams).length > 0 ? queryParams : undefined,
+            } as IHttpRequestOptions,
+        );
+        // If no error thrown, resource exists (2xx)
+        return { exists: true, statusCode: 200, url: fullUrl };
+    } catch (err: any) {
+        const statusCode = err?.cause?.statusCode ?? err?.statusCode ?? 404;
+        if (statusCode === 404) {
+            return { exists: false, statusCode: 404, url: fullUrl };
+        }
+        // Re-throw unexpected errors (401, 500, etc.)
+        throw new NodeApiError(this.getNode(), err, {
+            message: `[${opDef.name}]: ${(err as Error).message}`,
+        });
+    }
+}
 
 	try {
 		return await this.helpers.httpRequestWithAuthentication.call(
