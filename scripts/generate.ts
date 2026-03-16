@@ -143,7 +143,7 @@ function applyManualPatches(operations: ParsedOperation[]): void {
 			op.actionBodyFields = patch.actionBodyFields;
 		}
 
-		console.log(`  ✔ Patched missing fields for operation: ${op.value}`);
+		//console.log(`  ✔ Patched missing fields for operation: ${op.value}`);
 	}
 }
 
