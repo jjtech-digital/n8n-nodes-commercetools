@@ -81,6 +81,18 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		.replace(/\{\{projectKey\}\}/g, projectKey);
 
 	if (opDef.requiresId) {
+		// ── Secondary ID — substitute first before any branch touches remaining {{...-id}} tokens ──
+		// Handles sub-resource URLs like:
+		//   /business-units/{{business-unit-id}}/associates/{{associate-id}}   (ID path)
+		//   /business-units/key={{associate-key}}/associates/{{associate-id}}  (key path)
+		if (opDef.secondaryIdPlaceholder) {
+			const secondaryId = safeGet<string>(this, 'secondaryId', i, '');
+			urlPath = urlPath.replace(
+				new RegExp(`\\{\\{${opDef.secondaryIdPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
+				secondaryId,
+			);
+		}
+
 		if (opDef.pathParamSegment && opDef.pathParamName) {
 			// ── Non-standard path param: /customer-id={{customer-id}} ──────
 			const paramValue = safeGet<string>(this, opDef.pathParamName, i, '');
@@ -184,6 +196,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			let actions: unknown[] = tryParseArray(rawJson);
 
 			if (actions.length === 0) {
+				safeGet<unknown>(this, `actionsUi__${resource}`, i, '__NOT_FOUND__');
 				actions = buildActionsFromUi(this, i, resource);
 			}
 
@@ -222,9 +235,6 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		url: fullUrl,
 		qs: Object.keys(queryParams).length > 0 ? queryParams : undefined,
 		json: true,
-		headers: ['POST', 'PUT', 'PATCH'].includes(opDef.method)
-			? { 'Content-Type': 'application/json' }
-			: undefined,
 	};
 
 	// For search ops, always send body even if empty ({} is valid — CT returns all results).
@@ -235,26 +245,26 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 	if (opDef.method === 'HEAD') {
 		try {
-			const headOptions = {
-				...options,
-				resolveWithFullResponse: true,
-				simple: false,
-			} as unknown as IHttpRequestOptions;
-			const response = await this.helpers.httpRequestWithAuthentication.call(
-				this,
-				'commerceToolsOAuth2Api',
-				headOptions,
-			);
-			const statusCode: number = response.statusCode ?? response.status ?? 0;
-			return {
-				exists: statusCode >= 200 && statusCode < 300,
-				statusCode,
+			await this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
+				method: 'HEAD',
 				url: fullUrl,
-			};
-		} catch (err) {
-			throw new NodeApiError(this.getNode(), err, {
-				message: `[${opDef.name}]: ${(err as Error).message}`,
-			});
+				qs: Object.keys(queryParams).length > 0 ? queryParams : undefined,
+			} as IHttpRequestOptions);
+			// If no error thrown, resource exists (2xx)
+			return { exists: true, statusCode: 200, url: fullUrl };
+		} catch (err: unknown) {
+			const statusCode = (err as Record<string, unknown>)?.statusCode ?? 404;
+			if (statusCode === 404) {
+				return { exists: false, statusCode: 404, url: fullUrl };
+			}
+			// Re-throw unexpected errors (401, 500, etc.)
+			throw new NodeApiError(
+				this.getNode(),
+				{ message: (err as Error).message },
+				{
+					message: `[${opDef.name}]: ${(err as Error).message}`,
+				},
+			);
 		}
 	}
 
@@ -432,10 +442,41 @@ function tryParseJson(value: unknown): unknown {
 	const trimmed = value.trim();
 	if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
 		try {
-			return JSON.parse(trimmed);
+			return restoreLocaleKeys(JSON.parse(trimmed));
 		} catch {
 			/* fall through */
 		}
+	}
+	return value;
+}
+
+/**
+ * Recursively converts underscore locale keys back to hyphenated IETF tags.
+ *
+ * n8n parameter names cannot contain hyphens, so the generator emits locale
+ * keys as underscores (e.g. en_AU, zh_CN). CT requires hyphenated keys
+ * (e.g. en-AU, zh-CN) in LocalizedString objects.
+ *
+ * A key is treated as a locale key if it matches: 2-letter language code,
+ * optionally followed by _ + 2-letter region (e.g. en, en_AU, zh_CN).
+ * Non-locale keys (e.g. regular object fields) are left unchanged.
+ */
+function restoreLocaleKeys(value: unknown): unknown {
+	if (Array.isArray(value)) {
+		return value.map(restoreLocaleKeys);
+	}
+	if (typeof value === 'object' && value !== null) {
+		const obj = value as Record<string, unknown>;
+		const keys = Object.keys(obj);
+		// Only remap keys if ALL keys in this object look like locale tags.
+		// This prevents renaming fields in non-LocalizedString objects.
+		const allLocale = keys.every((k) => /^[a-z]{2}(_[A-Z]{2})?$/.test(k));
+		const result: Record<string, unknown> = {};
+		for (const k of keys) {
+			const newKey = allLocale ? k.replace('_', '-') : k;
+			result[newKey] = restoreLocaleKeys(obj[k]);
+		}
+		return result;
 	}
 	return value;
 }

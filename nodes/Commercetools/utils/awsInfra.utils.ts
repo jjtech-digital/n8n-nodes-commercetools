@@ -35,10 +35,10 @@ export async function createRealAWSInfrastructure(
 
 	// Generate unique names based on event and timestamp
 	const timestamp = Date.now();
-	const queueName = `ct-${eventType.toLowerCase()}-events-${timestamp}`;
-	const lambdaName = `ct-${eventType.toLowerCase()}-processor-${timestamp}`;
-	const roleName = `ct-${eventType.toLowerCase()}-lambda-role-${timestamp}`;
-
+	const eventSlug = eventType.toLowerCase().slice(0, 25);
+	const queueName = `ct-${eventSlug}-events-${timestamp}`;
+	const lambdaName = `ct-${eventSlug}-processor-${timestamp}`;
+	const roleName = `ct-${eventSlug}-lambda-role-${timestamp}`;
 	try {
 		// Initialize AWS clients
 		AWS.config.update({

@@ -238,11 +238,11 @@ export async function createGCPInfrastructure(
 		const creds = parseCredentials(gcpCredentials);
 		const authPromise = buildAuthClient(gcpCredentials);
 
-		const eventLower = eventType.toLowerCase();
+		const eventSlug = eventType.toLowerCase().slice(0, 30);
 		const timestamp = Date.now();
-		const topicName = `ct-${eventLower}-${timestamp}`;
-		const bucketName = `ct-${eventLower}-bucket-${timestamp}`;
-		const fnName = `ct-${eventLower}-fn-${timestamp}`;
+		const topicName = `ct-${eventSlug}-${timestamp}`;
+		const bucketName = `ct-${eventSlug}-bucket-${timestamp}`;
+		const fnName = `ct-${eventSlug}-fn-${timestamp}`;
 		const zipObject = `${fnName}.zip`;
 		const url = new URL(webhookUrl);
 		const { projectId, clientEmail, privateKey } = creds;

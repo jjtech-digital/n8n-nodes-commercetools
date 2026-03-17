@@ -32,45 +32,9 @@ export interface ParsedOperation {
 	pathParamName?: string;
 	pathParamSegment?: string;
 	keyPlaceholder?: string;
-
-	/**
-	 * True when this is a search endpoint (POST .../search).
-	 *
-	 * CT search endpoints (Product Search, Order Search) accept a
-	 * SearchRequest JSON body (query, sort, limit, offset, etc.) but their
-	 * Postman entries have an *empty* body — so parseCollection produces
-	 * bodyFields = []. The executor cannot assemble the body field-by-field.
-	 *
-	 * When isSearch=true:
-	 *   - generateProperties emits a single JSON textarea for the full
-	 *     SearchRequest body instead of individual body fields.
-	 *   - The executor passes that JSON through directly as the POST body.
-	 */
 	isSearch?: boolean;
-
-	/**
-	 * True when this is an image-upload endpoint (POST .../images).
-	 *
-	 * CT requires raw binary image bytes (image/jpeg, image/png, image/gif)
-	 * as the request body — NOT a JSON body. Sending JSON returns:
-	 *   "Unsupported Content-Type: application/json. The supported formats
-	 *    are image/jpeg, image/png and image/gif."
-	 *
-	 * The executor downloads the image from the user-supplied imageUrl, then
-	 * POSTs the raw buffer to CT with the correct Content-Type derived from
-	 * the URL file extension.
-	 *
-	 * Query params (variant, sku, staged, filename) come from op.queryParams,
-	 * populated from the Postman collection's (disabled) query param entries.
-	 *
-	 * When isImageUpload=true:
-	 *   - generateProperties (generateImageUploadFields) emits:
-	 *       imageUrl (string, required) — URL the executor downloads from
-	 *       filename, variant, sku, staged — passed as CT query params
-	 *   - The executor downloads imageUrl → POSTs binary buffer to CT.
-	 *   - generateMiscPostBodyFields excludes these ops (bodyFields is []).
-	 */
 	isImageUpload?: boolean;
+	secondaryIdPlaceholder?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -94,11 +58,33 @@ function formatLabel(dotPath: string): string {
 		.replace(/^./, (c) => c.toUpperCase());
 }
 
-/**
- * Match any folder whose name ENDS with the word "Action" or "Actions".
- */
 function isUpdateActionsSubFolder(folderName: string): boolean {
 	return /\bactions?$/i.test(folderName.trim());
+}
+
+/**
+ * Returns true if the value is a LocalizedString object.
+ *
+ * A LocalizedString is a plain object (not array, not null) whose keys are
+ * all IETF locale tags: 2-letter language code optionally followed by a
+ * hyphen and 2-letter region code (e.g. "en", "en-US", "de", "zh-CN").
+ *
+ * This is used in extractFields to emit locale objects as a single json
+ * field (preserving the full object as the example) rather than recursing
+ * into them and emitting individual "name.en", "name.de" string fields.
+ *
+ * Examples:
+ *   { "en": "Some Product" }           → true  (localized)
+ *   { "en": "x", "de-AT": "y" }        → true  (localized)
+ *   "commercetools"                     → false (plain string)
+ *   { "typeId": "product-type", "id" }  → false (not locale keys)
+ *   { "w": 303, "h": 197 }              → false (not locale keys)
+ */
+function isLocalizedObject(value: unknown): boolean {
+	if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+	const keys = Object.keys(value as Record<string, unknown>);
+	if (keys.length === 0) return false;
+	return keys.every((k) => /^[a-z]{2}(-[A-Z]{2})?$/.test(k));
 }
 
 function extractFields(obj: Record<string, unknown>, prefix = '', depth = 0): BodyField[] {
@@ -115,6 +101,17 @@ function extractFields(obj: Record<string, unknown>, prefix = '', depth = 0): Bo
 				required: false,
 				example: value,
 				description: `Array of ${key}`,
+			});
+		} else if (isLocalizedObject(value)) {
+			// Emit as a single json field, preserving the locale object as the
+			// example value. generateProperties.ts inspects field.example via
+			// isLocalizedField() and renders it as a JSON textarea with locale hint.
+			fields.push({
+				name: path,
+				type: 'json',
+				required: depth === 0,
+				example: value,
+				description: formatLabel(path),
 			});
 		} else if (value !== null && typeof value === 'object') {
 			fields.push(...extractFields(value as Record<string, unknown>, path, depth + 1));
@@ -154,6 +151,14 @@ function extractActionBodyFields(rawBodyObj: Record<string, unknown>): BodyField
 				example: value,
 				description: formatLabel(key),
 			});
+		} else if (isLocalizedObject(value)) {
+			fields.push({
+				name: key,
+				type: 'json',
+				required: false,
+				example: value,
+				description: formatLabel(key),
+			});
 		} else if (value !== null && typeof value === 'object') {
 			fields.push({
 				name: key,
@@ -183,13 +188,11 @@ function findFolder(items: any[], folderName: string, projectFolderName = 'Proje
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(item: any) => item.name === projectFolderName && Array.isArray(item.item),
 	);
-
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const searchIn: any[] = projectFolder ? projectFolder.item : items;
 	for (const item of searchIn) {
 		if (item.name === folderName && Array.isArray(item.item)) return item;
 	}
-
 	return null;
 }
 
@@ -198,25 +201,10 @@ function extractKeyPlaceholder(urlTemplate: string): string | undefined {
 	return match ? match[1] : undefined;
 }
 
-/**
- * Detect search endpoints: POST .../search
- *
- * These endpoints (Product Search: POST /products/search,
- * Order Search: POST /orders/search) have an empty Postman body,
- * so bodyFields will be []. We tag them so the generator and executor
- * can expose a single JSON passthrough field instead.
- */
 function detectIsSearch(method: string, urlTemplate: string): boolean {
 	return method === 'POST' && /\/search$/.test(urlTemplate);
 }
 
-/**
- * Detect image upload endpoints: POST .../images
- *
- * The CT image upload endpoint (POST /products/{id}/images) requires a raw
- * binary body, not JSON. Tag it so the executor sends binary data with the
- * correct Content-Type instead of a JSON payload.
- */
 function detectIsImageUpload(method: string, urlTemplate: string): boolean {
 	return method === 'POST' && /\/images$/.test(urlTemplate);
 }
@@ -229,9 +217,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 
 	for (const folderName of folders) {
 		const folder = findFolder(collection.item, folderName);
-		if (!folder) {
-			continue;
-		}
+		if (!folder) continue;
 
 		const walkItems = (
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -241,20 +227,17 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 			isActionSubFolder: boolean,
 		) => {
 			for (const item of items) {
-				// ── Sub-folder ───────────────────────────────────────────────
 				if (Array.isArray(item.item)) {
 					const childIsActionFolder = isUpdateActionsSubFolder(item.name);
 					walkItems(item.item, parentFolder, item.name, isActionSubFolder || childIsActionFolder);
 					continue;
 				}
 
-				// ── Request item ─────────────────────────────────────────────
 				const req = item.request;
 				if (!req) continue;
 
 				const method = ((req.method as string) || 'GET').toUpperCase() as ParsedOperation['method'];
 
-				// Parse body
 				let bodyFields: BodyField[] = [];
 				let actionBodyFields: BodyField[] = [];
 				let rawBodyObj: Record<string, unknown> = {};
@@ -288,7 +271,6 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					.map((q: any) => q.key as string);
 
-				// Build URL template
 				const rawUrl: string = typeof req.url === 'string' ? req.url : req.url?.raw || '';
 				const urlTemplate = rawUrl
 					.replace('{{host}}', '')
@@ -330,10 +312,27 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 							/\bversion\b/.test(rawBodyRaw)));
 
 				const isUpdateAction = isActionSubFolder;
-
-				// ── Classify special operation types ─────────────────────────
 				const isSearch = detectIsSearch(method, urlTemplate);
 				const isImageUpload = detectIsImageUpload(method, urlTemplate);
+
+				// Detect secondary ID placeholder.
+				// Two cases:
+				//   1. Two {{...-id}} tokens: /business-units/{{business-unit-id}}/associates/{{associate-id}}
+				//      → secondaryId is the second token
+				//   2. One key= + one {{...-id}} token: /business-units/key={{associate-key}}/associates/{{associate-id}}
+				//      → the primary identifier is the key; the ID token is the secondary
+				const allIdPlaceholders = [...urlTemplate.matchAll(/\{\{([^}]*[Ii][Dd])\}\}/g)].map(
+					(m) => m[1],
+				);
+				const uniqueIdPlaceholders = [...new Set(allIdPlaceholders)];
+				let secondaryIdPlaceholder: string | undefined;
+				if (uniqueIdPlaceholders.length >= 2) {
+					// Two ID tokens — second one is secondary
+					secondaryIdPlaceholder = uniqueIdPlaceholders[1];
+				} else if (requiresKey && uniqueIdPlaceholders.length === 1) {
+					// Key-based URL with an additional ID segment — that ID is secondary
+					secondaryIdPlaceholder = uniqueIdPlaceholders[0];
+				}
 
 				operations.push({
 					name: item.name,
@@ -355,6 +354,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					...(pathParamLabel ? { pathParamLabel, pathParamName, pathParamSegment } : {}),
 					...(isSearch ? { isSearch: true } : {}),
 					...(isImageUpload ? { isImageUpload: true } : {}),
+					...(secondaryIdPlaceholder ? { secondaryIdPlaceholder } : {}),
 				});
 			}
 		};

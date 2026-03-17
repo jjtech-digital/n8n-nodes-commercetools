@@ -31,6 +31,7 @@ import * as path from 'path';
 import * as https from 'https';
 
 import { parseCollection } from './parseCollection';
+import type { ParsedOperation, BodyField } from './parseCollection';
 import { generateAllNodeProperties } from './generateProperties';
 
 import { generateCtpEventRegistry } from './generateCtpRegistry';
@@ -47,9 +48,17 @@ const COLLECTION_LOCAL_PATH = path.resolve(__dirname, '../collection.json');
 
 const OUTPUT_DIR = path.resolve(__dirname, '../nodes/Commercetools/generated');
 
-const FOLDERS_TO_GENERATE = ['Products', 'Customers', 'Carts', 'Orders'];
+const FOLDERS_TO_GENERATE = [
+	'Products',
+	'Customers',
+	'Carts',
+	'Orders',
+	'Business-units',
+	'Categories',
+]; // For Actions;
 
-const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order'];
+const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order', 'business-unit', 'category']; // For Triggers;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Download helper
 // ─────────────────────────────────────────────────────────────────────────────
@@ -77,6 +86,75 @@ function downloadFile(url: string, dest: string): Promise<void> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Manual patches — fixes for operations where the Postman collection
+// is missing body/action field definitions
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface OperationPatch {
+	bodyFields?: BodyField[];
+	actionBodyFields?: BodyField[];
+}
+
+const MANUAL_PATCHES: Record<string, OperationPatch> = {
+	changeAssociateMode: {
+		bodyFields: [
+			{
+				name: 'version',
+				type: 'string',
+				required: true,
+				example: 'placeholder',
+				description: 'Version',
+			},
+			{
+				name: 'actions',
+				type: 'json',
+				required: false,
+				example: [
+					{
+						action: 'changeAssociateMode',
+						associateMode: 'ExplicitAndFromParent',
+					},
+				],
+				description: 'Array of actions',
+			},
+		],
+		actionBodyFields: [
+			{
+				name: 'associateMode',
+				type: 'string',
+				required: true,
+				example: 'ExplicitAndFromParent',
+				description: 'Associate Mode',
+			},
+		],
+	},
+	// Add more patches here in the future if the Postman collection
+	// is missing fields for other operations. Example:
+	// someOtherAction: {
+	//   actionBodyFields: [
+	//     { name: 'someField', type: 'string', required: true, example: '', description: '' },
+	//   ],
+	// },
+};
+
+function applyManualPatches(operations: ParsedOperation[]): void {
+	for (const op of operations) {
+		const patch = MANUAL_PATCHES[op.value];
+		if (!patch) continue;
+
+		if (patch.bodyFields !== undefined && op.bodyFields.length === 0) {
+			op.bodyFields = patch.bodyFields;
+		}
+
+		if (patch.actionBodyFields !== undefined && op.actionBodyFields.length === 0) {
+			op.actionBodyFields = patch.actionBodyFields;
+		}
+
+		//console.log(`  ✔ Patched missing fields for operation: ${op.value}`);
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STEP 1 — Postman → Node operation properties
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -93,6 +171,8 @@ async function generateFromCollection(): Promise<void> {
 	const collection = require(COLLECTION_LOCAL_PATH);
 
 	const operations = parseCollection(collection, FOLDERS_TO_GENERATE);
+
+	applyManualPatches(operations);
 
 	const nodeProperties = generateAllNodeProperties(operations, FOLDERS_TO_GENERATE);
 
