@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, and Business Units
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units and Categories
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -144,6 +144,8 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Cart** — cart created (change notification)
 
 **Business Unit** — created, deleted, address added/changed/removed, associate added/changed/removed, status changed, name changed, contact email updated, store assignments changed, custom fields and types
+
+**Category** — created, deleted, slug changed, name changed, description changed, parent changed, order hint changed, externalId set, custom type set, custom field changed
 
 #### Subscription routing
 
