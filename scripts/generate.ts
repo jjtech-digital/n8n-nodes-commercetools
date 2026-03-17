@@ -55,9 +55,10 @@ const FOLDERS_TO_GENERATE = [
 	'Orders',
 	'Business-units',
 	'Categories',
+	'Channels',
 ]; // For Actions;
 
-const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order', 'business-unit', 'category']; // For Triggers;
+const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order', 'business-unit', 'category', 'channel']; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Download helper
