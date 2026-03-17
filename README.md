@@ -57,11 +57,12 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 
 | Resource          | Available Operations                                                                                                                                       |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Product**       | Create, Get by ID, Get by Key, Query, Update, Delete, Upload Image, Search, Query Product Selections by ID, Query Product Selections by Key, HEAD checks   |
+| **Product**       | Create, Get by ID, Get by Key, Query, Update, Delete, Upload Image, Search, Query Product Selections by ID, Query Product Selections by Key, HEAD checks |
 | **Customer**      | Create, Authenticate (global & in-store), Get by ID / Key / Email / Password Token, Query, Update, Delete, Password reset, Email verification, HEAD checks |
-| **Cart**          | Create (regular & in-store), Get by ID / Customer ID, Query, Update, Delete, Replicate, Merge, HEAD checks                                                 |
-| **Order**         | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks                                    |
-| **Business Unit** | Create, Get by ID, Get by Key, Query, Search, Update, Delete, HEAD checks                                                                                  |
+| **Cart**          | Create (regular & in-store), Get by ID / Customer ID, Query, Update, Delete, Replicate, Merge, HEAD checks |
+| **Order**         | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks |
+| **Business Unit** | Create, Get by ID, Get by Key, Query, Search, Update, Delete, HEAD checks |
+| **Category**      | Create, Get by ID, Get by Key, Query, Update, Delete, Search, Get by Slug, HEAD checks |
 
 #### How field generation works
 
