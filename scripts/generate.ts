@@ -48,9 +48,9 @@ const COLLECTION_LOCAL_PATH = path.resolve(__dirname, '../collection.json');
 
 const OUTPUT_DIR = path.resolve(__dirname, '../nodes/Commercetools/generated');
 
-const FOLDERS_TO_GENERATE = ['Products', 'Customers', 'Carts', 'Orders', 'Business-units']; // For Actions;
+const FOLDERS_TO_GENERATE = ['Products', 'Customers', 'Carts', 'Orders', 'Business-units', 'Categories']; // For Actions;
 
-const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order', 'business-unit']; // For Triggers;
+const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order', 'business-unit', 'category']; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Download helper
