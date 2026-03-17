@@ -1,6 +1,206 @@
 {
   "events": [
     {
+      "value": "BusinessUnitAddressAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomFieldAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomFieldChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomFieldRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomTypeRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomTypeSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitApprovalRuleModeChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateModeChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociatesSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitBillingAddressAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitBillingAddressRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitContactEmailSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCreated",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomerGroupAssignmentAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomerGroupAssignmentRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomerGroupAssignmentsSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomFieldAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomFieldChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomFieldRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomTypeRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomTypeSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitDefaultBillingAddressSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitDefaultShippingAddressSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitDeleted",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitNameChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitParentChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitShippingAddressAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitShippingAddressRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStatusChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoreAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoreModeChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoreRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoresSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitTopLevelUnitSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitTypeSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
       "value": "CartFrozen",
       "resourceTypeId": "cart",
       "subscriptionType": "change"
@@ -14,6 +214,16 @@
       "value": "CartUnfrozen",
       "resourceTypeId": "cart",
       "subscriptionType": "change"
+    },
+    {
+      "value": "CategoryCreated",
+      "resourceTypeId": "category",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CategorySlugChanged",
+      "resourceTypeId": "category",
+      "subscriptionType": "message"
     },
     {
       "value": "CustomerAddressAdded",
@@ -649,7 +859,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 116,
+    "totalMessages": 158,
     "unmapped": 0,
     "unclassified": 0
   },

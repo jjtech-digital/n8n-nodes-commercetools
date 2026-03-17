@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-03-04T18:47:29.036Z
+ * Generated at: 2026-03-17T10:35:17.993Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -20,9 +20,51 @@ export type SubscriptionEvent = {
 // ─── Generated event list ─────────────────────────────────────────────────────
 
 export const subscriptionEvents: SubscriptionEvent[] = [
+    { name: 'Business Unit Address Added', value: 'BusinessUnitAddressAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address added occurs on a business-unit.' },
+    { name: 'Business Unit Address Changed', value: 'BusinessUnitAddressChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address changed occurs on a business-unit.' },
+    { name: 'Business Unit Address Custom Field Added', value: 'BusinessUnitAddressCustomFieldAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom field added occurs on a business-unit.' },
+    { name: 'Business Unit Address Custom Field Changed', value: 'BusinessUnitAddressCustomFieldChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom field changed occurs on a business-unit.' },
+    { name: 'Business Unit Address Custom Field Removed', value: 'BusinessUnitAddressCustomFieldRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom field removed occurs on a business-unit.' },
+    { name: 'Business Unit Address Custom Type Removed', value: 'BusinessUnitAddressCustomTypeRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom type removed occurs on a business-unit.' },
+    { name: 'Business Unit Address Custom Type Set', value: 'BusinessUnitAddressCustomTypeSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom type set occurs on a business-unit.' },
+    { name: 'Business Unit Address Removed', value: 'BusinessUnitAddressRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address removed occurs on a business-unit.' },
+    { name: 'Business Unit Approval Rule Mode Changed', value: 'BusinessUnitApprovalRuleModeChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit approval rule mode changed occurs on a business-unit.' },
+    { name: 'Business Unit Associate Added', value: 'BusinessUnitAssociateAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit associate added occurs on a business-unit.' },
+    { name: 'Business Unit Associate Changed', value: 'BusinessUnitAssociateChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit associate changed occurs on a business-unit.' },
+    { name: 'Business Unit Associate Mode Changed', value: 'BusinessUnitAssociateModeChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit associate mode changed occurs on a business-unit.' },
+    { name: 'Business Unit Associate Removed', value: 'BusinessUnitAssociateRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit associate removed occurs on a business-unit.' },
+    { name: 'Business Unit Associates Set', value: 'BusinessUnitAssociatesSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit associates set occurs on a business-unit.' },
+    { name: 'Business Unit Billing Address Added', value: 'BusinessUnitBillingAddressAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit billing address added occurs on a business-unit.' },
+    { name: 'Business Unit Billing Address Removed', value: 'BusinessUnitBillingAddressRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit billing address removed occurs on a business-unit.' },
+    { name: 'Business Unit Contact Email Set', value: 'BusinessUnitContactEmailSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit contact email set occurs on a business-unit.' },
+    { name: 'Business Unit Created', value: 'BusinessUnitCreated', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit created occurs on a business-unit.' },
+    { name: 'Business Unit Customer Group Assignment Added', value: 'BusinessUnitCustomerGroupAssignmentAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit customer group assignment added occurs on a business-unit.' },
+    { name: 'Business Unit Customer Group Assignment Removed', value: 'BusinessUnitCustomerGroupAssignmentRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit customer group assignment removed occurs on a business-unit.' },
+    { name: 'Business Unit Customer Group Assignments Set', value: 'BusinessUnitCustomerGroupAssignmentsSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit customer group assignments set occurs on a business-unit.' },
+    { name: 'Business Unit Custom Field Added', value: 'BusinessUnitCustomFieldAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit custom field added occurs on a business-unit.' },
+    { name: 'Business Unit Custom Field Changed', value: 'BusinessUnitCustomFieldChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit custom field changed occurs on a business-unit.' },
+    { name: 'Business Unit Custom Field Removed', value: 'BusinessUnitCustomFieldRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit custom field removed occurs on a business-unit.' },
+    { name: 'Business Unit Custom Type Removed', value: 'BusinessUnitCustomTypeRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit custom type removed occurs on a business-unit.' },
+    { name: 'Business Unit Custom Type Set', value: 'BusinessUnitCustomTypeSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit custom type set occurs on a business-unit.' },
+    { name: 'Business Unit Default Billing Address Set', value: 'BusinessUnitDefaultBillingAddressSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit default billing address set occurs on a business-unit.' },
+    { name: 'Business Unit Default Shipping Address Set', value: 'BusinessUnitDefaultShippingAddressSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit default shipping address set occurs on a business-unit.' },
+    { name: 'Business Unit Deleted', value: 'BusinessUnitDeleted', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit deleted occurs on a business-unit.' },
+    { name: 'Business Unit Name Changed', value: 'BusinessUnitNameChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit name changed occurs on a business-unit.' },
+    { name: 'Business Unit Parent Changed', value: 'BusinessUnitParentChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit parent changed occurs on a business-unit.' },
+    { name: 'Business Unit Shipping Address Added', value: 'BusinessUnitShippingAddressAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit shipping address added occurs on a business-unit.' },
+    { name: 'Business Unit Shipping Address Removed', value: 'BusinessUnitShippingAddressRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit shipping address removed occurs on a business-unit.' },
+    { name: 'Business Unit Status Changed', value: 'BusinessUnitStatusChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit status changed occurs on a business-unit.' },
+    { name: 'Business Unit Store Added', value: 'BusinessUnitStoreAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit store added occurs on a business-unit.' },
+    { name: 'Business Unit Store Mode Changed', value: 'BusinessUnitStoreModeChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit store mode changed occurs on a business-unit.' },
+    { name: 'Business Unit Store Removed', value: 'BusinessUnitStoreRemoved', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit store removed occurs on a business-unit.' },
+    { name: 'Business Unit Stores Set', value: 'BusinessUnitStoresSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit stores set occurs on a business-unit.' },
+    { name: 'Business Unit Top Level Unit Set', value: 'BusinessUnitTopLevelUnitSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit top level unit set occurs on a business-unit.' },
+    { name: 'Business Unit Type Set', value: 'BusinessUnitTypeSet', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit type set occurs on a business-unit.' },
     { name: 'Cart Frozen', value: 'CartFrozen', resourceTypeId: 'cart', subscriptionType: 'change', description: 'Triggers when a cart changes (cart frozen).' },
     { name: 'Cart Purchase Order Number Set', value: 'CartPurchaseOrderNumberSet', resourceTypeId: 'cart', subscriptionType: 'change', description: 'Triggers when a cart changes (cart purchase order number set).' },
     { name: 'Cart Unfrozen', value: 'CartUnfrozen', resourceTypeId: 'cart', subscriptionType: 'change', description: 'Triggers when a cart changes (cart unfrozen).' },
+    { name: 'Category Created', value: 'CategoryCreated', resourceTypeId: 'category', subscriptionType: 'message', description: 'Triggers when category created occurs on a category.' },
+    { name: 'Category Slug Changed', value: 'CategorySlugChanged', resourceTypeId: 'category', subscriptionType: 'message', description: 'Triggers when category slug changed occurs on a category.' },
     { name: 'Customer Address Added', value: 'CustomerAddressAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggers when customer address added occurs on a customer.' },
     { name: 'Customer Address Changed', value: 'CustomerAddressChanged', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggers when customer address changed occurs on a customer.' },
     { name: 'Customer Address Custom Field Added', value: 'CustomerAddressCustomFieldAdded', resourceTypeId: 'customer', subscriptionType: 'message', description: 'Triggers when customer address custom field added occurs on a customer.' },
