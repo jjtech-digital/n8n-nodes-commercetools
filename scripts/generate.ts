@@ -59,7 +59,16 @@ const FOLDERS_TO_GENERATE = [
 	'Associate-roles',
 ]; // For Actions;
 
-const RESOURCES_TO_GENERATE = ['product', 'customer', 'cart', 'order', 'business-unit', 'category', 'channel', 'associate-role']; // For Triggers;
+const RESOURCES_TO_GENERATE = [
+	'product',
+	'customer',
+	'cart',
+	'order',
+	'business-unit',
+	'category',
+	'channel',
+	'associate-role',
+]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Download helper
