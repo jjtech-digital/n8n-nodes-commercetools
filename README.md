@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units and Categories
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, and Associate Roles
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -63,6 +63,8 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Order**         | Create from Cart, Create from Quote, Import, Get by ID / Key / Order Number, Query, Search, Update, Delete, HEAD checks |
 | **Business Unit** | Create, Get by ID, Get by Key, Query, Search, Update, Delete, HEAD checks |
 | **Category**      | Create, Get by ID, Get by Key, Query, Update, Delete, Search, Get by Slug, HEAD checks |
+| **Channel**       | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Associate Role** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 
 #### How field generation works
 
@@ -137,15 +139,17 @@ Listens for real-time commercetools events via webhook subscription. On activati
 
 **Customer** — created, deleted, email verified/changed, password updated, address updates, custom fields and types
 
-**Category** — created, slug changed
-
 **Order** — created, deleted, imported, state transitions, customer updates, shipping and billing updates, line item changes, payments and deliveries, discount code updates, custom fields
 
 **Cart** — cart created (change notification)
 
 **Business Unit** — created, deleted, address added/changed/removed, associate added/changed/removed, status changed, name changed, contact email updated, store assignments changed, custom fields and types
 
-**Category** — created, deleted, slug changed, name changed, description changed, parent changed, order hint changed, externalId set, custom type set, custom field changed
+**Category** — created, slug changed
+
+**Channel** — no message triggers (change subscriptions only)
+
+**Associate Role** — created, deleted, name set, buyer assignable changed, permission added, permission removed, permissions set
 
 #### Subscription routing
 
@@ -304,7 +308,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     Filters to allowedResources: [product, customer, cart, order, business-unit]
+│     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
