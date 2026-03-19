@@ -2480,7 +2480,7 @@
     "name": "SetKey",
     "value": "setKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2496,7 +2496,7 @@
         "example": [
           {
             "action": "setKey",
-            "key": "myNewKey"
+            "key": "ie-key-1"
           }
         ],
         "description": "Array of actions"
@@ -2507,15 +2507,15 @@
         "name": "key",
         "type": "string",
         "required": false,
-        "example": "myNewKey",
+        "example": "ie-key-1",
         "description": "Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post Inventory",
+    "folder": "Inventory",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4948,7 +4948,7 @@
     "name": "SetCustomField",
     "value": "setCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4964,7 +4964,7 @@
         "example": [
           {
             "action": "setCustomField",
-            "name": "ExemplaryStringTypeField",
+            "name": "exampleStringField",
             "value": "TextString"
           }
         ],
@@ -4976,7 +4976,7 @@
         "name": "name",
         "type": "string",
         "required": false,
-        "example": "ExemplaryStringTypeField",
+        "example": "exampleStringField",
         "description": "Name"
       },
       {
@@ -4990,8 +4990,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post AssociateRoles",
-    "folder": "Associate-roles",
+    "description": "post Inventory",
+    "folder": "Inventory",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5002,7 +5002,7 @@
     "name": "SetCustomType",
     "value": "setCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5023,7 +5023,7 @@
               "typeId": "type"
             },
             "fields": {
-              "exemplaryStringTypeField": "TextString"
+              "exampleStringField": "TextString"
             }
           }
         ],
@@ -5046,7 +5046,7 @@
         "type": "json",
         "required": false,
         "example": {
-          "exemplaryStringTypeField": "TextString"
+          "exampleStringField": "TextString"
         },
         "description": "Fields"
       }
@@ -5054,8 +5054,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post AssociateRoles",
-    "folder": "Associate-roles",
+    "description": "post Inventory",
+    "folder": "Inventory",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -16565,6 +16565,625 @@
     ],
     "description": "post AssociateRoles",
     "folder": "Associate-roles",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getInventoryEntryById": {
+    "name": "Get InventoryEntry by ID",
+    "value": "getInventoryEntryById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfInventoryEntryExistsById": {
+    "name": "Check if InventoryEntry exists by ID",
+    "value": "checkIfInventoryEntryExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if an InventoryEntry exists with the provided `id`. Returns a `200` status if the InventoryEntry exists, or a `404` status otherwise.",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateInventoryEntryById": {
+    "name": "Update InventoryEntry by ID",
+    "value": "updateInventoryEntryById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addQuantity",
+            "quantity": 4
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 4,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteInventoryEntryById": {
+    "name": "Delete InventoryEntry by ID",
+    "value": "deleteInventoryEntryById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Produces the [InventoryEntryDeleted](ctp:api:type:InventoryEntryDeletedMessage) Message.",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getInventoryEntryByKey": {
+    "name": "Get InventoryEntry by Key",
+    "value": "getInventoryEntryByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/inventory/key={{inventory-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "inventory-key"
+  },
+  "checkIfInventoryEntryExistsByKey": {
+    "name": "Check if InventoryEntry exists by Key",
+    "value": "checkIfInventoryEntryExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/inventory/key={{inventory-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if an InventoryEntry exists with the provided `key`. Returns a `200` status if the InventoryEntry exists, or a `404` status otherwise.",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "inventory-key"
+  },
+  "updateInventoryEntryByKey": {
+    "name": "Update InventoryEntry by Key",
+    "value": "updateInventoryEntryByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/key={{inventory-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addQuantity",
+            "quantity": 4
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 4,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "inventory-key"
+  },
+  "deleteInventoryEntryByKey": {
+    "name": "Delete InventoryEntry by Key",
+    "value": "deleteInventoryEntryByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/inventory/key={{inventory-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Produces the [InventoryEntryDeleted](ctp:api:type:InventoryEntryDeletedMessage) Message.",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "inventory-key"
+  },
+  "queryInventoryEntries": {
+    "name": "Query InventoryEntries",
+    "value": "queryInventoryEntries",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/inventory",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfInventoryEntryExistsByQueryPredicate": {
+    "name": "Check if InventoryEntry exists by Query Predicate",
+    "value": "checkIfInventoryEntryExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/inventory",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more InventoryEntries exist for the provided query predicate. Returns a `200` status if any Inventory Entries match the Query Predicate, or a `404` status otherwise.",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createInventoryEntry": {
+    "name": "Create InventoryEntry",
+    "value": "createInventoryEntry",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "ie-key-1",
+        "description": "Key"
+      },
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true,
+        "example": "sku_GIRLS_CREW_variant1_1421832124541",
+        "description": "Sku"
+      },
+      {
+        "name": "quantityOnStock",
+        "type": "number",
+        "required": true,
+        "example": 4,
+        "description": "Quantity On Stock"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creates an InventoryEntry in the Project.\n\nIf quantity limits are provided, existing Line Items that reference a Product Variant with an SKU that matches the Inventory Entry can be affected. For more information, see [Quantity limits](/../api/carts-orders-overview#quantity-limits).\n\nProduces the [InventoryEntryCreated](ctp:api:type:InventoryEntryCreatedMessage) Message.\n",
+    "folder": "Inventory",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addQuantity": {
+    "name": "AddQuantity",
+    "value": "addQuantity",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addQuantity",
+            "quantity": 1
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeQuantity": {
+    "name": "ChangeQuantity",
+    "value": "changeQuantity",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuantity",
+            "quantity": 5
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 5,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeQuantity": {
+    "name": "RemoveQuantity",
+    "value": "removeQuantity",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeQuantity",
+            "quantity": 1
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setExpectedDelivery": {
+    "name": "SetExpectedDelivery",
+    "value": "setExpectedDelivery",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setExpectedDelivery",
+            "expectedDelivery": "2015-10-21T14:00:00.000Z"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "expectedDelivery",
+        "type": "string",
+        "required": false,
+        "example": "2015-10-21T14:00:00.000Z",
+        "description": "Expected Delivery"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setInventoryLimits": {
+    "name": "SetInventoryLimits",
+    "value": "setInventoryLimits",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setInventoryLimits",
+            "minCartQuantity": 2,
+            "maxCartQuantity": 50
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "minCartQuantity",
+        "type": "number",
+        "required": false,
+        "example": 2,
+        "description": "Min Cart Quantity"
+      },
+      {
+        "name": "maxCartQuantity",
+        "type": "number",
+        "required": false,
+        "example": 50,
+        "description": "Max Cart Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setRestockableInDays": {
+    "name": "SetRestockableInDays",
+    "value": "setRestockableInDays",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setRestockableInDays",
+            "restockableInDays": 7
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "restockableInDays",
+        "type": "number",
+        "required": false,
+        "example": 7,
+        "description": "Restockable In Days"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setSupplyChannel": {
+    "name": "SetSupplyChannel",
+    "value": "setSupplyChannel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSupplyChannel",
+            "supplyChannel": {
+              "id": "placeholder",
+              "typeId": "channel"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "supplyChannel",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "channel"
+        },
+        "description": "Supply Channel"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
