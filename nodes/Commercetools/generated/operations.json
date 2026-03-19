@@ -465,18 +465,22 @@
         "description": "Array of categories"
       },
       {
-        "name": "name.en",
-        "type": "string",
-        "required": false,
-        "example": "Some Product",
-        "description": "Name › en"
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Some Product"
+        },
+        "description": "Name"
       },
       {
-        "name": "slug.en",
-        "type": "string",
-        "required": false,
-        "example": "product_slug_<random-uuid>",
-        "description": "Slug › en"
+        "name": "slug",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "product_slug_<random-uuid>"
+        },
+        "description": "Slug"
       },
       {
         "name": "masterVariant.sku",
@@ -570,7 +574,7 @@
     "name": "AddAsset",
     "value": "addAsset",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -586,16 +590,16 @@
         "example": [
           {
             "action": "addAsset",
-            "variantId": 1,
             "asset": {
               "sources": [
                 {
-                  "uri": "//asset.mp4"
+                  "uri": "https://www.commercetools.de/ct-logo.svg",
+                  "key": "vector"
                 }
               ],
               "name": {
-                "de": "FirstAssetDE",
-                "en": "FirstassetEN"
+                "de": "commercetools Logo",
+                "en": "commercetools logo"
               }
             }
           }
@@ -605,41 +609,29 @@
     ],
     "actionBodyFields": [
       {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
-      {
         "name": "asset",
         "type": "json",
         "required": false,
         "example": {
           "sources": [
             {
-              "uri": "//asset.mp4"
+              "uri": "https://www.commercetools.de/ct-logo.svg",
+              "key": "vector"
             }
           ],
           "name": {
-            "de": "FirstAssetDE",
-            "en": "FirstassetEN"
+            "de": "commercetools Logo",
+            "en": "commercetools logo"
           }
         },
         "description": "Asset"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -912,7 +904,7 @@
     "name": "ChangeAssetName",
     "value": "changeAssetName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -928,7 +920,6 @@
         "example": [
           {
             "action": "changeAssetName",
-            "variantId": 1,
             "assetId": "placeholder",
             "name": {
               "de": "Mein Asset",
@@ -940,13 +931,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetId",
         "type": "string",
@@ -966,16 +950,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -986,7 +964,7 @@
     "name": "ChangeAssetOrder",
     "value": "changeAssetOrder",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1002,7 +980,6 @@
         "example": [
           {
             "action": "changeAssetOrder",
-            "variantId": 1,
             "assetOrder": [
               "{{assetId1}}",
               "{{assetId2}}"
@@ -1013,13 +990,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetOrder",
         "type": "json",
@@ -1032,16 +1002,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1104,7 +1068,7 @@
     "name": "ChangeName",
     "value": "changeName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1121,8 +1085,8 @@
           {
             "action": "changeName",
             "name": {
-              "de": "Mein neuer Produkt Name",
-              "en": "My new product name"
+              "de": "neuer Category Name",
+              "en": "new category name"
             }
           }
         ],
@@ -1135,23 +1099,17 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "Mein neuer Produkt Name",
-          "en": "My new product name"
+          "de": "neuer Category Name",
+          "en": "new category name"
         },
         "description": "Name"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1240,7 +1198,7 @@
     "name": "ChangeSlug",
     "value": "changeSlug",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1257,8 +1215,8 @@
           {
             "action": "changeSlug",
             "slug": {
-              "de": "mein-neuer-produkt-slug",
-              "en": "my-new-product-slug"
+              "de": "meine-kategorie",
+              "en": "my-category"
             }
           }
         ],
@@ -1271,23 +1229,17 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "mein-neuer-produkt-slug",
-          "en": "my-new-product-slug"
+          "de": "meine-kategorie",
+          "en": "my-category"
         },
         "description": "Slug"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1409,7 +1361,7 @@
     "name": "RemoveAsset",
     "value": "removeAsset",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1425,7 +1377,6 @@
         "example": [
           {
             "action": "removeAsset",
-            "variantId": 1,
             "assetId": "placeholder"
           }
         ],
@@ -1433,13 +1384,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetId",
         "type": "string",
@@ -1449,16 +1393,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1786,7 +1724,7 @@
     "name": "SetAssetCustomField",
     "value": "setAssetCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1802,7 +1740,6 @@
         "example": [
           {
             "action": "setAssetCustomField",
-            "variantId": 1,
             "assetId": "placeholder",
             "name": "exampleStringField",
             "value": "TextString"
@@ -1812,13 +1749,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetId",
         "type": "string",
@@ -1842,16 +1772,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1862,7 +1786,7 @@
     "name": "SetAssetCustomType",
     "value": "setAssetCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1878,7 +1802,6 @@
         "example": [
           {
             "action": "setAssetCustomType",
-            "variantId": 1,
             "assetId": "placeholder",
             "type": {
               "id": "placeholder",
@@ -1893,13 +1816,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetId",
         "type": "string",
@@ -1928,16 +1844,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1948,7 +1858,7 @@
     "name": "SetAssetDescription",
     "value": "setAssetDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1964,7 +1874,6 @@
         "example": [
           {
             "action": "setAssetDescription",
-            "variantId": 1,
             "assetId": "placeholder",
             "description": {
               "de": "Dies ist eine Asset-Beschreibung",
@@ -1976,13 +1885,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetId",
         "type": "string",
@@ -2002,16 +1904,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2022,7 +1918,7 @@
     "name": "SetAssetKey",
     "value": "setAssetKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2038,9 +1934,7 @@
         "example": [
           {
             "action": "setAssetKey",
-            "variantId": 1,
-            "assetId": "placeholder",
-            "assetKey": "assetKeyString"
+            "assetId": "placeholder"
           }
         ],
         "description": "Array of actions"
@@ -2048,38 +1942,18 @@
     ],
     "actionBodyFields": [
       {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
-      {
         "name": "assetId",
         "type": "string",
         "required": false,
         "example": "placeholder",
         "description": "Asset Id"
-      },
-      {
-        "name": "assetKey",
-        "type": "string",
-        "required": false,
-        "example": "assetKeyString",
-        "description": "Asset Key"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2090,7 +1964,7 @@
     "name": "SetAssetSources",
     "value": "setAssetSources",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2106,7 +1980,6 @@
         "example": [
           {
             "action": "setAssetSources",
-            "variantId": 1,
             "assetId": "placeholder",
             "sources": [
               {
@@ -2120,13 +1993,6 @@
       }
     ],
     "actionBodyFields": [
-      {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
       {
         "name": "assetId",
         "type": "string",
@@ -2148,16 +2014,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2168,7 +2028,7 @@
     "name": "SetAssetTags",
     "value": "setAssetTags",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2184,12 +2044,7 @@
         "example": [
           {
             "action": "setAssetTags",
-            "variantId": 1,
-            "assetId": "placeholder",
-            "tags": [
-              "commercetools",
-              "awesome"
-            ]
+            "assetId": "placeholder"
           }
         ],
         "description": "Array of actions"
@@ -2197,41 +2052,18 @@
     ],
     "actionBodyFields": [
       {
-        "name": "variantId",
-        "type": "number",
-        "required": false,
-        "example": 1,
-        "description": "Variant Id"
-      },
-      {
         "name": "assetId",
         "type": "string",
         "required": false,
         "example": "placeholder",
         "description": "Asset Id"
-      },
-      {
-        "name": "tags",
-        "type": "json",
-        "required": false,
-        "example": [
-          "commercetools",
-          "awesome"
-        ],
-        "description": "Tags"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2430,7 +2262,7 @@
     "name": "SetDescription",
     "value": "setDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2447,8 +2279,8 @@
           {
             "action": "setDescription",
             "description": {
-              "de": "Dies ist eine neue Produktbeschreibung",
-              "en": "This is a new product description"
+              "de": "This is a category description",
+              "en": "Dies ist eine Kategorie-Beschreibung"
             }
           }
         ],
@@ -2461,23 +2293,17 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "Dies ist eine neue Produktbeschreibung",
-          "en": "This is a new product description"
+          "de": "This is a category description",
+          "en": "Dies ist eine Kategorie-Beschreibung"
         },
         "description": "Description"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2650,7 +2476,7 @@
     "name": "SetKey",
     "value": "setKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/edits/{{edit-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2666,7 +2492,7 @@
         "example": [
           {
             "action": "setKey",
-            "key": "keyString"
+            "key": "myNewKey"
           }
         ],
         "description": "Array of actions"
@@ -2677,15 +2503,15 @@
         "name": "key",
         "type": "string",
         "required": false,
-        "example": "keyString",
+        "example": "myNewKey",
         "description": "Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an OrderEdit in the Project using one or more [update actions](/../api/projects/order-edits#update-actions).",
-    "folder": "Orders",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2696,7 +2522,7 @@
     "name": "SetMetaDescription",
     "value": "setMetaDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2713,8 +2539,8 @@
           {
             "action": "setMetaDescription",
             "metaDescription": {
-              "de": "meine Meta Beschreibung",
-              "en": "my metaDescription"
+              "de": "Dies ist meine MetaDecription",
+              "en": "this is my meta description"
             }
           }
         ],
@@ -2727,23 +2553,17 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "meine Meta Beschreibung",
-          "en": "my metaDescription"
+          "de": "Dies ist meine MetaDecription",
+          "en": "this is my meta description"
         },
         "description": "Meta Description"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2754,7 +2574,7 @@
     "name": "SetMetaKeywords",
     "value": "setMetaKeywords",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2771,8 +2591,8 @@
           {
             "action": "setMetaKeywords",
             "metaKeywords": {
-              "de": "mein MetaKeyword",
-              "en": "my metaKeeyword"
+              "de": "commercetools, genial",
+              "en": "commercetools, aweseome"
             }
           }
         ],
@@ -2785,23 +2605,17 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "mein MetaKeyword",
-          "en": "my metaKeeyword"
+          "de": "commercetools, genial",
+          "en": "commercetools, aweseome"
         },
         "description": "Meta Keywords"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2812,7 +2626,7 @@
     "name": "SetMetaTitle",
     "value": "setMetaTitle",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2829,8 +2643,8 @@
           {
             "action": "setMetaTitle",
             "metaTitle": {
-              "de": "mein MetaTitel",
-              "en": "my metaTitle"
+              "de": "Dies ist mein Meta-Title",
+              "en": "This is my meta title"
             }
           }
         ],
@@ -2843,23 +2657,17 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "mein MetaTitel",
-          "en": "my metaTitle"
+          "de": "Dies ist mein Meta-Title",
+          "en": "This is my meta title"
         },
         "description": "Meta Title"
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4234,7 +4042,7 @@
     "name": "AddAddress",
     "value": "addAddress",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4251,6 +4059,7 @@
           {
             "action": "addAddress",
             "address": {
+              "id": "exampleAddress",
               "key": "exampleKey",
               "title": "My Address",
               "salutation": "Mr.",
@@ -4271,7 +4080,7 @@
               "pOBox": "2471",
               "phone": "+49 89 12345678",
               "mobile": "+49 171 2345678",
-              "email": "email@example.com",
+              "email": "mail@example.com",
               "fax": "+49 89 12345679",
               "additionalAddressInfo": "no additional Info",
               "externalId": "Information not needed"
@@ -4287,6 +4096,7 @@
         "type": "json",
         "required": false,
         "example": {
+          "id": "exampleAddress",
           "key": "exampleKey",
           "title": "My Address",
           "salutation": "Mr.",
@@ -4307,7 +4117,7 @@
           "pOBox": "2471",
           "phone": "+49 89 12345678",
           "mobile": "+49 171 2345678",
-          "email": "email@example.com",
+          "email": "mail@example.com",
           "fax": "+49 89 12345679",
           "additionalAddressInfo": "no additional Info",
           "externalId": "Information not needed"
@@ -4318,8 +4128,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4330,7 +4140,7 @@
     "name": "AddBillingAddressId",
     "value": "addBillingAddressId",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4364,8 +4174,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4376,7 +4186,7 @@
     "name": "AddCustomerGroupAssignment",
     "value": "addCustomerGroupAssignment",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4420,8 +4230,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4432,7 +4242,7 @@
     "name": "AddShippingAddressId",
     "value": "addShippingAddressId",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4466,8 +4276,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4478,7 +4288,7 @@
     "name": "AddStore",
     "value": "addStore",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4518,8 +4328,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4530,7 +4340,7 @@
     "name": "ChangeAddress",
     "value": "changeAddress",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4548,6 +4358,7 @@
             "action": "changeAddress",
             "addressId": "placeholder",
             "address": {
+              "id": "exampleAddress",
               "key": "exampleKey",
               "title": "My Address",
               "salutation": "Mr.",
@@ -4591,6 +4402,7 @@
         "type": "json",
         "required": false,
         "example": {
+          "id": "exampleAddress",
           "key": "exampleKey",
           "title": "My Address",
           "salutation": "Mr.",
@@ -4622,8 +4434,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4680,7 +4492,7 @@
     "name": "RemoveAddress",
     "value": "removeAddress",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4714,8 +4526,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4726,7 +4538,7 @@
     "name": "RemoveBillingAddressId",
     "value": "removeBillingAddressId",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4760,8 +4572,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4772,7 +4584,7 @@
     "name": "RemoveCustomerGroupAssignment",
     "value": "removeCustomerGroupAssignment",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4812,8 +4624,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4824,7 +4636,7 @@
     "name": "RemoveShippingAddressId",
     "value": "removeShippingAddressId",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4858,8 +4670,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4870,7 +4682,7 @@
     "name": "RemoveStore",
     "value": "removeStore",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4910,8 +4722,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4922,7 +4734,7 @@
     "name": "SetAddressCustomField",
     "value": "setAddressCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4972,8 +4784,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4984,7 +4796,7 @@
     "name": "SetAddressCustomType",
     "value": "setAddressCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5044,8 +4856,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5148,7 +4960,7 @@
     "name": "SetCustomField",
     "value": "setCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5190,8 +5002,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5202,7 +5014,7 @@
     "name": "SetCustomType",
     "value": "setCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5254,8 +5066,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5318,7 +5130,7 @@
     "name": "SetCustomerGroupAssignments",
     "value": "setCustomerGroupAssignments",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5378,8 +5190,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5482,7 +5294,7 @@
     "name": "SetDefaultBillingAddress",
     "value": "setDefaultBillingAddress",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5516,8 +5328,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5528,7 +5340,7 @@
     "name": "SetDefaultShippingAddress",
     "value": "setDefaultShippingAddress",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5562,8 +5374,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5574,7 +5386,7 @@
     "name": "SetExternalId",
     "value": "setExternalId",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5590,7 +5402,7 @@
         "example": [
           {
             "action": "setExternalId",
-            "externalId": "123"
+            "externalId": "externalIdString"
           }
         ],
         "description": "Array of actions"
@@ -5601,15 +5413,15 @@
         "name": "externalId",
         "type": "string",
         "required": false,
-        "example": "123",
+        "example": "externalIdString",
         "description": "External Id"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5850,7 +5662,7 @@
     "name": "SetStores",
     "value": "setStores",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5894,8 +5706,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -13966,6 +13778,1491 @@
     ],
     "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
     "folder": "Orders",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getBusinessUnitByKey": {
+    "name": "Get BusinessUnit by Key",
+    "value": "getBusinessUnitByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/business-units/key={{business-unit-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "business-unit-key"
+  },
+  "checkIfBusinessUnitExistsByKey": {
+    "name": "Check if BusinessUnit exists by Key",
+    "value": "checkIfBusinessUnitExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/business-units/key={{business-unit-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a BusinessUnit exists with the provided `key`. Returns a `200` status if the BusinessUnit exists, or a `404` status otherwise.",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "business-unit-key"
+  },
+  "updateBusinessUnitByKey": {
+    "name": "Update BusinessUnit by Key",
+    "value": "updateBusinessUnitByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/key={{business-unit-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 3,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAddress",
+            "address": {
+              "streetName": "Any Street",
+              "streetNumber": "1337",
+              "postalCode": "11111",
+              "city": "Any City",
+              "country": "US"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "streetName": "Any Street",
+          "streetNumber": "1337",
+          "postalCode": "11111",
+          "city": "Any City",
+          "country": "US"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "business-unit-key"
+  },
+  "deleteBusinessUnitByKey": {
+    "name": "Delete BusinessUnit by Key",
+    "value": "deleteBusinessUnitByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/business-units/key={{business-unit-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "business-unit-key"
+  },
+  "getBusinessUnitById": {
+    "name": "Get BusinessUnit by ID",
+    "value": "getBusinessUnitById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfBusinessUnitExistsById": {
+    "name": "Check if BusinessUnit exists by ID",
+    "value": "checkIfBusinessUnitExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a BusinessUnit exists with the provided `id`. Returns a `200` status if the BusinessUnit exists, or a `404` status otherwise.",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateBusinessUnitById": {
+    "name": "Update BusinessUnit by ID",
+    "value": "updateBusinessUnitById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 3,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAddress",
+            "address": {
+              "streetName": "Any Street",
+              "streetNumber": "1337",
+              "postalCode": "11111",
+              "city": "Any City",
+              "country": "US"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "streetName": "Any Street",
+          "streetNumber": "1337",
+          "postalCode": "11111",
+          "city": "Any City",
+          "country": "US"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteBusinessUnitById": {
+    "name": "Delete BusinessUnit by ID",
+    "value": "deleteBusinessUnitById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getAssociateInBusinessUnitByKey": {
+    "name": "Get Associate in BusinessUnit by Key",
+    "value": "getAssociateInBusinessUnitByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/business-units/key={{associate-key}}/associates/{{associate-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Retrieves roles and permissions of an Associate in a Business Unit.\n",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "associate-key",
+    "secondaryIdPlaceholder": "associate-id"
+  },
+  "getAssociateInBusinessUnitById": {
+    "name": "Get Associate in BusinessUnit by ID",
+    "value": "getAssociateInBusinessUnitById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}/associates/{{associate-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Retrieves roles and permissions of an Associate in a Business Unit.\n",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false,
+    "secondaryIdPlaceholder": "associate-id"
+  },
+  "searchBusinessUnits": {
+    "name": "Search Business Units",
+    "value": "searchBusinessUnits",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/search",
+    "bodyFields": [
+      {
+        "name": "query.fullText.field",
+        "type": "string",
+        "required": false,
+        "example": "all",
+        "description": "Query › full Text › field"
+      },
+      {
+        "name": "query.fullText.value",
+        "type": "string",
+        "required": false,
+        "example": "plumbing",
+        "description": "Query › full Text › value"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "If the initial indexing is in progress or the feature is inactive, A [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned. If inactive, you can [reactivate](/../api/projects/business-unit-search#reactivate) it.\n",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false,
+    "isSearch": true
+  },
+  "checkIfBusinessUnitSearchIndexExists": {
+    "name": "Check if Business Unit Search index exists",
+    "value": "checkIfBusinessUnitSearchIndexExists",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/business-units/search",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks whether a search index of Business Units exists for a Project.\nReturns a `200 OK` if an index exists; otherwise, returns a `409 Conflict`.\n",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "getIndexingStatusOfBusinessUnitSearch": {
+    "name": "Get indexing status of Business Unit Search",
+    "value": "getIndexingStatusOfBusinessUnitSearch",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/business-units/search/indexing-status",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Returns the indexing status of the Business Unit Search for a Project.\n",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "queryBusinessUnits": {
+    "name": "Query BusinessUnits",
+    "value": "queryBusinessUnits",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/business-units",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfBusinessUnitExistsByQueryPredicate": {
+    "name": "Check if BusinessUnit exists by Query Predicate",
+    "value": "checkIfBusinessUnitExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/business-units",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more BusinessUnits exist for the provided query predicate. Returns a `200` status if any BusinessUnits match the query predicate, or a `404` status otherwise.",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createBusinessUnit": {
+    "name": "Create BusinessUnit",
+    "value": "createBusinessUnit",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units",
+    "bodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "example": "commercetools",
+        "description": "Name"
+      },
+      {
+        "name": "unitType",
+        "type": "string",
+        "required": true,
+        "example": "Company",
+        "description": "Unit Type"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "commercetools",
+        "description": "Key"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Business-units",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addAssociate": {
+    "name": "AddAssociate",
+    "value": "addAssociate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addAssociate",
+            "associate": {
+              "customer": {
+                "typeId": "customer",
+                "id": "some-customer-id"
+              },
+              "associateRoleAssignments": [
+                {
+                  "associateRole": {
+                    "typeId": "associate-role",
+                    "key": "admin"
+                  },
+                  "inheritance": "Enabled"
+                },
+                {
+                  "associateRole": {
+                    "typeId": "associate-role",
+                    "key": "buyer"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "associate",
+        "type": "json",
+        "required": false,
+        "example": {
+          "customer": {
+            "typeId": "customer",
+            "id": "some-customer-id"
+          },
+          "associateRoleAssignments": [
+            {
+              "associateRole": {
+                "typeId": "associate-role",
+                "key": "admin"
+              },
+              "inheritance": "Enabled"
+            },
+            {
+              "associateRole": {
+                "typeId": "associate-role",
+                "key": "buyer"
+              }
+            }
+          ]
+        },
+        "description": "Associate"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeApprovalRuleMode": {
+    "name": "ChangeApprovalRuleMode",
+    "value": "changeApprovalRuleMode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeApprovalRuleMode",
+            "approvalRuleMode": "Explicit"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "approvalRuleMode",
+        "type": "string",
+        "required": false,
+        "example": "Explicit",
+        "description": "Approval Rule Mode"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeAssociate": {
+    "name": "ChangeAssociate",
+    "value": "changeAssociate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeAssociate",
+            "associate": {
+              "customer": {
+                "typeId": "customer",
+                "id": "some-customer-id"
+              },
+              "associateRoleAssignments": [
+                {
+                  "associateRole": {
+                    "typeId": "associate-role",
+                    "key": "admin"
+                  },
+                  "inheritance": "Enabled"
+                },
+                {
+                  "associateRole": {
+                    "typeId": "associate-role",
+                    "key": "buyer"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "associate",
+        "type": "json",
+        "required": false,
+        "example": {
+          "customer": {
+            "typeId": "customer",
+            "id": "some-customer-id"
+          },
+          "associateRoleAssignments": [
+            {
+              "associateRole": {
+                "typeId": "associate-role",
+                "key": "admin"
+              },
+              "inheritance": "Enabled"
+            },
+            {
+              "associateRole": {
+                "typeId": "associate-role",
+                "key": "buyer"
+              }
+            }
+          ]
+        },
+        "description": "Associate"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeAssociateMode": {
+    "name": "ChangeAssociateMode",
+    "value": "changeAssociateMode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeAssociateMode",
+            "associateMode": "ExplicitAndFromParent"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "associateMode",
+        "type": "string",
+        "required": true,
+        "example": "ExplicitAndFromParent",
+        "description": "Associate Mode"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeParentUnit": {
+    "name": "ChangeParentUnit",
+    "value": "changeParentUnit",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeParentUnit",
+            "parentUnit": {
+              "typeId": "business-unit",
+              "key": "commercetools"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "parentUnit",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "business-unit",
+          "key": "commercetools"
+        },
+        "description": "Parent Unit"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeStatus": {
+    "name": "ChangeStatus",
+    "value": "changeStatus",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeStatus",
+            "status": "Inactive"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "status",
+        "type": "string",
+        "required": false,
+        "example": "Inactive",
+        "description": "Status"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeAssociate": {
+    "name": "RemoveAssociate",
+    "value": "removeAssociate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeAssociate",
+            "customer": {
+              "typeId": "customer",
+              "id": "some-customer-id"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customer",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "customer",
+          "id": "some-customer-id"
+        },
+        "description": "Customer"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setAssociates": {
+    "name": "SetAssociates",
+    "value": "setAssociates",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAssociates",
+            "associates": [
+              {
+                "customer": {
+                  "typeId": "customer",
+                  "id": "some-customer-id"
+                },
+                "associateRoleAssignments": [
+                  {
+                    "associateRole": {
+                      "typeId": "associate-role",
+                      "key": "admin"
+                    },
+                    "inheritance": "Enabled"
+                  }
+                ]
+              },
+              {
+                "customer": {
+                  "typeId": "customer",
+                  "id": "another-customer-id"
+                },
+                "associateRoleAssignments": [
+                  {
+                    "associateRole": {
+                      "typeId": "associate-role",
+                      "key": "buyer"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "associates",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "customer": {
+              "typeId": "customer",
+              "id": "some-customer-id"
+            },
+            "associateRoleAssignments": [
+              {
+                "associateRole": {
+                  "typeId": "associate-role",
+                  "key": "admin"
+                },
+                "inheritance": "Enabled"
+              }
+            ]
+          },
+          {
+            "customer": {
+              "typeId": "customer",
+              "id": "another-customer-id"
+            },
+            "associateRoleAssignments": [
+              {
+                "associateRole": {
+                  "typeId": "associate-role",
+                  "key": "buyer"
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Associates"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setContactEmail": {
+    "name": "SetContactEmail",
+    "value": "setContactEmail",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setContactEmail",
+            "contactEmail": "contact@example.com"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "contactEmail",
+        "type": "string",
+        "required": false,
+        "example": "contact@example.com",
+        "description": "Contact Email"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setStoreMode": {
+    "name": "SetStoreMode",
+    "value": "setStoreMode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setStoreMode",
+            "storeMode": "FromParent"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "storeMode",
+        "type": "string",
+        "required": false,
+        "example": "FromParent",
+        "description": "Store Mode"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setUnitType": {
+    "name": "SetUnitType",
+    "value": "setUnitType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setUnitType",
+            "unitType": "Division",
+            "parentUnit": {
+              "typeId": "business-unit",
+              "key": "commercetools"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "unitType",
+        "type": "string",
+        "required": false,
+        "example": "Division",
+        "description": "Unit Type"
+      },
+      {
+        "name": "parentUnit",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "business-unit",
+          "key": "commercetools"
+        },
+        "description": "Parent Unit"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post BusinessUnits",
+    "folder": "Business-units",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getCategoryByKey": {
+    "name": "Get Category by Key",
+    "value": "getCategoryByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/categories/key={{category-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `view_products:{projectKey}` or `view_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "category-key"
+  },
+  "checkIfCategoryExistsByKey": {
+    "name": "Check if Category exists by Key",
+    "value": "checkIfCategoryExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/categories/key={{category-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Category exists with the provided `key`. Returns a `200` status if the Category exists, or a `404` status otherwise.",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "category-key"
+  },
+  "updateCategoryByKey": {
+    "name": "Update Category by Key",
+    "value": "updateCategoryByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/key={{category-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "category-key"
+  },
+  "deleteCategoryByKey": {
+    "name": "Delete Category by Key",
+    "value": "deleteCategoryByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/categories/key={{category-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "category-key"
+  },
+  "getCategoryById": {
+    "name": "Get Category by ID",
+    "value": "getCategoryById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `view_products:{projectKey}` or `view_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfCategoryExistsById": {
+    "name": "Check if Category exists by ID",
+    "value": "checkIfCategoryExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Category exists with the provided `id`. Returns a `200` status if the Category exists, or a `404` status otherwise.",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateCategoryById": {
+    "name": "Update Category by ID",
+    "value": "updateCategoryById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteCategoryById": {
+    "name": "Delete Category by ID",
+    "value": "deleteCategoryById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryCategories": {
+    "name": "Query Categories",
+    "value": "queryCategories",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/categories",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Either the [scope](/../api/scopes) `view_products:{projectKey}` or `view_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfCategoryExistsByQueryPredicate": {
+    "name": "Check if Category exists by Query Predicate",
+    "value": "checkIfCategoryExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/categories",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Categories exist for the provided query predicate. Returns a `200` status if any Categories match the query predicate, or a `404` status otherwise.",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createCategory": {
+    "name": "Create Category",
+    "value": "createCategory",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories",
+    "bodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Hats"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "slug",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "hats"
+        },
+        "description": "Slug"
+      },
+      {
+        "name": "parent.typeId",
+        "type": "string",
+        "required": false,
+        "example": "category",
+        "description": "Parent › type Id"
+      },
+      {
+        "name": "parent.id",
+        "type": "string",
+        "required": false,
+        "example": "123456",
+        "description": "Parent › id"
+      },
+      {
+        "name": "orderHint",
+        "type": "string",
+        "required": true,
+        "example": "0.1",
+        "description": "Order Hint"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nCreating a Category produces the [CategoryCreated](ctp:api:type:CategoryCreatedMessage) Message.\n",
+    "folder": "Categories",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeOrderHint": {
+    "name": "ChangeOrderHint",
+    "value": "changeOrderHint",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeOrderHint",
+            "orderHint": "0.1"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "orderHint",
+        "type": "string",
+        "required": false,
+        "example": "0.1",
+        "description": "Order Hint"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeParent": {
+    "name": "ChangeParent",
+    "value": "changeParent",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeParent",
+            "parent": {
+              "typeId": "category",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "parent",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "category",
+          "id": "placeholder"
+        },
+        "description": "Parent"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
