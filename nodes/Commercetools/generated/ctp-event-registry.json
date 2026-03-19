@@ -466,6 +466,21 @@
       "subscriptionType": "message"
     },
     {
+      "value": "InventoryEntryCreated",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryDeleted",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryQuantitySet",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
       "value": "LineItemStateTransition",
       "resourceTypeId": "order",
       "subscriptionType": "message"
@@ -894,7 +909,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 165,
+    "totalMessages": 168,
     "unmapped": 0,
     "unclassified": 0
   },

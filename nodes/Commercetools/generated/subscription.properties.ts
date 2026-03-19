@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-03-19T06:15:50.845Z
+ * Generated at: 2026-03-19T12:46:51.044Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -113,6 +113,9 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Delivery Custom Type Set', value: 'DeliveryCustomTypeSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery custom type set occurs on a order.' },
     { name: 'Delivery Items Updated', value: 'DeliveryItemsUpdated', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery items updated occurs on a order.' },
     { name: 'Delivery Removed', value: 'DeliveryRemoved', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery removed occurs on a order.' },
+    { name: 'Inventory Entry Created', value: 'InventoryEntryCreated', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry created occurs on a inventory-entry.' },
+    { name: 'Inventory Entry Deleted', value: 'InventoryEntryDeleted', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry deleted occurs on a inventory-entry.' },
+    { name: 'Inventory Entry Quantity Set', value: 'InventoryEntryQuantitySet', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry quantity set occurs on a inventory-entry.' },
     { name: 'Line Item State Transition', value: 'LineItemStateTransition', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when line item state transition occurs on a order.' },
     { name: 'Order Billing Address Set', value: 'OrderBillingAddressSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when order billing address set occurs on a order.' },
     { name: 'Order Business Unit Set', value: 'OrderBusinessUnitSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when order business unit set occurs on a order.' },
