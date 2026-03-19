@@ -358,6 +358,7 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.3  | Added Business Units and Categories.                                                     |
 | v1.0.2  | Added missing triggers node to Package JSON.                                                     |
 | v1.0.1  | Automated the Node resources, properties and trigger properties creation.                        |
 | v0.1.35 | Improve GCP authentication by using JWT client for access token management                       |
