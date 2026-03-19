@@ -57,6 +57,7 @@ const FOLDERS_TO_GENERATE = [
 	'Categories',
 	'Channels',
 	'Associate-roles',
+	'Inventory',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -68,6 +69,7 @@ const RESOURCES_TO_GENERATE = [
 	'category',
 	'channel',
 	'associate-role',
+	'inventory-entry',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
