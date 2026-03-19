@@ -1,6 +1,41 @@
 {
   "events": [
     {
+      "value": "AssociateRoleBuyerAssignableChanged",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleCreated",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleDeleted",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleNameSet",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionAdded",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionRemoved",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionsSet",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
       "value": "BusinessUnitAddressAdded",
       "resourceTypeId": "business-unit",
       "subscriptionType": "message"
@@ -859,7 +894,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 158,
+    "totalMessages": 165,
     "unmapped": 0,
     "unclassified": 0
   },

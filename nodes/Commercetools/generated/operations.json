@@ -1068,7 +1068,7 @@
     "name": "ChangeName",
     "value": "changeName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1085,8 +1085,10 @@
           {
             "action": "changeName",
             "name": {
-              "de": "neuer Category Name",
-              "en": "new category name"
+              "en-US": "Updated Channel Name",
+              "de-DE": "Aktualisierter Kanalname",
+              "fr-FR": "Nom de canal mis à jour",
+              "es-ES": "Nombre de canal actualizado"
             }
           }
         ],
@@ -1099,8 +1101,10 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "neuer Category Name",
-          "en": "new category name"
+          "en-US": "Updated Channel Name",
+          "de-DE": "Aktualisierter Kanalname",
+          "fr-FR": "Nom de canal mis à jour",
+          "es-ES": "Nombre de canal actualizado"
         },
         "description": "Name"
       }
@@ -1108,8 +1112,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post Channels",
+    "folder": "Channels",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4734,7 +4738,7 @@
     "name": "SetAddressCustomField",
     "value": "setAddressCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4751,8 +4755,7 @@
           {
             "action": "setAddressCustomField",
             "name": "exampleStringField",
-            "value": "TextString",
-            "addressId": "placeholder"
+            "value": "TextString"
           }
         ],
         "description": "Array of actions"
@@ -4772,20 +4775,13 @@
         "required": false,
         "example": "TextString",
         "description": "Value"
-      },
-      {
-        "name": "addressId",
-        "type": "string",
-        "required": false,
-        "example": "placeholder",
-        "description": "Address Id"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post BusinessUnits",
-    "folder": "Business-units",
+    "description": "post Channels",
+    "folder": "Channels",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4796,7 +4792,7 @@
     "name": "SetAddressCustomType",
     "value": "setAddressCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4813,13 +4809,12 @@
           {
             "action": "setAddressCustomType",
             "type": {
-              "id": "placeholder",
+              "key": "address-custom-type",
               "typeId": "type"
             },
             "fields": {
               "exampleStringField": "TextString"
-            },
-            "addressId": "placeholder"
+            }
           }
         ],
         "description": "Array of actions"
@@ -4831,7 +4826,7 @@
         "type": "json",
         "required": false,
         "example": {
-          "id": "placeholder",
+          "key": "address-custom-type",
           "typeId": "type"
         },
         "description": "Type"
@@ -4844,20 +4839,13 @@
           "exampleStringField": "TextString"
         },
         "description": "Fields"
-      },
-      {
-        "name": "addressId",
-        "type": "string",
-        "required": false,
-        "example": "placeholder",
-        "description": "Address Id"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post BusinessUnits",
-    "folder": "Business-units",
+    "description": "post Channels",
+    "folder": "Channels",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4960,7 +4948,7 @@
     "name": "SetCustomField",
     "value": "setCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4976,7 +4964,7 @@
         "example": [
           {
             "action": "setCustomField",
-            "name": "exampleStringField",
+            "name": "ExemplaryStringTypeField",
             "value": "TextString"
           }
         ],
@@ -4988,7 +4976,7 @@
         "name": "name",
         "type": "string",
         "required": false,
-        "example": "exampleStringField",
+        "example": "ExemplaryStringTypeField",
         "description": "Name"
       },
       {
@@ -5002,8 +4990,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5014,7 +5002,7 @@
     "name": "SetCustomType",
     "value": "setCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5035,7 +5023,7 @@
               "typeId": "type"
             },
             "fields": {
-              "exampleStringField": "TextString"
+              "exemplaryStringTypeField": "TextString"
             }
           }
         ],
@@ -5058,7 +5046,7 @@
         "type": "json",
         "required": false,
         "example": {
-          "exampleStringField": "TextString"
+          "exemplaryStringTypeField": "TextString"
         },
         "description": "Fields"
       }
@@ -5066,8 +5054,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -15263,6 +15251,1320 @@
     ],
     "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
     "folder": "Categories",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getChannelById": {
+    "name": "Get Channel by ID",
+    "value": "getChannelById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfChannelExistsById": {
+    "name": "Check if Channel exists by ID",
+    "value": "checkIfChannelExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Channel exists with the provided `id`. Returns a `200` status if the Channel exists, or a `404` status otherwise.",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateChannelById": {
+    "name": "Update Channel by ID",
+    "value": "updateChannelById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en-US": "Updated US Distribution Channel",
+              "de-DE": "Aktualisierter US-Vertriebskanal",
+              "fr-FR": "Canal de distribution américain mis à jour",
+              "es-ES": "Canal de distribución de EE. UU. actualizado"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en-US": "Updated US Distribution Channel",
+          "de-DE": "Aktualisierter US-Vertriebskanal",
+          "fr-FR": "Canal de distribution américain mis à jour",
+          "es-ES": "Canal de distribución de EE. UU. actualizado"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteChannelById": {
+    "name": "Delete Channel by ID",
+    "value": "deleteChannelById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Returns a [ReferenceExists](ctp:api:type:ReferenceExistsError) error if other resources reference the Channel to be deleted.\n",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getChannelByKey": {
+    "name": "Get Channel by Key",
+    "value": "getChannelByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/channels/key={{channel-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "channel-key"
+  },
+  "checkIfChannelExistsByKey": {
+    "name": "Check if Channel exists by Key",
+    "value": "checkIfChannelExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/channels/key={{channel-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Channel exists with the provided `key`. Returns a `200` status if the Channel exists, or a `404` status otherwise.",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "channel-key"
+  },
+  "updateChannelByKey": {
+    "name": "Update Channel by Key",
+    "value": "updateChannelByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/key={{channel-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en-US": "Updated US Distribution Channel",
+              "de-DE": "Aktualisierter US-Vertriebskanal",
+              "fr-FR": "Canal de distribution américain mis à jour",
+              "es-ES": "Canal de distribución de EE. UU. actualizado"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en-US": "Updated US Distribution Channel",
+          "de-DE": "Aktualisierter US-Vertriebskanal",
+          "fr-FR": "Canal de distribution américain mis à jour",
+          "es-ES": "Canal de distribución de EE. UU. actualizado"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "channel-key"
+  },
+  "deleteChannelByKey": {
+    "name": "Delete Channel by Key",
+    "value": "deleteChannelByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/channels/key={{channel-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Returns a [ReferenceExists](ctp:api:type:ReferenceExistsError) error if other resources reference the Channel to be deleted.\n",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "channel-key"
+  },
+  "queryChannels": {
+    "name": "Query Channels",
+    "value": "queryChannels",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/channels",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfChannelExistsByQueryPredicate": {
+    "name": "Check if Channel exists by Query Predicate",
+    "value": "checkIfChannelExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/channels",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Channels exist for the provided query predicate. Returns a `200` status if any Channels match the query predicate, or a `404` status otherwise.",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createChannel": {
+    "name": "Create Channel",
+    "value": "createChannel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "distribution-channel-us",
+        "description": "Key"
+      },
+      {
+        "name": "roles",
+        "type": "json",
+        "required": false,
+        "example": [
+          "ProductDistribution",
+          "InventorySupply"
+        ],
+        "description": "Array of roles"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en-US": "US Distribution Channel",
+          "de-DE": "US-Vertriebskanal",
+          "fr-FR": "Canal de distribution américain",
+          "es-ES": "Canal de distribución de EE. UU."
+        },
+        "description": "Name"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en-US": "Primary distribution channel for United States market",
+          "de-DE": "Primärer Vertriebskanal für den US-Markt",
+          "fr-FR": "Canal de distribution principal pour le marché américain",
+          "es-ES": "Canal de distribución principal para el mercado estadounidense"
+        },
+        "description": "Description"
+      },
+      {
+        "name": "address.key",
+        "type": "string",
+        "required": false,
+        "example": "us-warehouse-address",
+        "description": "Address › key"
+      },
+      {
+        "name": "address.country",
+        "type": "string",
+        "required": false,
+        "example": "US",
+        "description": "Address › country"
+      },
+      {
+        "name": "address.firstName",
+        "type": "string",
+        "required": false,
+        "example": "John",
+        "description": "Address › first Name"
+      },
+      {
+        "name": "address.lastName",
+        "type": "string",
+        "required": false,
+        "example": "Smith",
+        "description": "Address › last Name"
+      },
+      {
+        "name": "address.streetName",
+        "type": "string",
+        "required": false,
+        "example": "Commerce Street",
+        "description": "Address › street Name"
+      },
+      {
+        "name": "address.streetNumber",
+        "type": "string",
+        "required": false,
+        "example": "123",
+        "description": "Address › street Number"
+      },
+      {
+        "name": "address.postalCode",
+        "type": "string",
+        "required": false,
+        "example": "94105",
+        "description": "Address › postal Code"
+      },
+      {
+        "name": "address.city",
+        "type": "string",
+        "required": false,
+        "example": "San Francisco",
+        "description": "Address › city"
+      },
+      {
+        "name": "address.state",
+        "type": "string",
+        "required": false,
+        "example": "California",
+        "description": "Address › state"
+      },
+      {
+        "name": "address.phone",
+        "type": "string",
+        "required": false,
+        "example": "+14155551234",
+        "description": "Address › phone"
+      },
+      {
+        "name": "address.email",
+        "type": "string",
+        "required": false,
+        "example": "warehouse@example.com",
+        "description": "Address › email"
+      },
+      {
+        "name": "geoLocation.type",
+        "type": "string",
+        "required": false,
+        "example": "Point",
+        "description": "Geo Location › type"
+      },
+      {
+        "name": "geoLocation.coordinates",
+        "type": "json",
+        "required": false,
+        "example": [
+          -122.4194,
+          37.7749
+        ],
+        "description": "Array of coordinates"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Channels",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addRoles": {
+    "name": "AddRoles",
+    "value": "addRoles",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addRoles",
+            "roles": [
+              "OrderExport"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "roles",
+        "type": "json",
+        "required": false,
+        "example": [
+          "OrderExport"
+        ],
+        "description": "Roles"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeDescription": {
+    "name": "ChangeDescription",
+    "value": "changeDescription",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeDescription",
+            "description": {
+              "en-US": "Updated channel description",
+              "de-DE": "Aktualisierte Kanalbeschreibung",
+              "fr-FR": "Description du canal mise à jour",
+              "es-ES": "Descripción del canal actualizada"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en-US": "Updated channel description",
+          "de-DE": "Aktualisierte Kanalbeschreibung",
+          "fr-FR": "Description du canal mise à jour",
+          "es-ES": "Descripción del canal actualizada"
+        },
+        "description": "Description"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeKey": {
+    "name": "ChangeKey",
+    "value": "changeKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeKey",
+            "key": "my-updated-key"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "my-updated-key",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeRoles": {
+    "name": "RemoveRoles",
+    "value": "removeRoles",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeRoles",
+            "roles": [
+              "InventorySupply"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "roles",
+        "type": "json",
+        "required": false,
+        "example": [
+          "InventorySupply"
+        ],
+        "description": "Roles"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setAddress": {
+    "name": "SetAddress",
+    "value": "setAddress",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAddress",
+            "address": {
+              "key": "warehouse-address-key",
+              "country": "US",
+              "firstName": "John",
+              "lastName": "Doe",
+              "streetName": "Market Street",
+              "streetNumber": "456",
+              "postalCode": "94103",
+              "city": "San Francisco",
+              "state": "California",
+              "phone": "+14155559876",
+              "email": "johndoe@example.com"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "address",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "warehouse-address-key",
+          "country": "US",
+          "firstName": "John",
+          "lastName": "Doe",
+          "streetName": "Market Street",
+          "streetNumber": "456",
+          "postalCode": "94103",
+          "city": "San Francisco",
+          "state": "California",
+          "phone": "+14155559876",
+          "email": "johndoe@example.com"
+        },
+        "description": "Address"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setGeoLocation": {
+    "name": "SetGeoLocation",
+    "value": "setGeoLocation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setGeoLocation",
+            "geoLocation": {
+              "type": "Point",
+              "coordinates": [
+                -122.4084,
+                37.7849
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "geoLocation",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "Point",
+          "coordinates": [
+            -122.4084,
+            37.7849
+          ]
+        },
+        "description": "Geo Location"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setRoles": {
+    "name": "SetRoles",
+    "value": "setRoles",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setRoles",
+            "roles": [
+              "OrderExport",
+              "OrderImport"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "roles",
+        "type": "json",
+        "required": false,
+        "example": [
+          "OrderExport",
+          "OrderImport"
+        ],
+        "description": "Roles"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Channels",
+    "folder": "Channels",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getAssociateRoleByKey": {
+    "name": "Get AssociateRole by Key",
+    "value": "getAssociateRoleByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/associate-roles/key={{associate-role-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "associate-role-key"
+  },
+  "checkIfAssociateRoleExistsByKey": {
+    "name": "Check if AssociateRole exists by Key",
+    "value": "checkIfAssociateRoleExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/associate-roles/key={{associate-role-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if an AssociateRole exists with the provided `key`. Returns a `200` status if the AssociateRole exists, or a `404` status otherwise.",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "associate-role-key"
+  },
+  "updateAssociateRoleByKey": {
+    "name": "Update AssociateRole by Key",
+    "value": "updateAssociateRoleByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/key={{associate-role-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 3,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": "regional-manager"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "regional-manager",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "associate-role-key"
+  },
+  "deleteAssociateRoleByKey": {
+    "name": "Delete AssociateRole by Key",
+    "value": "deleteAssociateRoleByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/associate-roles/key={{associate-role-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deleting an AssociateRole generates the [AssociateRoleDeleted](ctp:api:type:AssociateRoleDeletedMessage) Message. An AssociateRole can only be deleted if it is not assigned to any [Associates](ctp:api:type:Associate).\n",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "associate-role-key"
+  },
+  "getAssociateRoleById": {
+    "name": "Get AssociateRole by ID",
+    "value": "getAssociateRoleById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfAssociateRoleExistsById": {
+    "name": "Check if AssociateRole exists by ID",
+    "value": "checkIfAssociateRoleExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if an AssociateRole exists with the provided `id`. Returns a `200` status if the AssociateRole exists, or a `404` status otherwise.",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateAssociateRoleById": {
+    "name": "Update AssociateRole by ID",
+    "value": "updateAssociateRoleById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 3,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": "regional-manager"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "regional-manager",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteAssociateRoleById": {
+    "name": "Delete AssociateRole by ID",
+    "value": "deleteAssociateRoleById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryAssociateRoles": {
+    "name": "Query AssociateRoles",
+    "value": "queryAssociateRoles",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/associate-roles",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfAssociateRoleExistsByQueryPredicate": {
+    "name": "Check if AssociateRole exists by Query Predicate",
+    "value": "checkIfAssociateRoleExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/associate-roles",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more AssociateRoles exist for the provided query predicate. Returns a `200` status if any AssociateRole match the query predicate, or a `404` status otherwise.",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createAssociateRole": {
+    "name": "Create AssociateRole",
+    "value": "createAssociateRole",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "regional-manager",
+        "description": "Key"
+      },
+      {
+        "name": "permissions",
+        "type": "json",
+        "required": false,
+        "example": [
+          "ViewMyCarts",
+          "UpdateMyCarts"
+        ],
+        "description": "Array of permissions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creating a Associate Role generates the [AssociateRoleCreated](ctp:api:type:AssociateRoleCreatedMessage) Message.\n",
+    "folder": "Associate-roles",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addPermission": {
+    "name": "AddPermission",
+    "value": "addPermission",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addPermission",
+            "permission": "ViewMyCarts"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "permission",
+        "type": "string",
+        "required": false,
+        "example": "ViewMyCarts",
+        "description": "Permission"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeBuyerAssignable": {
+    "name": "ChangeBuyerAssignable",
+    "value": "changeBuyerAssignable",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeBuyerAssignable",
+            "buyerAssignable": false
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "buyerAssignable",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Buyer Assignable"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removePermission": {
+    "name": "RemovePermission",
+    "value": "removePermission",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removePermission",
+            "permission": "ViewMyCarts"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "permission",
+        "type": "string",
+        "required": false,
+        "example": "ViewMyCarts",
+        "description": "Permission"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setName": {
+    "name": "SetName",
+    "value": "setName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": "regional-manager"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "regional-manager",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setPermissions": {
+    "name": "SetPermissions",
+    "value": "setPermissions",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/associate-roles/{{associate-role-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setPermissions",
+            "permissions": [
+              "ViewMyCarts",
+              "ViewOthersCarts"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "permissions",
+        "type": "json",
+        "required": false,
+        "example": [
+          "ViewMyCarts",
+          "ViewOthersCarts"
+        ],
+        "description": "Permissions"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post AssociateRoles",
+    "folder": "Associate-roles",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,

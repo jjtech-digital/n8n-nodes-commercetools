@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-03-17T10:35:17.993Z
+ * Generated at: 2026-03-19T05:24:31.025Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -20,6 +20,13 @@ export type SubscriptionEvent = {
 // ─── Generated event list ─────────────────────────────────────────────────────
 
 export const subscriptionEvents: SubscriptionEvent[] = [
+    { name: 'Associate Role Buyer Assignable Changed', value: 'AssociateRoleBuyerAssignableChanged', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role buyer assignable changed occurs on a associate-role.' },
+    { name: 'Associate Role Created', value: 'AssociateRoleCreated', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role created occurs on a associate-role.' },
+    { name: 'Associate Role Deleted', value: 'AssociateRoleDeleted', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role deleted occurs on a associate-role.' },
+    { name: 'Associate Role Name Set', value: 'AssociateRoleNameSet', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role name set occurs on a associate-role.' },
+    { name: 'Associate Role Permission Added', value: 'AssociateRolePermissionAdded', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role permission added occurs on a associate-role.' },
+    { name: 'Associate Role Permission Removed', value: 'AssociateRolePermissionRemoved', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role permission removed occurs on a associate-role.' },
+    { name: 'Associate Role Permissions Set', value: 'AssociateRolePermissionsSet', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role permissions set occurs on a associate-role.' },
     { name: 'Business Unit Address Added', value: 'BusinessUnitAddressAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address added occurs on a business-unit.' },
     { name: 'Business Unit Address Changed', value: 'BusinessUnitAddressChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address changed occurs on a business-unit.' },
     { name: 'Business Unit Address Custom Field Added', value: 'BusinessUnitAddressCustomFieldAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom field added occurs on a business-unit.' },
