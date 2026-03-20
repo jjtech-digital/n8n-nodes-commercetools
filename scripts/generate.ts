@@ -58,6 +58,8 @@ const FOLDERS_TO_GENERATE = [
 	'Channels',
 	'Associate-roles',
 	'Inventory',
+	'Reviews',
+	'Shopping-lists',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -70,6 +72,8 @@ const RESOURCES_TO_GENERATE = [
 	'channel',
 	'associate-role',
 	'inventory-entry',
+	'review',
+	'shopping-list',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
