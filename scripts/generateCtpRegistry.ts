@@ -164,9 +164,7 @@ export function generateCtpEventRegistry(OUTPUT_DIR: string, options: GenerateOp
 	const allowed = options.allowedResources ? new Set(options.allowedResources) : undefined;
 
 	// Known false positives — valid SDK types but rejected by CT API
-	const EXCLUDED_MESSAGES = new Set([
-		'ShoppingListStoreSet',
-	]);
+	const EXCLUDED_MESSAGES = new Set(['ShoppingListStoreSet']);
 
 	const events: EventDef[] = Array.from(messageTypes)
 		.map((message) => {
