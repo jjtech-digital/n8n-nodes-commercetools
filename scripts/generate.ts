@@ -60,6 +60,7 @@ const FOLDERS_TO_GENERATE = [
 	'Inventory',
 	'Reviews',
 	'Shopping-lists',
+	'Types',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -74,6 +75,7 @@ const RESOURCES_TO_GENERATE = [
 	'inventory-entry',
 	'review',
 	'shopping-list',
+	'type',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
