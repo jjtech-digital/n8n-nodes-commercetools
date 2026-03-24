@@ -1068,7 +1068,7 @@
     "name": "ChangeName",
     "value": "changeName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1085,10 +1085,8 @@
           {
             "action": "changeName",
             "name": {
-              "en-US": "Updated Channel Name",
-              "de-DE": "Aktualisierter Kanalname",
-              "fr-FR": "Nom de canal mis à jour",
-              "es-ES": "Nombre de canal actualizado"
+              "en": "NameDE",
+              "de": "NameEN"
             }
           }
         ],
@@ -1101,10 +1099,8 @@
         "type": "json",
         "required": false,
         "example": {
-          "en-US": "Updated Channel Name",
-          "de-DE": "Aktualisierter Kanalname",
-          "fr-FR": "Nom de canal mis à jour",
-          "es-ES": "Nombre de canal actualizado"
+          "en": "NameDE",
+          "de": "NameEN"
         },
         "description": "Name"
       }
@@ -1112,8 +1108,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Channels",
-    "folder": "Channels",
+    "description": "post Types",
+    "folder": "Types",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2266,7 +2262,7 @@
     "name": "SetDescription",
     "value": "setDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2283,8 +2279,8 @@
           {
             "action": "setDescription",
             "description": {
-              "de": "This is a category description",
-              "en": "Dies ist eine Kategorie-Beschreibung"
+              "de": "DescriptionDE",
+              "en": "DescriptionEN"
             }
           }
         ],
@@ -2297,8 +2293,8 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "This is a category description",
-          "en": "Dies ist eine Kategorie-Beschreibung"
+          "de": "DescriptionDE",
+          "en": "DescriptionEN"
         },
         "description": "Description"
       }
@@ -2306,8 +2302,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post Types",
+    "folder": "Types",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2480,7 +2476,7 @@
     "name": "SetKey",
     "value": "setKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2496,7 +2492,7 @@
         "example": [
           {
             "action": "setKey",
-            "key": "ie-key-1"
+            "key": "new-shopping-list-key"
           }
         ],
         "description": "Array of actions"
@@ -2507,15 +2503,15 @@
         "name": "key",
         "type": "string",
         "required": false,
-        "example": "ie-key-1",
+        "example": "new-shopping-list-key",
         "description": "Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post Inventory",
-    "folder": "Inventory",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -3374,7 +3370,7 @@
     "name": "TransitionState",
     "value": "transitionState",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -3414,8 +3410,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "post Reviews",
+    "folder": "Reviews",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4948,7 +4944,7 @@
     "name": "SetCustomField",
     "value": "setCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4990,8 +4986,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Inventory",
-    "folder": "Inventory",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5002,7 +4998,7 @@
     "name": "SetCustomType",
     "value": "setCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5054,8 +5050,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Inventory",
-    "folder": "Inventory",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5512,7 +5508,7 @@
     "name": "SetLocale",
     "value": "setLocale",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5528,7 +5524,7 @@
         "example": [
           {
             "action": "setLocale",
-            "locale": "de-DE"
+            "locale": "en-US"
           }
         ],
         "description": "Array of actions"
@@ -5539,15 +5535,15 @@
         "name": "locale",
         "type": "string",
         "required": false,
-        "example": "de-DE",
+        "example": "en-US",
         "description": "Locale"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "post Reviews",
+    "folder": "Reviews",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -5706,7 +5702,7 @@
     "name": "SetTitle",
     "value": "setTitle",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/customers/{{customer-id}}",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5722,7 +5718,7 @@
         "example": [
           {
             "action": "setTitle",
-            "title": "Dr"
+            "title": "reviewTitle"
           }
         ],
         "description": "Array of actions"
@@ -5733,15 +5729,15 @@
         "name": "title",
         "type": "string",
         "required": false,
-        "example": "Dr",
+        "example": "reviewTitle",
         "description": "Title"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Simultaneously updating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.",
-    "folder": "Customers",
+    "description": "post Reviews",
+    "folder": "Reviews",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -6578,7 +6574,7 @@
     "name": "AddLineItem",
     "value": "addLineItem",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -6595,30 +6591,8 @@
           {
             "action": "addLineItem",
             "productId": "placeholder",
-            "variantId": 2,
-            "quantity": 1,
-            "supplyChannel": {
-              "typeId": "channel",
-              "id": "placeholder"
-            },
-            "distributionChannel": {
-              "typeId": "channel",
-              "id": "placeholder"
-            },
-            "externalTaxRate": {
-              "name": "StandardExternalTaxRate",
-              "amount": 0.19,
-              "country": "DE",
-              "state": "Bavaria"
-            },
-            "shippingDetails": {
-              "targets": [
-                {
-                  "addressKey": "AddressKeyStringFromAddress",
-                  "quantity": 2
-                }
-              ]
-            }
+            "variantId": 1,
+            "quantity": 2
           }
         ],
         "description": "Array of actions"
@@ -6636,68 +6610,22 @@
         "name": "variantId",
         "type": "number",
         "required": false,
-        "example": 2,
+        "example": 1,
         "description": "Variant Id"
       },
       {
         "name": "quantity",
         "type": "number",
         "required": false,
-        "example": 1,
+        "example": 2,
         "description": "Quantity"
-      },
-      {
-        "name": "supplyChannel",
-        "type": "json",
-        "required": false,
-        "example": {
-          "typeId": "channel",
-          "id": "placeholder"
-        },
-        "description": "Supply Channel"
-      },
-      {
-        "name": "distributionChannel",
-        "type": "json",
-        "required": false,
-        "example": {
-          "typeId": "channel",
-          "id": "placeholder"
-        },
-        "description": "Distribution Channel"
-      },
-      {
-        "name": "externalTaxRate",
-        "type": "json",
-        "required": false,
-        "example": {
-          "name": "StandardExternalTaxRate",
-          "amount": 0.19,
-          "country": "DE",
-          "state": "Bavaria"
-        },
-        "description": "External Tax Rate"
-      },
-      {
-        "name": "shippingDetails",
-        "type": "json",
-        "required": false,
-        "example": {
-          "targets": [
-            {
-              "addressKey": "AddressKeyStringFromAddress",
-              "quantity": 2
-            }
-          ]
-        },
-        "description": "Shipping Details"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Cart in the Project using one or more [update actions](/../api/projects/carts#update-actions).",
-    "folder": "Carts",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -7252,7 +7180,7 @@
     "name": "ChangeLineItemQuantity",
     "value": "changeLineItemQuantity",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -7269,7 +7197,7 @@
           {
             "action": "changeLineItemQuantity",
             "lineItemId": "placeholder",
-            "quantity": 1
+            "quantity": 8
           }
         ],
         "description": "Array of actions"
@@ -7287,15 +7215,15 @@
         "name": "quantity",
         "type": "number",
         "required": false,
-        "example": 1,
+        "example": 8,
         "description": "Quantity"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Cart in the Project using one or more [update actions](/../api/projects/carts#update-actions).",
-    "folder": "Carts",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -7306,7 +7234,7 @@
     "name": "ChangeLineItemsOrder",
     "value": "changeLineItemsOrder",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -7346,8 +7274,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Cart in the Project using one or more [update actions](/../api/projects/carts#update-actions).",
-    "folder": "Carts",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -7815,7 +7743,7 @@
     "name": "RemoveLineItem",
     "value": "removeLineItem",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -7832,19 +7760,7 @@
           {
             "action": "removeLineItem",
             "lineItemId": "placeholder",
-            "quantity": 1,
-            "externalPrice": {
-              "currencyCode": "EUR",
-              "centAmount": 4000
-            },
-            "shippingDetailsToRemove": {
-              "targets": [
-                {
-                  "addressKey": "AddressKeyStringFromAddress",
-                  "quantity": 2
-                }
-              ]
-            }
+            "quantity": 2
           }
         ],
         "description": "Array of actions"
@@ -7862,39 +7778,15 @@
         "name": "quantity",
         "type": "number",
         "required": false,
-        "example": 1,
+        "example": 2,
         "description": "Quantity"
-      },
-      {
-        "name": "externalPrice",
-        "type": "json",
-        "required": false,
-        "example": {
-          "currencyCode": "EUR",
-          "centAmount": 4000
-        },
-        "description": "External Price"
-      },
-      {
-        "name": "shippingDetailsToRemove",
-        "type": "json",
-        "required": false,
-        "example": {
-          "targets": [
-            {
-              "addressKey": "AddressKeyStringFromAddress",
-              "quantity": 2
-            }
-          ]
-        },
-        "description": "Shipping Details To Remove"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Cart in the Project using one or more [update actions](/../api/projects/carts#update-actions).",
-    "folder": "Carts",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -8003,7 +7895,7 @@
     "name": "SetAnonymousId",
     "value": "setAnonymousId",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -8019,7 +7911,7 @@
         "example": [
           {
             "action": "setAnonymousId",
-            "anonymousId": "idString"
+            "anonymousId": "anonymousId"
           }
         ],
         "description": "Array of actions"
@@ -8030,15 +7922,15 @@
         "name": "anonymousId",
         "type": "string",
         "required": false,
-        "example": "idString",
+        "example": "anonymousId",
         "description": "Anonymous Id"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Cart in the Project using one or more [update actions](/../api/projects/carts#update-actions).",
-    "folder": "Carts",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -8263,7 +8155,7 @@
     "name": "SetBusinessUnit",
     "value": "setBusinessUnit",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -8303,8 +8195,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -8985,7 +8877,7 @@
     "name": "SetDeleteDaysAfterLastModification",
     "value": "setDeleteDaysAfterLastModification",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -9001,7 +8893,7 @@
         "example": [
           {
             "action": "setDeleteDaysAfterLastModification",
-            "deleteDaysAfterLastModification": 90
+            "deleteDaysAfterLastModification": 10
           }
         ],
         "description": "Array of actions"
@@ -9012,15 +8904,15 @@
         "name": "deleteDaysAfterLastModification",
         "type": "number",
         "required": false,
-        "example": 90,
+        "example": 10,
         "description": "Delete Days After Last Modification"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Cart in the Project using one or more [update actions](/../api/projects/carts#update-actions).",
-    "folder": "Carts",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -9233,7 +9125,7 @@
     "name": "SetLineItemCustomField",
     "value": "setLineItemCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -9283,8 +9175,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -9295,7 +9187,7 @@
     "name": "SetLineItemCustomType",
     "value": "setLineItemCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -9355,8 +9247,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -13508,7 +13400,7 @@
     "name": "SetStore",
     "value": "setStore",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/orders/{{order-id}}",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -13548,8 +13440,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates an Order in the Project using one or more [update actions](/../api/projects/orders#update-actions).",
-    "folder": "Orders",
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -15784,7 +15676,7 @@
     "name": "ChangeKey",
     "value": "changeKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -15800,7 +15692,7 @@
         "example": [
           {
             "action": "changeKey",
-            "key": "my-updated-key"
+            "key": "NewKey"
           }
         ],
         "description": "Array of actions"
@@ -15811,15 +15703,15 @@
         "name": "key",
         "type": "string",
         "required": false,
-        "example": "my-updated-key",
+        "example": "NewKey",
         "description": "Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post Channels",
-    "folder": "Channels",
+    "description": "post Types",
+    "folder": "Types",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -17184,6 +17076,2422 @@
     ],
     "description": "post Inventory",
     "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getReviewByKey": {
+    "name": "Get Review by Key",
+    "value": "getReviewByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/reviews/key={{review-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "review-key"
+  },
+  "checkIfReviewExistsByKey": {
+    "name": "Check if Review exists by Key",
+    "value": "checkIfReviewExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/reviews/key={{review-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Review exists with the provided `key`. Returns a `200` status if the Review exists, or a `404` status otherwise.",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "review-key"
+  },
+  "updateReviewByKey": {
+    "name": "Update Review by Key",
+    "value": "updateReviewByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews/key={{review-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAuthorName",
+            "authorName": "John Doe"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "authorName",
+        "type": "string",
+        "required": false,
+        "example": "John Doe",
+        "description": "Author Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "review-key"
+  },
+  "deleteReviewByKey": {
+    "name": "Delete Review by Key",
+    "value": "deleteReviewByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/reviews/key={{review-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "review-key"
+  },
+  "getReviewById": {
+    "name": "Get Review by ID",
+    "value": "getReviewById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfReviewExistsById": {
+    "name": "Check if Review exists by ID",
+    "value": "checkIfReviewExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Review exists with the provided `id`. Returns a `200` status if the Review exists, or a `404` status otherwise.",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateReviewById": {
+    "name": "Update Review by ID",
+    "value": "updateReviewById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAuthorName",
+            "authorName": "John Doe"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "authorName",
+        "type": "string",
+        "required": false,
+        "example": "John Doe",
+        "description": "Author Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteReviewById": {
+    "name": "Delete Review by ID",
+    "value": "deleteReviewById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryReviews": {
+    "name": "Query Reviews",
+    "value": "queryReviews",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/reviews",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfReviewExistsByQueryPredicate": {
+    "name": "Check if Review exists by Query Predicate",
+    "value": "checkIfReviewExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/reviews",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Reviews exist for the provided query predicate. Returns a `200` status if any Reviews match the query predicate, or a `404` status otherwise.",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createReview": {
+    "name": "Create Review",
+    "value": "createReview",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews",
+    "bodyFields": [
+      {
+        "name": "authorName",
+        "type": "string",
+        "required": true,
+        "example": "John Doe",
+        "description": "Author Name"
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "example": "Incredible",
+        "description": "Title"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": true,
+        "example": "Best product ever",
+        "description": "Text"
+      },
+      {
+        "name": "rating",
+        "type": "number",
+        "required": true,
+        "example": 5,
+        "description": "Rating"
+      },
+      {
+        "name": "target.typeId",
+        "type": "string",
+        "required": false,
+        "example": "product",
+        "description": "Target › type Id"
+      },
+      {
+        "name": "target.id",
+        "type": "string",
+        "required": false,
+        "example": "8fddacac-6ef5-4e66-af6e-124452123456",
+        "description": "Target › id"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Reviews",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "setAuthorName": {
+    "name": "SetAuthorName",
+    "value": "setAuthorName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setAuthorName",
+            "authorName": "myAuthorName"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "authorName",
+        "type": "string",
+        "required": false,
+        "example": "myAuthorName",
+        "description": "Author Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Reviews",
+    "folder": "Reviews",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setCustomer": {
+    "name": "SetCustomer",
+    "value": "setCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCustomer",
+            "customer": {
+              "typeId": "customer",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customer",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "customer",
+          "id": "placeholder"
+        },
+        "description": "Customer"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setRating": {
+    "name": "SetRating",
+    "value": "setRating",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setRating",
+            "rating": 60
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "rating",
+        "type": "number",
+        "required": false,
+        "example": 60,
+        "description": "Rating"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Reviews",
+    "folder": "Reviews",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setTarget": {
+    "name": "SetTarget",
+    "value": "setTarget",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTarget",
+            "target": {
+              "typeId": "product",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "target",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product",
+          "id": "placeholder"
+        },
+        "description": "Target"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Reviews",
+    "folder": "Reviews",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setText": {
+    "name": "SetText",
+    "value": "setText",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/reviews/{{review-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setText",
+            "text": "reviewText"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "text",
+        "type": "string",
+        "required": false,
+        "example": "reviewText",
+        "description": "Text"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Reviews",
+    "folder": "Reviews",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getShoppingListByKey": {
+    "name": "Get ShoppingList by Key",
+    "value": "getShoppingListByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/shopping-lists/key={{shopping-list-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a ShoppingList with the provided `key`.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "shopping-list-key"
+  },
+  "checkIfShoppingListExistsByKey": {
+    "name": "Check if ShoppingList exists by Key",
+    "value": "checkIfShoppingListExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/shopping-lists/key={{shopping-list-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a ShoppingList exists with the provided `key`. Returns a `200` status if the ShoppingList exists, or a `404` status otherwise.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "shopping-list-key"
+  },
+  "updateShoppingListByKey": {
+    "name": "Update ShoppingList by Key",
+    "value": "updateShoppingListByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/key={{shopping-list-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "shopping-list-key"
+  },
+  "deleteShoppingListByKey": {
+    "name": "Delete ShoppingList by Key",
+    "value": "deleteShoppingListByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/shopping-lists/key={{shopping-list-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "dataErasure",
+      "version"
+    ],
+    "description": "Deletes a ShoppingList in the Project.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "shopping-list-key"
+  },
+  "getShoppingListById": {
+    "name": "Get ShoppingList by ID",
+    "value": "getShoppingListById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a ShoppingList with the provided `id`.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfShoppingListExistsById": {
+    "name": "Check if ShoppingList exists by ID",
+    "value": "checkIfShoppingListExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a ShoppingList exists with the provided `id`. Returns a `200` status if the ShoppingList exists, or a `404` status otherwise.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateShoppingListById": {
+    "name": "Update ShoppingList by ID",
+    "value": "updateShoppingListById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteShoppingListById": {
+    "name": "Delete ShoppingList by ID",
+    "value": "deleteShoppingListById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "dataErasure",
+      "version"
+    ],
+    "description": "Deletes a ShoppingList in the Project.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryShoppingLists": {
+    "name": "Query ShoppingLists",
+    "value": "queryShoppingLists",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/shopping-lists",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Retrieves ShoppingLists in the Project.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfShoppingListExistsByQueryPredicate": {
+    "name": "Check if ShoppingList exists by Query Predicate",
+    "value": "checkIfShoppingListExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/shopping-lists",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more ShoppingLists exist for the provided query predicate. Returns a `200` status if any ShoppingLists match the query predicate, or a `404` status otherwise.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createShoppingList": {
+    "name": "Create ShoppingList",
+    "value": "createShoppingList",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists",
+    "bodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "My shopping list"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "slug",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "my-shopping-list"
+        },
+        "description": "Slug"
+      },
+      {
+        "name": "customer.typeId",
+        "type": "string",
+        "required": false,
+        "example": "customer",
+        "description": "Customer › type Id"
+      },
+      {
+        "name": "customer.id",
+        "type": "string",
+        "required": false,
+        "example": "e73cd97f-846e-44a0-b418-3ed044a8e398",
+        "description": "Customer › id"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "my-shopping-list",
+        "description": "Key"
+      },
+      {
+        "name": "deleteDaysAfterLastModification",
+        "type": "number",
+        "required": true,
+        "example": 100,
+        "description": "Delete Days After Last Modification"
+      },
+      {
+        "name": "lineItems",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "sku": "product-variant-sku",
+            "quantity": 5
+          },
+          {
+            "productId": "0e131f46-8d1a-4761-9c83-b45ab5d3501e",
+            "variantId": 2
+          }
+        ],
+        "description": "Array of lineItems"
+      },
+      {
+        "name": "textLineItems",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "name": {
+              "en": "My shopping list item"
+            },
+            "description": {
+              "en": "This is a good gift idea"
+            },
+            "quantity": 5
+          }
+        ],
+        "description": "Array of textLineItems"
+      },
+      {
+        "name": "businessUnit.key",
+        "type": "string",
+        "required": false,
+        "example": "bu-345-france",
+        "description": "Business Unit › key"
+      },
+      {
+        "name": "businessUnit.typeId",
+        "type": "string",
+        "required": false,
+        "example": "business-unit",
+        "description": "Business Unit › type Id"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Create a ShoppingList in the Project.",
+    "folder": "Shopping-lists",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addTextLineItem": {
+    "name": "AddTextLineItem",
+    "value": "addTextLineItem",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addTextLineItem",
+            "name": {
+              "de": "German name for text line item",
+              "en": "English name for text line item"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "German name for text line item",
+          "en": "English name for text line item"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeTextLineItemName": {
+    "name": "ChangeTextLineItemName",
+    "value": "changeTextLineItemName",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeTextLineItemName",
+            "textLineItemId": "placeholder",
+            "name": {
+              "de": "New German text line item name",
+              "en": "New English text line item name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Text Line Item Id"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "New German text line item name",
+          "en": "New English text line item name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeTextLineItemQuantity": {
+    "name": "ChangeTextLineItemQuantity",
+    "value": "changeTextLineItemQuantity",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeTextLineItemQuantity",
+            "textLineItemId": "placeholder",
+            "quantity": 1
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Text Line Item Id"
+      },
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeTextLineItemsOrder": {
+    "name": "ChangeTextLineItemsOrder",
+    "value": "changeTextLineItemsOrder",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeTextLineItemsOrder",
+            "textLineItemOrder": [
+              "{{lineItemId2}}",
+              "{{lineItemId}}"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemOrder",
+        "type": "json",
+        "required": false,
+        "example": [
+          "{{lineItemId2}}",
+          "{{lineItemId}}"
+        ],
+        "description": "Text Line Item Order"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeTextLineItem": {
+    "name": "RemoveTextLineItem",
+    "value": "removeTextLineItem",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeTextLineItem",
+            "textLineItemId": "placeholder",
+            "quantity": 1
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Text Line Item Id"
+      },
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setSlug": {
+    "name": "SetSlug",
+    "value": "setSlug",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSlug",
+            "slug": {
+              "en": "en-slug",
+              "de": "de-slug"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "slug",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "en-slug",
+          "de": "de-slug"
+        },
+        "description": "Slug"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setTextLineItemCustomField": {
+    "name": "SetTextLineItemCustomField",
+    "value": "setTextLineItemCustomField",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTextLineItemCustomField",
+            "textLineItemId": "placeholder",
+            "name": "exampleStringField",
+            "value": "TextString"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Text Line Item Id"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "exampleStringField",
+        "description": "Name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "example": "TextString",
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setTextLineItemCustomType": {
+    "name": "SetTextLineItemCustomType",
+    "value": "setTextLineItemCustomType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTextLineItemCustomType",
+            "textLineItemId": "placeholder",
+            "type": {
+              "id": "placeholder",
+              "typeId": "type"
+            },
+            "fields": {
+              "exampleStringField": "TextString"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Text Line Item Id"
+      },
+      {
+        "name": "type",
+        "type": "json",
+        "required": false,
+        "example": {
+          "id": "placeholder",
+          "typeId": "type"
+        },
+        "description": "Type"
+      },
+      {
+        "name": "fields",
+        "type": "json",
+        "required": false,
+        "example": {
+          "exampleStringField": "TextString"
+        },
+        "description": "Fields"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setTextLineItemDescription": {
+    "name": "SetTextLineItemDescription",
+    "value": "setTextLineItemDescription",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTextLineItemDescription",
+            "textLineItemId": "placeholder",
+            "description": {
+              "en": "New description",
+              "de": "Neue Beschreibung"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "textLineItemId",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Text Line Item Id"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New description",
+          "de": "Neue Beschreibung"
+        },
+        "description": "Description"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
+    "folder": "Shopping-lists",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getTypeByKey": {
+    "name": "Get Type by Key",
+    "value": "getTypeByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/types/key={{type-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "type-key"
+  },
+  "checkIfTypeExistsByKey": {
+    "name": "Check if Type exists by Key",
+    "value": "checkIfTypeExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/types/key={{type-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Type exists with the provided `key`. Returns a `200` status if the Type exists, or a `404` status otherwise.",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "type-key"
+  },
+  "updateTypeByKey": {
+    "name": "Update Type by Key",
+    "value": "updateTypeByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/key={{type-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "type-key"
+  },
+  "deleteTypeByKey": {
+    "name": "Delete Type by Key",
+    "value": "deleteTypeByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/types/key={{type-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "type-key"
+  },
+  "getTypeById": {
+    "name": "Get Type by ID",
+    "value": "getTypeById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfTypeExistsById": {
+    "name": "Check if Type exists by ID",
+    "value": "checkIfTypeExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Type exists with the provided `id`. Returns a `200` status if the Type exists, or a `404` status otherwise.",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateTypeById": {
+    "name": "Update Type by ID",
+    "value": "updateTypeById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteTypeById": {
+    "name": "Delete Type by ID",
+    "value": "deleteTypeById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryTypes": {
+    "name": "Query Types",
+    "value": "queryTypes",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/types",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfTypeExistsByQueryPredicate": {
+    "name": "Check if Type exists by Query Predicate",
+    "value": "checkIfTypeExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/types",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Types exist for the provided query predicate. Returns a `200` status if any Types match the query predicate, or a `404` status otherwise.",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createType": {
+    "name": "Create Type",
+    "value": "createType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "line-item-string-field",
+        "description": "Key"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "String Custom Field on Line Items"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "This adds a Custom Field on Line Items, which can hold any string value."
+        },
+        "description": "Description"
+      },
+      {
+        "name": "resourceTypeIds",
+        "type": "json",
+        "required": false,
+        "example": [
+          "line-item"
+        ],
+        "description": "Array of resourceTypeIds"
+      },
+      {
+        "name": "fieldDefinitions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "name": "exampleStringField",
+            "label": {
+              "en": "Example string field."
+            },
+            "required": false,
+            "type": {
+              "name": "String"
+            },
+            "inputHint": "SingleLine"
+          }
+        ],
+        "description": "Array of fieldDefinitions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Types",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addEnumValue": {
+    "name": "AddEnumValue",
+    "value": "addEnumValue",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addEnumValue",
+            "fieldName": "exampleEnumField",
+            "value": {
+              "key": "NewENumKey",
+              "label": "NewENumLabel"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "NewENumKey",
+          "label": "NewENumLabel"
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "addFieldDefinition": {
+    "name": "AddFieldDefinition",
+    "value": "addFieldDefinition",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addFieldDefinition",
+            "fieldDefinition": {
+              "type": {
+                "name": "LocalizedString"
+              },
+              "name": "fieldDefinitionName",
+              "label": {
+                "de": "labelDE",
+                "en": "labelEN"
+              },
+              "required": false,
+              "inputHint": "MultiLine"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldDefinition",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": {
+            "name": "LocalizedString"
+          },
+          "name": "fieldDefinitionName",
+          "label": {
+            "de": "labelDE",
+            "en": "labelEN"
+          },
+          "required": false,
+          "inputHint": "MultiLine"
+        },
+        "description": "Field Definition"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "addLocalizedEnumValue": {
+    "name": "AddLocalizedEnumValue",
+    "value": "addLocalizedEnumValue",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addLocalizedEnumValue",
+            "fieldName": "exampleLocalizedEnumField",
+            "value": {
+              "key": "NewLocalizedEnumKeyString",
+              "label": {
+                "en": "NewLocalizedEnumLabelEN",
+                "de": "NewLocalizedEnumLabelDE"
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleLocalizedEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "NewLocalizedEnumKeyString",
+          "label": {
+            "en": "NewLocalizedEnumLabelEN",
+            "de": "NewLocalizedEnumLabelDE"
+          }
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeEnumValueLabel": {
+    "name": "ChangeEnumValueLabel",
+    "value": "changeEnumValueLabel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeEnumValueLabel",
+            "fieldName": "exampleEnumField",
+            "value": {
+              "key": "NewENumKey",
+              "label": "New value"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "NewENumKey",
+          "label": "New value"
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeEnumValueOrder": {
+    "name": "ChangeEnumValueOrder",
+    "value": "changeEnumValueOrder",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeEnumValueOrder",
+            "fieldName": "exampleEnumField",
+            "keys": [
+              "enum3",
+              "enum4",
+              "enum2",
+              "enum1"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "keys",
+        "type": "json",
+        "required": false,
+        "example": [
+          "enum3",
+          "enum4",
+          "enum2",
+          "enum1"
+        ],
+        "description": "Keys"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeFieldDefinitionOrder": {
+    "name": "ChangeFieldDefinitionOrder",
+    "value": "changeFieldDefinitionOrder",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeFieldDefinitionOrder",
+            "fieldNames": [
+              "exampleEnumField",
+              "exampleLocalizedEnumField",
+              "exampleStringField"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldNames",
+        "type": "json",
+        "required": false,
+        "example": [
+          "exampleEnumField",
+          "exampleLocalizedEnumField",
+          "exampleStringField"
+        ],
+        "description": "Field Names"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeInputHint": {
+    "name": "ChangeInputHint",
+    "value": "changeInputHint",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeInputHint",
+            "fieldName": "exampleBooleanField",
+            "inputHint": "MultiLine"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleBooleanField",
+        "description": "Field Name"
+      },
+      {
+        "name": "inputHint",
+        "type": "string",
+        "required": false,
+        "example": "MultiLine",
+        "description": "Input Hint"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeLabel": {
+    "name": "ChangeLabel",
+    "value": "changeLabel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeLabel",
+            "fieldName": "exampleStringField",
+            "label": {
+              "de": "NewLabelDE",
+              "en": "NewLabelEN"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleStringField",
+        "description": "Field Name"
+      },
+      {
+        "name": "label",
+        "type": "json",
+        "required": false,
+        "example": {
+          "de": "NewLabelDE",
+          "en": "NewLabelEN"
+        },
+        "description": "Label"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeLocalizedEnumValueLabel": {
+    "name": "ChangeLocalizedEnumValueLabel",
+    "value": "changeLocalizedEnumValueLabel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeLocalizedEnumValueLabel",
+            "fieldName": "exampleLocalizedEnumField",
+            "value": {
+              "key": "NewLocalizedEnumKeyString",
+              "label": {
+                "en": "NewLocalizedEnumLabelEN",
+                "de": "NewLocalizedEnumLabelDE"
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleLocalizedEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "NewLocalizedEnumKeyString",
+          "label": {
+            "en": "NewLocalizedEnumLabelEN",
+            "de": "NewLocalizedEnumLabelDE"
+          }
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeLocalizedEnumValueOrder": {
+    "name": "ChangeLocalizedEnumValueOrder",
+    "value": "changeLocalizedEnumValueOrder",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeLocalizedEnumValueOrder",
+            "fieldName": "exampleLocalizedEnumField",
+            "keys": [
+              "lenum3",
+              "lenum4",
+              "lenum2",
+              "lenum1"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleLocalizedEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "keys",
+        "type": "json",
+        "required": false,
+        "example": [
+          "lenum3",
+          "lenum4",
+          "lenum2",
+          "lenum1"
+        ],
+        "description": "Keys"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeFieldDefinition": {
+    "name": "RemoveFieldDefinition",
+    "value": "removeFieldDefinition",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeFieldDefinition",
+            "fieldName": "fieldDefinitionName"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "fieldDefinitionName",
+        "description": "Field Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,

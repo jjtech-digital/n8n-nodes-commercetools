@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-03-19T15:19:46.841Z
+ * Generated at: 2026-03-24T07:39:59.005Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -188,6 +188,11 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Product Variant Tailoring Removed', value: 'ProductVariantTailoringRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggers when product variant tailoring removed occurs on a product.' },
     { name: 'Return Info Added', value: 'ReturnInfoAdded', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info added occurs on a order.' },
     { name: 'Return Info Set', value: 'ReturnInfoSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info set occurs on a order.' },
+    { name: 'Review Created', value: 'ReviewCreated', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review created occurs on a review.' },
+    { name: 'Review Rating Set', value: 'ReviewRatingSet', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review rating set occurs on a review.' },
+    { name: 'Review State Transition', value: 'ReviewStateTransition', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review state transition occurs on a review.' },
+    { name: 'Shopping List Line Item Added', value: 'ShoppingListLineItemAdded', resourceTypeId: 'shopping-list', subscriptionType: 'message', description: 'Triggers when shopping list line item added occurs on a shopping-list.' },
+    { name: 'Shopping List Line Item Removed', value: 'ShoppingListLineItemRemoved', resourceTypeId: 'shopping-list', subscriptionType: 'message', description: 'Triggers when shopping list line item removed occurs on a shopping-list.' },
 ];
 
 export const triggerProperties: INodeProperties[] = [

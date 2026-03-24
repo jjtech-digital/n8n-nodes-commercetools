@@ -839,6 +839,31 @@
       "value": "ReturnInfoSet",
       "resourceTypeId": "order",
       "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewCreated",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewRatingSet",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewStateTransition",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ShoppingListLineItemAdded",
+      "resourceTypeId": "shopping-list",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ShoppingListLineItemRemoved",
+      "resourceTypeId": "shopping-list",
+      "subscriptionType": "message"
     }
   ],
   "messageResourceTypeIds": [
@@ -909,7 +934,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 168,
+    "totalMessages": 173,
     "unmapped": 0,
     "unclassified": 0
   },
