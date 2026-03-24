@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-03-17T10:35:17.993Z
+ * Generated at: 2026-03-24T07:48:55.933Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -20,6 +20,13 @@ export type SubscriptionEvent = {
 // ─── Generated event list ─────────────────────────────────────────────────────
 
 export const subscriptionEvents: SubscriptionEvent[] = [
+    { name: 'Associate Role Buyer Assignable Changed', value: 'AssociateRoleBuyerAssignableChanged', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role buyer assignable changed occurs on a associate-role.' },
+    { name: 'Associate Role Created', value: 'AssociateRoleCreated', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role created occurs on a associate-role.' },
+    { name: 'Associate Role Deleted', value: 'AssociateRoleDeleted', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role deleted occurs on a associate-role.' },
+    { name: 'Associate Role Name Set', value: 'AssociateRoleNameSet', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role name set occurs on a associate-role.' },
+    { name: 'Associate Role Permission Added', value: 'AssociateRolePermissionAdded', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role permission added occurs on a associate-role.' },
+    { name: 'Associate Role Permission Removed', value: 'AssociateRolePermissionRemoved', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role permission removed occurs on a associate-role.' },
+    { name: 'Associate Role Permissions Set', value: 'AssociateRolePermissionsSet', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role permissions set occurs on a associate-role.' },
     { name: 'Business Unit Address Added', value: 'BusinessUnitAddressAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address added occurs on a business-unit.' },
     { name: 'Business Unit Address Changed', value: 'BusinessUnitAddressChanged', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address changed occurs on a business-unit.' },
     { name: 'Business Unit Address Custom Field Added', value: 'BusinessUnitAddressCustomFieldAdded', resourceTypeId: 'business-unit', subscriptionType: 'message', description: 'Triggers when business unit address custom field added occurs on a business-unit.' },
@@ -106,6 +113,9 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Delivery Custom Type Set', value: 'DeliveryCustomTypeSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery custom type set occurs on a order.' },
     { name: 'Delivery Items Updated', value: 'DeliveryItemsUpdated', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery items updated occurs on a order.' },
     { name: 'Delivery Removed', value: 'DeliveryRemoved', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery removed occurs on a order.' },
+    { name: 'Inventory Entry Created', value: 'InventoryEntryCreated', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry created occurs on a inventory-entry.' },
+    { name: 'Inventory Entry Deleted', value: 'InventoryEntryDeleted', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry deleted occurs on a inventory-entry.' },
+    { name: 'Inventory Entry Quantity Set', value: 'InventoryEntryQuantitySet', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry quantity set occurs on a inventory-entry.' },
     { name: 'Line Item State Transition', value: 'LineItemStateTransition', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when line item state transition occurs on a order.' },
     { name: 'Order Billing Address Set', value: 'OrderBillingAddressSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when order billing address set occurs on a order.' },
     { name: 'Order Business Unit Set', value: 'OrderBusinessUnitSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when order business unit set occurs on a order.' },
@@ -178,6 +188,11 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Product Variant Tailoring Removed', value: 'ProductVariantTailoringRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggers when product variant tailoring removed occurs on a product.' },
     { name: 'Return Info Added', value: 'ReturnInfoAdded', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info added occurs on a order.' },
     { name: 'Return Info Set', value: 'ReturnInfoSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info set occurs on a order.' },
+    { name: 'Review Created', value: 'ReviewCreated', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review created occurs on a review.' },
+    { name: 'Review Rating Set', value: 'ReviewRatingSet', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review rating set occurs on a review.' },
+    { name: 'Review State Transition', value: 'ReviewStateTransition', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review state transition occurs on a review.' },
+    { name: 'Shopping List Line Item Added', value: 'ShoppingListLineItemAdded', resourceTypeId: 'shopping-list', subscriptionType: 'message', description: 'Triggers when shopping list line item added occurs on a shopping-list.' },
+    { name: 'Shopping List Line Item Removed', value: 'ShoppingListLineItemRemoved', resourceTypeId: 'shopping-list', subscriptionType: 'message', description: 'Triggers when shopping list line item removed occurs on a shopping-list.' },
 ];
 
 export const triggerProperties: INodeProperties[] = [

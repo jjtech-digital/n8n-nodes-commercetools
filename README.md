@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, and Associate Roles
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, and Types
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -64,7 +64,11 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Business Unit** | Create, Get by ID, Get by Key, Query, Search, Update, Delete, HEAD checks |
 | **Category**      | Create, Get by ID, Get by Key, Query, Update, Delete, Search, Get by Slug, HEAD checks |
 | **Channel**       | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
-| **Associate Role** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Associate Role**| Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Inventory**     | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Review**        | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Shopping List** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Type**          | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 
 #### How field generation works
 
@@ -150,6 +154,14 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Channel** — no message triggers (change subscriptions only)
 
 **Associate Role** — created, deleted, name set, buyer assignable changed, permission added, permission removed, permissions set
+
+**Inventory** — entry created, entry deleted, entry quantity set
+
+**Reviews** — created, rating set, state transition
+
+**Shopping List** — line item added, line item removed
+
+**Types** — no message triggers
 
 #### Subscription routing
 
@@ -308,7 +320,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role]
+│     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -358,10 +370,12 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
-| v1.0.2  | Added missing triggers node to Package JSON.                                                     |
-| v1.0.1  | Automated the Node resources, properties and trigger properties creation.                        |
-| v0.1.35 | Improve GCP authentication by using JWT client for access token management                       |
-| v0.1.34 | Fix: GCP Credential service handling                                                             |
+| v1.0.6  | Added Reviews and Shopping Lists.                                                                |
+| v1.0.5  | Added Inventory feature.                                                                         |
+| v1.0.4  | Added Channels and Associate Roles.                                                              |
+| v1.0.3  | Added Business Units and Categories.                                                             |
+
+
 
 ---
 

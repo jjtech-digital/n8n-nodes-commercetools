@@ -1,6 +1,41 @@
 {
   "events": [
     {
+      "value": "AssociateRoleBuyerAssignableChanged",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleCreated",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleDeleted",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleNameSet",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionAdded",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionRemoved",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionsSet",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
       "value": "BusinessUnitAddressAdded",
       "resourceTypeId": "business-unit",
       "subscriptionType": "message"
@@ -431,6 +466,21 @@
       "subscriptionType": "message"
     },
     {
+      "value": "InventoryEntryCreated",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryDeleted",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryQuantitySet",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
       "value": "LineItemStateTransition",
       "resourceTypeId": "order",
       "subscriptionType": "message"
@@ -789,6 +839,31 @@
       "value": "ReturnInfoSet",
       "resourceTypeId": "order",
       "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewCreated",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewRatingSet",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewStateTransition",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ShoppingListLineItemAdded",
+      "resourceTypeId": "shopping-list",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ShoppingListLineItemRemoved",
+      "resourceTypeId": "shopping-list",
+      "subscriptionType": "message"
     }
   ],
   "messageResourceTypeIds": [
@@ -859,7 +934,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 158,
+    "totalMessages": 173,
     "unmapped": 0,
     "unclassified": 0
   },
