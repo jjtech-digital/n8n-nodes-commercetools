@@ -80,6 +80,16 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		.replace(/\{\{project-key\}\}/g, projectKey)
 		.replace(/\{\{projectKey\}\}/g, projectKey);
 
+	// ── Custom Object — container/key path params ─────────────────────────────
+	if (
+		operation === 'getCustomObjectByContainerAndKey' ||
+		operation === 'deleteCustomObjectByContainerAndKey'
+	) {
+		const container = safeGet<string>(this, 'container', i, '');
+		const key = safeGet<string>(this, 'resourceKey', i, '');
+		urlPath = urlPath.replace(/\{\{container\}\}/g, container).replace(/\{\{key\}\}/g, key);
+	}
+
 	if (opDef.requiresId) {
 		// ── Secondary ID — substitute first before any branch touches remaining {{...-id}} tokens ──
 		// Handles sub-resource URLs like:
@@ -141,7 +151,7 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 	const queryParams: Record<string, string> = {};
 
-	if (opDef.method === 'DELETE') {
+	if (opDef.method === 'DELETE' && operation !== 'deleteCustomObjectByContainerAndKey') {
 		queryParams.version = String(safeGet<number>(this, 'version', i, 1));
 	}
 
@@ -389,6 +399,7 @@ async function executeImageUpload(
 // ─── isMainUpdateOp ───────────────────────────────────────────────────────────
 
 function isMainUpdateOp(op: ParsedOperation): boolean {
+	if (op.value === 'createOrUpdateCustomObject') return false;
 	if (op.isUpdateAction) return false;
 	if (op.isSearch || /\/search$/.test(op.urlTemplate)) return false;
 	if (op.isImageUpload || /\/images$/.test(op.urlTemplate)) return false;

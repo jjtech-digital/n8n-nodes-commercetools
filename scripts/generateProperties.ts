@@ -187,6 +187,29 @@ export function generateIdFields(
 			});
 		}
 
+		// ── Custom Object — container/key path params ─────────────────
+		const customObjectOps = topLevelOps
+			.filter((op) => op.urlTemplate.includes('{{container}}'))
+			.map((op) => op.value);
+		if (customObjectOps.length > 0) {
+			props.push({
+				displayName: 'Container',
+				name: 'container',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: customObjectOps } },
+			});
+			props.push({
+				displayName: 'Key',
+				name: 'resourceKey',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: customObjectOps } },
+			});
+		}
+
 		const customParamOps = topLevelOps.filter((op) => op.requiresId && op.pathParamName);
 		const byParamName = new Map<string, { label: string; opValues: string[] }>();
 		for (const op of customParamOps) {
