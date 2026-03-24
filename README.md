@@ -374,7 +374,7 @@ New API endpoints and fields appear in the node automatically without manual dev
 | v1.0.5  | Added Inventory feature.                                                                         |
 | v1.0.4  | Added Channels and Associate Roles.                                                              |
 | v1.0.3  | Added Business Units and Categories.                                                             |
-| v1.0.2  | Added missing triggers node to Package JSON.                                                     |
+
 
 
 ---
