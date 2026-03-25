@@ -87,7 +87,9 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 	) {
 		const container = safeGet<string>(this, 'container', i, '');
 		const key = safeGet<string>(this, 'resourceKey', i, '');
-		urlPath = urlPath.replace(/\{\{container\}\}/g, container).replace(/\{\{key\}\}/g, key);
+		urlPath = urlPath
+			.replace(/\{\{container\}\}/g, container)
+			.replace(/\{\{custom-object-key\}\}/g, key);
 	}
 
 	if (opDef.requiresId) {

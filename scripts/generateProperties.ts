@@ -200,13 +200,18 @@ export function generateIdFields(
 				required: true,
 				displayOptions: { show: { resource: [resourceValue], operation: customObjectOps } },
 			});
+		}
+		const customObjectKeyOps = topLevelOps
+			.filter((op) => op.urlTemplate.includes('{{custom-object-key}}'))
+			.map((op) => op.value);
+		if (customObjectKeyOps.length > 0) {
 			props.push({
 				displayName: 'Key',
 				name: 'resourceKey',
 				type: 'string',
 				default: '',
 				required: true,
-				displayOptions: { show: { resource: [resourceValue], operation: customObjectOps } },
+				displayOptions: { show: { resource: [resourceValue], operation: customObjectKeyOps } },
 			});
 		}
 
