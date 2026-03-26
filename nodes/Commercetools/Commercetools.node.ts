@@ -164,6 +164,13 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 				queryParams[k] = String(v);
 			}
 		}
+
+		// Read required query params rendered as dedicated visible fields
+		for (const paramName of opDef.queryParams) {
+			const fieldName = `reqParam__${operation}__${paramName}`;
+			const val = safeGet<string>(this, fieldName, i, '');
+			if (val !== '') queryParams[paramName] = val;
+		}
 	}
 
 	// ── Build request body ────────────────────────────────────────────────────

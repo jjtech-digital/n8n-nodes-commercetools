@@ -64,6 +64,7 @@ const FOLDERS_TO_GENERATE = [
 	'Custom-objects',
 	'Payments',
 	'Payment-methods',
+	'Shipping-methods',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -82,6 +83,7 @@ const RESOURCES_TO_GENERATE = [
 	'custom-object',
 	'payment',
 	'payment-method',
+	'shipping-method',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
