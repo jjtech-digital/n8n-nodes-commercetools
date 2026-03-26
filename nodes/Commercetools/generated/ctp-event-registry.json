@@ -1,0 +1,1033 @@
+{
+  "events": [
+    {
+      "value": "AssociateRoleBuyerAssignableChanged",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleCreated",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleDeleted",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRoleNameSet",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionAdded",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionRemoved",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "AssociateRolePermissionsSet",
+      "resourceTypeId": "associate-role",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomFieldAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomFieldChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomFieldRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomTypeRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressCustomTypeSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAddressRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitApprovalRuleModeChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateModeChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociateRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitAssociatesSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitBillingAddressAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitBillingAddressRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitContactEmailSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCreated",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomerGroupAssignmentAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomerGroupAssignmentRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomerGroupAssignmentsSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomFieldAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomFieldChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomFieldRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomTypeRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitCustomTypeSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitDefaultBillingAddressSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitDefaultShippingAddressSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitDeleted",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitNameChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitParentChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitShippingAddressAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitShippingAddressRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStatusChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoreAdded",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoreModeChanged",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoreRemoved",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitStoresSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitTopLevelUnitSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "BusinessUnitTypeSet",
+      "resourceTypeId": "business-unit",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CartFrozen",
+      "resourceTypeId": "cart",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "CartPurchaseOrderNumberSet",
+      "resourceTypeId": "cart",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "CartUnfrozen",
+      "resourceTypeId": "cart",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "CategoryCreated",
+      "resourceTypeId": "category",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CategorySlugChanged",
+      "resourceTypeId": "category",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressAdded",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressChanged",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressCustomFieldAdded",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressCustomFieldChanged",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressCustomFieldRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressCustomTypeRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressCustomTypeSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerAddressRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerBillingAddressAdded",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerBillingAddressRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCompanyNameSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCreated",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCustomFieldAdded",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCustomFieldChanged",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCustomFieldRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCustomTypeRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerCustomTypeSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerDateOfBirthSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerDefaultBillingAddressSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerDefaultShippingAddressSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerDeleted",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerEmailChanged",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerEmailVerified",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerExternalIdSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerFirstNameSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerLastNameSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerPasswordUpdated",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerShippingAddressAdded",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerShippingAddressRemoved",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerStoresSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerTitleSet",
+      "resourceTypeId": "customer",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomLineItemStateTransition",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryAddressSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryCustomFieldAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryCustomFieldChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryCustomFieldRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryCustomTypeRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryCustomTypeSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryItemsUpdated",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "DeliveryRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryCreated",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryDeleted",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "InventoryEntryQuantitySet",
+      "resourceTypeId": "inventory-entry",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "LineItemStateTransition",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderBillingAddressSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderBusinessUnitSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCreated",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCreatedFromRecurringOrder",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomerEmailSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomerGroupSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomerSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomFieldAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomFieldChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomFieldRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomLineItemAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomLineItemDiscountSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomLineItemQuantityChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomLineItemRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomTypeRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderCustomTypeSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderDeleted",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderDiscountCodeAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderDiscountCodeRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderDiscountCodeStateSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderImported",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderLineItemAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderLineItemDiscountSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderLineItemDistributionChannelSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderLineItemRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderPaymentAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderPaymentRemoved",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderPaymentStateChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderPurchaseOrderNumberSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderReturnShipmentStateChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderShipmentStateChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderShippingAddressSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderShippingInfoSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderShippingRateInputSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderStateChanged",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderStateTransition",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "OrderStoreSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ParcelAddedToDelivery",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ParcelItemsUpdated",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ParcelMeasurementsUpdated",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ParcelRemovedFromDelivery",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ParcelTrackingDataUpdated",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentCreated",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentInteractionAdded",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentInterfaceIdSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoCustomFieldAdded",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoCustomFieldChanged",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoCustomFieldRemoved",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoCustomTypeRemoved",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoCustomTypeSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoInterfaceAccountSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoInterfaceSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoMethodSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoNameSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentMethodInfoTokenSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentStatusInterfaceCodeSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentStatusStateTransition",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentTransactionAdded",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentTransactionInterfaceIdSet",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "PaymentTransactionStateChanged",
+      "resourceTypeId": "payment",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductAddedToCategory",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductCreated",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductDeleted",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductImageAdded",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceAdded",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceChanged",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceCustomFieldAdded",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceCustomFieldChanged",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceCustomFieldRemoved",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceCustomFieldsRemoved",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceCustomFieldsSet",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceDiscountsSet",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceExternalDiscountSet",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceKeySet",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceModeSet",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPriceRemoved",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPricesSet",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductPublished",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductRemovedFromCategory",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductRevertedStagedChanges",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSlugChanged",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductStateTransition",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductUnpublished",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductVariantAdded",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductVariantDeleted",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductVariantTailoringAdded",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductVariantTailoringRemoved",
+      "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReturnInfoAdded",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReturnInfoSet",
+      "resourceTypeId": "order",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewCreated",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewRatingSet",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ReviewStateTransition",
+      "resourceTypeId": "review",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ShoppingListLineItemAdded",
+      "resourceTypeId": "shopping-list",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ShoppingListLineItemRemoved",
+      "resourceTypeId": "shopping-list",
+      "subscriptionType": "message"
+    }
+  ],
+  "messageResourceTypeIds": [
+    "approval-flow",
+    "approval-rule",
+    "associate-role",
+    "business-unit",
+    "category",
+    "customer",
+    "customer-email-token",
+    "customer-group",
+    "customer-password-token",
+    "inventory-entry",
+    "order",
+    "payment",
+    "product",
+    "product-selection",
+    "product-tailoring",
+    "quote",
+    "quote-request",
+    "review",
+    "shopping-list",
+    "staged-quote",
+    "standalone-price",
+    "store"
+  ],
+  "changeResourceTypeIds": [
+    "approval-flow",
+    "approval-rule",
+    "associate-role",
+    "attribute-group",
+    "business-unit",
+    "cart",
+    "cart-discount",
+    "category",
+    "channel",
+    "customer",
+    "customer-email-token",
+    "customer-group",
+    "customer-password-token",
+    "discount-code",
+    "discount-group",
+    "extension",
+    "inventory-entry",
+    "key-value-document",
+    "order",
+    "order-edit",
+    "payment",
+    "product",
+    "product-discount",
+    "product-selection",
+    "product-tailoring",
+    "product-type",
+    "quote",
+    "quote-request",
+    "recurrence-policy",
+    "recurring-order",
+    "review",
+    "shipping-method",
+    "shopping-list",
+    "staged-quote",
+    "standalone-price",
+    "state",
+    "store",
+    "subscription",
+    "tax-category",
+    "type",
+    "zone"
+  ],
+  "stats": {
+    "totalMessages": 191,
+    "unmapped": 0,
+    "unclassified": 0
+  },
+  "unmapped": [],
+  "unclassified": []
+}
