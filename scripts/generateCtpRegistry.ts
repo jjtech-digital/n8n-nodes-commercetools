@@ -205,6 +205,7 @@ export function generateCtpEventRegistry(OUTPUT_DIR: string, options: GenerateOp
 		// ✅ FILTER HERE
 		.filter((e) => {
 			if (EXCLUDED_MESSAGES.has(e.value)) return false;
+			if (EXCLUDED_MESSAGES.has(e.value)) return false;
 			if (!allowed) return true;
 			return e.resourceTypeId && allowed.has(e.resourceTypeId);
 		});
