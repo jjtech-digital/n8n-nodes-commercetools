@@ -61,6 +61,10 @@ const FOLDERS_TO_GENERATE = [
 	'Reviews',
 	'Shopping-lists',
 	'Types',
+	'Custom-objects',
+	'Payments',
+	'Payment-methods',
+	'Shipping-methods',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -76,6 +80,10 @@ const RESOURCES_TO_GENERATE = [
 	'review',
 	'shopping-list',
 	'type',
+	'custom-object',
+	'payment',
+	'payment-method',
+	'shipping-method',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -112,9 +120,13 @@ function downloadFile(url: string, dest: string): Promise<void> {
 interface OperationPatch {
 	bodyFields?: BodyField[];
 	actionBodyFields?: BodyField[];
+	queryParams?: string[];
 }
 
 const MANUAL_PATCHES: Record<string, OperationPatch> = {
+	queryCustomObjects: {
+		queryParams: ['container', 'sort', 'where', 'expand', 'limit', 'offset', 'withTotal'],
+	},
 	changeAssociateMode: {
 		bodyFields: [
 			{
@@ -167,6 +179,10 @@ function applyManualPatches(operations: ParsedOperation[]): void {
 
 		if (patch.actionBodyFields !== undefined && op.actionBodyFields.length === 0) {
 			op.actionBodyFields = patch.actionBodyFields;
+		}
+
+		if (patch.queryParams !== undefined) {
+			op.queryParams = patch.queryParams;
 		}
 
 		//console.log(`  ✔ Patched missing fields for operation: ${op.value}`);

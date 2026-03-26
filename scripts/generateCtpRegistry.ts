@@ -164,7 +164,23 @@ export function generateCtpEventRegistry(OUTPUT_DIR: string, options: GenerateOp
 	const allowed = options.allowedResources ? new Set(options.allowedResources) : undefined;
 
 	// Known false positives — valid SDK types but rejected by CT API
-	const EXCLUDED_MESSAGES = new Set(['ShoppingListStoreSet']);
+	const EXCLUDED_MESSAGES = new Set([
+		'ShoppingListStoreSet',
+		'PaymentMethodCreated',
+		'PaymentMethodDeleted',
+		'PaymentMethodDefaultSet',
+		'PaymentMethodKeySet',
+		'PaymentMethodNameSet',
+		'PaymentMethodMethodSet',
+		'PaymentMethodInterfaceAccountSet',
+		'PaymentMethodPaymentInterfaceSet',
+		'PaymentMethodPaymentMethodStatusSet',
+		'PaymentMethodCustomFieldAdded',
+		'PaymentMethodCustomFieldChanged',
+		'PaymentMethodCustomFieldRemoved',
+		'PaymentMethodCustomTypeSet',
+		'PaymentMethodCustomTypeRemoved',
+	]);
 
 	const events: EventDef[] = Array.from(messageTypes)
 		.map((message) => {
@@ -188,6 +204,7 @@ export function generateCtpEventRegistry(OUTPUT_DIR: string, options: GenerateOp
 		})
 		// ✅ FILTER HERE
 		.filter((e) => {
+			if (EXCLUDED_MESSAGES.has(e.value)) return false;
 			if (EXCLUDED_MESSAGES.has(e.value)) return false;
 			if (!allowed) return true;
 			return e.resourceTypeId && allowed.has(e.resourceTypeId);

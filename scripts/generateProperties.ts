@@ -87,6 +87,7 @@ const SINGULAR_MAP: Record<string, string> = {
 	RecurringOrders: 'Recurring Order',
 };
 
+const REQUIRED_QUERY_PARAMS = new Set(['cartId', 'orderEditId', 'country']);
 function toSingular(folderName: string): string {
 	return SINGULAR_MAP[folderName] ?? folderName.replace(/ies$/, 'y').replace(/(?<=[^s])s$/, '');
 }
@@ -184,6 +185,34 @@ export function generateIdFields(
 				default: '',
 				required: true,
 				displayOptions: { show: { resource: [resourceValue], operation: opsNeedingKey } },
+			});
+		}
+
+		// ── Custom Object — container/key path params ─────────────────
+		const customObjectOps = topLevelOps
+			.filter((op) => op.urlTemplate.includes('{{container}}'))
+			.map((op) => op.value);
+		if (customObjectOps.length > 0) {
+			props.push({
+				displayName: 'Container',
+				name: 'container',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: customObjectOps } },
+			});
+		}
+		const customObjectKeyOps = topLevelOps
+			.filter((op) => op.urlTemplate.includes('{{custom-object-key}}'))
+			.map((op) => op.value);
+		if (customObjectKeyOps.length > 0) {
+			props.push({
+				displayName: 'Key',
+				name: 'resourceKey',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: customObjectKeyOps } },
 			});
 		}
 
@@ -573,6 +602,22 @@ export function generateQueryParamProperties(
 
 			if (cleanParams.length === 0) continue;
 
+			const requiredParams = cleanParams.filter((p) => REQUIRED_QUERY_PARAMS.has(p));
+			const optionalParams = cleanParams.filter((p) => !REQUIRED_QUERY_PARAMS.has(p));
+
+			for (const param of requiredParams) {
+				props.push({
+					displayName: humanize(param),
+					name: `reqParam__${op.value}__${param}`,
+					type: 'string',
+					default: '',
+					required: true,
+					displayOptions: { show: { resource: [resourceValue], operation: [op.value] } },
+				});
+			}
+
+			if (optionalParams.length === 0) continue;
+
 			props.push({
 				displayName: 'Filters',
 				name: `queryParams__${op.value}`,
@@ -580,7 +625,7 @@ export function generateQueryParamProperties(
 				placeholder: 'Add Filter',
 				default: {},
 				displayOptions: { show: { resource: [resourceValue], operation: [op.value] } },
-				options: cleanParams.map((param) => ({
+				options: optionalParams.map((param) => ({
 					displayName: humanize(param),
 					name: param,
 					type: 'string' as const,
