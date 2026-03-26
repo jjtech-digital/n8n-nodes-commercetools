@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, and Types
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments and Payment Methods
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -69,6 +69,9 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Review**        | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Shopping List** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Type**          | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Custom Object** | Create or Update, Get by Container/Key, Query, Delete, HEAD checks|
+| **Payment**        | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Payment Method** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 
 #### How field generation works
 
@@ -162,6 +165,10 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Shopping List** — line item added, line item removed
 
 **Types** — no message triggers
+
+**Custom Objects** — no message triggers (CT does not emit subscription messages for custom objects)
+
+**Payment** — created, transaction added, transaction state changed, interface interaction added, interface ID set, status interface code set, status state transition, payment added/removed, payment method info name/method/interface/token set, payment method info custom field updates.
 
 #### Subscription routing
 
@@ -320,7 +327,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type]
+│     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -363,6 +370,7 @@ New API endpoints and fields appear in the node automatically without manual dev
 | GCP: private key / PEM errors                              | Use the **Service Account JSON** field; paste the entire `.json` key file, not individual fields              |
 | GCP: deploy timeout on first activation                    | GCP API enablement takes time on cold projects — retry after a minute                                         |
 | Node not visible in n8n                                    | Run `npm install` then `npm run dev`                                                                          |
+| Trigger: `"A message with the name 'PaymentMethodCreated' is unknown for the TypeId 'payment'"` | CT Subscriptions API does not support `payment-method` as a resourceTypeId. Use CT API Extensions or a schedule-based polling trigger instead. |
 
 ---
 
@@ -370,10 +378,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.7  | Added Types feature.                                                                             |
 | v1.0.6  | Added Reviews and Shopping Lists.                                                                |
 | v1.0.5  | Added Inventory feature.                                                                         |
 | v1.0.4  | Added Channels and Associate Roles.                                                              |
-| v1.0.3  | Added Business Units and Categories.                                                             |
 
 
 
