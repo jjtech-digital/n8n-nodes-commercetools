@@ -67,6 +67,7 @@ const FOLDERS_TO_GENERATE = [
 	'Shipping-methods',
 	'Zones',
 	'Subscriptions',
+	'States',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -86,6 +87,9 @@ const RESOURCES_TO_GENERATE = [
 	'payment',
 	'payment-method',
 	'shipping-method',
+	'zone',
+	'subscription',
+	'state',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
