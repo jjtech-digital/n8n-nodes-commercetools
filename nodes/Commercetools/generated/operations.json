@@ -1068,7 +1068,7 @@
     "name": "ChangeName",
     "value": "changeName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/shipping-methods/{{shipping-method-id}}",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1084,7 +1084,7 @@
         "example": [
           {
             "action": "changeName",
-            "name": "nameString"
+            "name": "changedName"
           }
         ],
         "description": "Array of actions"
@@ -1095,15 +1095,15 @@
         "name": "name",
         "type": "string",
         "required": false,
-        "example": "nameString",
+        "example": "changedName",
         "description": "Name"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).",
-    "folder": "Shipping-methods",
+    "description": "post Zones",
+    "folder": "Zones",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2256,7 +2256,7 @@
     "name": "SetDescription",
     "value": "setDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2273,8 +2273,8 @@
           {
             "action": "setDescription",
             "description": {
-              "de": "DescriptionDE",
-              "en": "DescriptionEN"
+              "de": "State Beschreibung",
+              "en": "State description"
             }
           }
         ],
@@ -2287,8 +2287,8 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "DescriptionDE",
-          "en": "DescriptionEN"
+          "de": "State Beschreibung",
+          "en": "State description"
         },
         "description": "Description"
       }
@@ -2296,8 +2296,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Types",
-    "folder": "Types",
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2470,7 +2470,7 @@
     "name": "SetKey",
     "value": "setKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/shipping-methods/{{shipping-method-id}}",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2504,8 +2504,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).",
-    "folder": "Shipping-methods",
+    "description": "post Zones",
+    "folder": "Zones",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -15564,7 +15564,7 @@
     "name": "AddRoles",
     "value": "addRoles",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -15581,7 +15581,7 @@
           {
             "action": "addRoles",
             "roles": [
-              "OrderExport"
+              "ReviewIncludedInStatistics"
             ]
           }
         ],
@@ -15594,7 +15594,7 @@
         "type": "json",
         "required": false,
         "example": [
-          "OrderExport"
+          "ReviewIncludedInStatistics"
         ],
         "description": "Roles"
       }
@@ -15602,8 +15602,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Channels",
-    "folder": "Channels",
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -15670,7 +15670,7 @@
     "name": "ChangeKey",
     "value": "changeKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -15686,7 +15686,7 @@
         "example": [
           {
             "action": "changeKey",
-            "key": "NewKey"
+            "key": "ChangedStateKey"
           }
         ],
         "description": "Array of actions"
@@ -15697,15 +15697,15 @@
         "name": "key",
         "type": "string",
         "required": false,
-        "example": "NewKey",
+        "example": "ChangedStateKey",
         "description": "Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post Types",
-    "folder": "Types",
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -15716,7 +15716,7 @@
     "name": "RemoveRoles",
     "value": "removeRoles",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -15733,7 +15733,7 @@
           {
             "action": "removeRoles",
             "roles": [
-              "InventorySupply"
+              "ReviewIncludedInStatistics"
             ]
           }
         ],
@@ -15746,7 +15746,7 @@
         "type": "json",
         "required": false,
         "example": [
-          "InventorySupply"
+          "ReviewIncludedInStatistics"
         ],
         "description": "Roles"
       }
@@ -15754,8 +15754,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Channels",
-    "folder": "Channels",
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -15894,7 +15894,7 @@
     "name": "SetRoles",
     "value": "setRoles",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/channels/{{channel-id}}",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -15911,8 +15911,7 @@
           {
             "action": "setRoles",
             "roles": [
-              "OrderExport",
-              "OrderImport"
+              "ReviewIncludedInStatistics"
             ]
           }
         ],
@@ -15925,8 +15924,7 @@
         "type": "json",
         "required": false,
         "example": [
-          "OrderExport",
-          "OrderImport"
+          "ReviewIncludedInStatistics"
         ],
         "description": "Roles"
       }
@@ -15934,8 +15932,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post Channels",
-    "folder": "Channels",
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -16363,7 +16361,7 @@
     "name": "SetName",
     "value": "setName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/payment-methods/{{payment-method-id}}",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -16380,8 +16378,8 @@
           {
             "action": "setName",
             "name": {
-              "de": "German name",
-              "en": "English name"
+              "de": "State Name",
+              "en": "State name"
             }
           }
         ],
@@ -16394,8 +16392,8 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "German name",
-          "en": "English name"
+          "de": "State Name",
+          "en": "State name"
         },
         "description": "Name"
       }
@@ -16403,8 +16401,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a PaymentMethod in the Project using one or more [update actions](/../api/projects/payment-methods#update-actions).\n",
-    "folder": "Payment-methods",
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -22685,6 +22683,1170 @@
     ],
     "description": "Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).",
     "folder": "Shipping-methods",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getZoneByKey": {
+    "name": "Get Zone by Key",
+    "value": "getZoneByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/zones/key={{zone-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a Zone with the provided `key`.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "zone-key"
+  },
+  "checkIfZoneExistsByKey": {
+    "name": "Check if Zone exists by Key",
+    "value": "checkIfZoneExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/zones/key={{zone-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Zone exists with the provided `key`. Returns a `200 OK` status if the Zone exists or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "zone-key"
+  },
+  "updateZoneByKey": {
+    "name": "Update Zone by Key",
+    "value": "updateZoneByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/zones/key={{zone-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": "New Name"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "New Name",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Zone in the Project using one or more [update actions](/../api/projects/zones#update-actions).",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "zone-key"
+  },
+  "deleteZoneByKey": {
+    "name": "Delete Zone by Key",
+    "value": "deleteZoneByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/zones/key={{zone-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a Zone in the Project.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "zone-key"
+  },
+  "getZoneById": {
+    "name": "Get Zone by ID",
+    "value": "getZoneById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a Zone with the provided `id`.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfZoneExistsById": {
+    "name": "Check if Zone exists by ID",
+    "value": "checkIfZoneExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Zone exists with the provided `id`. Returns a `200 OK` status if the Zone exists or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateZoneById": {
+    "name": "Update Zone by ID",
+    "value": "updateZoneById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": "New Name"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "New Name",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteZoneById": {
+    "name": "Delete Zone by ID",
+    "value": "deleteZoneById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a Zone in the Project.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryZones": {
+    "name": "Query Zones",
+    "value": "queryZones",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/zones",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Retrieves all Zones in the Project.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfZoneExistsByQueryPredicate": {
+    "name": "Check if Zone exists by Query Predicate",
+    "value": "checkIfZoneExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/zones",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Zones exist for the provided query predicate. Returns a `200 OK` status if any Zones match the query predicate, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createZone": {
+    "name": "Create Zone",
+    "value": "createZone",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/zones",
+    "bodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "example": "US",
+        "description": "Name"
+      },
+      {
+        "name": "locations",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "country": "US"
+          }
+        ],
+        "description": "Array of locations"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creates a Zone in the Project.",
+    "folder": "Zones",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addLocation": {
+    "name": "AddLocation",
+    "value": "addLocation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addLocation",
+            "location": {
+              "country": "AT"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "location",
+        "type": "json",
+        "required": false,
+        "example": {
+          "country": "AT"
+        },
+        "description": "Location"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Zones",
+    "folder": "Zones",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeLocation": {
+    "name": "RemoveLocation",
+    "value": "removeLocation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeLocation",
+            "location": {
+              "country": "AT"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "location",
+        "type": "json",
+        "required": false,
+        "example": {
+          "country": "AT"
+        },
+        "description": "Location"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Zones",
+    "folder": "Zones",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getSubscriptionByKey": {
+    "name": "Get Subscription by Key",
+    "value": "getSubscriptionByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/subscriptions/key={{subscription-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "subscription-key"
+  },
+  "checkIfSubscriptionExistsByKey": {
+    "name": "Check if Subscription exists by Key",
+    "value": "checkIfSubscriptionExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/subscriptions/key={{subscription-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Subscription exists with the provided `key`. Returns a `200` status if the Subscription exists, or a `404` status otherwise.",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "subscription-key"
+  },
+  "updateSubscriptionByKey": {
+    "name": "Update Subscription by Key",
+    "value": "updateSubscriptionByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/subscriptions/key={{subscription-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setKey",
+            "key": "new-key"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "new-key",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "subscription-key"
+  },
+  "deleteSubscriptionByKey": {
+    "name": "Delete Subscription by Key",
+    "value": "deleteSubscriptionByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/subscriptions/key={{subscription-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version"
+    ],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "subscription-key"
+  },
+  "getHealthStatusOfSubscriptionById": {
+    "name": "Get Health Status of Subscription by ID",
+    "value": "getHealthStatusOfSubscriptionById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/subscriptions/{{subscription-id}}/health",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "This endpoint can be polled by a monitoring or alerting system that checks the health of your Subscriptions. To ease integration with such systems this endpoint does not require [Authorization](/../api/authorization).\n",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "getSubscriptionById": {
+    "name": "Get Subscription by ID",
+    "value": "getSubscriptionById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/subscriptions/{{subscription-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfSubscriptionExistsById": {
+    "name": "Check if Subscription exists by ID",
+    "value": "checkIfSubscriptionExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/subscriptions/{{subscription-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Subscription exists with the provided `id`. Returns a `200` status if the Subscription exists, or a `404` status otherwise.",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateSubscriptionById": {
+    "name": "Update Subscription by ID",
+    "value": "updateSubscriptionById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/subscriptions/{{subscription-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setKey",
+            "key": "new-key"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "new-key",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteSubscriptionById": {
+    "name": "Delete Subscription by ID",
+    "value": "deleteSubscriptionById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/subscriptions/{{subscription-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version"
+    ],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "querySubscriptions": {
+    "name": "Query Subscriptions",
+    "value": "querySubscriptions",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/subscriptions",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfSubscriptionExistsByQueryPredicate": {
+    "name": "Check if Subscription exists by Query Predicate",
+    "value": "checkIfSubscriptionExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/subscriptions",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Subscriptions exist for the provided query predicate. Returns a `200` status if any Subscriptions match the query predicate, or a `404` status otherwise.",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createSubscription": {
+    "name": "Create Subscription",
+    "value": "createSubscription",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/subscriptions",
+    "bodyFields": [
+      {
+        "name": "destination.type",
+        "type": "string",
+        "required": false,
+        "example": "SQS",
+        "description": "Destination › type"
+      },
+      {
+        "name": "destination.queueUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://sqs.my-region.amazonaws.com/my-aws-account-number/my-queue",
+        "description": "Destination › queue Url"
+      },
+      {
+        "name": "destination.authenticationMode",
+        "type": "string",
+        "required": false,
+        "example": "IAM",
+        "description": "Destination › authentication Mode"
+      },
+      {
+        "name": "destination.region",
+        "type": "string",
+        "required": false,
+        "example": "my-region",
+        "description": "Destination › region"
+      },
+      {
+        "name": "messages",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "resourceTypeId": "product",
+            "types": []
+          }
+        ],
+        "description": "Array of messages"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "test-queue",
+        "description": "Key"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "A test notification is sent to ensure the correct configuration of the Destination. If the notification cannot be delivered, the Subscription will not be created. The payload of the test notification is of type [ResourceCreated](/../api/projects/subscriptions#resourcecreateddeliverypayload) for the `resourceTypeId` `subscription`.\n",
+    "folder": "Subscriptions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "getStateByKey": {
+    "name": "Get State by Key",
+    "value": "getStateByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/states/key={{state-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "state-key"
+  },
+  "checkIfStateExistsByKey": {
+    "name": "Check if State exists by Key",
+    "value": "checkIfStateExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/states/key={{state-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a State exists with the provided `key`. Returns a `200` status if the State exists, or a `404` status otherwise.",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "state-key"
+  },
+  "updateStateByKey": {
+    "name": "Update State by Key",
+    "value": "updateStateByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/states/key={{state-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "state-key"
+  },
+  "deleteStateByKey": {
+    "name": "Delete State by Key",
+    "value": "deleteStateByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/states/key={{state-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "state-key"
+  },
+  "getStateById": {
+    "name": "Get State by ID",
+    "value": "getStateById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStateExistsById": {
+    "name": "Check if State exists by ID",
+    "value": "checkIfStateExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a State exists with the provided `id`. Returns a `200` status if the State exists, or a `404` status otherwise.",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateStateById": {
+    "name": "Update State by ID",
+    "value": "updateStateById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteStateById": {
+    "name": "Delete State by ID",
+    "value": "deleteStateById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryStates": {
+    "name": "Query States",
+    "value": "queryStates",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/states",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStateExistsByQueryPredicate": {
+    "name": "Check if State exists by Query Predicate",
+    "value": "checkIfStateExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/states",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more States exist for the provided query predicate. Returns a `200` status if any States match the query predicate, or a `404` status otherwise.",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createState": {
+    "name": "Create State",
+    "value": "createState",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/states",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "Initial",
+        "description": "Key"
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "required": true,
+        "example": "LineItemState",
+        "description": "Type"
+      },
+      {
+        "name": "roles",
+        "type": "json",
+        "required": false,
+        "example": [],
+        "description": "Array of roles"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Initial"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Initial is the first State that a (custom) Line Item gets after its creation."
+        },
+        "description": "Description"
+      },
+      {
+        "name": "initial",
+        "type": "boolean",
+        "required": true,
+        "example": true,
+        "description": "Initial"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "States",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeInitial": {
+    "name": "ChangeInitial",
+    "value": "changeInitial",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeInitial",
+            "initial": false
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "initial",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Initial"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post States",
+    "folder": "States",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeType": {
+    "name": "ChangeType",
+    "value": "changeType",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeType",
+            "type": "ReviewState"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "type",
+        "type": "string",
+        "required": false,
+        "example": "ReviewState",
+        "description": "Type"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post States",
+    "folder": "States",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setTransitions": {
+    "name": "SetTransitions",
+    "value": "setTransitions",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/states/{{state-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setTransitions",
+            "transitions": [
+              {
+                "typeId": "state",
+                "id": "placeholder"
+              },
+              {
+                "typeId": "state",
+                "id": "placeholder"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "transitions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "state",
+            "id": "placeholder"
+          },
+          {
+            "typeId": "state",
+            "id": "placeholder"
+          }
+        ],
+        "description": "Transitions"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post States",
+    "folder": "States",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
