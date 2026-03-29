@@ -390,10 +390,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.8  | Added Custom Objects, Payments, Payment Methods, and Shipping Methods                            |
 | v1.0.7  | Added Types feature.                                                                             |
 | v1.0.6  | Added Reviews and Shopping Lists.                                                                |
 | v1.0.5  | Added Inventory feature.                                                                         |
-| v1.0.4  | Added Channels and Associate Roles.                                                              |
 
 
 
