@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, and Shipping Methods
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, and States
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -73,6 +73,9 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Payment**        | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Payment Method** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Shipping Method** | Create, Get by ID, Get by Key, Query, Update, Delete, Get matching methods for Cart / Location / OrderEdit, HEAD checks |
+| **Zone**            | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Subscription**    | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **State**           | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 
 #### How field generation works
 
@@ -172,6 +175,12 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Payment** — created, transaction added, transaction state changed, interface interaction added, interface ID set, status interface code set, status state transition, payment added/removed, payment method info name/method/interface/token set, payment method info custom field updates.
 
 **Shipping Methods** — no message triggers 
+
+**Zones** — no message triggers (change subscriptions only)
+
+**Subscriptions** — no message triggers (change subscriptions only)
+
+**States** — change notifications only (CT does not support message subscriptions for states)
 
 #### Subscription routing
 
@@ -381,10 +390,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.8  | Added Custom Objects, Payments, Payment Methods, and Shipping Methods                            |
 | v1.0.7  | Added Types feature.                                                                             |
 | v1.0.6  | Added Reviews and Shopping Lists.                                                                |
 | v1.0.5  | Added Inventory feature.                                                                         |
-| v1.0.4  | Added Channels and Associate Roles.                                                              |
 
 
 
