@@ -146,14 +146,8 @@ export async function createSubscription(
 			type: 'SQS',
 			queueUrl: awsInfrastructure.queueUrl,
 			region: awsInfrastructure.region,
+			authenticationMode: 'IAM',
 		};
-		if (awsInfrastructure.accessKeyId && awsInfrastructure.secretAccessKey) {
-			destination.authenticationMode = 'Credentials';
-			destination.accessKey = awsInfrastructure.accessKeyId;
-			destination.accessSecret = awsInfrastructure.secretAccessKey;
-		} else {
-			destination.authenticationMode = 'IAM';
-		}
 	} else if (useGCP && gcpInfrastructure) {
 		destination = {
 			type: 'GoogleCloudPubSub',

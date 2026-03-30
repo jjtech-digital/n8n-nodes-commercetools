@@ -8,6 +8,7 @@ import type {
 	IDataObject,
 	IExecuteFunctions,
 	IHttpRequestOptions,
+	INode,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
@@ -38,10 +39,11 @@ export class Commercetools implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
+		const credentials = await this.getCredentials('commerceToolsOAuth2Api');
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const result = await executeOperation.call(this, i);
+				const result = await executeOperation.call(this, i, credentials);
 				returnData.push({ json: result as IDataObject });
 			} catch (error) {
 				if (this.continueOnFail()) {
@@ -56,10 +58,22 @@ export class Commercetools implements INodeType {
 	}
 }
 
+// ─── Path Param Sanitizer ─────────────────────────────────────────────────────
+
+function sanitizePathParam(node: INode, value: string, name: string): string {
+	if (/[/\\%\x00]/.test(value) || value.includes('..')) {
+		throw new NodeOperationError(node, `Path parameter "${name}" contains invalid characters`);
+	}
+	return encodeURIComponent(value);
+}
+
 // ─── Executor ─────────────────────────────────────────────────────────────────
 
-async function executeOperation(this: IExecuteFunctions, i: number): Promise<unknown> {
-	const creds = await this.getCredentials('commerceToolsOAuth2Api');
+async function executeOperation(
+	this: IExecuteFunctions,
+	i: number,
+	creds: IDataObject,
+): Promise<unknown> {
 	const projectKey = creds.projectKey as string;
 	const region = creds.region as string;
 	const baseUrl = `https://api.${region}.commercetools.com`;
@@ -85,8 +99,16 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		operation === 'getCustomObjectByContainerAndKey' ||
 		operation === 'deleteCustomObjectByContainerAndKey'
 	) {
-		const container = safeGet<string>(this, 'container', i, '');
-		const key = safeGet<string>(this, 'resourceKey', i, '');
+		const container = sanitizePathParam(
+			this.getNode(),
+			safeGet<string>(this, 'container', i, ''),
+			'container',
+		);
+		const key = sanitizePathParam(
+			this.getNode(),
+			safeGet<string>(this, 'resourceKey', i, ''),
+			'resourceKey',
+		);
 		urlPath = urlPath
 			.replace(/\{\{container\}\}/g, container)
 			.replace(/\{\{custom-object-key\}\}/g, key);
@@ -98,7 +120,11 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 		//   /business-units/{{business-unit-id}}/associates/{{associate-id}}   (ID path)
 		//   /business-units/key={{associate-key}}/associates/{{associate-id}}  (key path)
 		if (opDef.secondaryIdPlaceholder) {
-			const secondaryId = safeGet<string>(this, 'secondaryId', i, '');
+			const secondaryId = sanitizePathParam(
+				this.getNode(),
+				safeGet<string>(this, 'secondaryId', i, ''),
+				'secondaryId',
+			);
 			urlPath = urlPath.replace(
 				new RegExp(`\\{\\{${opDef.secondaryIdPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
 				secondaryId,
@@ -107,7 +133,11 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 
 		if (opDef.pathParamSegment && opDef.pathParamName) {
 			// ── Non-standard path param: /customer-id={{customer-id}} ──────
-			const paramValue = safeGet<string>(this, opDef.pathParamName, i, '');
+			const paramValue = sanitizePathParam(
+				this.getNode(),
+				safeGet<string>(this, opDef.pathParamName, i, ''),
+				opDef.pathParamName,
+			);
 			urlPath = urlPath.replace(
 				new RegExp(opDef.pathParamSegment + '=\\{\\{[^}]+\\}\\}'),
 				`${opDef.pathParamSegment}=${paramValue}`,
@@ -119,7 +149,11 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			// the Postman URL at generate-time) so compound URLs like
 			//   /products/key={{product-key}}/product-selections
 			// are substituted correctly regardless of placeholder naming.
-			const key = safeGet<string>(this, 'resourceKey', i, '');
+			const key = sanitizePathParam(
+				this.getNode(),
+				safeGet<string>(this, 'resourceKey', i, ''),
+				'resourceKey',
+			);
 			if (opDef.keyPlaceholder) {
 				const escapedPlaceholder = opDef.keyPlaceholder.replace(/-/g, '\\-');
 				urlPath = urlPath.replace(
@@ -131,7 +165,11 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			}
 		} else {
 			// ── Standard /{{ID}} endpoints ────────────────────────────────
-			const id = safeGet<string>(this, 'resourceId', i, '');
+			const id = sanitizePathParam(
+				this.getNode(),
+				safeGet<string>(this, 'resourceId', i, ''),
+				'resourceId',
+			);
 			urlPath = urlPath.replace(/\{\{[^}]*[Ii][Dd]\}\}/g, id).replace(/\/:id/g, `/${id}`);
 		}
 	}
@@ -294,9 +332,37 @@ async function executeOperation(this: IExecuteFunctions, i: number): Promise<unk
 			options,
 		);
 	} catch (err) {
-		throw new NodeApiError(this.getNode(), err, {
-			message: `[${opDef.name}]: ${(err as Error).message}`,
-		});
+		throw new NodeApiError(
+			this.getNode(),
+			{ message: (err as Error).message },
+			{ message: `[${opDef.name}]: ${(err as Error).message}` },
+		);
+	}
+}
+
+// ─── SSRF Guard ───────────────────────────────────────────────────────────────
+
+function validateImageUrl(node: INode, raw: string): void {
+	let parsed: URL;
+	try {
+		parsed = new URL(raw);
+	} catch {
+		throw new NodeOperationError(node, 'Image URL is not a valid URL');
+	}
+	if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+		throw new NodeOperationError(node, 'Image URL must use HTTP or HTTPS');
+	}
+	const host = parsed.hostname.toLowerCase();
+	const blocked = [
+		'localhost',
+		'127.0.0.1',
+		'0.0.0.0',
+		'169.254.169.254',
+		'metadata.google.internal',
+		'[::1]',
+	];
+	if (blocked.includes(host) || /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/.test(host)) {
+		throw new NodeOperationError(node, 'Image URL must not target internal addresses');
 	}
 }
 
@@ -335,6 +401,8 @@ async function executeImageUpload(
 			'Image URL is required. Provide a publicly accessible URL to the image (JPEG, PNG, or GIF).',
 		);
 	}
+
+	validateImageUrl(this.getNode(), imageUrl);
 
 	// ── Step 1: Download the image from the URL ───────────────────────────────
 	// Derive Content-Type from the URL extension, defaulting to image/jpeg.
@@ -399,9 +467,11 @@ async function executeImageUpload(
 		}
 		return response;
 	} catch (err) {
-		throw new NodeApiError(this.getNode(), err, {
-			message: `[${opDef.name}]: ${(err as Error).message}`,
-		});
+		throw new NodeApiError(
+			this.getNode(),
+			{ message: (err as Error).message },
+			{ message: `[${opDef.name}]: ${(err as Error).message}` },
+		);
 	}
 }
 

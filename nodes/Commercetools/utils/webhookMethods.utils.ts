@@ -23,8 +23,14 @@ import { PubSub } from '@google-cloud/pubsub';
 import { Storage } from '@google-cloud/storage';
 import { google } from 'googleapis';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function generateConfigHash(events: string[], hasAWS: boolean, hasGCP: boolean): string {
-	return JSON.stringify({ events: [...events].sort(), hasAWS, hasGCP });
+function generateConfigHash(
+	events: string[],
+	hasAWS: boolean,
+	hasGCP: boolean,
+	region?: string,
+	projectKey?: string,
+): string {
+	return JSON.stringify({ events: [...events].sort(), hasAWS, hasGCP, region, projectKey });
 }
 /** Clear all stored webhook state in one place to avoid missed deletes. */
 function clearWebhookData(webhookData: StaticSubscriptionData): void {
@@ -33,6 +39,7 @@ function clearWebhookData(webhookData: StaticSubscriptionData): void {
 	delete webhookData.gcpInfrastructure;
 	delete webhookData.configHash;
 	delete webhookData.events;
+	delete webhookData.lastVerifiedAt;
 }
 // ─── Trigger methods ──────────────────────────────────────────────────────────
 export const triggerMethods = {
@@ -48,7 +55,13 @@ export const triggerMethods = {
 			const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
 			const hasAWS = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
 			const hasGCP = !!credentials.serviceAccountJson; // updated: check for JSON field
-			const currentHash = generateConfigHash(currentEvents, hasAWS, hasGCP);
+			const currentHash = generateConfigHash(
+				currentEvents,
+				hasAWS,
+				hasGCP,
+				credentials.region,
+				credentials.projectKey,
+			);
 			// No subscription stored yet
 			if (!webhookData.subscriptionId) return false;
 			// Config changed — delete old infrastructure then let create() rebuild
@@ -88,6 +101,14 @@ export const triggerMethods = {
 				clearWebhookData(webhookData);
 				return false;
 			}
+			// Config unchanged — check if recently verified
+			const VERIFY_INTERVAL_MS = 5 * 60 * 1000;
+			if (
+				webhookData.lastVerifiedAt &&
+				Date.now() - webhookData.lastVerifiedAt < VERIFY_INTERVAL_MS
+			) {
+				return true;
+			}
 			// Config unchanged — verify everything still exists in the cloud
 			try {
 				const baseUrl = await getBaseUrl.call(this);
@@ -95,13 +116,13 @@ export const triggerMethods = {
 				if (webhookData.awsInfrastructure) {
 					// ── Verify AWS ────────────────────────────────────────────
 					try {
-						AWS.config.update({
+						const awsClientConfig = {
 							accessKeyId: credentials.awsAccessKeyId,
 							secretAccessKey: credentials.awsSecretAccessKey,
 							region: (webhookData.awsInfrastructure as AWSResponse).region || 'us-east-1',
-						});
-						const lambda = new AWS.Lambda();
-						const sqs = new AWS.SQS();
+						};
+						const lambda = new AWS.Lambda(awsClientConfig);
+						const sqs = new AWS.SQS(awsClientConfig);
 						await lambda
 							.getFunctionConfiguration({
 								FunctionName: (webhookData.awsInfrastructure as AWSResponse)
@@ -133,7 +154,7 @@ export const triggerMethods = {
 						try {
 							await cloudfunctions.projects.locations.functions.get({ name: fnFullName });
 						} catch (err) {
-							if (err.code === 5) {
+							if ((err as { code?: number }).code === 5) {
 								clearWebhookData(webhookData);
 								return false;
 							}
@@ -172,6 +193,7 @@ export const triggerMethods = {
 						return false;
 					}
 				}
+				webhookData.lastVerifiedAt = Date.now();
 				return true;
 			} catch {
 				clearWebhookData(webhookData);
@@ -231,19 +253,13 @@ export const triggerMethods = {
 			}
 			webhookData.subscriptionId = subscriptionId;
 			webhookData.events = events;
-			webhookData.configHash = generateConfigHash(events, hasAWS, hasGCP);
-			// Optional: smoke-test Lambda
-			if (useAWS && awsInfrastructure) {
-				try {
-					AWS.config.update({
-						accessKeyId: credentials.awsAccessKeyId,
-						secretAccessKey: credentials.awsSecretAccessKey,
-						region: awsInfrastructure.region,
-					});
-				} catch {
-					/* best-effort */
-				}
-			}
+			webhookData.configHash = generateConfigHash(
+				events,
+				hasAWS,
+				hasGCP,
+				credentials.region,
+				credentials.projectKey,
+			);
 			return true;
 		},
 		// ── delete ───────────────────────────────────────────────────────────

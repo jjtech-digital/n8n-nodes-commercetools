@@ -79,7 +79,7 @@ export function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 	if (!privateKey) throw new Error('GCP credential missing privateKey');
 	if (!privateKey.includes('-----BEGIN')) {
 		throw new Error(
-			`GCP privateKey does not look like a PEM key (got: ${privateKey.substring(0, 40)}...). ` +
+			`GCP privateKey does not look like a PEM key. ` +
 				`n8n may be hashing the field value. Use the "Service Account JSON" field instead: ` +
 				`paste the entire downloaded GCP key JSON file into a single credential field named serviceAccountJson.`,
 		);
@@ -123,10 +123,6 @@ export async function buildAuthClient(raw: Record<string, string>) {
 		);
 	}
 
-	// Set as the global default so every google.* client created after this
-	// automatically carries the same pre-warmed credential.
-	google.options({ auth: jwtClient });
-
 	return { restAuth: jwtClient as unknown as OAuth2Client };
 }
 
@@ -153,7 +149,7 @@ functions.cloudEvent('cloudFunctionCode', async (cloudEvent) => {
 	}
 
 	const decoded = Buffer.from(base64data, 'base64').toString('utf-8');
-	console.log('Decoded Pub/Sub message:', decoded);
+	console.log(JSON.stringify({ event: 'pubsub_received', size: decoded.length }));
 
 	let parsed;
 	try {
@@ -231,6 +227,7 @@ export async function createGCPInfrastructure(
 	gcpCredentials: Record<string, string>,
 	webhookUrl: string,
 	eventType: string,
+	node?: INode,
 ): Promise<GCPResponse> {
 	try {
 		// Parse credentials synchronously, then kick off auth token pre-warm
@@ -289,8 +286,8 @@ export async function createGCPInfrastructure(
 			//    pre-built zip — no zip construction on the hot path
 			bucket
 				.create({ location: gcpCredentials.gcpRegion })
-				.catch((err) => {
-					if (err.code !== 409) throw err;
+				.catch((err: unknown) => {
+					if ((err as { code?: number }).code !== 409) throw err;
 				})
 				.then(() =>
 					bucket.file(zipObject).save(PREBUILT_ZIP, {
@@ -346,9 +343,10 @@ export async function createGCPInfrastructure(
 
 		return { topicName, bucketName, projectId, functionName: fnName };
 	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
 		throw new NodeOperationError(
-			{} as INode,
-			`Failed to create GCP infrastructure: ${err.message ?? err}`,
+			node ?? ({} as INode),
+			`Failed to create GCP infrastructure: ${msg}`,
 		);
 	}
 }
@@ -357,6 +355,7 @@ export async function createGCPInfrastructure(
 export async function deleteGCPInfrastructure(
 	gcpCredentials: Record<string, string>,
 	infrastructure: GCPResponse,
+	node?: INode,
 ): Promise<void> {
 	try {
 		const creds = parseCredentials(gcpCredentials);
@@ -381,16 +380,16 @@ export async function deleteGCPInfrastructure(
 				.delete({
 					name: `projects/${infrastructure.projectId}/locations/${gcpCredentials.gcpRegion}/functions/${infrastructure.functionName}`,
 				})
-				.catch((err) => {
-					if (err.code !== 5) throw err; // 5 = NOT_FOUND, already gone
+				.catch((err: unknown) => {
+					if ((err as { code?: number }).code !== 5) throw err; // 5 = NOT_FOUND, already gone
 				}),
 
 			// Pub/Sub topic
 			pubsub
 				.topic(infrastructure.topicName)
 				.delete()
-				.catch((err) => {
-					if (err.code !== 5) throw err;
+				.catch((err: unknown) => {
+					if ((err as { code?: number }).code !== 5) throw err;
 				}),
 
 			// GCS bucket — files must be purged before the bucket itself
@@ -398,8 +397,8 @@ export async function deleteGCPInfrastructure(
 				const bucket = storage.bucket(infrastructure.bucketName);
 				await bucket.deleteFiles({ force: true });
 				await bucket.delete();
-			})().catch((err) => {
-				if (err.code !== 5) throw err;
+			})().catch((err: unknown) => {
+				if ((err as { code?: number }).code !== 5) throw err;
 			}),
 		]);
 
@@ -408,9 +407,10 @@ export async function deleteGCPInfrastructure(
 			throw new Error(failed.map((f) => f.reason?.message ?? f.reason).join('; '));
 		}
 	} catch (error) {
+		const msg = error instanceof Error ? error.message : String(error);
 		throw new NodeOperationError(
-			{} as INode,
-			`Failed to delete GCP infrastructure: ${error.message ?? error}. You may need to manually clean up in GCP Console.`,
+			node ?? ({} as INode),
+			`Failed to delete GCP infrastructure: ${msg}. You may need to manually clean up in GCP Console.`,
 		);
 	}
 }
@@ -455,16 +455,21 @@ async function pollUntilDone(
 		stepMs: number;
 		maxDelayMs: number;
 		backoffFactor: number;
+		maxAttempts?: number;
 	},
 ): Promise<void> {
+	const maxAttempts = opts.maxAttempts ?? 120;
 	let delay = opts.initialDelayMs;
-	while (true) {
+	let attempts = 0;
+	while (attempts < maxAttempts) {
 		const [op] = await Promise.all([getFn(), new Promise<void>((r) => setTimeout(r, delay))]);
 		if (op.data.done) {
 			if (op.data.error) throw new Error(`Deployment failed: ${JSON.stringify(op.data.error)}`);
 			return;
 		}
+		attempts++;
 		delay =
 			delay === 0 ? opts.stepMs : Math.min(Math.ceil(delay * opts.backoffFactor), opts.maxDelayMs);
 	}
+	throw new Error(`Deployment timed out after ${maxAttempts} polling attempts`);
 }
