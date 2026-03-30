@@ -228,8 +228,7 @@ exports.handler = async (event) => {
             const receivedEventType = messageBody.type ?? eventType;
             const webhookPayload = {
                 eventType: receivedEventType,
-                resource: messageBody.resource,
-                resourceType: messageBody.notificationType,
+                rawMessage: messageBody,
                 source: 'CommerceTools-Lambda',
                 timestamp: new Date().toISOString(),
                 projectKey,
