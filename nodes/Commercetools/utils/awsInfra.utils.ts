@@ -103,14 +103,9 @@ export async function createRealAWSInfrastructure(
 						Statement: [
 							{
 								Effect: 'Allow',
-								Principal: { Service: 'sqs.amazonaws.com' },
+								Principal: '*',
 								Action: 'sqs:SendMessage',
 								Resource: queueArn,
-								Condition: {
-									ArnLike: {
-										'aws:SourceArn': `arn:aws:sqs:${awsCredentials.awsRegion}:${accountId}:${queueName}`,
-									},
-								},
 							},
 						],
 					}),
