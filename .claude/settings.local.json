@@ -8,7 +8,8 @@
       "Skill(aws)",
       "Skill(aws:*)",
       "Skill(prettier)",
-      "Skill(prettier:*)"
+      "Skill(prettier:*)",
+      "Bash(npm run:*)"
     ],
     "additionalDirectories": [
       "c:\\Projects\\n8n-ct\\n8n-nodes-commercetools"

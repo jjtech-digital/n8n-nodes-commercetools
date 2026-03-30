@@ -61,7 +61,7 @@ export class Commercetools implements INodeType {
 // ─── Path Param Sanitizer ─────────────────────────────────────────────────────
 
 function sanitizePathParam(node: INode, value: string, name: string): string {
-	if (/[/\\%\x00]/.test(value) || value.includes('..')) {
+	if (/[/\\%\0]/.test(value) || value.includes('..')) {
 		throw new NodeOperationError(node, `Path parameter "${name}" contains invalid characters`);
 	}
 	return encodeURIComponent(value);

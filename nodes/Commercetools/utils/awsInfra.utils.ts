@@ -369,11 +369,8 @@ export async function deleteAWSInfrastructure(
 						UUID: infrastructure.eventSourceMappingUuid,
 					})
 					.promise();
-			} catch (e) {
-				console.warn(
-					'[ct-node] teardown: failed to delete event source mapping:',
-					(e as Error).message,
-				);
+			} catch {
+				// Deletion is best-effort
 			}
 			// Deletion is best-effort; proceed without waiting
 		}
@@ -386,8 +383,8 @@ export async function deleteAWSInfrastructure(
 						FunctionName: infrastructure.lambdaFunctionName,
 					})
 					.promise();
-			} catch (e) {
-				console.warn('[ct-node] teardown: failed to delete Lambda function:', (e as Error).message);
+			} catch {
+				// Deletion is best-effort
 			}
 		}
 
@@ -399,8 +396,8 @@ export async function deleteAWSInfrastructure(
 						QueueUrl: infrastructure.queueUrl,
 					})
 					.promise();
-			} catch (e) {
-				console.warn('[ct-node] teardown: failed to delete SQS queue:', (e as Error).message);
+			} catch {
+				// Deletion is best-effort
 			}
 		}
 
@@ -416,11 +413,8 @@ export async function deleteAWSInfrastructure(
 							PolicyName: cwPolicyName,
 						})
 						.promise();
-				} catch (e) {
-					console.warn(
-						'[ct-node] teardown: failed to delete CloudWatch inline policy:',
-						(e as Error).message,
-					);
+				} catch {
+					// Deletion is best-effort
 				}
 
 				// Delete CloudWatch log group
@@ -432,11 +426,8 @@ export async function deleteAWSInfrastructure(
 								logGroupName: `/aws/lambda/${infrastructure.lambdaFunctionName}`,
 							})
 							.promise();
-					} catch (e) {
-						console.warn(
-							'[ct-node] teardown: failed to delete CloudWatch log group:',
-							(e as Error).message,
-						);
+					} catch {
+						// Deletion is best-effort
 					}
 				}
 
@@ -449,11 +440,8 @@ export async function deleteAWSInfrastructure(
 							PolicyName: inlinePolicyName,
 						})
 						.promise();
-				} catch (e) {
-					console.warn(
-						'[ct-node] teardown: failed to delete SQS inline policy:',
-						(e as Error).message,
-					);
+				} catch {
+					// Deletion is best-effort
 				}
 
 				// Detach managed policies
@@ -464,11 +452,8 @@ export async function deleteAWSInfrastructure(
 							PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
 						})
 						.promise();
-				} catch (e) {
-					console.warn(
-						'[ct-node] teardown: failed to detach managed policy:',
-						(e as Error).message,
-					);
+				} catch {
+					// Deletion is best-effort
 				}
 
 				// Delete the role
@@ -477,11 +462,11 @@ export async function deleteAWSInfrastructure(
 						RoleName: infrastructure.iamRoleName,
 					})
 					.promise();
-			} catch (e) {
-				console.warn('[ct-node] teardown: failed to delete IAM role:', (e as Error).message);
+			} catch {
+				// Deletion is best-effort
 			}
 		}
-	} catch (error) {
+	} catch {
 		throw new NodeOperationError(
 			node ?? ({} as INode),
 			'Failed to delete AWS infrastructure. You may need to manually clean up resources in the AWS Console.',

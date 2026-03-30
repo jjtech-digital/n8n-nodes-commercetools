@@ -23,6 +23,7 @@ export type StaticSubscriptionData = IDataObject & {
 
 export class CommercetoolsTrigger implements INodeType {
 	description: INodeTypeDescription = {
+		usableAsTool: true,
 		displayName: 'commercetools Trigger',
 		name: 'commercetoolsTrigger',
 		icon: 'file:Commercetools.svg',
