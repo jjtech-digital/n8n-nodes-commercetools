@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm audit:*)",
+      "Bash(grep -n \"isMainUpdateOp\\\\|isSearch\\\\|\\\\/search$\" /c/Projects/n8n-ct/n8n-nodes-commercetools/nodes/Commercetools/Commercetools.node.ts)",
+      "Bash(find /c/Projects/n8n-ct/n8n-nodes-commercetools -name *.test.ts -o -name *.spec.ts)",
+      "Bash(node -e \":*)",
+      "Bash(python3 -c \":*)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/skill-instructions-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

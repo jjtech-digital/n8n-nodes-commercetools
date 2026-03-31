@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(n8n)",
+      "Skill(n8n:*)",
+      "Skill(typescript)",
+      "Skill(typescript:*)",
+      "Skill(aws)",
+      "Skill(aws:*)",
+      "Skill(prettier)",
+      "Skill(prettier:*)",
+      "Bash(npm run:*)"
+    ],
+    "additionalDirectories": [
+      "c:\\Projects\\n8n-ct\\n8n-nodes-commercetools"
+    ]
+  }
+}

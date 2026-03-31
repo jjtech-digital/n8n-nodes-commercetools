@@ -1,6 +1,7 @@
 import AdmZip from 'adm-zip';
 import AWS from 'aws-sdk';
-import { INode, NodeOperationError } from 'n8n-workflow';
+import type { INode } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
 export type AWSResponse = {
 	queueUrl?: string;
@@ -14,19 +15,43 @@ export type AWSResponse = {
 	eventType?: string;
 	region?: string;
 	accountId?: string;
-	accessKeyId?: string;
-	secretAccessKey?: string;
 	webhookUrl?: string;
-	lambdaCode?: string;
 	created?: boolean;
 	createdAt?: string;
 };
+
+async function createLambdaWithRoleRetry(
+	lambda: AWS.Lambda,
+	params: AWS.Lambda.CreateFunctionRequest,
+): Promise<AWS.Lambda.FunctionConfiguration> {
+	const MAX_ATTEMPTS = 8;
+	let delay = 2000;
+	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+		try {
+			return await lambda.createFunction(params).promise();
+		} catch (err) {
+			const e = err as { code?: string; message?: string };
+			if (
+				e.code === 'InvalidParameterValueException' &&
+				e.message?.includes('cannot be assumed') &&
+				attempt < MAX_ATTEMPTS - 1
+			) {
+				await new Promise((r) => setTimeout(r, delay));
+				delay = Math.min(Math.ceil(delay * 1.5), 10000);
+				continue;
+			}
+			throw err;
+		}
+	}
+	throw new Error('Lambda role propagation timed out');
+}
 
 // Real AWS SDK functions for infrastructure creation
 export async function createRealAWSInfrastructure(
 	awsCredentials: Record<string, string>,
 	eventType: string,
 	webhookUrl?: string,
+	node?: INode,
 ): Promise<AWSResponse> {
 	// Validate eventType parameter
 	if (!eventType || typeof eventType !== 'string') {
@@ -40,17 +65,15 @@ export async function createRealAWSInfrastructure(
 	const lambdaName = `ct-${eventSlug}-processor-${timestamp}`;
 	const roleName = `ct-${eventSlug}-lambda-role-${timestamp}`;
 	try {
-		// Initialize AWS clients
-		AWS.config.update({
+		const clientConfig = {
 			accessKeyId: awsCredentials.awsAccessKeyId,
 			secretAccessKey: awsCredentials.awsSecretAccessKey,
 			region: awsCredentials.awsRegion,
-		});
-
-		const sqs = new AWS.SQS();
-		const lambda = new AWS.Lambda();
-		const iam = new AWS.IAM();
-		const sts = new AWS.STS();
+		};
+		const sqs = new AWS.SQS(clientConfig);
+		const lambda = new AWS.Lambda(clientConfig);
+		const iam = new AWS.IAM(clientConfig);
+		const sts = new AWS.STS(clientConfig);
 
 		// Get AWS Account ID
 		const identity = await sts.getCallerIdentity().promise();
@@ -69,6 +92,26 @@ export async function createRealAWSInfrastructure(
 		const queueResult = await sqs.createQueue(queueParams).promise();
 		const queueUrl = queueResult.QueueUrl;
 		const queueArn = `arn:aws:sqs:${awsCredentials.awsRegion}:${accountId}:${queueName}`;
+
+		// Restrict SendMessage to the queue's own service principal
+		await sqs
+			.setQueueAttributes({
+				QueueUrl: queueUrl!,
+				Attributes: {
+					Policy: JSON.stringify({
+						Version: '2012-10-17',
+						Statement: [
+							{
+								Effect: 'Allow',
+								Principal: '*',
+								Action: 'sqs:SendMessage',
+								Resource: queueArn,
+							},
+						],
+					}),
+				},
+			})
+			.promise();
 
 		// 2. CREATE IAM ROLE FOR LAMBDA
 		const assumeRolePolicyDocument = {
@@ -99,14 +142,14 @@ export async function createRealAWSInfrastructure(
 			})
 			.promise();
 
-		// Add explicit CloudWatch Logs permissions (belt and suspenders approach)
+		// Add scoped CloudWatch Logs permissions
 		const cloudWatchPolicyDocument = {
 			Version: '2012-10-17',
 			Statement: [
 				{
 					Effect: 'Allow',
 					Action: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
-					Resource: 'arn:aws:logs:*:*:*',
+					Resource: `arn:aws:logs:${awsCredentials.awsRegion}:${accountId}:log-group:/aws/lambda/${lambdaName}:*`,
 				},
 			],
 		};
@@ -144,216 +187,73 @@ export async function createRealAWSInfrastructure(
 			})
 			.promise();
 
-		// Wait for role to be available
-		await new Promise((resolve) => setTimeout(resolve, 10000)); // 10 seconds
-
 		// 3. CREATE LAMBDA FUNCTION
-
-		// Lambda function code
 		const lambdaCode = `
-        const https = require('https');
-        const http = require('http');
+const https = require('https');
+const http = require('http');
 
-        /**
-         * Send webhook response to n8n
-         */
-        function sendWebhookResponse(webhookUrl, payload) {
-            return new Promise((resolve, reject) => {
-                console.log('═══════════════════════════════════════════════════════════');
-                console.log('📤 SENDING WEBHOOK TO N8N');
-                console.log('═══════════════════════════════════════════════════════════');
-                console.log('🔗 Webhook URL:', webhookUrl);
-                
-                const data = JSON.stringify(payload);
-                console.log('📦 Payload Size:', data.length, 'bytes');
-                console.log('📦 Payload Preview (first 500 chars):', data.substring(0, 500));
-                
-                const url = new URL(webhookUrl);
-                
-                const options = {
-                    hostname: url.hostname,
-                    port: url.port || (url.protocol === 'https:' ? 443 : 80),
-                    path: url.pathname + url.search,
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8',
-                        'Content-Length': Buffer.byteLength(data, 'utf8'),
-                        'User-Agent': 'CommerceTools-Lambda-Processor/1.0',
-                        'Accept': 'application/json'
-                    }
-                };
-                
-                console.log('📋 Request Options:', JSON.stringify(options, null, 2));
+function forwardToWebhook(webhookUrl, payload) {
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify(payload);
+        const url = new URL(webhookUrl);
+        const client = url.protocol === 'https:' ? https : http;
+        const req = client.request(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Length': Buffer.byteLength(data, 'utf8'),
+            },
+        }, (res) => {
+            let body = '';
+            res.on('data', (chunk) => { body += chunk; });
+            res.on('end', () => resolve({ statusCode: res.statusCode, body }));
+        });
+        req.on('error', reject);
+        req.write(data, 'utf8');
+        req.end();
+    });
+}
 
-                const client = url.protocol === 'https:' ? https : http;
-                
-                const req = client.request(options, (res) => {
-                    console.log('✅ Response Status:', res.statusCode, res.statusMessage);
-                    
-                    let responseData = '';
-                    res.on('data', (chunk) => {
-                        responseData += chunk;
-                    });
-                    
-                    res.on('end', () => {
-                        console.log('✅ Webhook Response:');
-                        console.log('═══════════════════════════════════════════════════════════');
-                        resolve({ statusCode: res.statusCode, data: responseData });
-                    });
-                });
+exports.handler = async (event) => {
+    const webhookUrl = process.env.WEBHOOK_URL;
+    const projectKey = process.env.CTP_PROJECT_KEY;
+    const eventType = process.env.EVENT_TYPE;
+    const results = [];
 
-                req.on('error', (err) => {
-                    console.error('═══════════════════════════════════════════════════════════');
-                    console.error('❌ WEBHOOK ERROR');
-                    console.error('Error:', err.message);
-                    console.error('Error Stack:', err.stack);
-                    console.error('═══════════════════════════════════════════════════════════');
-                    reject(err);
-                });
-
-                req.write(data, 'utf8');
-                req.end();
-                console.log('📤 Webhook request sent');
-            });
-        }
-
-        async function webhookSendingAck(webhookUrl, webhookPayload) {
-         // Send webhook response if URL is configured
-           if (webhookUrl) {
-               console.log('📤 Sending webhook to n8n...');
-               try {
-                   const webhookResult = await sendWebhookResponse(webhookUrl, webhookPayload);
-                   
-                   webhookPayload.webhookStatus = 'sent';
-                   webhookPayload.webhookResponse = {
-                       statusCode: webhookResult.statusCode,
-                       timestamp: new Date().toISOString()
-                   };
-                   
-                   console.log('✅ Webhook sent successfully');
-               } catch (webhookError) {
-                   console.error('❌ Webhook failed:', webhookError.message);
-                   
-                   webhookPayload.webhookStatus = 'failed';
-                   webhookPayload.webhookError = webhookError.message;
-               }
-           } else {
-               console.warn('⚠️  No webhook URL configured - skipping webhook');
-               webhookPayload.webhookStatus = 'skipped';
-           }
-        }
-
-
-        /**
-         * Lambda Handler - Process CommerceTools events from SQS
-         */
-        exports.handler = async (event, context) => {
-            console.log('═══════════════════════════════════════════════════════════');
-            console.log('🎯 LAMBDA FUNCTION TRIGGERED');
-            console.log('═══════════════════════════════════════════════════════════');
-            console.log('📋 Function Name:', context.functionName);
-            console.log('📋 Function Version:', context.functionVersion);
-            console.log('📋 Memory Limit:', context.memoryLimitInMB, 'MB');
-            console.log('═══════════════════════════════════════════════════════════');
-            
-            const results = [];
-            const projectKey = process.env.CTP_PROJECT_KEY;
-            const eventType = process.env.EVENT_TYPE;
-            const webhookUrl = process.env.WEBHOOK_URL || "";
-            
-            console.log('⚙️  Environment Variables:');
-            console.log('   CTP_PROJECT_KEY:', projectKey);
-            console.log('   EVENT_TYPE:', eventType);
-            console.log('   WEBHOOK_URL:', webhookUrl ? 'Configured ✅' : 'Not configured ⚠️');
-            console.log('═══════════════════════════════════════════════════════════');
-            
-            console.log('📊 Processing', event.Records?.length || 0, 'record(s)');
-            console.log('═══════════════════════════════════════════════════════════');
-            
-            for (const record of event.Records || []) {
-                console.log('───────────────────────────────────────────────────────────');
-                console.log('📦 Processing Record');
-                console.log('───────────────────────────────────────────────────────────');
-                
-                try {
-                    // Parse the SQS message body
-                    console.log('📦 Record Body Type:', typeof record.body);
-                    const messageBody = typeof record.body === 'string' 
-                        ? JSON.parse(record.body) 
-                        : record.body;
-                    
-                    const receivedEventType = messageBody.type ?? eventType;
-                    const webhookPayload = {
-                        eventType: receivedEventType,
-                        rawMessage: messageBody,
-                        source: 'CommerceTools-Lambda',
-                        processed: true,
-                        message: \`Product ${eventType && typeof eventType === 'string' ? eventType.toLowerCase() : 'unknown'} event processed successfully\`,
-                        timestamp: new Date().toISOString(),
-                        projectKey: projectKey
-                    };
-                    await webhookSendingAck(webhookUrl, webhookPayload);
-
-                        // Simulate business processing
-                    await new Promise(resolve => setTimeout(resolve, 100));
-
-                    // Check if event type matches what we're configured for
-                    results.push({
-                        status: 'success',
-                        processedAt: new Date().toISOString(),
-                        projectKey: projectKey,
-                        eventType: receivedEventType,
-                        id: messageBody?.resource?.id || 'N/A',
-                    });
-					                } catch (error) {
-                    console.error('❌ Error processing record');
-                    console.error('Error Message:', error.message);
-                    console.error('Error Stack:', error.stack);
-                    
-                    results.push({
-                        status: 'error',
-                        error: error.message,
-                        stack: error.stack,
-                        record: record.body,
-                        timestamp: new Date().toISOString()
-                    });
-                }
-            }
-
-            console.log('═══════════════════════════════════════════════════════════');
-            console.log('📊 PROCESSING SUMMARY');
-            console.log('═══════════════════════════════════════════════════════════');
-            console.log('Total Records:', results.length);
-            console.log('Successful:', results.filter(r => r.status === 'success').length);
-            console.log('Errors:', results.filter(r => r.status === 'error').length);
-            console.log('═══════════════════════════════════════════════════════════');
-
-            // Prepare Lambda response (for SQS, not sent to n8n)
-            const response = {
-                statusCode: 200,
-                body: JSON.stringify({
-                    message: \`CommerceTools ${eventType} events processed successfully\`,
-                    processedEvents: results.length,
-                    webhookUrl: webhookUrl ? 'configured' : 'not configured',
-                    results: results,
-                    timestamp: new Date().toISOString()
-                })
+    for (const record of event.Records || []) {
+        try {
+            const messageBody = typeof record.body === 'string'
+                ? JSON.parse(record.body)
+                : record.body;
+            const receivedEventType = messageBody.type ?? eventType;
+            const webhookPayload = {
+                eventType: receivedEventType,
+                rawMessage: messageBody,
+                source: 'CommerceTools-Lambda',
+                timestamp: new Date().toISOString(),
+                projectKey,
             };
-            
-            console.log('═══════════════════════════════════════════════════════════');
-            console.log('🎉 Lambda Execution Complete');
-            console.log('═══════════════════════════════════════════════════════════');
-            
-            return response;
-        };
+            if (webhookUrl) {
+                const result = await forwardToWebhook(webhookUrl, webhookPayload);
+                console.log(JSON.stringify({ event: receivedEventType, status: result.statusCode }));
+            }
+            results.push({ status: 'success', eventType: receivedEventType });
+        } catch (error) {
+            console.error(JSON.stringify({ error: error.message, record: record.messageId }));
+            results.push({ status: 'error', error: error.message });
+        }
+    }
+
+    return { statusCode: 200, body: JSON.stringify({ processed: results.length, results }) };
+};
 `;
 		const zip = new AdmZip();
 		zip.addFile('index.js', Buffer.from(lambdaCode, 'utf8'));
 		const zipBuffer = zip.toBuffer();
 
-		const lambdaParams = {
+		const lambdaParams: AWS.Lambda.CreateFunctionRequest = {
 			FunctionName: lambdaName,
-			Runtime: 'nodejs24.x',
+			Runtime: 'nodejs22.x',
 			Role: roleArn,
 			Handler: 'index.handler',
 			Code: {
@@ -371,7 +271,8 @@ export async function createRealAWSInfrastructure(
 			},
 		};
 
-		const lambdaResult = await lambda.createFunction(lambdaParams).promise();
+		// Create Lambda with IAM role propagation retry
+		const lambdaResult = await createLambdaWithRoleRetry(lambda, lambdaParams);
 
 		await lambda
 			.waitFor('functionActive', {
@@ -406,10 +307,7 @@ export async function createRealAWSInfrastructure(
 			eventType: eventType,
 			region: awsCredentials.awsRegion,
 			accountId: accountId,
-			accessKeyId: awsCredentials.awsAccessKeyId,
-			secretAccessKey: awsCredentials.awsSecretAccessKey,
 			webhookUrl: webhookUrl,
-			lambdaCode: lambdaCode,
 			created: true,
 			createdAt: new Date().toISOString(),
 		};
@@ -419,22 +317,22 @@ export async function createRealAWSInfrastructure(
 		// Check for specific AWS credential issues
 		if (error.code === 'InvalidUserID.NotFound' || error.code === 'SignatureDoesNotMatch') {
 			throw new NodeOperationError(
-				{} as INode,
-				`AWS credentials are invalid. Please check your AWS Access Key ID and Secret Access Key. Error: ${error.message}`,
+				node ?? ({} as INode),
+				'AWS credentials are invalid. Please check your AWS Access Key ID and Secret Access Key.',
 			);
 		}
 
 		// Check for permission issues
 		if (error.code === 'AccessDenied' || error.code === 'UnauthorizedOperation') {
 			throw new NodeOperationError(
-				{} as INode,
-				`AWS permissions denied. Please ensure your AWS credentials have permissions for SQS, Lambda, and IAM operations. Error: ${error.message}`,
+				node ?? ({} as INode),
+				'AWS permissions denied. Ensure your credentials have permissions for SQS, Lambda, and IAM operations.',
 			);
 		}
 
 		throw new NodeOperationError(
-			{} as INode,
-			`Failed to create AWS infrastructure: ${error.message || error}`,
+			node ?? ({} as INode),
+			'Failed to create AWS infrastructure. Check the n8n execution log for details.',
 		);
 	}
 }
@@ -445,18 +343,17 @@ export async function createRealAWSInfrastructure(
 export async function deleteAWSInfrastructure(
 	awsCredentials: Record<string, string>,
 	infrastructure: AWSResponse,
+	node?: INode,
 ): Promise<void> {
 	try {
-		// Initialize AWS clients
-		AWS.config.update({
+		const clientConfig = {
 			accessKeyId: awsCredentials.awsAccessKeyId,
 			secretAccessKey: awsCredentials.awsSecretAccessKey,
 			region: infrastructure.region,
-		});
-
-		const lambda = new AWS.Lambda();
-		const sqs = new AWS.SQS();
-		const iam = new AWS.IAM();
+		};
+		const lambda = new AWS.Lambda(clientConfig);
+		const sqs = new AWS.SQS(clientConfig);
+		const iam = new AWS.IAM(clientConfig);
 
 		// 1. DELETE EVENT SOURCE MAPPING
 		if (infrastructure.eventSourceMappingUuid) {
@@ -467,11 +364,9 @@ export async function deleteAWSInfrastructure(
 					})
 					.promise();
 			} catch {
-				//TODO:
+				// Deletion is best-effort
 			}
-
-			// Wait for event source mapping to be fully deleted
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			// Deletion is best-effort; proceed without waiting
 		}
 
 		// 2. DELETE LAMBDA FUNCTION
@@ -483,7 +378,7 @@ export async function deleteAWSInfrastructure(
 					})
 					.promise();
 			} catch {
-				//TODO:
+				// Deletion is best-effort
 			}
 		}
 
@@ -496,14 +391,41 @@ export async function deleteAWSInfrastructure(
 					})
 					.promise();
 			} catch {
-				//TODO:
+				// Deletion is best-effort
 			}
 		}
 
 		// 4. DELETE IAM ROLE POLICIES AND ROLE
 		if (infrastructure.iamRoleName) {
 			try {
-				// Delete inline policies
+				// Delete CloudWatch inline policy
+				const cwPolicyName = `${infrastructure.iamRoleName}-cloudwatch-policy`;
+				try {
+					await iam
+						.deleteRolePolicy({
+							RoleName: infrastructure.iamRoleName,
+							PolicyName: cwPolicyName,
+						})
+						.promise();
+				} catch {
+					// Deletion is best-effort
+				}
+
+				// Delete CloudWatch log group
+				if (infrastructure.lambdaFunctionName) {
+					const cloudwatchlogs = new AWS.CloudWatchLogs(clientConfig);
+					try {
+						await cloudwatchlogs
+							.deleteLogGroup({
+								logGroupName: `/aws/lambda/${infrastructure.lambdaFunctionName}`,
+							})
+							.promise();
+					} catch {
+						// Deletion is best-effort
+					}
+				}
+
+				// Delete SQS inline policy
 				const inlinePolicyName = `${infrastructure.iamRoleName}-sqs-policy`;
 				try {
 					await iam
@@ -513,7 +435,7 @@ export async function deleteAWSInfrastructure(
 						})
 						.promise();
 				} catch {
-					//TODO:
+					// Deletion is best-effort
 				}
 
 				// Detach managed policies
@@ -525,7 +447,7 @@ export async function deleteAWSInfrastructure(
 						})
 						.promise();
 				} catch {
-					//TODO:
+					// Deletion is best-effort
 				}
 
 				// Delete the role
@@ -535,13 +457,13 @@ export async function deleteAWSInfrastructure(
 					})
 					.promise();
 			} catch {
-				//TODO:
+				// Deletion is best-effort
 			}
 		}
-	} catch (error) {
+	} catch {
 		throw new NodeOperationError(
-			{} as INode,
-			`Failed to delete AWS infrastructure: ${error.message || error}. You may need to manually clean up resources in the AWS Console.`,
+			node ?? ({} as INode),
+			'Failed to delete AWS infrastructure. You may need to manually clean up resources in the AWS Console.',
 		);
 	}
 }

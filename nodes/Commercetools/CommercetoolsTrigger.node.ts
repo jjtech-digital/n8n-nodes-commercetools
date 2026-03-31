@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'crypto';
 import type {
 	IDataObject,
 	INodeType,
@@ -9,16 +10,20 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 import { triggerProperties } from './generated/subscription.properties';
 import { triggerMethods } from './utils/webhookMethods.utils';
 import { AWSResponse } from './utils/awsInfra.utils';
+import { GCPResponse } from './utils/gcpInfra.utils';
 
 export type StaticSubscriptionData = IDataObject & {
 	subscriptionId?: string;
 	awsInfrastructure?: AWSResponse;
+	gcpInfrastructure?: GCPResponse;
 	configHash?: string;
 	events?: string[];
+	lastVerifiedAt?: number;
 };
 
 export class CommercetoolsTrigger implements INodeType {
 	description: INodeTypeDescription = {
+		usableAsTool: true,
 		displayName: 'commercetools Trigger',
 		name: 'commercetoolsTrigger',
 		icon: 'file:Commercetools.svg',
@@ -53,7 +58,6 @@ export class CommercetoolsTrigger implements INodeType {
 				ndvHideUrl: false,
 			},
 		],
-		usableAsTool: true,
 		properties: [...triggerProperties],
 	};
 
@@ -62,26 +66,23 @@ export class CommercetoolsTrigger implements INodeType {
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
 
-		let processedBody: IDataObject;
-		try {
-			// Handle different body formats
-			if (typeof req.body === 'string') {
-				processedBody = JSON.parse(req.body);
-			} else if (typeof req.body === 'object' && req.body !== null) {
-				processedBody = req.body;
-			} else {
-				processedBody = req.body;
+		// Validate webhook secret if configured
+		const credentials = await this.getCredentials('commerceToolsOAuth2Api');
+		const secret = credentials.webhookSecret as string | undefined;
+		if (secret) {
+			const incoming = (req.headers['x-webhook-secret'] as string) ?? '';
+			const expected = Buffer.from(secret, 'utf8');
+			const received = Buffer.from(incoming, 'utf8');
+			if (expected.length !== received.length || !timingSafeEqual(expected, received)) {
+				return { noWebhookResponse: true };
 			}
-
-			// Return the processed data
-			return {
-				workflowData: [this.helpers.returnJsonArray(processedBody)],
-			};
-		} catch {
-			// Return raw body as fallback
-			return {
-				workflowData: [this.helpers.returnJsonArray(req.body as IDataObject)],
-			};
 		}
+
+		const processedBody: IDataObject =
+			typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
+		return {
+			workflowData: [this.helpers.returnJsonArray(processedBody)],
+		};
 	}
 }

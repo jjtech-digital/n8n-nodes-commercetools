@@ -77,6 +77,16 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			description: 'Choose the event provider for webhook integration',
 		},
 		{
+			displayName: 'Webhook Secret',
+			name: 'webhookSecret',
+			type: 'string',
+			typeOptions: { password: true },
+			default: '',
+			placeholder: 'Optional shared secret for webhook validation',
+			description:
+				'If set, incoming webhook requests must include this value in the X-Webhook-Secret header',
+		},
+		{
 			displayName: 'AWS Client Access Key',
 			name: 'awsAccessKeyId',
 			type: 'string',
@@ -106,9 +116,29 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 		{
 			displayName: 'AWS Region',
 			name: 'awsRegion',
-			type: 'string',
+			type: 'options',
+			options: [
+				{ name: 'us-east-1', value: 'us-east-1' },
+				{ name: 'us-east-2', value: 'us-east-2' },
+				{ name: 'us-west-1', value: 'us-west-1' },
+				{ name: 'us-west-2', value: 'us-west-2' },
+				{ name: 'eu-west-1', value: 'eu-west-1' },
+				{ name: 'eu-west-2', value: 'eu-west-2' },
+				{ name: 'eu-west-3', value: 'eu-west-3' },
+				{ name: 'eu-central-1', value: 'eu-central-1' },
+				{ name: 'eu-central-2', value: 'eu-central-2' },
+				{ name: 'eu-north-1', value: 'eu-north-1' },
+				{ name: 'ap-southeast-1', value: 'ap-southeast-1' },
+				{ name: 'ap-southeast-2', value: 'ap-southeast-2' },
+				{ name: 'ap-northeast-1', value: 'ap-northeast-1' },
+				{ name: 'ap-northeast-2', value: 'ap-northeast-2' },
+				{ name: 'ap-south-1', value: 'ap-south-1' },
+				{ name: 'sa-east-1', value: 'sa-east-1' },
+				{ name: 'ca-central-1', value: 'ca-central-1' },
+				{ name: 'me-south-1', value: 'me-south-1' },
+				{ name: 'af-south-1', value: 'af-south-1' },
+			],
 			default: 'us-east-1',
-			placeholder: 'us-east-1',
 			description: 'AWS Region for EventBridge',
 			displayOptions: {
 				show: {
@@ -121,6 +151,7 @@ export class CommerceToolsOAuth2Api implements ICredentialType {
 			name: 'serviceAccountJson',
 			type: 'string',
 			typeOptions: {
+				password: true,
 				rows: 6,
 			},
 			default: '',
