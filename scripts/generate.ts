@@ -68,6 +68,11 @@ const FOLDERS_TO_GENERATE = [
 	'Zones',
 	'Subscriptions',
 	'States',
+	'Quotes',
+	'Quote-requests',
+	'Staged-quotes',
+	'Messages',
+	'Extensions',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -90,6 +95,9 @@ const RESOURCES_TO_GENERATE = [
 	'zone',
 	'subscription',
 	'state',
+	'quote',
+	'quote-request',
+	'staged-quote',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
