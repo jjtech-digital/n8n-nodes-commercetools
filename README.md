@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, and States
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -76,6 +76,11 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Zone**            | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Subscription**    | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **State**           | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Quote**           | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Quote Request**   | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Staged Quote**    | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Message**         | Get by ID, Query, HEAD checks |
+| **Extension**       | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 
 #### How field generation works
 
@@ -181,6 +186,16 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Subscriptions** — no message triggers (change subscriptions only)
 
 **States** — change notifications only (CT does not support message subscriptions for states)
+
+**Quote** — created, deleted, customer changed, seller comment set, state changed, state transition, valid to set
+
+**Quote Request** — created, deleted, customer changed, state changed, state transition
+
+**Staged Quote** — created, deleted, seller comment set, state changed, state transition, valid to set
+
+**Messages** — no triggers (read-only resource)
+
+**Extensions** — no message triggers (change subscriptions only)
 
 #### Subscription routing
 
@@ -339,7 +354,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment]
+│     │     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment, quote, quote-request, staged-quote]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -390,10 +405,11 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.10 | Added Claude AI agents and skills for automated development assistance                           |
+| v1.0.9  | Added Zones, Subscriptions, and States                                                           |
 | v1.0.8  | Added Custom Objects, Payments, Payment Methods, and Shipping Methods                            |
 | v1.0.7  | Added Types feature.                                                                             |
-| v1.0.6  | Added Reviews and Shopping Lists.                                                                |
-| v1.0.5  | Added Inventory feature.                                                                         |
+                                                                      
 
 
 
