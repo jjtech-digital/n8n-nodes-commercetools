@@ -3364,7 +3364,7 @@
     "name": "TransitionState",
     "value": "transitionState",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/payments/{{payment-id}}",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -3404,8 +3404,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Payment in the Project using one or more [update actions](/../api/projects/payments#update-actions).",
-    "folder": "Payments",
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4938,7 +4938,7 @@
     "name": "SetCustomField",
     "value": "setCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/shipping-methods/{{shipping-method-id}}",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4980,8 +4980,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).",
-    "folder": "Shipping-methods",
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4992,7 +4992,7 @@
     "name": "SetCustomType",
     "value": "setCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/shipping-methods/{{shipping-method-id}}",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5044,8 +5044,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).",
-    "folder": "Shipping-methods",
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -23852,5 +23852,1569 @@
     "requiresId": true,
     "requiresKey": false,
     "requiresVersion": true
+  },
+  "getQuoteByKey": {
+    "name": "Get Quote by Key",
+    "value": "getQuoteByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/quotes/key={{quote-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a Quote with the provided `key`.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "quote-key"
+  },
+  "checkIfQuoteExistsByKey": {
+    "name": "Check if Quote exists by Key",
+    "value": "checkIfQuoteExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/quotes/key={{quote-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Quote exists with the provided `key`. Returns a `200 OK` status if the Quote exists, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "quote-key"
+  },
+  "updateQuoteByKey": {
+    "name": "Update Quote by Key",
+    "value": "updateQuoteByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quotes/key={{quote-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuoteState",
+            "quoteState": "Accepted"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quoteState",
+        "type": "string",
+        "required": false,
+        "example": "Accepted",
+        "description": "Quote State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Quote in the Project using one or more [update actions](/../api/projects/quotes#update-actions).",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "quote-key"
+  },
+  "deleteQuoteByKey": {
+    "name": "Delete Quote by Key",
+    "value": "deleteQuoteByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/quotes/key={{quote-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a Quote in the Project.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "quote-key"
+  },
+  "getQuoteById": {
+    "name": "Get Quote by ID",
+    "value": "getQuoteById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/quotes/{{quote-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a Quote with the provided `id`.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfQuoteExistsById": {
+    "name": "Check if Quote exists by ID",
+    "value": "checkIfQuoteExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/quotes/{{quote-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Quote exists with the provided `id`. Returns a `200 OK` status if the Quote exists, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateQuoteById": {
+    "name": "Update Quote by ID",
+    "value": "updateQuoteById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quotes/{{quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuoteState",
+            "quoteState": "Accepted"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quoteState",
+        "type": "string",
+        "required": false,
+        "example": "Accepted",
+        "description": "Quote State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Quote in the Project using one or more [update actions](/../api/projects/quotes#update-actions).",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteQuoteById": {
+    "name": "Delete Quote by ID",
+    "value": "deleteQuoteById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/quotes/{{quote-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a Quote in the Project.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryQuotes": {
+    "name": "Query Quotes",
+    "value": "queryQuotes",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/quotes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Retrieves all Quotes in the Project.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfQuoteExistsByQueryPredicate": {
+    "name": "Check if Quote exists by Query Predicate",
+    "value": "checkIfQuoteExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/quotes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Quotes exist for the provided query predicate. Returns a `200 OK` status if any Quotes match the query predicate, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createQuote": {
+    "name": "Create Quote",
+    "value": "createQuote",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quotes",
+    "bodyFields": [
+      {
+        "name": "stagedQuote.typeId",
+        "type": "string",
+        "required": false,
+        "example": "staged-quote",
+        "description": "Staged Quote › type Id"
+      },
+      {
+        "name": "stagedQuote.id",
+        "type": "string",
+        "required": false,
+        "example": "2a3baa00-44fa-4ab8-bec7-933c31e18dcc",
+        "description": "Staged Quote › id"
+      },
+      {
+        "name": "stagedQuoteVersion",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Staged Quote Version"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creates a Quote in the Project.",
+    "folder": "Quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeCustomer": {
+    "name": "ChangeCustomer",
+    "value": "changeCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quote-requests/{{quote-request-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeCustomer",
+            "customer": {
+              "typeId": "customer",
+              "id": "900bcbef-77e6-4739-8fdf-c3511d14b32a"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "customer",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "customer",
+          "id": "900bcbef-77e6-4739-8fdf-c3511d14b32a"
+        },
+        "description": "Customer"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a QuoteRequest in the Project using one or more [update actions](/../api/projects/quote-requests#update-actions).",
+    "folder": "Quote-requests",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeQuoteState": {
+    "name": "ChangeQuoteState",
+    "value": "changeQuoteState",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quotes/{{quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuoteState",
+            "quoteState": "Accepted"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quoteState",
+        "type": "string",
+        "required": false,
+        "example": "Accepted",
+        "description": "Quote State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Quote in the Project using one or more [update actions](/../api/projects/quotes#update-actions).",
+    "folder": "Quotes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "requestQuoteRenegotiation": {
+    "name": "RequestQuoteRenegotiation",
+    "value": "requestQuoteRenegotiation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quotes/{{quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "requestQuoteRenegotiation",
+            "buyerComment": "Please also give me a 10% discount on the red T-shirts."
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "buyerComment",
+        "type": "string",
+        "required": false,
+        "example": "Please also give me a 10% discount on the red T-shirts.",
+        "description": "Buyer Comment"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Quote in the Project using one or more [update actions](/../api/projects/quotes#update-actions).",
+    "folder": "Quotes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getQuoteRequestByKey": {
+    "name": "Get QuoteRequest by Key",
+    "value": "getQuoteRequestByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/quote-requests/key={{quote-request-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a QuoteRequest with the provided `key`.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "quote-request-key"
+  },
+  "checkIfQuoteRequestExistsByKey": {
+    "name": "Check if QuoteRequest exists by Key",
+    "value": "checkIfQuoteRequestExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/quote-requests/key={{quote-request-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a QuoteRequest exists with the provided `key`. Returns a `200 OK` status if the QuoteRequest exists, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "quote-request-key"
+  },
+  "updateQuoteRequestByKey": {
+    "name": "Update QuoteRequest by Key",
+    "value": "updateQuoteRequestByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quote-requests/key={{quote-request-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuoteRequestState",
+            "quoteRequestState": "Cancelled"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quoteRequestState",
+        "type": "string",
+        "required": false,
+        "example": "Cancelled",
+        "description": "Quote Request State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a QuoteRequest in the Project using one or more [update actions](/../api/projects/quote-requests#update-actions).",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "quote-request-key"
+  },
+  "deleteQuoteRequestByKey": {
+    "name": "Delete QuoteRequest by Key",
+    "value": "deleteQuoteRequestByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/quote-requests/key={{quote-request-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a QuoteRequest in the Project.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "quote-request-key"
+  },
+  "getQuoteRequestById": {
+    "name": "Get QuoteRequest by ID",
+    "value": "getQuoteRequestById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/quote-requests/{{quote-request-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a QuoteRequest with the provided `id`.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfQuoteRequestExistsById": {
+    "name": "Check if QuoteRequest exists by ID",
+    "value": "checkIfQuoteRequestExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/quote-requests/{{quote-request-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a QuoteRequest exists with the provided `id`. Returns a `200 OK` status if the QuoteRequest exists, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateQuoteRequestById": {
+    "name": "Update QuoteRequest by ID",
+    "value": "updateQuoteRequestById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quote-requests/{{quote-request-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuoteRequestState",
+            "quoteRequestState": "Cancelled"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quoteRequestState",
+        "type": "string",
+        "required": false,
+        "example": "Cancelled",
+        "description": "Quote Request State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a QuoteRequest in the Project using one or more [update actions](/../api/projects/quote-requests#update-actions).",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteQuoteRequestById": {
+    "name": "Delete QuoteRequest by ID",
+    "value": "deleteQuoteRequestById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/quote-requests/{{quote-request-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a QuoteRequest in the Project.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryQuoteRequests": {
+    "name": "Query QuoteRequests",
+    "value": "queryQuoteRequests",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/quote-requests",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Retrieves all QuoteRequests in the Project.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfQuoteRequestExistsByQueryPredicate": {
+    "name": "Check if QuoteRequest exists by Query Predicate",
+    "value": "checkIfQuoteRequestExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/quote-requests",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more QuoteRequests exist for the provided query predicate. Returns a `200 OK` status if any QuoteRequests match the query predicate, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createQuoteRequest": {
+    "name": "Create QuoteRequest",
+    "value": "createQuoteRequest",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quote-requests",
+    "bodyFields": [
+      {
+        "name": "cart.typeId",
+        "type": "string",
+        "required": false,
+        "example": "cart",
+        "description": "Cart › type Id"
+      },
+      {
+        "name": "cart.id",
+        "type": "string",
+        "required": false,
+        "example": "168e5783-73c8-4f2d-91f4-3c90b872c708",
+        "description": "Cart › id"
+      },
+      {
+        "name": "cartVersion",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Cart Version"
+      },
+      {
+        "name": "comment",
+        "type": "string",
+        "required": true,
+        "example": "Give me 10% discount",
+        "description": "Comment"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creates a QuoteRequest in the Project.",
+    "folder": "Quote-requests",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeQuoteRequestState": {
+    "name": "ChangeQuoteRequestState",
+    "value": "changeQuoteRequestState",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/quote-requests/{{quote-request-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeQuoteRequestState",
+            "quoteRequestState": "Rejected"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quoteRequestState",
+        "type": "string",
+        "required": false,
+        "example": "Rejected",
+        "description": "Quote Request State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a QuoteRequest in the Project using one or more [update actions](/../api/projects/quote-requests#update-actions).",
+    "folder": "Quote-requests",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getStagedQuoteByKey": {
+    "name": "Get StagedQuote by Key",
+    "value": "getStagedQuoteByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/staged-quotes/key={{staged-quote-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a StagedQuote with the provided `key`.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "staged-quote-key"
+  },
+  "checkIfStagedQuoteExistsByKey": {
+    "name": "Check if StagedQuote exists by Key",
+    "value": "checkIfStagedQuoteExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/staged-quotes/key={{staged-quote-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a StagedQuote exists with the provided `key`. Returns a `200 OK` status if the StagedQuote exists, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "staged-quote-key"
+  },
+  "updateStagedQuoteByKey": {
+    "name": "Update StagedQuote by Key",
+    "value": "updateStagedQuoteByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/staged-quotes/key={{staged-quote-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeStagedQuoteState",
+            "stagedQuoteState": "Sent"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "stagedQuoteState",
+        "type": "string",
+        "required": false,
+        "example": "Sent",
+        "description": "Staged Quote State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "staged-quote-key"
+  },
+  "deleteStagedQuoteByKey": {
+    "name": "Delete StagedQuote by Key",
+    "value": "deleteStagedQuoteByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/staged-quotes/key={{staged-quote-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a StagedQuote in the Project.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "staged-quote-key"
+  },
+  "getStagedQuoteById": {
+    "name": "Get StagedQuote by ID",
+    "value": "getStagedQuoteById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Retrieves a StagedQuote with the provided `id`.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStagedQuoteExistsById": {
+    "name": "Check if StagedQuote exists by ID",
+    "value": "checkIfStagedQuoteExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a StagedQuote exists with the provided `id`. Returns a `200 OK` status if the StagedQuote exists, or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateStagedQuoteById": {
+    "name": "Update StagedQuote by ID",
+    "value": "updateStagedQuoteById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeStagedQuoteState",
+            "stagedQuoteState": "Sent"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "stagedQuoteState",
+        "type": "string",
+        "required": false,
+        "example": "Sent",
+        "description": "Staged Quote State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteStagedQuoteById": {
+    "name": "Delete StagedQuote by ID",
+    "value": "deleteStagedQuoteById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deletes a StagedQuote in the Project.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryStagedQuotes": {
+    "name": "Query StagedQuotes",
+    "value": "queryStagedQuotes",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/staged-quotes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Retrieves all StagedQuotes in the Project.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStagedQuoteExistsByQueryPredicate": {
+    "name": "Check if StagedQuote exists by Query Predicate",
+    "value": "checkIfStagedQuoteExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/staged-quotes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more StagedQuotes exist for the provided query predicate. Returns a `200 OK` status if any StagedQuotes match the query predicate or a [Not Found](/../api/errors#404-not-found) error otherwise.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createStagedQuote": {
+    "name": "Create StagedQuote",
+    "value": "createStagedQuote",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/staged-quotes",
+    "bodyFields": [
+      {
+        "name": "quoteRequest.typeId",
+        "type": "string",
+        "required": false,
+        "example": "quote-request",
+        "description": "Quote Request › type Id"
+      },
+      {
+        "name": "quoteRequest.id",
+        "type": "string",
+        "required": false,
+        "example": "168e5783-73c8-4f2d-91f4-3c90b872c708",
+        "description": "Quote Request › id"
+      },
+      {
+        "name": "quoteRequestVersion",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Quote Request Version"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creates a StagedQuote in the Project.",
+    "folder": "Staged-quotes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeStagedQuoteState": {
+    "name": "ChangeStagedQuoteState",
+    "value": "changeStagedQuoteState",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeStagedQuoteState",
+            "stagedQuoteState": "Sent"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "stagedQuoteState",
+        "type": "string",
+        "required": false,
+        "example": "Sent",
+        "description": "Staged Quote State"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setSellerComment": {
+    "name": "SetSellerComment",
+    "value": "setSellerComment",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSellerComment",
+            "sellerComment": "Please let me know if this matches your expectations"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "sellerComment",
+        "type": "string",
+        "required": false,
+        "example": "Please let me know if this matches your expectations",
+        "description": "Seller Comment"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setValidTo": {
+    "name": "SetValidTo",
+    "value": "setValidTo",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/staged-quotes/{{staged-quote-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setValidTo",
+            "validTo": "2022-09-22T15:41:55.816Z"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "validTo",
+        "type": "string",
+        "required": false,
+        "example": "2022-09-22T15:41:55.816Z",
+        "description": "Valid To"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a StagedQuote in the Project using one or more [update actions](/../api/projects/staged-quotes#update-actions).",
+    "folder": "Staged-quotes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getMessageById": {
+    "name": "Get Message by ID",
+    "value": "getMessageById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/messages/{{message-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `view_orders:{projectKey}`",
+    "folder": "Messages",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfMessageExistsById": {
+    "name": "Check if Message exists by ID",
+    "value": "checkIfMessageExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/messages/{{message-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Message exists with the provided `id`. Returns a `200` status if the Message exists, or a `404` status otherwise.",
+    "folder": "Messages",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "queryMessages": {
+    "name": "Query Messages",
+    "value": "queryMessages",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/messages",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `view_orders:{projectKey}`",
+    "folder": "Messages",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfMessageExistsByQueryPredicate": {
+    "name": "Check if Message exists by Query Predicate",
+    "value": "checkIfMessageExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/messages",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Messages exist for the provided query predicate. Returns a `200` status if any Messages match the query predicate, or a `404` status otherwise.",
+    "folder": "Messages",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "getExtensionByKey": {
+    "name": "Get Extension by Key",
+    "value": "getExtensionByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/extensions/key={{extension-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "extension-key"
+  },
+  "checkIfExtensionExistsByKey": {
+    "name": "Check if Extension exists by Key",
+    "value": "checkIfExtensionExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/extensions/key={{extension-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if an Extension exists with the provided `key`. Returns a `200` status if the Extension exists, or a `404` status otherwise.",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "extension-key"
+  },
+  "updateExtensionByKey": {
+    "name": "Update Extension by Key",
+    "value": "updateExtensionByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/extensions/key={{extension-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setKey",
+            "key": "my-new-extension-key"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "my-new-extension-key",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "extension-key"
+  },
+  "deleteExtensionByKey": {
+    "name": "Delete Extension by Key",
+    "value": "deleteExtensionByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/extensions/key={{extension-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version"
+    ],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "extension-key"
+  },
+  "getExtensionById": {
+    "name": "Get Extension by ID",
+    "value": "getExtensionById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/extensions/{{extension-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfExtensionExistsById": {
+    "name": "Check if Extension exists by ID",
+    "value": "checkIfExtensionExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/extensions/{{extension-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if an Extension exists with the provided `id`. Returns a `200` status if the Extension exists, or a `404` status otherwise.",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateExtensionById": {
+    "name": "Update Extension by ID",
+    "value": "updateExtensionById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/extensions/{{extension-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setKey",
+            "key": "my-new-extension-key"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": false,
+        "example": "my-new-extension-key",
+        "description": "Key"
+      }
+    ],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteExtensionById": {
+    "name": "Delete Extension by ID",
+    "value": "deleteExtensionById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/extensions/{{extension-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version"
+    ],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryExtensions": {
+    "name": "Query Extensions",
+    "value": "queryExtensions",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/extensions",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfExtensionExistsByQueryPredicate": {
+    "name": "Check if Extension exists by Query Predicate",
+    "value": "checkIfExtensionExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/extensions",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Extensions exist for the provided query predicate. Returns a `200` status if any Extensions match the query predicate, or a `404` status otherwise.",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createExtension": {
+    "name": "Create Extension",
+    "value": "createExtension",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/extensions",
+    "bodyFields": [
+      {
+        "name": "destination.type",
+        "type": "string",
+        "required": false,
+        "example": "HTTP",
+        "description": "Destination › type"
+      },
+      {
+        "name": "destination.url",
+        "type": "string",
+        "required": false,
+        "example": "https://example.azurewebsites.net/api/extension",
+        "description": "Destination › url"
+      },
+      {
+        "name": "destination.authentication.type",
+        "type": "string",
+        "required": false,
+        "example": "AzureFunctions",
+        "description": "Destination › authentication › type"
+      },
+      {
+        "name": "destination.authentication.key",
+        "type": "string",
+        "required": false,
+        "example": "some-azure-function-code",
+        "description": "Destination › authentication › key"
+      },
+      {
+        "name": "triggers",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "resourceTypeId": "cart",
+            "actions": [
+              "Create",
+              "Update"
+            ]
+          }
+        ],
+        "description": "Array of triggers"
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "my-extension",
+        "description": "Key"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "null",
+    "folder": "Extensions",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
   }
 }

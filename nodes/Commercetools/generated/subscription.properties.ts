@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-03-31T06:52:23.083Z
+ * Generated at: 2026-04-01T09:58:05.072Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -204,6 +204,17 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Product Variant Deleted', value: 'ProductVariantDeleted', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggers when product variant deleted occurs on a product.' },
     { name: 'Product Variant Tailoring Added', value: 'ProductVariantTailoringAdded', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggers when product variant tailoring added occurs on a product.' },
     { name: 'Product Variant Tailoring Removed', value: 'ProductVariantTailoringRemoved', resourceTypeId: 'product', subscriptionType: 'message', description: 'Triggers when product variant tailoring removed occurs on a product.' },
+    { name: 'Quote Created', value: 'QuoteCreated', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote created occurs on a quote.' },
+    { name: 'Quote Customer Changed', value: 'QuoteCustomerChanged', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote customer changed occurs on a quote.' },
+    { name: 'Quote Deleted', value: 'QuoteDeleted', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote deleted occurs on a quote.' },
+    { name: 'Quote Renegotiation Requested', value: 'QuoteRenegotiationRequested', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote renegotiation requested occurs on a quote.' },
+    { name: 'Quote Request Created', value: 'QuoteRequestCreated', resourceTypeId: 'quote-request', subscriptionType: 'message', description: 'Triggers when quote request created occurs on a quote-request.' },
+    { name: 'Quote Request Customer Changed', value: 'QuoteRequestCustomerChanged', resourceTypeId: 'quote-request', subscriptionType: 'message', description: 'Triggers when quote request customer changed occurs on a quote-request.' },
+    { name: 'Quote Request Deleted', value: 'QuoteRequestDeleted', resourceTypeId: 'quote-request', subscriptionType: 'message', description: 'Triggers when quote request deleted occurs on a quote-request.' },
+    { name: 'Quote Request State Changed', value: 'QuoteRequestStateChanged', resourceTypeId: 'quote-request', subscriptionType: 'message', description: 'Triggers when quote request state changed occurs on a quote-request.' },
+    { name: 'Quote Request State Transition', value: 'QuoteRequestStateTransition', resourceTypeId: 'quote-request', subscriptionType: 'message', description: 'Triggers when quote request state transition occurs on a quote-request.' },
+    { name: 'Quote State Changed', value: 'QuoteStateChanged', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote state changed occurs on a quote.' },
+    { name: 'Quote State Transition', value: 'QuoteStateTransition', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote state transition occurs on a quote.' },
     { name: 'Return Info Added', value: 'ReturnInfoAdded', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info added occurs on a order.' },
     { name: 'Return Info Set', value: 'ReturnInfoSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info set occurs on a order.' },
     { name: 'Review Created', value: 'ReviewCreated', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review created occurs on a review.' },
@@ -211,6 +222,12 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Review State Transition', value: 'ReviewStateTransition', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review state transition occurs on a review.' },
     { name: 'Shopping List Line Item Added', value: 'ShoppingListLineItemAdded', resourceTypeId: 'shopping-list', subscriptionType: 'message', description: 'Triggers when shopping list line item added occurs on a shopping-list.' },
     { name: 'Shopping List Line Item Removed', value: 'ShoppingListLineItemRemoved', resourceTypeId: 'shopping-list', subscriptionType: 'message', description: 'Triggers when shopping list line item removed occurs on a shopping-list.' },
+    { name: 'Staged Quote Created', value: 'StagedQuoteCreated', resourceTypeId: 'staged-quote', subscriptionType: 'message', description: 'Triggers when staged quote created occurs on a staged-quote.' },
+    { name: 'Staged Quote Deleted', value: 'StagedQuoteDeleted', resourceTypeId: 'staged-quote', subscriptionType: 'message', description: 'Triggers when staged quote deleted occurs on a staged-quote.' },
+    { name: 'Staged Quote Seller Comment Set', value: 'StagedQuoteSellerCommentSet', resourceTypeId: 'staged-quote', subscriptionType: 'message', description: 'Triggers when staged quote seller comment set occurs on a staged-quote.' },
+    { name: 'Staged Quote State Changed', value: 'StagedQuoteStateChanged', resourceTypeId: 'staged-quote', subscriptionType: 'message', description: 'Triggers when staged quote state changed occurs on a staged-quote.' },
+    { name: 'Staged Quote State Transition', value: 'StagedQuoteStateTransition', resourceTypeId: 'staged-quote', subscriptionType: 'message', description: 'Triggers when staged quote state transition occurs on a staged-quote.' },
+    { name: 'Staged Quote Valid To Set', value: 'StagedQuoteValidToSet', resourceTypeId: 'staged-quote', subscriptionType: 'message', description: 'Triggers when staged quote valid to set occurs on a staged-quote.' },
 ];
 
 export const triggerProperties: INodeProperties[] = [
