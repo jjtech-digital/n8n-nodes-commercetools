@@ -98,6 +98,8 @@ const RESOURCES_TO_GENERATE = [
 	'quote',
 	'quote-request',
 	'staged-quote',
+	'message',
+	'extension',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
