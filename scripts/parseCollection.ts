@@ -190,8 +190,17 @@ function findFolder(items: any[], folderName: string, projectFolderName = 'Proje
 	);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const searchIn: any[] = projectFolder ? projectFolder.item : items;
-	for (const item of searchIn) {
-		if (item.name === folderName && Array.isArray(item.item)) return item;
+
+	// Support slash-separated nested paths e.g. 'As-associate/In-business-unit/Approval-rules'
+	const parts = folderName.split('/');
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	let current: any[] = searchIn;
+	for (let idx = 0; idx < parts.length; idx++) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const found = current.find((i: any) => i.name === parts[idx] && Array.isArray(i.item));
+		if (!found) return null;
+		if (idx === parts.length - 1) return found;
+		current = found.item;
 	}
 	return null;
 }
