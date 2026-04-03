@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, API Extensions, Approval Rules, Approval Flows, and Associate Endpoints (Carts, Orders, Quotes, Quote Requests, Shopping Lists, Business Units)
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -81,6 +81,14 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Staged Quote**    | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Message**         | Get by ID, Query, HEAD checks |
 | **Extension**       | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Approval Rule**          | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Approval Flow**          | Get by ID, Query, Update, HEAD checks |
+| **Associate Cart**         | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Associate Order**        | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Associate Quote**        | Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Associate Quote Request**| Create, Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Associate Shopping List**| Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Associate Business Unit**| Get by ID, Get by Key, Query, Update, HEAD checks |
 
 #### How field generation works
 
@@ -196,6 +204,10 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Messages** — no triggers (read-only resource)
 
 **Extensions** — no message triggers (change subscriptions only)
+
+**Approval Rule** — created, approvers set, description set, key set, mode changed, name set, predicate set, requesters set, status set
+
+**Approval Flow** — created, approved, completed, rejected
 
 #### Subscription routing
 
@@ -354,7 +366,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     │     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment, quote, quote-request, staged-quote]
+│     │     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment, quote, quote-request, staged-quote, approval-rule, approval-flow]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -405,10 +417,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
+| v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                           |
 | v1.0.10 | Added Claude AI agents and skills for automated development assistance                           |
 | v1.0.9  | Added Zones, Subscriptions, and States                                                           |
 | v1.0.8  | Added Custom Objects, Payments, Payment Methods, and Shipping Methods                            |
-| v1.0.7  | Added Types feature.                                                                             |
                                                                       
 
 
