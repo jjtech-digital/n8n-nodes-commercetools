@@ -35,6 +35,7 @@ export interface ParsedOperation {
 	isSearch?: boolean;
 	isImageUpload?: boolean;
 	secondaryIdPlaceholder?: string;
+	associateIdPlaceholder?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -343,6 +344,14 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					secondaryIdPlaceholder = uniqueIdPlaceholders[0];
 				}
 
+				// Detect associate-id for As-associate endpoints
+				const associateIdMatch = urlTemplate.match(/as-associate\/\{\{([^}]+)\}\}/);
+				const associateIdPlaceholder = associateIdMatch ? associateIdMatch[1] : undefined;
+				// Remove associate-id from secondaryId to avoid duplicate fields
+				if (associateIdPlaceholder && secondaryIdPlaceholder === associateIdPlaceholder) {
+					secondaryIdPlaceholder = undefined;
+				}
+
 				operations.push({
 					name: item.name,
 					value: slugify(item.name),
@@ -364,6 +373,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					...(isSearch ? { isSearch: true } : {}),
 					...(isImageUpload ? { isImageUpload: true } : {}),
 					...(secondaryIdPlaceholder ? { secondaryIdPlaceholder } : {}),
+					...(associateIdPlaceholder ? { associateIdPlaceholder } : {}),
 				});
 			}
 		};
