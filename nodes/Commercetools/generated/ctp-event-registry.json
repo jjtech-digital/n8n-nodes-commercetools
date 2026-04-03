@@ -1,6 +1,66 @@
 {
   "events": [
     {
+      "value": "ApprovalFlowApproved",
+      "resourceTypeId": "approval-flow",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalFlowCompleted",
+      "resourceTypeId": "approval-flow",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalFlowCreated",
+      "resourceTypeId": "approval-flow",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalFlowRejected",
+      "resourceTypeId": "approval-flow",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleApproversSet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleCreated",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleDescriptionSet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleKeySet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleNameSet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRulePredicateSet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleRequestersSet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ApprovalRuleStatusSet",
+      "resourceTypeId": "approval-rule",
+      "subscriptionType": "message"
+    },
+    {
       "value": "AssociateRoleBuyerAssignableChanged",
       "resourceTypeId": "associate-role",
       "subscriptionType": "message"
@@ -1109,7 +1169,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 208,
+    "totalMessages": 220,
     "unmapped": 0,
     "unclassified": 0
   },

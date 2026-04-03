@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-04-01T10:49:06.648Z
+ * Generated at: 2026-04-03T10:15:55.448Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -20,6 +20,18 @@ export type SubscriptionEvent = {
 // ─── Generated event list ─────────────────────────────────────────────────────
 
 export const subscriptionEvents: SubscriptionEvent[] = [
+    { name: 'Approval Flow Approved', value: 'ApprovalFlowApproved', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Triggers when approval flow approved occurs on a approval-flow.' },
+    { name: 'Approval Flow Completed', value: 'ApprovalFlowCompleted', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Triggers when approval flow completed occurs on a approval-flow.' },
+    { name: 'Approval Flow Created', value: 'ApprovalFlowCreated', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Triggers when approval flow created occurs on a approval-flow.' },
+    { name: 'Approval Flow Rejected', value: 'ApprovalFlowRejected', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Triggers when approval flow rejected occurs on a approval-flow.' },
+    { name: 'Approval Rule Approvers Set', value: 'ApprovalRuleApproversSet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule approvers set occurs on a approval-rule.' },
+    { name: 'Approval Rule Created', value: 'ApprovalRuleCreated', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule created occurs on a approval-rule.' },
+    { name: 'Approval Rule Description Set', value: 'ApprovalRuleDescriptionSet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule description set occurs on a approval-rule.' },
+    { name: 'Approval Rule Key Set', value: 'ApprovalRuleKeySet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule key set occurs on a approval-rule.' },
+    { name: 'Approval Rule Name Set', value: 'ApprovalRuleNameSet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule name set occurs on a approval-rule.' },
+    { name: 'Approval Rule Predicate Set', value: 'ApprovalRulePredicateSet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule predicate set occurs on a approval-rule.' },
+    { name: 'Approval Rule Requesters Set', value: 'ApprovalRuleRequestersSet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule requesters set occurs on a approval-rule.' },
+    { name: 'Approval Rule Status Set', value: 'ApprovalRuleStatusSet', resourceTypeId: 'approval-rule', subscriptionType: 'message', description: 'Triggers when approval rule status set occurs on a approval-rule.' },
     { name: 'Associate Role Buyer Assignable Changed', value: 'AssociateRoleBuyerAssignableChanged', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role buyer assignable changed occurs on a associate-role.' },
     { name: 'Associate Role Created', value: 'AssociateRoleCreated', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role created occurs on a associate-role.' },
     { name: 'Associate Role Deleted', value: 'AssociateRoleDeleted', resourceTypeId: 'associate-role', subscriptionType: 'message', description: 'Triggers when associate role deleted occurs on a associate-role.' },
