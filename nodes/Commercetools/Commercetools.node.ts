@@ -94,6 +94,21 @@ async function executeOperation(
 		.replace(/\{\{project-key\}\}/g, projectKey)
 		.replace(/\{\{projectKey\}\}/g, projectKey);
 
+	// Associate endpoints — substitute {{associate-id}}
+	if (urlPath.includes('{{associate-id}}')) {
+		const associateId = safeGet<string>(this, 'associateId', i, '');
+		urlPath = urlPath.replace(/\{\{associate-id\}\}/g, associateId);
+	}
+	// Tertiary key — substitute second key= segment e.g. key={{approval-rule-key}}
+	const keyMatches = [...urlPath.matchAll(/key=\{\{([^}]+)\}\}/g)].map((m) => m[1]);
+	if (keyMatches.length >= 2) {
+		const tertiaryKey = safeGet<string>(this, 'tertiaryKey', i, '');
+		const secondKeyPlaceholder = keyMatches[1];
+		urlPath = urlPath.replace(
+			new RegExp(`key=\\{\\{${secondKeyPlaceholder.replace(/-/g, '\\-')}\\}\\}`),
+			`key=${tertiaryKey}`,
+		);
+	}
 	// ── Custom Object — container/key path params ─────────────────────────────
 	if (
 		operation === 'getCustomObjectByContainerAndKey' ||

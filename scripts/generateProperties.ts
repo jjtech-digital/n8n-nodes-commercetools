@@ -263,6 +263,49 @@ export function generateIdFields(
 				displayOptions: { show: { resource: [resourceValue], operation: opValues } },
 			});
 		}
+		// Associate endpoints — add Associate ID field
+		const associateOps = topLevelOps
+			.filter((op) => op.associateIdPlaceholder)
+			.map((op) => op.value);
+		if (associateOps.length > 0) {
+			props.push({
+				displayName: 'Associate ID',
+				name: 'associateId',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: associateOps } },
+			});
+		}
+
+		// Tertiary key — for URLs with two key= segments e.g. approval-rule-key
+		const tertiaryKeyOps = topLevelOps.filter((op) => {
+			const keyMatches = [...op.urlTemplate.matchAll(/key=\{\{([^}]+)\}\}/g)].map((m) => m[1]);
+			return keyMatches.length >= 2;
+		});
+		const byTertiaryKey = new Map<string, string[]>();
+		for (const op of tertiaryKeyOps) {
+			const keyMatches = [...op.urlTemplate.matchAll(/key=\{\{([^}]+)\}\}/g)].map((m) => m[1]);
+			const tertiaryKeyPlaceholder = keyMatches[1];
+			if (!byTertiaryKey.has(tertiaryKeyPlaceholder)) byTertiaryKey.set(tertiaryKeyPlaceholder, []);
+			byTertiaryKey.get(tertiaryKeyPlaceholder)!.push(op.value);
+		}
+		for (const [placeholder, opValues] of byTertiaryKey) {
+			const label =
+				placeholder
+					.replace(/-key$/i, '')
+					.split('-')
+					.map((w) => w[0].toUpperCase() + w.slice(1))
+					.join(' ') + ' Key';
+			props.push({
+				displayName: label,
+				name: 'tertiaryKey',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: opValues } },
+			});
+		}
 	}
 
 	return props;

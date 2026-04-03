@@ -73,6 +73,14 @@ const FOLDERS_TO_GENERATE = [
 	'Staged-quotes',
 	'Messages',
 	'Extensions',
+	'As-associate/In-business-unit/Approval-rules',
+	'As-associate/In-business-unit/Approval-flows',
+	'As-associate/In-business-unit/Carts',
+	'As-associate/In-business-unit/Orders',
+	'As-associate/In-business-unit/Quotes',
+	'As-associate/In-business-unit/Quote-requests',
+	'As-associate/In-business-unit/Shopping-lists',
+	'As-associate/In-business-unit/Business-units',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -100,6 +108,8 @@ const RESOURCES_TO_GENERATE = [
 	'staged-quote',
 	'message',
 	'extension',
+	'approval-rule',
+	'approval-flow',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
