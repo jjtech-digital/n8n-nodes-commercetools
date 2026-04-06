@@ -197,6 +197,39 @@ const MANUAL_PATCHES: Record<string, OperationPatch> = {
 			},
 		],
 	},
+	changeCartPredicate: {
+		actionBodyFields: [
+			{
+				name: 'cartPredicate',
+				type: 'string',
+				required: true,
+				example: 'totalPrice.centAmount > 10000',
+				description: 'Cart Predicate',
+			},
+		],
+	},
+	changeTarget: {
+		actionBodyFields: [
+			{
+				name: 'target',
+				type: 'json',
+				required: true,
+				example: { type: 'lineItems', predicate: '1 = 1' },
+				description: 'Target',
+			},
+		],
+	},
+	setCartPredicate: {
+		actionBodyFields: [
+			{
+				name: 'cartPredicate',
+				type: 'string',
+				required: false,
+				example: 'totalPrice.centAmount > 10000',
+				description: 'Cart Predicate',
+			},
+		],
+	},
 	// Add more patches here in the future if the Postman collection
 	// is missing fields for other operations. Example:
 	// someOtherAction: {
