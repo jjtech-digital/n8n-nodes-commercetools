@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, API Extensions, Approval Rules, Approval Flows, and Associate Endpoints (Carts, Orders, Quotes, Quote Requests, Shopping Lists, Business Units)
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, API Extensions, Approval Rules, Approval Flows, Associate Endpoints, Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -89,6 +89,13 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Associate Quote Request**| Create, Get by ID, Get by Key, Query, Update, HEAD checks |
 | **Associate Shopping List**| Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Associate Business Unit**| Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Standalone Price**  | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Store**             | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Product Tailoring** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Customer Group**    | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Product Selection** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Cart Discount**     | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Discount Code**     | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 
 #### How field generation works
 
@@ -208,6 +215,16 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Approval Rule** — created, approvers set, description set, key set, mode changed, name set, predicate set, requesters set, status set
 
 **Approval Flow** — created, approved, completed, rejected
+
+**Standalone Price** — created, deleted, discounted price set/removed, external price set, price tiers set/added/removed, staged changes applied/removed, validity dates set, custom field updates
+
+**Store** — created, deleted, name set, languages added/removed, countries added/removed, distribution channels added/removed, supply channels added/removed, product selections added/removed/updated, custom field updates
+
+**Product Tailoring** — created, deleted, published, unpublished, name set, description set, slug set, images added/removed, assets added/removed/changed
+
+**Customer Group** — created, custom field updates
+
+**Product Selection** — created, deleted, product added/removed/excluded, variant selection/exclusion changed
 
 #### Subscription routing
 
@@ -366,7 +383,7 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     │     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment, quote, quote-request, staged-quote, approval-rule, approval-flow]
+│     │     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment, quote, quote-request, staged-quote, approval-rule, approval-flow, standalone-price, store, product-tailoring, customer-group, product-selection]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -417,7 +434,8 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                          |
 | ------- | ------------------------------------------------------------------------------------------------ |
-| v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                           |
+| v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                    |
+| v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                        |
 | v1.0.10 | Added Claude AI agents and skills for automated development assistance                           |
 | v1.0.9  | Added Zones, Subscriptions, and States                                                           |
 | v1.0.8  | Added Custom Objects, Payments, Payment Methods, and Shipping Methods                            |
