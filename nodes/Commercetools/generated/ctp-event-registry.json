@@ -446,6 +446,51 @@
       "subscriptionType": "message"
     },
     {
+      "value": "CustomerGroupAssignmentAdded",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupAssignmentRemoved",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupAssignmentsSet",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupCustomFieldAdded",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupCustomFieldChanged",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupCustomFieldRemoved",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupCustomTypeRemoved",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupCustomTypeSet",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "CustomerGroupSet",
+      "resourceTypeId": "customer-group",
+      "subscriptionType": "message"
+    },
+    {
       "value": "CustomerLastNameSet",
       "resourceTypeId": "customer",
       "subscriptionType": "message"
@@ -946,6 +991,41 @@
       "subscriptionType": "message"
     },
     {
+      "value": "ProductSelectionCreated",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSelectionDeleted",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSelectionProductAdded",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSelectionProductExcluded",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSelectionProductRemoved",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSelectionVariantExclusionChanged",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductSelectionVariantSelectionChanged",
+      "resourceTypeId": "product-selection",
+      "subscriptionType": "message"
+    },
+    {
       "value": "ProductSlugChanged",
       "resourceTypeId": "product",
       "subscriptionType": "message"
@@ -953,6 +1033,51 @@
     {
       "value": "ProductStateTransition",
       "resourceTypeId": "product",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringCreated",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringDeleted",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringDescriptionSet",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringImageAdded",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringImagesSet",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringNameSet",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringPublished",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringSlugSet",
+      "resourceTypeId": "product-tailoring",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "ProductTailoringUnpublished",
+      "resourceTypeId": "product-tailoring",
       "subscriptionType": "message"
     },
     {
@@ -1099,6 +1224,121 @@
       "value": "StagedQuoteValidToSet",
       "resourceTypeId": "staged-quote",
       "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceActiveChanged",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceCreated",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceDeleted",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceDiscountSet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceExternalDiscountSet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceKeySet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceStagedChangesApplied",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceStagedChangesRemoved",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceTierAdded",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceTierRemoved",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceTiersSet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceValidFromAndUntilSet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceValidFromSet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceValidUntilSet",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StandalonePriceValueChanged",
+      "resourceTypeId": "standalone-price",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreCountriesChanged",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreCreated",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreDeleted",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreDistributionChannelsChanged",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreLanguagesChanged",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreNameSet",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreProductSelectionsChanged",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
+    },
+    {
+      "value": "StoreSupplyChannelsChanged",
+      "resourceTypeId": "store",
+      "subscriptionType": "message"
     }
   ],
   "messageResourceTypeIds": [
@@ -1169,7 +1409,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 220,
+    "totalMessages": 268,
     "unmapped": 0,
     "unclassified": 0
   },

@@ -574,7 +574,7 @@
     "name": "AddAsset",
     "value": "addAsset",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -590,16 +590,16 @@
         "example": [
           {
             "action": "addAsset",
+            "variantId": 1,
             "asset": {
               "sources": [
                 {
-                  "uri": "https://www.commercetools.de/ct-logo.svg",
-                  "key": "vector"
+                  "uri": "//asset.mp4"
                 }
               ],
               "name": {
-                "de": "commercetools Logo",
-                "en": "commercetools logo"
+                "de": "FirstAssetDE",
+                "en": "FirstassetEN"
               }
             }
           }
@@ -609,19 +609,25 @@
     ],
     "actionBodyFields": [
       {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
         "name": "asset",
         "type": "json",
         "required": false,
         "example": {
           "sources": [
             {
-              "uri": "https://www.commercetools.de/ct-logo.svg",
-              "key": "vector"
+              "uri": "//asset.mp4"
             }
           ],
           "name": {
-            "de": "commercetools Logo",
-            "en": "commercetools logo"
+            "de": "FirstAssetDE",
+            "en": "FirstassetEN"
           }
         },
         "description": "Asset"
@@ -630,8 +636,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -642,7 +648,7 @@
     "name": "AddExternalImage",
     "value": "addExternalImage",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -696,16 +702,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -844,7 +844,7 @@
     "name": "AddVariant",
     "value": "addVariant",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -860,7 +860,7 @@
         "example": [
           {
             "action": "addVariant",
-            "key": "VariantKey",
+            "id": 2,
             "sku": "VariantSKU"
           }
         ],
@@ -869,11 +869,11 @@
     ],
     "actionBodyFields": [
       {
-        "name": "key",
-        "type": "string",
+        "name": "id",
+        "type": "number",
         "required": false,
-        "example": "VariantKey",
-        "description": "Key"
+        "example": 2,
+        "description": "Id"
       },
       {
         "name": "sku",
@@ -884,16 +884,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -904,7 +898,7 @@
     "name": "ChangeAssetName",
     "value": "changeAssetName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -920,6 +914,7 @@
         "example": [
           {
             "action": "changeAssetName",
+            "variantId": 1,
             "assetId": "placeholder",
             "name": {
               "de": "Mein Asset",
@@ -931,6 +926,13 @@
       }
     ],
     "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
       {
         "name": "assetId",
         "type": "string",
@@ -952,8 +954,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -964,7 +966,7 @@
     "name": "ChangeAssetOrder",
     "value": "changeAssetOrder",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -980,6 +982,7 @@
         "example": [
           {
             "action": "changeAssetOrder",
+            "variantId": 1,
             "assetOrder": [
               "{{assetId1}}",
               "{{assetId2}}"
@@ -990,6 +993,13 @@
       }
     ],
     "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
       {
         "name": "assetOrder",
         "type": "json",
@@ -1004,8 +1014,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1068,7 +1078,7 @@
     "name": "ChangeName",
     "value": "changeName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/zones/{{zone-id}}",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1084,7 +1094,10 @@
         "example": [
           {
             "action": "changeName",
-            "name": "changedName"
+            "name": {
+              "en": "New name",
+              "de": "Neuer Name"
+            }
           }
         ],
         "description": "Array of actions"
@@ -1093,17 +1106,20 @@
     "actionBodyFields": [
       {
         "name": "name",
-        "type": "string",
+        "type": "json",
         "required": false,
-        "example": "changedName",
+        "example": {
+          "en": "New name",
+          "de": "Neuer Name"
+        },
         "description": "Name"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post Zones",
-    "folder": "Zones",
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1244,7 +1260,7 @@
     "name": "MoveImageToPosition",
     "value": "moveImageToPosition",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1292,16 +1308,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1312,7 +1322,7 @@
     "name": "Publish",
     "value": "publish",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1335,16 +1345,10 @@
     ],
     "actionBodyFields": [],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1355,7 +1359,7 @@
     "name": "RemoveAsset",
     "value": "removeAsset",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1371,6 +1375,7 @@
         "example": [
           {
             "action": "removeAsset",
+            "variantId": 1,
             "assetId": "placeholder"
           }
         ],
@@ -1378,6 +1383,13 @@
       }
     ],
     "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
       {
         "name": "assetId",
         "type": "string",
@@ -1389,8 +1401,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1459,7 +1471,7 @@
     "name": "RemoveImage",
     "value": "removeImage",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1499,16 +1511,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1571,7 +1577,7 @@
     "name": "RemoveVariant",
     "value": "removeVariant",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1603,16 +1609,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1718,7 +1718,7 @@
     "name": "SetAssetCustomField",
     "value": "setAssetCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1735,6 +1735,7 @@
           {
             "action": "setAssetCustomField",
             "assetId": "placeholder",
+            "variantId": 1,
             "name": "exampleStringField",
             "value": "TextString"
           }
@@ -1749,6 +1750,13 @@
         "required": false,
         "example": "placeholder",
         "description": "Asset Id"
+      },
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
       },
       {
         "name": "name",
@@ -1768,8 +1776,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1780,7 +1788,7 @@
     "name": "SetAssetCustomType",
     "value": "setAssetCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1796,6 +1804,7 @@
         "example": [
           {
             "action": "setAssetCustomType",
+            "variantId": 1,
             "assetId": "placeholder",
             "type": {
               "id": "placeholder",
@@ -1810,6 +1819,13 @@
       }
     ],
     "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
       {
         "name": "assetId",
         "type": "string",
@@ -1840,8 +1856,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1852,7 +1868,7 @@
     "name": "SetAssetDescription",
     "value": "setAssetDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1869,6 +1885,7 @@
           {
             "action": "setAssetDescription",
             "assetId": "placeholder",
+            "variantId": 1,
             "description": {
               "de": "Dies ist eine Asset-Beschreibung",
               "en": "This is an asset description"
@@ -1887,6 +1904,13 @@
         "description": "Asset Id"
       },
       {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
         "name": "description",
         "type": "json",
         "required": false,
@@ -1900,8 +1924,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1912,7 +1936,7 @@
     "name": "SetAssetKey",
     "value": "setAssetKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1928,7 +1952,9 @@
         "example": [
           {
             "action": "setAssetKey",
-            "assetId": "placeholder"
+            "variantId": 1,
+            "assetId": "placeholder",
+            "assetKey": "assetKeyString"
           }
         ],
         "description": "Array of actions"
@@ -1936,18 +1962,32 @@
     ],
     "actionBodyFields": [
       {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
         "name": "assetId",
         "type": "string",
         "required": false,
         "example": "placeholder",
         "description": "Asset Id"
+      },
+      {
+        "name": "assetKey",
+        "type": "string",
+        "required": false,
+        "example": "assetKeyString",
+        "description": "Asset Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -1958,7 +1998,7 @@
     "name": "SetAssetSources",
     "value": "setAssetSources",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -1974,6 +2014,7 @@
         "example": [
           {
             "action": "setAssetSources",
+            "variantId": 1,
             "assetId": "placeholder",
             "sources": [
               {
@@ -1987,6 +2028,13 @@
       }
     ],
     "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
       {
         "name": "assetId",
         "type": "string",
@@ -2010,8 +2058,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2022,7 +2070,7 @@
     "name": "SetAssetTags",
     "value": "setAssetTags",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2038,7 +2086,12 @@
         "example": [
           {
             "action": "setAssetTags",
-            "assetId": "placeholder"
+            "variantId": 1,
+            "assetId": "placeholder",
+            "tags": [
+              "commercetools",
+              "awesome"
+            ]
           }
         ],
         "description": "Array of actions"
@@ -2046,18 +2099,35 @@
     ],
     "actionBodyFields": [
       {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
         "name": "assetId",
         "type": "string",
         "required": false,
         "example": "placeholder",
         "description": "Asset Id"
+      },
+      {
+        "name": "tags",
+        "type": "json",
+        "required": false,
+        "example": [
+          "commercetools",
+          "awesome"
+        ],
+        "description": "Tags"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2068,7 +2138,7 @@
     "name": "SetAttribute",
     "value": "setAttribute",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2116,16 +2186,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2136,7 +2200,7 @@
     "name": "SetAttributeInAllVariants",
     "value": "setAttributeInAllVariants",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2176,16 +2240,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2256,7 +2314,7 @@
     "name": "SetDescription",
     "value": "setDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/approval-rules/{{approval-rule-id}}",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2272,7 +2330,10 @@
         "example": [
           {
             "action": "setDescription",
-            "description": "New description"
+            "description": {
+              "en": "New description",
+              "de": "Neue Beschreibung"
+            }
           }
         ],
         "description": "Array of actions"
@@ -2281,31 +2342,31 @@
     "actionBodyFields": [
       {
         "name": "description",
-        "type": "string",
+        "type": "json",
         "required": false,
-        "example": "New description",
+        "example": {
+          "en": "New description",
+          "de": "Neue Beschreibung"
+        },
         "description": "Description"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post ApprovalRules",
-    "folder": "As-associate/In-business-unit/Approval-rules",
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
-    "requiresKey": true,
-    "requiresVersion": true,
-    "keyPlaceholder": "business-unit-key",
-    "secondaryIdPlaceholder": "approval-rule-id",
-    "associateIdPlaceholder": "associate-id"
+    "requiresKey": false,
+    "requiresVersion": true
   },
   "setDiscountedPrice": {
     "name": "SetDiscountedPrice",
     "value": "setDiscountedPrice",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2321,12 +2382,12 @@
         "example": [
           {
             "action": "setDiscountedPrice",
-            "priceId": "placeholder",
-            "staged": true,
             "discounted": {
               "value": {
+                "type": "centPrecision",
                 "currencyCode": "EUR",
-                "centAmount": 4000
+                "centAmount": 2990,
+                "fractionDigits": 2
               },
               "discount": {
                 "typeId": "product-discount",
@@ -2340,27 +2401,15 @@
     ],
     "actionBodyFields": [
       {
-        "name": "priceId",
-        "type": "string",
-        "required": false,
-        "example": "placeholder",
-        "description": "Price Id"
-      },
-      {
-        "name": "staged",
-        "type": "boolean",
-        "required": false,
-        "example": true,
-        "description": "Staged"
-      },
-      {
         "name": "discounted",
         "type": "json",
         "required": false,
         "example": {
           "value": {
+            "type": "centPrecision",
             "currencyCode": "EUR",
-            "centAmount": 4000
+            "centAmount": 2990,
+            "fractionDigits": 2
           },
           "discount": {
             "typeId": "product-discount",
@@ -2371,16 +2420,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2391,7 +2434,7 @@
     "name": "SetImageLabel",
     "value": "setImageLabel",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2447,16 +2490,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2467,7 +2504,7 @@
     "name": "SetKey",
     "value": "setKey",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/carts/{{cart-id}}",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2483,7 +2520,7 @@
         "example": [
           {
             "action": "setKey",
-            "key": "myNewKey"
+            "key": "new-key"
           }
         ],
         "description": "Array of actions"
@@ -2494,29 +2531,26 @@
         "name": "key",
         "type": "string",
         "required": false,
-        "example": "myNewKey",
+        "example": "new-key",
         "description": "Key"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "If the Cart exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n",
-    "folder": "As-associate/In-business-unit/Carts",
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
-    "requiresKey": true,
-    "requiresVersion": true,
-    "keyPlaceholder": "business-unit-key",
-    "secondaryIdPlaceholder": "cart-id",
-    "associateIdPlaceholder": "associate-id"
+    "requiresKey": false,
+    "requiresVersion": true
   },
   "setMetaDescription": {
     "name": "SetMetaDescription",
     "value": "setMetaDescription",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2533,9 +2567,9 @@
           {
             "action": "setMetaDescription",
             "metaDescription": {
-              "de": "Dies ist meine MetaDecription",
-              "en": "this is my meta description"
-            }
+              "en": "A Meta Description"
+            },
+            "staged": true
           }
         ],
         "description": "Array of actions"
@@ -2547,17 +2581,23 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "Dies ist meine MetaDecription",
-          "en": "this is my meta description"
+          "en": "A Meta Description"
         },
         "description": "Meta Description"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2568,7 +2608,7 @@
     "name": "SetMetaKeywords",
     "value": "setMetaKeywords",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2585,9 +2625,9 @@
           {
             "action": "setMetaKeywords",
             "metaKeywords": {
-              "de": "commercetools, genial",
-              "en": "commercetools, aweseome"
-            }
+              "en": "Meta Keywords"
+            },
+            "staged": true
           }
         ],
         "description": "Array of actions"
@@ -2599,17 +2639,23 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "commercetools, genial",
-          "en": "commercetools, aweseome"
+          "en": "Meta Keywords"
         },
         "description": "Meta Keywords"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2620,7 +2666,7 @@
     "name": "SetMetaTitle",
     "value": "setMetaTitle",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2637,9 +2683,9 @@
           {
             "action": "setMetaTitle",
             "metaTitle": {
-              "de": "Dies ist mein Meta-Title",
-              "en": "This is my meta title"
-            }
+              "en": "A Meta Title"
+            },
+            "staged": true
           }
         ],
         "description": "Array of actions"
@@ -2651,17 +2697,23 @@
         "type": "json",
         "required": false,
         "example": {
-          "de": "Dies ist mein Meta-Title",
-          "en": "This is my meta title"
+          "en": "A Meta Title"
         },
         "description": "Meta Title"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/../api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
-    "folder": "Categories",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -2878,7 +2930,7 @@
     "name": "SetProductAttribute",
     "value": "setProductAttribute",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -2918,16 +2970,10 @@
       }
     ],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -3419,7 +3465,7 @@
     "name": "Unpublish",
     "value": "unpublish",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -3442,16 +3488,10 @@
     ],
     "actionBodyFields": [],
     "queryParams": [
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/../api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
-    "folder": "Products",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4285,7 +4325,7 @@
     "name": "AddStore",
     "value": "addStore",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4302,8 +4342,7 @@
           {
             "action": "addStore",
             "store": {
-              "key": "placeholder",
-              "typeId": "store"
+              "key": "placeholder"
             }
           }
         ],
@@ -4316,8 +4355,7 @@
         "type": "json",
         "required": false,
         "example": {
-          "key": "placeholder",
-          "typeId": "store"
+          "key": "placeholder"
         },
         "description": "Store"
       }
@@ -4325,8 +4363,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post BusinessUnits",
-    "folder": "Business-units",
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4679,7 +4717,7 @@
     "name": "RemoveStore",
     "value": "removeStore",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4696,8 +4734,7 @@
           {
             "action": "removeStore",
             "store": {
-              "key": "placeholder",
-              "typeId": "store"
+              "key": "placeholder"
             }
           }
         ],
@@ -4710,8 +4747,7 @@
         "type": "json",
         "required": false,
         "example": {
-          "key": "placeholder",
-          "typeId": "store"
+          "key": "placeholder"
         },
         "description": "Store"
       }
@@ -4719,8 +4755,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post BusinessUnits",
-    "folder": "Business-units",
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -4941,7 +4977,7 @@
     "name": "SetCustomField",
     "value": "setCustomField",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/quote-requests/{{quote-request-id}}",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -4983,22 +5019,19 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a QuoteRequest in a BusinessUnit using one or more [update actions](/../api/projects/quote-requests#update-actions).\nIf the QuoteRequest exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n",
-    "folder": "As-associate/In-business-unit/Quote-requests",
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
-    "requiresKey": true,
-    "requiresVersion": true,
-    "keyPlaceholder": "business-unit-key",
-    "secondaryIdPlaceholder": "quote-request-id",
-    "associateIdPlaceholder": "associate-id"
+    "requiresKey": false,
+    "requiresVersion": true
   },
   "setCustomType": {
     "name": "SetCustomType",
     "value": "setCustomType",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/quote-requests/{{quote-request-id}}",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5050,16 +5083,13 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a QuoteRequest in a BusinessUnit using one or more [update actions](/../api/projects/quote-requests#update-actions).\nIf the QuoteRequest exists in the [Project](ctp:api:type:Project) but does not reference the requested [BusinessUnit](ctp:api:type:BusinessUnit), this method returns an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n",
-    "folder": "As-associate/In-business-unit/Quote-requests",
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
-    "requiresKey": true,
-    "requiresVersion": true,
-    "keyPlaceholder": "business-unit-key",
-    "secondaryIdPlaceholder": "quote-request-id",
-    "associateIdPlaceholder": "associate-id"
+    "requiresKey": false,
+    "requiresVersion": true
   },
   "setCustomerGroup": {
     "name": "SetCustomerGroup",
@@ -5655,7 +5685,7 @@
     "name": "SetStores",
     "value": "setStores",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/business-units/{{business-unit-id}}",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -5673,8 +5703,13 @@
             "action": "setStores",
             "stores": [
               {
-                "key": "placeholder",
-                "typeId": "store"
+                "key": "store-one"
+              },
+              {
+                "key": "store-two"
+              },
+              {
+                "key": "store-three"
               }
             ]
           }
@@ -5689,8 +5724,13 @@
         "required": false,
         "example": [
           {
-            "key": "placeholder",
-            "typeId": "store"
+            "key": "store-one"
+          },
+          {
+            "key": "store-two"
+          },
+          {
+            "key": "store-three"
           }
         ],
         "description": "Stores"
@@ -5699,8 +5739,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "post BusinessUnits",
-    "folder": "Business-units",
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -16789,7 +16829,7 @@
     "name": "SetName",
     "value": "setName",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/as-associate/{{associate-id}}/in-business-unit/key={{business-unit-key}}/approval-rules/{{approval-rule-id}}",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -16805,7 +16845,10 @@
         "example": [
           {
             "action": "setName",
-            "name": "New name"
+            "name": {
+              "en": "New name",
+              "de": "Neuer Name"
+            }
           }
         ],
         "description": "Array of actions"
@@ -16814,25 +16857,25 @@
     "actionBodyFields": [
       {
         "name": "name",
-        "type": "string",
+        "type": "json",
         "required": false,
-        "example": "New name",
+        "example": {
+          "en": "New name",
+          "de": "Neuer Name"
+        },
         "description": "Name"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "post ApprovalRules",
-    "folder": "As-associate/In-business-unit/Approval-rules",
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
-    "requiresKey": true,
-    "requiresVersion": true,
-    "keyPlaceholder": "business-unit-key",
-    "secondaryIdPlaceholder": "approval-rule-id",
-    "associateIdPlaceholder": "associate-id"
+    "requiresKey": false,
+    "requiresVersion": true
   },
   "setPermissions": {
     "name": "SetPermissions",
@@ -18694,7 +18737,7 @@
     "name": "SetSlug",
     "value": "setSlug",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/shopping-lists/{{shopping-list-id}}",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -18711,9 +18754,9 @@
           {
             "action": "setSlug",
             "slug": {
-              "en": "en-slug",
-              "de": "de-slug"
-            }
+              "en": "a-slug"
+            },
+            "staged": true
           }
         ],
         "description": "Array of actions"
@@ -18725,17 +18768,23 @@
         "type": "json",
         "required": false,
         "example": {
-          "en": "en-slug",
-          "de": "de-slug"
+          "en": "a-slug"
         },
         "description": "Slug"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
       }
     ],
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShoppingList in the Project using one or more [update actions](/../api/projects/shoppingLists#update-actions).",
-    "folder": "Shopping-lists",
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -22706,7 +22755,7 @@
     "name": "ChangeActive",
     "value": "changeActive",
     "method": "POST",
-    "urlTemplate": "/{{project-key}}/shipping-methods/{{shipping-method-id}}",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
     "bodyFields": [
       {
         "name": "version",
@@ -22740,8 +22789,8 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShippingMethod in the Project using one or more [update actions](/../api/projects/shippingMethods#update-actions).",
-    "folder": "Shipping-methods",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
     "requiresId": true,
@@ -27988,5 +28037,4669 @@
     "requiresVersion": false,
     "keyPlaceholder": "business-unit-key",
     "associateIdPlaceholder": "associate-id"
+  },
+  "getStandalonePriceByKey": {
+    "name": "Get StandalonePrice by Key",
+    "value": "getStandalonePriceByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/standalone-prices/key={{standalone-price-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "standalone-price-key"
+  },
+  "checkIfStandalonePriceExistsByKey": {
+    "name": "Check if StandalonePrice exists by Key",
+    "value": "checkIfStandalonePriceExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/standalone-prices/key={{standalone-price-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a StandalonePrice exists with the provided `key`. Returns a `200` status if the StandalonePrice exists, or a `404` status otherwise.",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "standalone-price-key"
+  },
+  "updateStandalonePriceByKey": {
+    "name": "Update StandalonePrice by Key",
+    "value": "updateStandalonePriceByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/key={{standalone-price-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeValue",
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 15000
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "currencyCode": "EUR",
+          "centAmount": 15000
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "standalone-price-key"
+  },
+  "deleteStandalonePriceByKey": {
+    "name": "Delete StandalonePrice by Key",
+    "value": "deleteStandalonePriceByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/standalone-prices/key={{standalone-price-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Produces the [StandalonePriceDeleted](ctp:api:type:StandalonePriceDeletedMessage) Message.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "standalone-price-key"
+  },
+  "getStandalonePriceById": {
+    "name": "Get StandalonePrice by ID",
+    "value": "getStandalonePriceById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStandalonePriceExistsById": {
+    "name": "Check if StandalonePrice exists by ID",
+    "value": "checkIfStandalonePriceExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a StandalonePrice exists with the provided `id`. Returns a `200` status if the StandalonePrice exists, or a `404` status otherwise.",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateStandalonePriceById": {
+    "name": "Update StandalonePrice by ID",
+    "value": "updateStandalonePriceById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeValue",
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 15000
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "currencyCode": "EUR",
+          "centAmount": 15000
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteStandalonePriceById": {
+    "name": "Delete StandalonePrice by ID",
+    "value": "deleteStandalonePriceById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Produces the [StandalonePriceDeleted](ctp:api:type:StandalonePriceDeletedMessage) Message.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryStandalonePrices": {
+    "name": "Query StandalonePrices",
+    "value": "queryStandalonePrices",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/standalone-prices",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStandalonePriceExistsByQueryPredicate": {
+    "name": "Check if StandalonePrice exists by Query Predicate",
+    "value": "checkIfStandalonePriceExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/standalone-prices",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more StandalonePrices exist for the provided query predicate. Returns a `200` status if any StandalonePrices match the query predicate, or a `404` status otherwise.",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createStandalonePrice": {
+    "name": "Create StandalonePrice",
+    "value": "createStandalonePrice",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "red-jacket-de-price",
+        "description": "Key"
+      },
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true,
+        "example": "A0E200000002E49",
+        "description": "Sku"
+      },
+      {
+        "name": "value.currencyCode",
+        "type": "string",
+        "required": false,
+        "example": "EUR",
+        "description": "Value › currency Code"
+      },
+      {
+        "name": "value.centAmount",
+        "type": "number",
+        "required": false,
+        "example": 10000,
+        "description": "Value › cent Amount"
+      },
+      {
+        "name": "country",
+        "type": "string",
+        "required": true,
+        "example": "DE",
+        "description": "Country"
+      },
+      {
+        "name": "customerGroup.typeId",
+        "type": "string",
+        "required": false,
+        "example": "customer-group",
+        "description": "Customer Group › type Id"
+      },
+      {
+        "name": "customerGroup.id",
+        "type": "string",
+        "required": false,
+        "example": "placeholder",
+        "description": "Customer Group › id"
+      },
+      {
+        "name": "tiers",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "minimumQuantity": 10,
+            "value": {
+              "currencyCode": "EUR",
+              "centAmount": 9000
+            }
+          }
+        ],
+        "description": "Array of tiers"
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": true,
+        "example": true,
+        "description": "Active"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creating a Standalone Price produces the [StandalonePriceCreated](ctp:api:type:StandalonePriceCreatedMessage) Message.\n\n- If the Standalone Price has the same price scope as an existing Standalone Price, a [DuplicateStandalonePriceScope](ctp:api:type:DuplicateStandalonePriceScopeError) error is returned.\n- If the Standalone Price has overlapping validity periods within the same price scope, a [OverlappingStandalonePriceValidity](ctp:api:type:OverlappingStandalonePriceValidityError) error is returned. A Price without validity period does not conflict with a Price defined for a time period.\n- If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addPriceTier": {
+    "name": "AddPriceTier",
+    "value": "addPriceTier",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addPriceTier",
+            "tier": {
+              "minimumQuantity": 100,
+              "value": {
+                "centAmount": 4200,
+                "currencyCode": "EUR",
+                "type": "centPrecision"
+              }
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "tier",
+        "type": "json",
+        "required": false,
+        "example": {
+          "minimumQuantity": 100,
+          "value": {
+            "centAmount": 4200,
+            "currencyCode": "EUR",
+            "type": "centPrecision"
+          }
+        },
+        "description": "Tier"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "applyStagedChanges": {
+    "name": "ApplyStagedChanges",
+    "value": "applyStagedChanges",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "applyStagedChanges"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeValue": {
+    "name": "ChangeValue",
+    "value": "changeValue",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeValue",
+            "value": {
+              "type": "absolute",
+              "money": [
+                {
+                  "currencyCode": "EUR",
+                  "centAmount": 40099
+                }
+              ],
+              "applicationMode": "IndividualApplication"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "absolute",
+          "money": [
+            {
+              "currencyCode": "EUR",
+              "centAmount": 40099
+            }
+          ],
+          "applicationMode": "IndividualApplication"
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removePriceTier": {
+    "name": "RemovePriceTier",
+    "value": "removePriceTier",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removePriceTier",
+            "minimumQuantity": 100
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "minimumQuantity",
+        "type": "number",
+        "required": false,
+        "example": 100,
+        "description": "Minimum Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeStagedChanges": {
+    "name": "RemoveStagedChanges",
+    "value": "removeStagedChanges",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeStagedChanges"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setPriceTiers": {
+    "name": "SetPriceTiers",
+    "value": "setPriceTiers",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/standalone-prices/{{standalone-price-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setPriceTiers",
+            "tiers": [
+              {
+                "minimumQuantity": 100,
+                "value": {
+                  "centAmount": 4200,
+                  "currencyCode": "EUR",
+                  "type": "centPrecision"
+                }
+              },
+              {
+                "minimumQuantity": 150,
+                "value": {
+                  "centAmount": 4000,
+                  "currencyCode": "EUR",
+                  "type": "centPrecision"
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "tiers",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "minimumQuantity": 100,
+            "value": {
+              "centAmount": 4200,
+              "currencyCode": "EUR",
+              "type": "centPrecision"
+            }
+          },
+          {
+            "minimumQuantity": 150,
+            "value": {
+              "centAmount": 4000,
+              "currencyCode": "EUR",
+              "type": "centPrecision"
+            }
+          }
+        ],
+        "description": "Tiers"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "folder": "Standalone-prices",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setValidFrom": {
+    "name": "SetValidFrom",
+    "value": "setValidFrom",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setValidFrom",
+            "validFrom": "2025-10-12T14:00:00.000Z"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "validFrom",
+        "type": "string",
+        "required": false,
+        "example": "2025-10-12T14:00:00.000Z",
+        "description": "Valid From"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setValidFromAndUntil": {
+    "name": "SetValidFromAndUntil",
+    "value": "setValidFromAndUntil",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setValidFromAndUntil",
+            "validFrom": "2025-10-12T14:00:00.000Z",
+            "validUntil": "2025-11-12T14:05:00.000Z"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "validFrom",
+        "type": "string",
+        "required": false,
+        "example": "2025-10-12T14:00:00.000Z",
+        "description": "Valid From"
+      },
+      {
+        "name": "validUntil",
+        "type": "string",
+        "required": false,
+        "example": "2025-11-12T14:05:00.000Z",
+        "description": "Valid Until"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setValidUntil": {
+    "name": "SetValidUntil",
+    "value": "setValidUntil",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setValidUntil",
+            "validUntil": "2025-11-12T14:00:00.000Z"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "validUntil",
+        "type": "string",
+        "required": false,
+        "example": "2025-11-12T14:00:00.000Z",
+        "description": "Valid Until"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getStoreByKey": {
+    "name": "Get Store by Key",
+    "value": "getStoreByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/stores/key={{store-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "store-key"
+  },
+  "checkIfStoreExistsByKey": {
+    "name": "Check if Store exists by Key",
+    "value": "checkIfStoreExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/stores/key={{store-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Store exists with the provided `key`. Returns a `200` status if the Store exists, or a `404` status otherwise.",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "store-key"
+  },
+  "updateStoreByKey": {
+    "name": "Update Store by Key",
+    "value": "updateStoreByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/key={{store-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "store-key"
+  },
+  "deleteStoreByKey": {
+    "name": "Delete Store by Key",
+    "value": "deleteStoreByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/stores/key={{store-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "store-key"
+  },
+  "getStoreById": {
+    "name": "Get Store by ID",
+    "value": "getStoreById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStoreExistsById": {
+    "name": "Check if Store exists by ID",
+    "value": "checkIfStoreExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a Store exists with the provided `id`. Returns a `200` status if the Store exists, or a `404` status otherwise.",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateStoreById": {
+    "name": "Update Store by ID",
+    "value": "updateStoreById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setName",
+            "name": {
+              "en": "New Name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "New Name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteStoreById": {
+    "name": "Delete Store by ID",
+    "value": "deleteStoreById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryStores": {
+    "name": "Query Stores",
+    "value": "queryStores",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/stores",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfStoreExistsByQueryPredicate": {
+    "name": "Check if Store exists by Query Predicate",
+    "value": "checkIfStoreExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/stores",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more Stores exist for the provided query predicate. Returns a `200` status if any Stores match the query predicate, or a `404` status otherwise.",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createStore": {
+    "name": "Create Store",
+    "value": "createStore",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "random-key-123",
+        "description": "Key"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "main store"
+        },
+        "description": "Name"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Stores",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addCountry": {
+    "name": "AddCountry",
+    "value": "addCountry",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addCountry",
+            "country": {
+              "code": "DE"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "country",
+        "type": "json",
+        "required": false,
+        "example": {
+          "code": "DE"
+        },
+        "description": "Country"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "addDistributionChannel": {
+    "name": "AddDistributionChannel",
+    "value": "addDistributionChannel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addDistributionChannel",
+            "distributionChannel": {
+              "typeId": "channel",
+              "id": "12345"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "distributionChannel",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "channel",
+          "id": "12345"
+        },
+        "description": "Distribution Channel"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "addProductSelection": {
+    "name": "AddProductSelection",
+    "value": "addProductSelection",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addProductSelection",
+            "productSelection": {
+              "typeId": "product-selection",
+              "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+            },
+            "active": false
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "productSelection",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product-selection",
+          "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+        },
+        "description": "Product Selection"
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Active"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "addSupplyChannel": {
+    "name": "AddSupplyChannel",
+    "value": "addSupplyChannel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addSupplyChannel",
+            "supplyChannel": {
+              "typeId": "channel",
+              "id": "12345"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "supplyChannel",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "channel",
+          "id": "12345"
+        },
+        "description": "Supply Channel"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeProductSelectionActive": {
+    "name": "ChangeProductSelectionActive",
+    "value": "changeProductSelectionActive",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeProductSelectionActive",
+            "productSelection": {
+              "typeId": "product-selection",
+              "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+            },
+            "active": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "productSelection",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product-selection",
+          "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+        },
+        "description": "Product Selection"
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Active"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeCountry": {
+    "name": "RemoveCountry",
+    "value": "removeCountry",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeCountry",
+            "country": {
+              "code": "DE"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "country",
+        "type": "json",
+        "required": false,
+        "example": {
+          "code": "DE"
+        },
+        "description": "Country"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeDistributionChannel": {
+    "name": "RemoveDistributionChannel",
+    "value": "removeDistributionChannel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeDistributionChannel",
+            "distributionChannel": {
+              "typeId": "channel",
+              "id": "12345"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "distributionChannel",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "channel",
+          "id": "12345"
+        },
+        "description": "Distribution Channel"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeProductSelection": {
+    "name": "RemoveProductSelection",
+    "value": "removeProductSelection",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeProductSelection",
+            "productSelection": {
+              "typeId": "product-selection",
+              "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "productSelection",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product-selection",
+          "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+        },
+        "description": "Product Selection"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeSupplyChannel": {
+    "name": "RemoveSupplyChannel",
+    "value": "removeSupplyChannel",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeSupplyChannel",
+            "supplyChannel": {
+              "typeId": "channel",
+              "id": "12345"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "supplyChannel",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "channel",
+          "id": "12345"
+        },
+        "description": "Supply Channel"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setCountries": {
+    "name": "SetCountries",
+    "value": "setCountries",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setCountries",
+            "countries": [
+              {
+                "code": "DE"
+              },
+              {
+                "code": "IT"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "countries",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "code": "DE"
+          },
+          {
+            "code": "IT"
+          }
+        ],
+        "description": "Countries"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setDistributionChannels": {
+    "name": "SetDistributionChannels",
+    "value": "setDistributionChannels",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDistributionChannels",
+            "distributionChannels": [
+              {
+                "typeId": "channel",
+                "id": "12345"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "distributionChannels",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "channel",
+            "id": "12345"
+          }
+        ],
+        "description": "Distribution Channels"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setLanguages": {
+    "name": "SetLanguages",
+    "value": "setLanguages",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setLanguages",
+            "languages": [
+              "en"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "languages",
+        "type": "json",
+        "required": false,
+        "example": [
+          "en"
+        ],
+        "description": "Languages"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setProductSelections": {
+    "name": "SetProductSelections",
+    "value": "setProductSelections",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setProductSelections",
+            "productSelections": [
+              {
+                "productSelection": {
+                  "typeId": "product-selection",
+                  "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+                },
+                "active": false
+              },
+              {
+                "productSelection": {
+                  "typeId": "product-selection",
+                  "id": "a7ba45e5-b1c2-482d-94d5-2c1a10118426"
+                },
+                "active": true
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "productSelections",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "productSelection": {
+              "typeId": "product-selection",
+              "id": "e7ba4555-b1bb-483d-92d8-2c4a10778427"
+            },
+            "active": false
+          },
+          {
+            "productSelection": {
+              "typeId": "product-selection",
+              "id": "a7ba45e5-b1c2-482d-94d5-2c1a10118426"
+            },
+            "active": true
+          }
+        ],
+        "description": "Product Selections"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setSupplyChannels": {
+    "name": "SetSupplyChannels",
+    "value": "setSupplyChannels",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setSupplyChannels",
+            "supplyChannels": [
+              {
+                "typeId": "channel",
+                "id": "12345"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "supplyChannels",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "channel",
+            "id": "12345"
+          }
+        ],
+        "description": "Supply Channels"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getProductTailoringByKey": {
+    "name": "Get ProductTailoring by Key",
+    "value": "getProductTailoringByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-tailoring/key={{product-tailoring-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "product-tailoring-key"
+  },
+  "updateProductTailoringByKey": {
+    "name": "Update ProductTailoring by Key",
+    "value": "updateProductTailoringByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-tailoring/key={{product-tailoring-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDescription",
+            "description": {
+              "en": "A description"
+            },
+            "staged": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "A description"
+        },
+        "description": "Description"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "product-tailoring-key"
+  },
+  "deleteProductTailoringByKey": {
+    "name": "Delete ProductTailoring by Key",
+    "value": "deleteProductTailoringByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/product-tailoring/key={{product-tailoring-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.\n",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "product-tailoring-key"
+  },
+  "getProductTailoringById": {
+    "name": "Get ProductTailoring by ID",
+    "value": "getProductTailoringById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateProductTailoringById": {
+    "name": "Update ProductTailoring by ID",
+    "value": "updateProductTailoringById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDescription",
+            "description": {
+              "en": "A description"
+            },
+            "staged": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "description",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "A description"
+        },
+        "description": "Description"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteProductTailoringById": {
+    "name": "Delete ProductTailoring by ID",
+    "value": "deleteProductTailoringById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Generates the [ProductTailoringDeleted](ctp:api:type:ProductTailoringDeletedMessage) Message.\n",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryProductTailoring": {
+    "name": "Query ProductTailoring",
+    "value": "queryProductTailoring",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-tailoring",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "withTotal",
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfProductTailoringExistsByQueryPredicate": {
+    "name": "Check if ProductTailoring exists by Query Predicate",
+    "value": "checkIfProductTailoringExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/product-tailoring",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more ProductTailorings exist for the provided query predicate. Returns a `200` status if any ProductTailoring match the query predicate, or a `404` status otherwise.",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createProductTailoring": {
+    "name": "Create ProductTailoring",
+    "value": "createProductTailoring",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-tailoring",
+    "bodyFields": [
+      {
+        "name": "product.typeId",
+        "type": "string",
+        "required": false,
+        "example": "product",
+        "description": "Product › type Id"
+      },
+      {
+        "name": "product.id",
+        "type": "string",
+        "required": false,
+        "example": "daf720e5-9e8e-4300-98db-3a3219327db9",
+        "description": "Product › id"
+      },
+      {
+        "name": "store.key",
+        "type": "string",
+        "required": false,
+        "example": "store-key",
+        "description": "Store › key"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "tailored name"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "metaTitle",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "tailored meta title"
+        },
+        "description": "Meta Title"
+      },
+      {
+        "name": "metaDescription",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "tailored meta description"
+        },
+        "description": "Meta Description"
+      },
+      {
+        "name": "metaKeywords",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "tailored meta keywords"
+        },
+        "description": "Meta Keywords"
+      },
+      {
+        "name": "slug",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "tailored-slug"
+        },
+        "description": "Slug"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "tailored description"
+        },
+        "description": "Description"
+      },
+      {
+        "name": "variants",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "id": 1,
+            "images": [
+              {
+                "url": "//myimage.jpg",
+                "dimensions": {
+                  "w": 400,
+                  "h": 300
+                }
+              }
+            ],
+            "attributes": [
+              {
+                "name": "my-attribute",
+                "value": "attribute-1"
+              }
+            ]
+          },
+          {
+            "sku": "sku-1",
+            "images": [
+              {
+                "url": "//myimage-2.png",
+                "dimensions": {
+                  "w": 400,
+                  "h": 300
+                }
+              }
+            ],
+            "attributes": [
+              {
+                "name": "my-attribute",
+                "value": "attribute-2"
+              }
+            ]
+          }
+        ],
+        "description": "Array of variants"
+      },
+      {
+        "name": "attributes",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "name": "label",
+            "value": "product-attribute"
+          }
+        ],
+        "description": "Array of attributes"
+      },
+      {
+        "name": "publish",
+        "type": "boolean",
+        "required": true,
+        "example": false,
+        "description": "Publish"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Generates the [ProductTailoringCreated](ctp:api:type:ProductTailoringCreatedMessage) Message.\n",
+    "folder": "Product-tailoring",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "setImages": {
+    "name": "SetImages",
+    "value": "setImages",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setImages",
+            "variantId": 1,
+            "images": [
+              {
+                "url": "//myimage.jpg",
+                "dimensions": {
+                  "w": 100,
+                  "h": 100
+                }
+              },
+              {
+                "url": "//myimage2.jpg",
+                "dimensions": {
+                  "w": 100,
+                  "h": 100
+                }
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variantId",
+        "type": "number",
+        "required": false,
+        "example": 1,
+        "description": "Variant Id"
+      },
+      {
+        "name": "images",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "url": "//myimage.jpg",
+            "dimensions": {
+              "w": 100,
+              "h": 100
+            }
+          },
+          {
+            "url": "//myimage2.jpg",
+            "dimensions": {
+              "w": 100,
+              "h": 100
+            }
+          }
+        ],
+        "description": "Images"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setMetaAttributes": {
+    "name": "SetMetaAttributes",
+    "value": "setMetaAttributes",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-tailoring/{{product-tailoring-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMetaAttributes",
+            "metaTitle": {
+              "en": "A Meta Title"
+            },
+            "metaDescription": {
+              "en": "A Meta Description"
+            },
+            "metaKeywords": {
+              "en": "Meta Keywords"
+            },
+            "staged": true
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "metaTitle",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "A Meta Title"
+        },
+        "description": "Meta Title"
+      },
+      {
+        "name": "metaDescription",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "A Meta Description"
+        },
+        "description": "Meta Description"
+      },
+      {
+        "name": "metaKeywords",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "Meta Keywords"
+        },
+        "description": "Meta Keywords"
+      },
+      {
+        "name": "staged",
+        "type": "boolean",
+        "required": false,
+        "example": true,
+        "description": "Staged"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductTailoring",
+    "folder": "Product-tailoring",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getCustomerGroupByKey": {
+    "name": "Get CustomerGroup by Key",
+    "value": "getCustomerGroupByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customer-groups/key={{customer-group-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "customer-group-key"
+  },
+  "checkIfCustomerGroupExistsByKey": {
+    "name": "Check if CustomerGroup exists by Key",
+    "value": "checkIfCustomerGroupExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customer-groups/key={{customer-group-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a CustomerGroup exists with the provided `key`. Returns a `200` status if the CustomerGroup exists, or a `404` status otherwise.",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "customer-group-key"
+  },
+  "updateCustomerGroupByKey": {
+    "name": "Update CustomerGroup by Key",
+    "value": "updateCustomerGroupByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customer-groups/key={{customer-group-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": "New Name"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "New Name",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "customer-group-key"
+  },
+  "deleteCustomerGroupByKey": {
+    "name": "Delete CustomerGroup by Key",
+    "value": "deleteCustomerGroupByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/customer-groups/key={{customer-group-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "customer-group-key"
+  },
+  "getCustomerGroupById": {
+    "name": "Get CustomerGroup by ID",
+    "value": "getCustomerGroupById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customer-groups/{{customer-group-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfCustomerGroupExistsById": {
+    "name": "Check if CustomerGroup exists by ID",
+    "value": "checkIfCustomerGroupExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customer-groups/{{customer-group-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a CustomerGroup exists with the provided `id`. Returns a `200` status if the CustomerGroup exists, or a `404` status otherwise.",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateCustomerGroupById": {
+    "name": "Update CustomerGroup by ID",
+    "value": "updateCustomerGroupById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customer-groups/{{customer-group-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": "New Name"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "example": "New Name",
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteCustomerGroupById": {
+    "name": "Delete CustomerGroup by ID",
+    "value": "deleteCustomerGroupById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/customer-groups/{{customer-group-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryCustomerGroups": {
+    "name": "Query CustomerGroups",
+    "value": "queryCustomerGroups",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/customer-groups",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where",
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfCustomerGroupExistsByQueryPredicate": {
+    "name": "Check if CustomerGroup exists by Query Predicate",
+    "value": "checkIfCustomerGroupExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/customer-groups",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more CustomerGroups exist for the provided query predicate. Returns a `200` status if any CustomerGroup match the query predicate, or a `404` status otherwise.",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createCustomerGroup": {
+    "name": "Create CustomerGroup",
+    "value": "createCustomerGroup",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/customer-groups",
+    "bodyFields": [
+      {
+        "name": "groupName",
+        "type": "string",
+        "required": true,
+        "example": "Webshop user",
+        "description": "Group Name"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Customer-groups",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "queryProductsInProductSelectionByKey": {
+    "name": "Query Products in ProductSelection by Key",
+    "value": "queryProductsInProductSelectionByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-selections/key={{product-selection-key}}/products",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where",
+      "withTotal",
+      "expand",
+      "limit",
+      "offset",
+      "sort"
+    ],
+    "description": "",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "product-selection-key"
+  },
+  "getProductSelectionByKey": {
+    "name": "Get ProductSelection by Key",
+    "value": "getProductSelectionByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-selections/key={{product-selection-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "product-selection-key"
+  },
+  "checkIfProductSelectionExistsByKey": {
+    "name": "Check if ProductSelection exists by Key",
+    "value": "checkIfProductSelectionExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/product-selections/key={{product-selection-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a ProductSelection exists with the provided `key`. Returns a `200` status if the ProductSelection exists, or a `404` status otherwise.",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "product-selection-key"
+  },
+  "updateProductSelectionByKey": {
+    "name": "Update ProductSelection by Key",
+    "value": "updateProductSelectionByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/key={{product-selection-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "new selection name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "new selection name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "product-selection-key"
+  },
+  "deleteProductSelectionByKey": {
+    "name": "Delete ProductSelection by Key",
+    "value": "deleteProductSelectionByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/product-selections/key={{product-selection-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deletion will only succeed if the Product Selection is not assigned to any [Store](ctp:api:type:Store).",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "product-selection-key"
+  },
+  "queryProductsInProductSelectionById": {
+    "name": "Query Products in ProductSelection by ID",
+    "value": "queryProductsInProductSelectionById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}/products",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where",
+      "withTotal",
+      "expand",
+      "limit",
+      "offset",
+      "sort"
+    ],
+    "description": "",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "getProductSelectionById": {
+    "name": "Get ProductSelection by ID",
+    "value": "getProductSelectionById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfProductSelectionExistsById": {
+    "name": "Check if ProductSelection exists by ID",
+    "value": "checkIfProductSelectionExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a ProductSelection exists with the provided `id`. Returns a `200` status if the ProductSelection exists, or a `404` status otherwise.",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateProductSelectionById": {
+    "name": "Update ProductSelection by ID",
+    "value": "updateProductSelectionById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeName",
+            "name": {
+              "en": "new selection name"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "name",
+        "type": "json",
+        "required": false,
+        "example": {
+          "en": "new selection name"
+        },
+        "description": "Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteProductSelectionById": {
+    "name": "Delete ProductSelection by ID",
+    "value": "deleteProductSelectionById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deletion will only succeed if the Product Selection is not assigned to any [Store](ctp:api:type:Store).",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryProductSelections": {
+    "name": "Query ProductSelections",
+    "value": "queryProductSelections",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-selections",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfProductSelectionExistsByQueryPredicate": {
+    "name": "Check if ProductSelection exists by Query Predicate",
+    "value": "checkIfProductSelectionExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/product-selections",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more ProductSelections exist for the provided query predicate. Returns a `200` status if any ProductSelections match the query predicate, or a `404` status otherwise.",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createProductSelection": {
+    "name": "Create ProductSelection",
+    "value": "createProductSelection",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "finest-selection",
+        "description": "Key"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Finest Selection"
+        },
+        "description": "Name"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Product-selections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "addProduct": {
+    "name": "AddProduct",
+    "value": "addProduct",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "addProduct",
+            "product": {
+              "typeId": "product",
+              "key": "millennium-falcon"
+            },
+            "variantSelection": {
+              "type": "includeOnly",
+              "skus": [
+                "metallic-white"
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "product",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product",
+          "key": "millennium-falcon"
+        },
+        "description": "Product"
+      },
+      {
+        "name": "variantSelection",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "includeOnly",
+          "skus": [
+            "metallic-white"
+          ]
+        },
+        "description": "Variant Selection"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductSelections",
+    "folder": "Product-selections",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "excludeProduct": {
+    "name": "ExcludeProduct",
+    "value": "excludeProduct",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "excludeProduct",
+            "product": {
+              "typeId": "product",
+              "key": "millennium-falcon"
+            },
+            "variantExclusion": {
+              "skus": [
+                "metallic-white"
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "product",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product",
+          "key": "millennium-falcon"
+        },
+        "description": "Product"
+      },
+      {
+        "name": "variantExclusion",
+        "type": "json",
+        "required": false,
+        "example": {
+          "skus": [
+            "metallic-white"
+          ]
+        },
+        "description": "Variant Exclusion"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductSelections",
+    "folder": "Product-selections",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeProduct": {
+    "name": "RemoveProduct",
+    "value": "removeProduct",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "removeProduct",
+            "product": {
+              "typeId": "product",
+              "key": "millennium-falcon"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "product",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product",
+          "key": "millennium-falcon"
+        },
+        "description": "Product"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductSelections",
+    "folder": "Product-selections",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setVariantExclusion": {
+    "name": "SetVariantExclusion",
+    "value": "setVariantExclusion",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setVariantExclusion",
+            "product": {
+              "typeId": "product",
+              "key": "millennium-falcon"
+            },
+            "variantExclusion": {
+              "skus": [
+                "M0E20000000EH3V",
+                "M0E20000000EH4Q",
+                "M0E20000000EH5J"
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "product",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product",
+          "key": "millennium-falcon"
+        },
+        "description": "Product"
+      },
+      {
+        "name": "variantExclusion",
+        "type": "json",
+        "required": false,
+        "example": {
+          "skus": [
+            "M0E20000000EH3V",
+            "M0E20000000EH4Q",
+            "M0E20000000EH5J"
+          ]
+        },
+        "description": "Variant Exclusion"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductSelections",
+    "folder": "Product-selections",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setVariantSelection": {
+    "name": "SetVariantSelection",
+    "value": "setVariantSelection",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-selections/{{product-selection-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setVariantSelection",
+            "product": {
+              "typeId": "product",
+              "key": "millennium-falcon"
+            },
+            "variantSelection": {
+              "type": "includeOnly",
+              "skus": [
+                "M0E20000000EH3V"
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "product",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "product",
+          "key": "millennium-falcon"
+        },
+        "description": "Product"
+      },
+      {
+        "name": "variantSelection",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "includeOnly",
+          "skus": [
+            "M0E20000000EH3V"
+          ]
+        },
+        "description": "Variant Selection"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductSelections",
+    "folder": "Product-selections",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getCartDiscountByKey": {
+    "name": "Get CartDiscount by Key",
+    "value": "getCartDiscountByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/cart-discounts/key={{cart-discount-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "cart-discount-key"
+  },
+  "checkIfCartDiscountExistsByKey": {
+    "name": "Check if CartDiscount exists by Key",
+    "value": "checkIfCartDiscountExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/cart-discounts/key={{cart-discount-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a CartDiscount exists with the provided `key`. Returns a `200` status if the CartDiscount exists, or a `404` status otherwise.",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "cart-discount-key"
+  },
+  "updateCartDiscountByKey": {
+    "name": "Update CartDiscount by Key",
+    "value": "updateCartDiscountByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/key={{cart-discount-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeValue",
+            "value": {
+              "type": "relative",
+              "permyriad": 1500
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "relative",
+          "permyriad": 1500
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "cart-discount-key"
+  },
+  "deleteCartDiscountByKey": {
+    "name": "Delete CartDiscount by Key",
+    "value": "deleteCartDiscountByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/cart-discounts/key={{cart-discount-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "cart-discount-key"
+  },
+  "getCartDiscountById": {
+    "name": "Get CartDiscount by ID",
+    "value": "getCartDiscountById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfCartDiscountExistsById": {
+    "name": "Check if CartDiscount exists by ID",
+    "value": "checkIfCartDiscountExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a CartDiscount exists with the provided `id`. Returns a `200` status if the CartDiscount exists, or a `404` status otherwise.",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateCartDiscountById": {
+    "name": "Update CartDiscount by ID",
+    "value": "updateCartDiscountById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeValue",
+            "value": {
+              "type": "relative",
+              "permyriad": 1500
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "relative",
+          "permyriad": 1500
+        },
+        "description": "Value"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "null",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteCartDiscountById": {
+    "name": "Delete CartDiscount by ID",
+    "value": "deleteCartDiscountById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "version",
+      "expand"
+    ],
+    "description": "Deleting a Cart Discount produces the [CartDiscountDeleted](ctp:api:type:CartDiscountDeletedMessage) Message.",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "queryCartDiscounts": {
+    "name": "Query CartDiscounts",
+    "value": "queryCartDiscounts",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/cart-discounts",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "null",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfCartDiscountExistsByQueryPredicate": {
+    "name": "Check if CartDiscount exists by Query Predicate",
+    "value": "checkIfCartDiscountExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/cart-discounts",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more CartDiscounts exist for the provided query predicate. Returns a `200` status if any CartDiscounts match the query predicate, or a `404` status otherwise.",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createCartDiscount": {
+    "name": "Create CartDiscount",
+    "value": "createCartDiscount",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "black-friday-sale",
+        "description": "Key"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Black Friday Sale"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "10% discount on all items in cart"
+        },
+        "description": "Description"
+      },
+      {
+        "name": "value.type",
+        "type": "string",
+        "required": false,
+        "example": "relative",
+        "description": "Value › type"
+      },
+      {
+        "name": "value.permyriad",
+        "type": "number",
+        "required": false,
+        "example": 1000,
+        "description": "Value › permyriad"
+      },
+      {
+        "name": "cartPredicate",
+        "type": "string",
+        "required": true,
+        "example": "lineItemTotal(true = true) >= \"500.00 USD\"",
+        "description": "Cart Predicate"
+      },
+      {
+        "name": "target.type",
+        "type": "string",
+        "required": false,
+        "example": "lineItems",
+        "description": "Target › type"
+      },
+      {
+        "name": "target.predicate",
+        "type": "string",
+        "required": false,
+        "example": "categories.id = (\"{{category-id}}\")",
+        "description": "Target › predicate"
+      },
+      {
+        "name": "sortOrder",
+        "type": "string",
+        "required": true,
+        "example": "0.01",
+        "description": "Sort Order"
+      },
+      {
+        "name": "stores",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "key": "europe",
+            "typeId": "store"
+          }
+        ],
+        "description": "Array of stores"
+      },
+      {
+        "name": "isActive",
+        "type": "boolean",
+        "required": true,
+        "example": true,
+        "description": "Is Active"
+      },
+      {
+        "name": "requiresDiscountCode",
+        "type": "boolean",
+        "required": true,
+        "example": true,
+        "description": "Requires Discount Code"
+      },
+      {
+        "name": "stackingMode",
+        "type": "string",
+        "required": true,
+        "example": "Stacking",
+        "description": "Stacking Mode"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creating a Cart Discount produces the [CartDiscountCreated](ctp:api:type:CartDiscountCreatedMessage) Message.\n",
+    "folder": "Cart-discounts",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeCartPredicate": {
+    "name": "ChangeCartPredicate",
+    "value": "changeCartPredicate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [
+      {
+        "name": "cartPredicate",
+        "type": "string",
+        "required": true,
+        "example": "totalPrice.centAmount > 10000",
+        "description": "Cart Predicate"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeIsActive": {
+    "name": "ChangeIsActive",
+    "value": "changeIsActive",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeIsActive",
+            "isActive": false
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "isActive",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Is Active"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeRequiresDiscountCode": {
+    "name": "ChangeRequiresDiscountCode",
+    "value": "changeRequiresDiscountCode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeRequiresDiscountCode",
+            "requiresDiscountCode": false
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "requiresDiscountCode",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Requires Discount Code"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeSortOrder": {
+    "name": "ChangeSortOrder",
+    "value": "changeSortOrder",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeSortOrder",
+            "sortOrder": "0.1"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "sortOrder",
+        "type": "string",
+        "required": false,
+        "example": "0.1",
+        "description": "Sort Order"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeStackingMode": {
+    "name": "ChangeStackingMode",
+    "value": "changeStackingMode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeStackingMode",
+            "stackingMode": "StopAfterThisDiscount"
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "stackingMode",
+        "type": "string",
+        "required": false,
+        "example": "StopAfterThisDiscount",
+        "description": "Stacking Mode"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeTarget": {
+    "name": "ChangeTarget",
+    "value": "changeTarget",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [
+      {
+        "name": "target",
+        "type": "json",
+        "required": true,
+        "example": {
+          "type": "lineItems",
+          "predicate": "1 = 1"
+        },
+        "description": "Target"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setDiscountGroup": {
+    "name": "SetDiscountGroup",
+    "value": "setDiscountGroup",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setDiscountGroup",
+            "discountGroup": {
+              "key": "placeholder"
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "discountGroup",
+        "type": "json",
+        "required": false,
+        "example": {
+          "key": "placeholder"
+        },
+        "description": "Discount Group"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setRecurringOrderScope": {
+    "name": "SetRecurringOrderScope",
+    "value": "setRecurringOrderScope",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/cart-discounts/{{cart-discount-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setRecurringOrderScope",
+            "recurringOrderScope": {
+              "type": "ApplicableRecurrencePolicies",
+              "recurrencePolicies": [
+                {
+                  "typeId": "recurrence-policy",
+                  "id": "placeholder"
+                }
+              ]
+            }
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "recurringOrderScope",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "ApplicableRecurrencePolicies",
+          "recurrencePolicies": [
+            {
+              "typeId": "recurrence-policy",
+              "id": "placeholder"
+            }
+          ]
+        },
+        "description": "Recurring Order Scope"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post CartDiscounts",
+    "folder": "Cart-discounts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getDiscountCodeById": {
+    "name": "Get DiscountCode by ID",
+    "value": "getDiscountCodeById",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `view_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfDiscountCodeExistsById": {
+    "name": "Check if DiscountCode exists by ID",
+    "value": "checkIfDiscountCodeExistsById",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a DiscountCode exists with the provided `id`. Returns a `200` status if the DiscountCode exists, or a `404` status otherwise.",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "updateDiscountCodeById": {
+    "name": "Update DiscountCode by ID",
+    "value": "updateDiscountCodeById",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMaxApplicationsPerCustomer",
+            "maxApplicationsPerCustomer": 5
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "maxApplicationsPerCustomer",
+        "type": "number",
+        "required": false,
+        "example": 5,
+        "description": "Max Applications Per Customer"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "deleteDiscountCodeById": {
+    "name": "Delete DiscountCode by ID",
+    "value": "deleteDiscountCodeById",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deleting a Discount Code produces the [DiscountCodeDeleted](ctp:api:type:DiscountCodeDeletedMessage) Message.\n\nDeprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`\n",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "getDiscountCodeByKey": {
+    "name": "Get DiscountCode by Key",
+    "value": "getDiscountCodeByKey",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/discount-codes/key={{discount-code-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `view_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "discount-code-key"
+  },
+  "checkIfDiscountCodeExistsByKey": {
+    "name": "Check if DiscountCode exists by Key",
+    "value": "checkIfDiscountCodeExistsByKey",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/discount-codes/key={{discount-code-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [],
+    "description": "Checks if a DiscountCode exists with the provided `key`. Returns a `200` status if the DiscountCode exists, or a `404` status otherwise.",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "keyPlaceholder": "discount-code-key"
+  },
+  "updateDiscountCodeByKey": {
+    "name": "Update DiscountCode by Key",
+    "value": "updateDiscountCodeByKey",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/key={{discount-code-key}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMaxApplicationsPerCustomer",
+            "maxApplicationsPerCustomer": 5
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "maxApplicationsPerCustomer",
+        "type": "number",
+        "required": false,
+        "example": 5,
+        "description": "Max Applications Per Customer"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "discount-code-key"
+  },
+  "deleteDiscountCodeByKey": {
+    "name": "Delete DiscountCode by Key",
+    "value": "deleteDiscountCodeByKey",
+    "method": "DELETE",
+    "urlTemplate": "/{{project-key}}/discount-codes/key={{discount-code-key}}",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "dataErasure",
+      "version",
+      "expand"
+    ],
+    "description": "Deleting a Discount Code produces the [DiscountCodeDeleted](ctp:api:type:DiscountCodeDeletedMessage) Message.\n\nDeprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`\n",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "keyPlaceholder": "discount-code-key"
+  },
+  "queryDiscountCodes": {
+    "name": "Query DiscountCodes",
+    "value": "queryDiscountCodes",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/discount-codes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand",
+      "sort",
+      "limit",
+      "offset",
+      "withTotal",
+      "where"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `view_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "checkIfDiscountCodeExistsByQueryPredicate": {
+    "name": "Check if DiscountCode exists by Query Predicate",
+    "value": "checkIfDiscountCodeExistsByQueryPredicate",
+    "method": "HEAD",
+    "urlTemplate": "/{{project-key}}/discount-codes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "where"
+    ],
+    "description": "Checks if one or more DiscountCodes exist for the provided query predicate. Returns a `200` status if any DiscountCodes match the query predicate, or a `404` status otherwise.",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "createDiscountCode": {
+    "name": "Create DiscountCode",
+    "value": "createDiscountCode",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes",
+    "bodyFields": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "example": "save10_code",
+        "description": "Key"
+      },
+      {
+        "name": "name",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Save10"
+        },
+        "description": "Name"
+      },
+      {
+        "name": "description",
+        "type": "json",
+        "required": true,
+        "example": {
+          "en": "Save 10% using this code"
+        },
+        "description": "Description"
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "required": true,
+        "example": "SAVE10",
+        "description": "Code"
+      },
+      {
+        "name": "cartDiscounts",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "cart-discount",
+            "id": "placeholder"
+          }
+        ],
+        "description": "Array of cartDiscounts"
+      },
+      {
+        "name": "cartPredicate",
+        "type": "string",
+        "required": true,
+        "example": "customer.email = \"john.doe@example.com\" and customer.customerGroup.id = \"{{customer-group-id}}\"",
+        "description": "Cart Predicate"
+      },
+      {
+        "name": "isActive",
+        "type": "boolean",
+        "required": true,
+        "example": true,
+        "description": "Is Active"
+      },
+      {
+        "name": "maxApplications",
+        "type": "number",
+        "required": true,
+        "example": 100,
+        "description": "Max Applications"
+      },
+      {
+        "name": "maxApplicationsPerCustomer",
+        "type": "number",
+        "required": true,
+        "example": 2,
+        "description": "Max Applications Per Customer"
+      },
+      {
+        "name": "groups",
+        "type": "json",
+        "required": false,
+        "example": [
+          "new customers"
+        ],
+        "description": "Array of groups"
+      }
+    ],
+    "actionBodyFields": [],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Creating a Discount Code produces the [DiscountCodeCreated](ctp:api:type:DiscountCodeCreatedMessage) Message.\n\nDeprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`\n",
+    "folder": "Discount-codes",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": false,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
+  "changeCartDiscounts": {
+    "name": "ChangeCartDiscounts",
+    "value": "changeCartDiscounts",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeCartDiscounts",
+            "cartDiscounts": [
+              {
+                "typeId": "cart-discount",
+                "id": "placeholder"
+              }
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "cartDiscounts",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "cart-discount",
+            "id": "placeholder"
+          }
+        ],
+        "description": "Cart Discounts"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "changeGroups": {
+    "name": "ChangeGroups",
+    "value": "changeGroups",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "changeGroups",
+            "groups": [
+              "groupString"
+            ]
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "groups",
+        "type": "json",
+        "required": false,
+        "example": [
+          "groupString"
+        ],
+        "description": "Groups"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setCartPredicate": {
+    "name": "SetCartPredicate",
+    "value": "setCartPredicate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [],
+    "actionBodyFields": [
+      {
+        "name": "cartPredicate",
+        "type": "string",
+        "required": false,
+        "example": "totalPrice.centAmount > 10000",
+        "description": "Cart Predicate"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setMaxApplications": {
+    "name": "SetMaxApplications",
+    "value": "setMaxApplications",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMaxApplications",
+            "maxApplications": 150
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "maxApplications",
+        "type": "number",
+        "required": false,
+        "example": 150,
+        "description": "Max Applications"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setMaxApplicationsPerCustomer": {
+    "name": "SetMaxApplicationsPerCustomer",
+    "value": "setMaxApplicationsPerCustomer",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/discount-codes/{{discount-code-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "action": "setMaxApplicationsPerCustomer",
+            "maxApplicationsPerCustomer": 10
+          }
+        ],
+        "description": "Array of actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "maxApplicationsPerCustomer",
+        "type": "number",
+        "required": false,
+        "example": 10,
+        "description": "Max Applications Per Customer"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Deprecated OAuth 2.0 Scope: `manage_orders:{projectKey}`",
+    "folder": "Discount-codes",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
   }
 }
