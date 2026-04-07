@@ -81,6 +81,13 @@ const FOLDERS_TO_GENERATE = [
 	'As-associate/In-business-unit/Quote-requests',
 	'As-associate/In-business-unit/Shopping-lists',
 	'As-associate/In-business-unit/Business-units',
+	'Standalone-prices',
+	'Stores',
+	'Product-tailoring',
+	'Customer-groups',
+	'Product-selections',
+	'Cart-discounts',
+	'Discount-codes',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -110,6 +117,11 @@ const RESOURCES_TO_GENERATE = [
 	'extension',
 	'approval-rule',
 	'approval-flow',
+	'standalone-price',
+	'store',
+	'product-tailoring',
+	'customer-group',
+	'product-selection',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -182,6 +194,39 @@ const MANUAL_PATCHES: Record<string, OperationPatch> = {
 				required: true,
 				example: 'ExplicitAndFromParent',
 				description: 'Associate Mode',
+			},
+		],
+	},
+	changeCartPredicate: {
+		actionBodyFields: [
+			{
+				name: 'cartPredicate',
+				type: 'string',
+				required: true,
+				example: 'totalPrice.centAmount > 10000',
+				description: 'Cart Predicate',
+			},
+		],
+	},
+	changeTarget: {
+		actionBodyFields: [
+			{
+				name: 'target',
+				type: 'json',
+				required: true,
+				example: { type: 'lineItems', predicate: '1 = 1' },
+				description: 'Target',
+			},
+		],
+	},
+	setCartPredicate: {
+		actionBodyFields: [
+			{
+				name: 'cartPredicate',
+				type: 'string',
+				required: false,
+				example: 'totalPrice.centAmount > 10000',
+				description: 'Cart Predicate',
 			},
 		],
 	},
