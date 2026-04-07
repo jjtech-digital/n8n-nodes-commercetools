@@ -88,6 +88,15 @@ const FOLDERS_TO_GENERATE = [
 	'Product-selections',
 	'Cart-discounts',
 	'Discount-codes',
+	'Product-discounts',
+	'Product-types',
+	'Product-projections',
+	'Tax-categories',
+	'Attribute-groups',
+	'Api-clients',
+	'Recurring-orders',
+	'Recurrence-policies',
+	'Discount-groups',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -122,6 +131,8 @@ const RESOURCES_TO_GENERATE = [
 	'product-tailoring',
 	'customer-group',
 	'product-selection',
+	'recurring-order',
+	'discount-group',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────
