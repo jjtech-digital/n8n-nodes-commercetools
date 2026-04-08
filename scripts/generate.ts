@@ -97,6 +97,19 @@ const FOLDERS_TO_GENERATE = [
 	'Recurring-orders',
 	'Recurrence-policies',
 	'Discount-groups',
+	'Project',
+	'In-store/Business-units',
+	'In-store/Cart-discounts',
+	'In-store/Carts',
+	'In-store/Customers',
+	'In-store/Orders',
+	'In-store/Quote-requests',
+	'In-store/Quotes',
+	'In-store/Shopping-lists',
+	'In-store/Staged-quotes',
+	'In-store/Product-projections',
+	'In-store/Shipping-methods',
+	'In-store/Products',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [

@@ -36,6 +36,7 @@ export interface ParsedOperation {
 	isImageUpload?: boolean;
 	secondaryIdPlaceholder?: string;
 	associateIdPlaceholder?: string;
+	storeKeyPlaceholder?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -293,7 +294,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					/\/\{[^}]*[Ii][Dd]\}/.test(urlTemplate);
 
 				const requiresKey = /\/key=/.test(urlTemplate) || /key=\{\{/.test(urlTemplate);
-				const keyPlaceholder = requiresKey ? extractKeyPlaceholder(urlTemplate) : undefined;
+				let keyPlaceholder = requiresKey ? extractKeyPlaceholder(urlTemplate) : undefined;
 
 				const pathParamMatch = urlTemplate.match(/\/([a-z][a-z-]*)=\{\{([^}]+)\}\}/);
 				const hasCustomPathParam = pathParamMatch !== null && pathParamMatch[1] !== 'key';
@@ -351,7 +352,15 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 				if (associateIdPlaceholder && secondaryIdPlaceholder === associateIdPlaceholder) {
 					secondaryIdPlaceholder = undefined;
 				}
-
+				// Detect store-key for In-store endpoints
+				const storeKeyMatch = urlTemplate.match(/in-store\/key=\{\{([^}]+)\}\}/);
+				const storeKeyPlaceholder = storeKeyMatch ? storeKeyMatch[1] : undefined;
+				// If store-key was picked up as keyPlaceholder, replace it with
+				// the actual resource key (second key= segment)
+				if (storeKeyPlaceholder && keyPlaceholder === storeKeyPlaceholder) {
+					const allKeyMatches = [...urlTemplate.matchAll(/key=\{\{([^}]+)\}\}/g)].map((m) => m[1]);
+					keyPlaceholder = allKeyMatches.length >= 2 ? allKeyMatches[1] : undefined;
+				}
 				operations.push({
 					name: item.name,
 					value: slugify(item.name),
@@ -374,6 +383,7 @@ export function parseCollection(collection: any, folders: string[]): ParsedOpera
 					...(isImageUpload ? { isImageUpload: true } : {}),
 					...(secondaryIdPlaceholder ? { secondaryIdPlaceholder } : {}),
 					...(associateIdPlaceholder ? { associateIdPlaceholder } : {}),
+					...(storeKeyPlaceholder ? { storeKeyPlaceholder } : {}),
 				});
 			}
 		};

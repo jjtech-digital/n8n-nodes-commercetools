@@ -93,7 +93,11 @@ async function executeOperation(
 	let urlPath = opDef.urlTemplate
 		.replace(/\{\{project-key\}\}/g, projectKey)
 		.replace(/\{\{projectKey\}\}/g, projectKey);
-
+	// In-store endpoints — substitute store-key
+	if (urlPath.includes('in-store/key={{')) {
+		const storeKey = safeGet<string>(this, 'storeKey', i, '');
+		urlPath = urlPath.replace(/in-store\/key=\{\{[^}]+\}\}/, `in-store/key=${storeKey}`);
+	}
 	// Associate endpoints — substitute {{associate-id}}
 	if (urlPath.includes('{{associate-id}}')) {
 		const associateId = safeGet<string>(this, 'associateId', i, '');
