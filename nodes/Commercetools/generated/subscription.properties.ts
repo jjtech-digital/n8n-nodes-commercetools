@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-04-07T05:47:03.206Z
+ * Generated at: 2026-04-09T11:25:03.556Z
  */
 
 import { INodeProperties } from 'n8n-workflow';
@@ -134,6 +134,11 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Delivery Custom Type Set', value: 'DeliveryCustomTypeSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery custom type set occurs on a order.' },
     { name: 'Delivery Items Updated', value: 'DeliveryItemsUpdated', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery items updated occurs on a order.' },
     { name: 'Delivery Removed', value: 'DeliveryRemoved', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when delivery removed occurs on a order.' },
+    { name: 'Discount Group Created', value: 'DiscountGroupCreated', resourceTypeId: 'discount-group', subscriptionType: 'change', description: 'Triggers when a discount-group changes (discount group created).' },
+    { name: 'Discount Group Deleted', value: 'DiscountGroupDeleted', resourceTypeId: 'discount-group', subscriptionType: 'change', description: 'Triggers when a discount-group changes (discount group deleted).' },
+    { name: 'Discount Group Is Active Set', value: 'DiscountGroupIsActiveSet', resourceTypeId: 'discount-group', subscriptionType: 'change', description: 'Triggers when a discount-group changes (discount group is active set).' },
+    { name: 'Discount Group Key Set', value: 'DiscountGroupKeySet', resourceTypeId: 'discount-group', subscriptionType: 'change', description: 'Triggers when a discount-group changes (discount group key set).' },
+    { name: 'Discount Group Sort Order Set', value: 'DiscountGroupSortOrderSet', resourceTypeId: 'discount-group', subscriptionType: 'change', description: 'Triggers when a discount-group changes (discount group sort order set).' },
     { name: 'Inventory Entry Created', value: 'InventoryEntryCreated', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry created occurs on a inventory-entry.' },
     { name: 'Inventory Entry Deleted', value: 'InventoryEntryDeleted', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry deleted occurs on a inventory-entry.' },
     { name: 'Inventory Entry Quantity Set', value: 'InventoryEntryQuantitySet', resourceTypeId: 'inventory-entry', subscriptionType: 'message', description: 'Triggers when inventory entry quantity set occurs on a inventory-entry.' },
@@ -252,6 +257,20 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Quote Request State Transition', value: 'QuoteRequestStateTransition', resourceTypeId: 'quote-request', subscriptionType: 'message', description: 'Triggers when quote request state transition occurs on a quote-request.' },
     { name: 'Quote State Changed', value: 'QuoteStateChanged', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote state changed occurs on a quote.' },
     { name: 'Quote State Transition', value: 'QuoteStateTransition', resourceTypeId: 'quote', subscriptionType: 'message', description: 'Triggers when quote state transition occurs on a quote.' },
+    { name: 'Recurring Order Created', value: 'RecurringOrderCreated', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order created).' },
+    { name: 'Recurring Order Custom Field Added', value: 'RecurringOrderCustomFieldAdded', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order custom field added).' },
+    { name: 'Recurring Order Custom Field Changed', value: 'RecurringOrderCustomFieldChanged', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order custom field changed).' },
+    { name: 'Recurring Order Custom Field Removed', value: 'RecurringOrderCustomFieldRemoved', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order custom field removed).' },
+    { name: 'Recurring Order Custom Type Removed', value: 'RecurringOrderCustomTypeRemoved', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order custom type removed).' },
+    { name: 'Recurring Order Custom Type Set', value: 'RecurringOrderCustomTypeSet', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order custom type set).' },
+    { name: 'Recurring Order Deleted', value: 'RecurringOrderDeleted', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order deleted).' },
+    { name: 'Recurring Order Expires At Set', value: 'RecurringOrderExpiresAtSet', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order expires at set).' },
+    { name: 'Recurring Order Failed', value: 'RecurringOrderFailed', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order failed).' },
+    { name: 'Recurring Order Key Set', value: 'RecurringOrderKeySet', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order key set).' },
+    { name: 'Recurring Order Schedule Set', value: 'RecurringOrderScheduleSet', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order schedule set).' },
+    { name: 'Recurring Order Starts At Set', value: 'RecurringOrderStartsAtSet', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order starts at set).' },
+    { name: 'Recurring Order State Changed', value: 'RecurringOrderStateChanged', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order state changed).' },
+    { name: 'Recurring Order State Transition', value: 'RecurringOrderStateTransition', resourceTypeId: 'recurring-order', subscriptionType: 'change', description: 'Triggers when a recurring-order changes (recurring order state transition).' },
     { name: 'Return Info Added', value: 'ReturnInfoAdded', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info added occurs on a order.' },
     { name: 'Return Info Set', value: 'ReturnInfoSet', resourceTypeId: 'order', subscriptionType: 'message', description: 'Triggers when return info set occurs on a order.' },
     { name: 'Review Created', value: 'ReviewCreated', resourceTypeId: 'review', subscriptionType: 'message', description: 'Triggers when review created occurs on a review.' },

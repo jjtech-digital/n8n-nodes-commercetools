@@ -571,6 +571,31 @@
       "subscriptionType": "message"
     },
     {
+      "value": "DiscountGroupCreated",
+      "resourceTypeId": "discount-group",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "DiscountGroupDeleted",
+      "resourceTypeId": "discount-group",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "DiscountGroupIsActiveSet",
+      "resourceTypeId": "discount-group",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "DiscountGroupKeySet",
+      "resourceTypeId": "discount-group",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "DiscountGroupSortOrderSet",
+      "resourceTypeId": "discount-group",
+      "subscriptionType": "change"
+    },
+    {
       "value": "InventoryEntryCreated",
       "resourceTypeId": "inventory-entry",
       "subscriptionType": "message"
@@ -1161,6 +1186,76 @@
       "subscriptionType": "message"
     },
     {
+      "value": "RecurringOrderCreated",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderCustomFieldAdded",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderCustomFieldChanged",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderCustomFieldRemoved",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderCustomTypeRemoved",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderCustomTypeSet",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderDeleted",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderExpiresAtSet",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderFailed",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderKeySet",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderScheduleSet",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderStartsAtSet",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderStateChanged",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
+      "value": "RecurringOrderStateTransition",
+      "resourceTypeId": "recurring-order",
+      "subscriptionType": "change"
+    },
+    {
       "value": "ReturnInfoAdded",
       "resourceTypeId": "order",
       "subscriptionType": "message"
@@ -1409,7 +1504,7 @@
     "zone"
   ],
   "stats": {
-    "totalMessages": 268,
+    "totalMessages": 287,
     "unmapped": 0,
     "unclassified": 0
   },
