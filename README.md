@@ -26,7 +26,7 @@ Operations are **auto-generated** from the official commercetools Postman collec
 
 ## Highlights
 
-- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, API Extensions, Approval Rules, Approval Flows, Associate Endpoints, Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes
+- Full CRUD coverage for Products, Customers, Carts, Orders, Business Units, Categories, Channels, Associate Roles, Inventory, Reviews, Shopping Lists, Types, Custom Objects, Payments, Payment Methods, Shipping Methods, Zones, Subscriptions, States, Quotes, Quote Requests, Staged Quotes, Messages, API Extensions, Approval Rules, Approval Flows, Associate Endpoints, Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, Discount Codes, Product Discounts, Product Types, Product Projections, Tax Categories, Attribute Groups, API Clients, Recurring Orders, Recurrence Policies, Discount Groups, and In-Store Endpoints
 - Auto-generated operations from the official Postman collection — always in sync
 - Product image upload: downloads from a URL, posts raw binary to commercetools
 - Product, Order, and Business Unit search with structured query, sort, limit, and offset fields
@@ -96,6 +96,27 @@ Select a **Resource** and **Operation** to interact with the commercetools API. 
 | **Product Selection** | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Cart Discount**     | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
 | **Discount Code**     | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Product Discount**          | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Product Type**              | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Product Projection**        | Get by ID, Get by Key, Query, HEAD checks |
+| **Tax Category**              | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Attribute Group**           | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **API Client**                | Create, Get by ID, Query, Delete, HEAD checks |
+| **Recurring Order**           | Create, Get by ID, Query, Update, Delete, HEAD checks |
+| **Recurrence Policy**         | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Discount Group**            | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Store Business Unit**       | Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Store Cart Discount**       | Get by ID, Get by Key, Query, HEAD checks |
+| **Store Cart**                | Create, Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Store Customer**            | Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Store Order**               | Create, Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Store Quote Request**       | Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Store Quote**               | Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Store Shopping List**       | Get by ID, Get by Key, Query, Update, Delete, HEAD checks |
+| **Store Staged Quote**        | Get by ID, Get by Key, Query, Update, HEAD checks |
+| **Store Product Projection**  | Get by ID, Get by Key, Query, HEAD checks |
+| **Store Shipping Method**     | Get matching methods for Cart, HEAD checks |
+| **Store Product Tailoring**   | Create, Get by Key, Update, Delete, Upload Image, HEAD checks |
 
 #### How field generation works
 
@@ -225,6 +246,10 @@ Listens for real-time commercetools events via webhook subscription. On activati
 **Customer Group** — created, custom field updates
 
 **Product Selection** — created, deleted, product added/removed/excluded, variant selection/exclusion changed
+
+**Cart Discounts** — no message triggers (change subscriptions only)
+
+**Discount Codes** — no message triggers (change subscriptions only)
 
 #### Subscription routing
 
@@ -432,13 +457,12 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 ## Changelog
 
-| Version | Changes                                                                                          |
-| ------- | ------------------------------------------------------------------------------------------------ |
-| v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                    |
-| v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                        |
-| v1.0.10 | Added Claude AI agents and skills for automated development assistance                           |
-| v1.0.9  | Added Zones, Subscriptions, and States                                                           |
-| v1.0.8  | Added Custom Objects, Payments, Payment Methods, and Shipping Methods                            |
+| Version | Changes                                                                                                                     |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------|
+| v1.0.13 | Added Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes |
+| v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                                               |
+| v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                                                   |
+| v1.0.10 | Added Claude AI agents and skills for automated development assistance                                                      |
                                                                       
 
 
