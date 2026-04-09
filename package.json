@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-commercetools",
-	"version": "1.0.13",
+	"version": "1.0.14",
 	"description": "n8n custom node for commercetools — auto-generated from official Postman collection",
 	"license": "MIT",
 	"homepage": "",
