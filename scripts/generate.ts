@@ -88,6 +88,28 @@ const FOLDERS_TO_GENERATE = [
 	'Product-selections',
 	'Cart-discounts',
 	'Discount-codes',
+	'Product-discounts',
+	'Product-types',
+	'Product-projections',
+	'Tax-categories',
+	'Attribute-groups',
+	'Api-clients',
+	'Recurring-orders',
+	'Recurrence-policies',
+	'Discount-groups',
+	'Project',
+	'In-store/Business-units',
+	'In-store/Cart-discounts',
+	'In-store/Carts',
+	'In-store/Customers',
+	'In-store/Orders',
+	'In-store/Quote-requests',
+	'In-store/Quotes',
+	'In-store/Shopping-lists',
+	'In-store/Staged-quotes',
+	'In-store/Product-projections',
+	'In-store/Shipping-methods',
+	'In-store/Products',
 ]; // For Actions;
 
 const RESOURCES_TO_GENERATE = [
@@ -122,6 +144,8 @@ const RESOURCES_TO_GENERATE = [
 	'product-tailoring',
 	'customer-group',
 	'product-selection',
+	'recurring-order',
+	'discount-group',
 ]; // For Triggers;
 
 // ─────────────────────────────────────────────────────────────────────────────

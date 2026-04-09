@@ -85,6 +85,32 @@ const SINGULAR_MAP: Record<string, string> = {
 	QuoteRequests: 'Quote Request',
 	StandalonePrices: 'Standalone Price',
 	RecurringOrders: 'Recurring Order',
+	'As-associate/In-business-unit/Approval-rules': 'Approval Rule',
+	'As-associate/In-business-unit/Approval-flows': 'Approval Flow',
+	'As-associate/In-business-unit/Carts': 'Associate Cart',
+	'As-associate/In-business-unit/Orders': 'Associate Order',
+	'As-associate/In-business-unit/Quotes': 'Associate Quote',
+	'As-associate/In-business-unit/Quote-requests': 'Associate Quote Request',
+	'As-associate/In-business-unit/Shopping-lists': 'Associate Shopping List',
+	'As-associate/In-business-unit/Business-units': 'Associate Business Unit',
+	'Standalone-prices': 'Standalone Price',
+	'Product-tailoring': 'Product Tailoring',
+	'Customer-groups': 'Customer Group',
+	'Product-selections': 'Product Selection',
+	'Cart-discounts': 'Cart Discount',
+	'Discount-codes': 'Discount Code',
+	'In-store/Business-units': 'Store Business Unit',
+	'In-store/Cart-discounts': 'Store Cart Discount',
+	'In-store/Carts': 'Store Cart',
+	'In-store/Customers': 'Store Customer',
+	'In-store/Orders': 'Store Order',
+	'In-store/Quote-requests': 'Store Quote Request',
+	'In-store/Quotes': 'Store Quote',
+	'In-store/Shopping-lists': 'Store Shopping List',
+	'In-store/Staged-quotes': 'Store Staged Quote',
+	'In-store/Product-projections': 'Store Product Projection',
+	'In-store/Shipping-methods': 'Store Shipping Method',
+	'In-store/Products': 'Store Product Tailoring',
 };
 
 const REQUIRED_QUERY_PARAMS = new Set(['cartId', 'orderEditId', 'country']);
@@ -277,7 +303,18 @@ export function generateIdFields(
 				displayOptions: { show: { resource: [resourceValue], operation: associateOps } },
 			});
 		}
-
+		// In-store endpoints — add Store Key field
+		const storeKeyOps = topLevelOps.filter((op) => op.storeKeyPlaceholder).map((op) => op.value);
+		if (storeKeyOps.length > 0) {
+			props.push({
+				displayName: 'Store Key',
+				name: 'storeKey',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: { show: { resource: [resourceValue], operation: storeKeyOps } },
+			});
+		}
 		// Tertiary key — for URLs with two key= segments e.g. approval-rule-key
 		const tertiaryKeyOps = topLevelOps.filter((op) => {
 			const keyMatches = [...op.urlTemplate.matchAll(/key=\{\{([^}]+)\}\}/g)].map((m) => m[1]);
