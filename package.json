@@ -20,7 +20,7 @@
 	"scripts": {
 		"generate": "ts-node scripts/generate.ts",
 		"build": "n8n-node build",
-		"postbuild": "mkdir -p dist/nodes/Commercetools/lambda && cp nodes/Commercetools/lambda/*.js dist/nodes/Commercetools/lambda/",
+		"postbuild": "node scripts/copyLambda.js",
 		"build:watch": "tsc --watch",
 		"update": "npm run generate && npm run build",
 		"dev": "n8n-node dev",
