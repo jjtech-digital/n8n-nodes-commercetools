@@ -45,8 +45,8 @@
 		]
 	},
 	"dependencies": {
-		"@commercetools/platform-sdk": "^8.24.0",
-		"@google-cloud/pubsub": "^5.2.3",
+		"@commercetools/platform-sdk": "^8.25.0",
+		"@google-cloud/pubsub": "^5.3.0",
 		"@google-cloud/storage": "^7.19.0",
 		"adm-zip": "^0.5.16",
 		"aws-sdk": "^2.1693.0",
@@ -54,17 +54,17 @@
 	},
 	"devDependencies": {
 		"@n8n/node-cli": "^0.17.0",
-		"@types/adm-zip": "^0.5.7",
-		"@types/node": "^25.3.3",
+		"@types/adm-zip": "^0.5.8",
+		"@types/node": "^25.6.0",
 		"auto-changelog": "^2.5.0",
-		"eslint": "^9.39.2",
+		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.5",
-		"n8n-workflow": "^2.3.0",
-		"prettier": "3.8.1",
-		"release-it": "^19.2.2",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.9.3"
+		"n8n-workflow": "^2.13.1",
+		"prettier": "^3.8.2",
+		"release-it": "^19.2.4",
+		"ts-node": "^10.9.2",
+		"typescript": "^6.0.2"
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
