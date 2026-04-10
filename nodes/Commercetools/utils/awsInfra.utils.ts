@@ -24,15 +24,28 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
-import { SQSClient, CreateQueueCommand, GetQueueAttributesCommand, SetQueueAttributesCommand } from '@aws-sdk/client-sqs';
+import {
+	SQSClient,
+	CreateQueueCommand,
+	GetQueueAttributesCommand,
+	SetQueueAttributesCommand,
+} from '@aws-sdk/client-sqs';
 import {
 	LambdaClient,
 	CreateFunctionCommand,
 	CreateEventSourceMappingCommand,
 	waitUntilFunctionActive,
 } from '@aws-sdk/client-lambda';
-import type { CreateFunctionCommandInput, CreateFunctionCommandOutput } from '@aws-sdk/client-lambda';
-import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand, PutRolePolicyCommand } from '@aws-sdk/client-iam';
+import type {
+	CreateFunctionCommandInput,
+	CreateFunctionCommandOutput,
+} from '@aws-sdk/client-lambda';
+import {
+	IAMClient,
+	CreateRoleCommand,
+	AttachRolePolicyCommand,
+	PutRolePolicyCommand,
+} from '@aws-sdk/client-iam';
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import type { INode } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
@@ -293,8 +306,6 @@ export async function createRealAWSInfrastructure(
 			createdAt: new Date().toISOString(),
 		};
 	} catch (err) {
-		// AWS-BP-1: log before re-throwing
-		console.error('[CT AWS] Failed to create infrastructure:', (err as Error).message);
 		const e = err as { name?: string; message?: string };
 		if (e.name === 'InvalidClientTokenId' || e.name === 'SignatureDoesNotMatch') {
 			throw new NodeOperationError(

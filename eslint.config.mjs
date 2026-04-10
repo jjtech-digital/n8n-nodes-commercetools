@@ -11,6 +11,7 @@ export default [
 		files: ['nodes/Commercetools/**/*.ts', 'scripts/**/*.ts'],
 		rules: {
 			'import-x/no-unresolved': 'off',
+			'no-console': ['error', { allow: ['warn', 'error'] }],
 		},
 	},
 ];

@@ -11,7 +11,8 @@
       "Skill(prettier:*)",
       "Bash(npm run:*)",
       "Bash(wc -l /Users/devulapallisatya/Desktop/n8n-nodes-commercetools/scripts/*.ts /Users/devulapallisatya/Desktop/n8n-nodes-commercetools/nodes/Commercetools/utils/*.ts /Users/devulapallisatya/Desktop/n8n-nodes-commercetools/nodes/Commercetools/*.ts)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx prettier:*)"
     ],
     "additionalDirectories": [
       "c:\\Projects\\n8n-ct\\n8n-nodes-commercetools"

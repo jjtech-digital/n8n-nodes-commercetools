@@ -14,7 +14,11 @@
  * Migrated to AWS SDK for JavaScript v3.
  */
 
-import { LambdaClient, DeleteFunctionCommand, DeleteEventSourceMappingCommand } from '@aws-sdk/client-lambda';
+import {
+	LambdaClient,
+	DeleteFunctionCommand,
+	DeleteEventSourceMappingCommand,
+} from '@aws-sdk/client-lambda';
 import { SQSClient, DeleteQueueCommand } from '@aws-sdk/client-sqs';
 import {
 	IAMClient,
