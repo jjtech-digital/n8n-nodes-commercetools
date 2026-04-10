@@ -70,8 +70,7 @@ exports.handler = async (event) => {
 
 	for (const record of event.Records || []) {
 		try {
-			const messageBody =
-				typeof record.body === 'string' ? JSON.parse(record.body) : record.body;
+			const messageBody = typeof record.body === 'string' ? JSON.parse(record.body) : record.body;
 
 			const receivedEventType = messageBody.type ?? eventType;
 

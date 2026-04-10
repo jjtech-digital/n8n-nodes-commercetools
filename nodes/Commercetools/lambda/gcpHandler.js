@@ -76,12 +76,7 @@ functions.cloudEvent('cloudFunctionCode', async (cloudEvent) => {
 						console.log('Webhook delivered successfully, status:', res.statusCode);
 						resolve();
 					} else {
-						console.error(
-							'Webhook returned error status:',
-							res.statusCode,
-							'body:',
-							responseBody,
-						);
+						console.error('Webhook returned error status:', res.statusCode, 'body:', responseBody);
 						reject(new Error('Webhook returned status ' + res.statusCode + ': ' + responseBody));
 					}
 				});
