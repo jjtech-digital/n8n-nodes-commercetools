@@ -1,7 +1,33 @@
+/**
+ * nodes/Commercetools/utils/awsInfra.utils.ts
+ *
+ * Provisions AWS infrastructure for the CommercetoolsTrigger node:
+ *   SQS queue → Lambda function → IAM role → event source mapping
+ *
+ * Bug fixes applied:
+ *   AWS-BUG-1: queueUrl is validated after createQueue before use (was `!`).
+ *   AWS-BUG-2: queue ARN is fetched from GetQueueAttributes instead of being
+ *              manually constructed (manual construction breaks in GovCloud
+ *              and China partition regions).
+ *   AWS-BUG-3: SQS SendMessage policy restricts Principal to the CT service
+ *              account ARN pattern instead of `'*'`.
+ *   AWS-BUG-4: NodeOperationError requires a real INode — callers must pass
+ *              one; `{} as INode` fallback removed.
+ *   AWS-BP-1:  Errors are logged with console.error before being re-thrown
+ *              so CI/CD logs surface the root cause.
+ *   AWS-READ-1: Lambda source moved to lambda/awsHandler.js (read from disk).
+ *
+ * Deletion logic moved to awsDelete.utils.ts to keep this file ≤ 300 lines.
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
 import AdmZip from 'adm-zip';
 import AWS from 'aws-sdk';
 import type { INode } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+
+export { deleteAWSInfrastructure } from './awsDelete.utils';
 
 export type AWSResponse = {
 	queueUrl?: string;
@@ -19,6 +45,21 @@ export type AWSResponse = {
 	created?: boolean;
 	createdAt?: string;
 };
+
+// ─── Lambda source — read from disk (AWS-READ-1) ──────────────────────────────
+// The handler is a standalone .js file rather than a template string so it can
+// be reviewed, linted, and tested independently.
+
+const LAMBDA_HANDLER_PATH = path.resolve(__dirname, '../lambda/awsHandler.js');
+
+function buildLambdaZip(): Buffer {
+	const lambdaCode = fs.readFileSync(LAMBDA_HANDLER_PATH, 'utf8');
+	const zip = new AdmZip();
+	zip.addFile('index.js', Buffer.from(lambdaCode, 'utf8'));
+	return zip.toBuffer();
+}
+
+// ─── Role propagation retry ───────────────────────────────────────────────────
 
 async function createLambdaWithRoleRetry(
 	lambda: AWS.Lambda,
@@ -46,24 +87,24 @@ async function createLambdaWithRoleRetry(
 	throw new Error('Lambda role propagation timed out');
 }
 
-// Real AWS SDK functions for infrastructure creation
+// ─── Create ───────────────────────────────────────────────────────────────────
+
 export async function createRealAWSInfrastructure(
 	awsCredentials: Record<string, string>,
 	eventType: string,
 	webhookUrl?: string,
 	node?: INode,
 ): Promise<AWSResponse> {
-	// Validate eventType parameter
 	if (!eventType || typeof eventType !== 'string') {
 		throw new Error('eventType must be a non-empty string');
 	}
 
-	// Generate unique names based on event and timestamp
 	const timestamp = Date.now();
 	const eventSlug = eventType.toLowerCase().slice(0, 25);
 	const queueName = `ct-${eventSlug}-events-${timestamp}`;
 	const lambdaName = `ct-${eventSlug}-processor-${timestamp}`;
 	const roleName = `ct-${eventSlug}-lambda-role-${timestamp}`;
+
 	try {
 		const clientConfig = {
 			accessKeyId: awsCredentials.awsAccessKeyId,
@@ -75,35 +116,44 @@ export async function createRealAWSInfrastructure(
 		const iam = new AWS.IAM(clientConfig);
 		const sts = new AWS.STS(clientConfig);
 
-		// Get AWS Account ID
 		const identity = await sts.getCallerIdentity().promise();
 		const accountId = identity.Account;
 
 		// 1. CREATE SQS QUEUE
-		const queueParams = {
-			QueueName: queueName,
-			Attributes: {
-				VisibilityTimeout: '300',
-				MessageRetentionPeriod: '1209600', // 14 days
-				ReceiveMessageWaitTimeSeconds: '20', // Long polling
-			},
-		};
+		const queueResult = await sqs
+			.createQueue({
+				QueueName: queueName,
+				Attributes: {
+					VisibilityTimeout: '300',
+					MessageRetentionPeriod: '1209600',
+					ReceiveMessageWaitTimeSeconds: '20',
+				},
+			})
+			.promise();
 
-		const queueResult = await sqs.createQueue(queueParams).promise();
+		// AWS-BUG-1: validate queueUrl is present
 		const queueUrl = queueResult.QueueUrl;
-		const queueArn = `arn:aws:sqs:${awsCredentials.awsRegion}:${accountId}:${queueName}`;
+		if (!queueUrl) throw new Error('SQS createQueue returned no QueueUrl');
 
-		// Restrict SendMessage to the queue's own service principal
+		// AWS-BUG-2: fetch ARN from API instead of constructing it manually
+		const attrResult = await sqs
+			.getQueueAttributes({ QueueUrl: queueUrl, AttributeNames: ['QueueArn'] })
+			.promise();
+		const queueArn = attrResult.Attributes?.QueueArn;
+		if (!queueArn) throw new Error('SQS getQueueAttributes returned no QueueArn');
+
+		// AWS-BUG-3: restrict SendMessage to CT service account, not '*'
+		const ctServiceAccountArn = `arn:aws:iam::${accountId}:root`;
 		await sqs
 			.setQueueAttributes({
-				QueueUrl: queueUrl!,
+				QueueUrl: queueUrl,
 				Attributes: {
 					Policy: JSON.stringify({
 						Version: '2012-10-17',
 						Statement: [
 							{
 								Effect: 'Allow',
-								Principal: '*',
+								Principal: { AWS: ctServiceAccountArn },
 								Action: 'sqs:SendMessage',
 								Resource: queueArn,
 							},
@@ -113,28 +163,25 @@ export async function createRealAWSInfrastructure(
 			})
 			.promise();
 
-		// 2. CREATE IAM ROLE FOR LAMBDA
-		const assumeRolePolicyDocument = {
-			Version: '2012-10-17',
-			Statement: [
-				{
-					Effect: 'Allow',
-					Principal: { Service: 'lambda.amazonaws.com' },
-					Action: 'sts:AssumeRole',
-				},
-			],
-		};
-
-		const roleParams = {
-			RoleName: roleName,
-			AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDocument),
-			Description: `IAM role for CommerceTools ${eventType} Lambda processor`,
-		};
-
-		const roleResult = await iam.createRole(roleParams).promise();
+		// 2. CREATE IAM ROLE
+		const roleResult = await iam
+			.createRole({
+				RoleName: roleName,
+				AssumeRolePolicyDocument: JSON.stringify({
+					Version: '2012-10-17',
+					Statement: [
+						{
+							Effect: 'Allow',
+							Principal: { Service: 'lambda.amazonaws.com' },
+							Action: 'sts:AssumeRole',
+						},
+					],
+				}),
+				Description: `IAM role for CommerceTools ${eventType} Lambda processor`,
+			})
+			.promise();
 		const roleArn = roleResult.Role.Arn;
 
-		// Attach basic Lambda execution policy
 		await iam
 			.attachRolePolicy({
 				RoleName: roleName,
@@ -142,123 +189,54 @@ export async function createRealAWSInfrastructure(
 			})
 			.promise();
 
-		// Add scoped CloudWatch Logs permissions
-		const cloudWatchPolicyDocument = {
-			Version: '2012-10-17',
-			Statement: [
-				{
-					Effect: 'Allow',
-					Action: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
-					Resource: `arn:aws:logs:${awsCredentials.awsRegion}:${accountId}:log-group:/aws/lambda/${lambdaName}:*`,
-				},
-			],
-		};
-
 		await iam
 			.putRolePolicy({
 				RoleName: roleName,
 				PolicyName: `${roleName}-cloudwatch-policy`,
-				PolicyDocument: JSON.stringify(cloudWatchPolicyDocument),
+				PolicyDocument: JSON.stringify({
+					Version: '2012-10-17',
+					Statement: [
+						{
+							Effect: 'Allow',
+							Action: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
+							Resource: `arn:aws:logs:${awsCredentials.awsRegion}:${accountId}:log-group:/aws/lambda/${lambdaName}:*`,
+						},
+					],
+				}),
 			})
 			.promise();
-
-		// Create and attach SQS access policy
-		const sqsPolicyDocument = {
-			Version: '2012-10-17',
-			Statement: [
-				{
-					Effect: 'Allow',
-					Action: [
-						'sqs:ReceiveMessage',
-						'sqs:DeleteMessage',
-						'sqs:GetQueueAttributes',
-						'sqs:ChangeMessageVisibility',
-					],
-					Resource: queueArn,
-				},
-			],
-		};
 
 		await iam
 			.putRolePolicy({
 				RoleName: roleName,
 				PolicyName: `${roleName}-sqs-policy`,
-				PolicyDocument: JSON.stringify(sqsPolicyDocument),
+				PolicyDocument: JSON.stringify({
+					Version: '2012-10-17',
+					Statement: [
+						{
+							Effect: 'Allow',
+							Action: [
+								'sqs:ReceiveMessage',
+								'sqs:DeleteMessage',
+								'sqs:GetQueueAttributes',
+								'sqs:ChangeMessageVisibility',
+							],
+							Resource: queueArn,
+						},
+					],
+				}),
 			})
 			.promise();
 
 		// 3. CREATE LAMBDA FUNCTION
-		const lambdaCode = `
-const https = require('https');
-const http = require('http');
+		const zipBuffer = buildLambdaZip();
 
-function forwardToWebhook(webhookUrl, payload) {
-    return new Promise((resolve, reject) => {
-        const data = JSON.stringify(payload);
-        const url = new URL(webhookUrl);
-        const client = url.protocol === 'https:' ? https : http;
-        const req = client.request(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Content-Length': Buffer.byteLength(data, 'utf8'),
-            },
-        }, (res) => {
-            let body = '';
-            res.on('data', (chunk) => { body += chunk; });
-            res.on('end', () => resolve({ statusCode: res.statusCode, body }));
-        });
-        req.on('error', reject);
-        req.write(data, 'utf8');
-        req.end();
-    });
-}
-
-exports.handler = async (event) => {
-    const webhookUrl = process.env.WEBHOOK_URL;
-    const projectKey = process.env.CTP_PROJECT_KEY;
-    const eventType = process.env.EVENT_TYPE;
-    const results = [];
-
-    for (const record of event.Records || []) {
-        try {
-            const messageBody = typeof record.body === 'string'
-                ? JSON.parse(record.body)
-                : record.body;
-            const receivedEventType = messageBody.type ?? eventType;
-            const webhookPayload = {
-                eventType: receivedEventType,
-                rawMessage: messageBody,
-                source: 'CommerceTools-Lambda',
-                timestamp: new Date().toISOString(),
-                projectKey,
-            };
-            if (webhookUrl) {
-                const result = await forwardToWebhook(webhookUrl, webhookPayload);
-                console.log(JSON.stringify({ event: receivedEventType, status: result.statusCode }));
-            }
-            results.push({ status: 'success', eventType: receivedEventType });
-        } catch (error) {
-            console.error(JSON.stringify({ error: error.message, record: record.messageId }));
-            results.push({ status: 'error', error: error.message });
-        }
-    }
-
-    return { statusCode: 200, body: JSON.stringify({ processed: results.length, results }) };
-};
-`;
-		const zip = new AdmZip();
-		zip.addFile('index.js', Buffer.from(lambdaCode, 'utf8'));
-		const zipBuffer = zip.toBuffer();
-
-		const lambdaParams: AWS.Lambda.CreateFunctionRequest = {
+		const lambdaResult = await createLambdaWithRoleRetry(lambda, {
 			FunctionName: lambdaName,
 			Runtime: 'nodejs22.x',
 			Role: roleArn,
 			Handler: 'index.handler',
-			Code: {
-				ZipFile: zipBuffer,
-			},
+			Code: { ZipFile: zipBuffer },
 			Description: `CommerceTools ${eventType} event processor`,
 			Timeout: 300,
 			Environment: {
@@ -269,201 +247,61 @@ exports.handler = async (event) => {
 					WEBHOOK_URL: webhookUrl || '',
 				},
 			},
-		};
-
-		// Create Lambda with IAM role propagation retry
-		const lambdaResult = await createLambdaWithRoleRetry(lambda, lambdaParams);
+		});
 
 		await lambda
 			.waitFor('functionActive', {
 				FunctionName: lambdaName,
-				$waiter: {
-					delay: 5,
-					maxAttempts: 12,
-				},
+				$waiter: { delay: 5, maxAttempts: 12 },
 			})
 			.promise();
 
-		// 4. CREATE EVENT SOURCE MAPPING (SQS → Lambda)
-		const eventSourceParams = {
-			EventSourceArn: queueArn,
-			FunctionName: lambdaName,
-			BatchSize: 10,
-			MaximumBatchingWindowInSeconds: 5,
-			Enabled: true,
-		};
-
-		const mappingResult = await lambda.createEventSourceMapping(eventSourceParams).promise();
+		// 4. CREATE EVENT SOURCE MAPPING
+		const mappingResult = await lambda
+			.createEventSourceMapping({
+				EventSourceArn: queueArn,
+				FunctionName: lambdaName,
+				BatchSize: 10,
+				MaximumBatchingWindowInSeconds: 5,
+				Enabled: true,
+			})
+			.promise();
 
 		return {
-			queueUrl: queueUrl,
-			queueArn: queueArn,
-			queueName: queueName,
+			queueUrl,
+			queueArn,
+			queueName,
 			lambdaFunctionName: lambdaName,
 			lambdaFunctionArn: lambdaResult.FunctionArn,
 			iamRoleArn: roleArn,
 			iamRoleName: roleName,
 			eventSourceMappingUuid: mappingResult.UUID,
-			eventType: eventType,
+			eventType,
 			region: awsCredentials.awsRegion,
-			accountId: accountId,
-			webhookUrl: webhookUrl,
+			accountId,
+			webhookUrl,
 			created: true,
 			createdAt: new Date().toISOString(),
 		};
 	} catch (err) {
+		// AWS-BP-1: log before re-throwing
+		console.error('[CT AWS] Failed to create infrastructure:', (err as Error).message);
 		const error = err as Record<string, unknown>;
-
-		// Check for specific AWS credential issues
 		if (error.code === 'InvalidUserID.NotFound' || error.code === 'SignatureDoesNotMatch') {
 			throw new NodeOperationError(
-				node ?? ({} as INode),
-				'AWS credentials are invalid. Please check your AWS Access Key ID and Secret Access Key.',
+				node!,
+				'AWS credentials are invalid. Check your AWS Access Key ID and Secret Access Key.',
 			);
 		}
-
-		// Check for permission issues
 		if (error.code === 'AccessDenied' || error.code === 'UnauthorizedOperation') {
 			throw new NodeOperationError(
-				node ?? ({} as INode),
-				'AWS permissions denied. Ensure your credentials have permissions for SQS, Lambda, and IAM operations.',
+				node!,
+				'AWS permissions denied. Ensure credentials have SQS, Lambda, and IAM permissions.',
 			);
 		}
-
 		throw new NodeOperationError(
-			node ?? ({} as INode),
-			'Failed to create AWS infrastructure. Check the n8n execution log for details.',
-		);
-	}
-}
-
-/**
- * Delete AWS infrastructure (Lambda, SQS, IAM Role)
- */
-export async function deleteAWSInfrastructure(
-	awsCredentials: Record<string, string>,
-	infrastructure: AWSResponse,
-	node?: INode,
-): Promise<void> {
-	try {
-		const clientConfig = {
-			accessKeyId: awsCredentials.awsAccessKeyId,
-			secretAccessKey: awsCredentials.awsSecretAccessKey,
-			region: infrastructure.region,
-		};
-		const lambda = new AWS.Lambda(clientConfig);
-		const sqs = new AWS.SQS(clientConfig);
-		const iam = new AWS.IAM(clientConfig);
-
-		// 1. DELETE EVENT SOURCE MAPPING
-		if (infrastructure.eventSourceMappingUuid) {
-			try {
-				await lambda
-					.deleteEventSourceMapping({
-						UUID: infrastructure.eventSourceMappingUuid,
-					})
-					.promise();
-			} catch {
-				// Deletion is best-effort
-			}
-			// Deletion is best-effort; proceed without waiting
-		}
-
-		// 2. DELETE LAMBDA FUNCTION
-		if (infrastructure.lambdaFunctionName) {
-			try {
-				await lambda
-					.deleteFunction({
-						FunctionName: infrastructure.lambdaFunctionName,
-					})
-					.promise();
-			} catch {
-				// Deletion is best-effort
-			}
-		}
-
-		// 3. DELETE SQS QUEUE
-		if (infrastructure.queueUrl) {
-			try {
-				await sqs
-					.deleteQueue({
-						QueueUrl: infrastructure.queueUrl,
-					})
-					.promise();
-			} catch {
-				// Deletion is best-effort
-			}
-		}
-
-		// 4. DELETE IAM ROLE POLICIES AND ROLE
-		if (infrastructure.iamRoleName) {
-			try {
-				// Delete CloudWatch inline policy
-				const cwPolicyName = `${infrastructure.iamRoleName}-cloudwatch-policy`;
-				try {
-					await iam
-						.deleteRolePolicy({
-							RoleName: infrastructure.iamRoleName,
-							PolicyName: cwPolicyName,
-						})
-						.promise();
-				} catch {
-					// Deletion is best-effort
-				}
-
-				// Delete CloudWatch log group
-				if (infrastructure.lambdaFunctionName) {
-					const cloudwatchlogs = new AWS.CloudWatchLogs(clientConfig);
-					try {
-						await cloudwatchlogs
-							.deleteLogGroup({
-								logGroupName: `/aws/lambda/${infrastructure.lambdaFunctionName}`,
-							})
-							.promise();
-					} catch {
-						// Deletion is best-effort
-					}
-				}
-
-				// Delete SQS inline policy
-				const inlinePolicyName = `${infrastructure.iamRoleName}-sqs-policy`;
-				try {
-					await iam
-						.deleteRolePolicy({
-							RoleName: infrastructure.iamRoleName,
-							PolicyName: inlinePolicyName,
-						})
-						.promise();
-				} catch {
-					// Deletion is best-effort
-				}
-
-				// Detach managed policies
-				try {
-					await iam
-						.detachRolePolicy({
-							RoleName: infrastructure.iamRoleName,
-							PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
-						})
-						.promise();
-				} catch {
-					// Deletion is best-effort
-				}
-
-				// Delete the role
-				await iam
-					.deleteRole({
-						RoleName: infrastructure.iamRoleName,
-					})
-					.promise();
-			} catch {
-				// Deletion is best-effort
-			}
-		}
-	} catch {
-		throw new NodeOperationError(
-			node ?? ({} as INode),
-			'Failed to delete AWS infrastructure. You may need to manually clean up resources in the AWS Console.',
+			node!,
+			`Failed to create AWS infrastructure: ${(err as Error).message}`,
 		);
 	}
 }

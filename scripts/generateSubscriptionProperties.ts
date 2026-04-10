@@ -1,27 +1,20 @@
 /**
  * scripts/generateSubscriptionProperties.ts
  *
- * Reads @commercetools/platform-sdk type declarations and writes
- * nodes/Commercetools/generated/subscription.properties.ts
- *
- * Sources:
- *   subscription.d.ts → MessageSubscriptionResourceTypeIdValues (enum)
- *                     → ChangeSubscriptionResourceTypeIdValues  (enum)
- *                     → EventSubscriptionResourceTypeIdValues   (enum)
- *                     → EventTypeValues                         (enum)
- *   message.d.ts      → all `readonly type: 'XxxYyy'` message type strings
- *
- * Three CT subscription arrays:
- *   messages[]  → MessageSubscription { resourceTypeId, types?: string[] }
- *   changes[]   → ChangeSubscription  { resourceTypeId }           (no types!)
- *   events[]    → EventSubscription   { resourceTypeId, types?: EventType[] }
- *
- * The generated file imports resource type Sets LIVE from the SDK enum values
- * at runtime, so they stay current across SDK version bumps without needing
- * to re-run the generator.
+ * Reads nodes/Commercetools/generated/ctp-event-registry.json and writes
+ * nodes/Commercetools/generated/subscription.properties.ts.
  *
  * Can be called as a module (from generate.ts) or run standalone:
  *   npx ts-node scripts/generateSubscriptionProperties.ts
+ *
+ * Bug fixes applied:
+ *   BUG-10: Renamed `escape` → `escapeSingleQuotes` to avoid shadowing the
+ *            deprecated global `escape()` function.
+ *   BUG-11: Added fs.existsSync pre-check so a missing registry file produces
+ *            a clear error instead of an opaque JSON parse failure.
+ *   READ-9: INodeProperties imported with `import type`.
+ *   READ-10: formatDescription now uses plain-English phrasing with the event
+ *             name rendered in title-case rather than lowercase.
  */
 
 import * as fs from 'fs';
@@ -39,6 +32,8 @@ const OUTPUT_PATH = path.resolve(
 	'nodes/Commercetools/generated/subscription.properties.ts',
 );
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 type RegistryFile = {
 	events: Array<{
 		value: string;
@@ -47,47 +42,69 @@ type RegistryFile = {
 	}>;
 };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 function formatEventName(value: string): string {
-	// ProductPublished → Product Published
 	return value
 		.replace(/([a-z])([A-Z])/g, '$1 $2')
 		.replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
 		.trim();
 }
 
+/**
+ * READ-10: description now reads naturally in the n8n UI.
+ * Example: "Fires when a ProductPublished message is received for a product."
+ */
 function formatDescription(
 	value: string,
 	resourceTypeId: string,
 	subscriptionType: 'message' | 'change',
 ): string {
-	const readableName = formatEventName(value).toLowerCase();
+	const eventName = formatEventName(value);
 
 	if (subscriptionType === 'message') {
-		return `Triggers when ${readableName} occurs on a ${resourceTypeId}.`;
+		return `Fires when a ${eventName} message is received for a ${resourceTypeId}.`;
 	}
 
-	return `Triggers when a ${resourceTypeId} changes (${readableName}).`;
+	return `Fires on any change to a ${resourceTypeId} (${eventName}).`;
 }
 
+/** BUG-10: renamed from `escape` to avoid shadowing the global `escape()`. */
+function escapeSingleQuotes(str: string): string {
+	return str.replace(/'/g, "\\'");
+}
+
+// ─── Main generator ───────────────────────────────────────────────────────────
+
 export function generateSubscriptionProperties(): void {
+	// BUG-11: Check existence before reading to surface a clear error message.
+	if (!fs.existsSync(REGISTRY_PATH)) {
+		throw new Error(
+			`[generateSubscriptionProperties] Registry file not found: ${REGISTRY_PATH}\n` +
+				`Run the registry generator first (Step 2 in generate.ts).`,
+		);
+	}
+
 	const registry: RegistryFile = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
 
 	if (!registry.events || !Array.isArray(registry.events)) {
-		throw new Error('Invalid registry format: missing events array');
+		throw new Error(
+			`[generateSubscriptionProperties] Invalid registry format: missing events array in ${REGISTRY_PATH}`,
+		);
 	}
 
 	const lines: string[] = [];
 
 	for (const e of registry.events) {
 		if (!e.resourceTypeId || !e.subscriptionType) {
-			continue; // skip unmapped/unclassified
+			continue; // skip unmapped / unclassified entries
 		}
 
 		const name = formatEventName(e.value);
 		const description = formatDescription(e.value, e.resourceTypeId, e.subscriptionType);
 
 		lines.push(
-			`    { name: '${escape(name)}', value: '${e.value}', resourceTypeId: '${e.resourceTypeId}', subscriptionType: '${e.subscriptionType}', description: '${escape(description)}' },`,
+			`    { name: '${escapeSingleQuotes(name)}', value: '${e.value}', resourceTypeId: '${e.resourceTypeId}', subscriptionType: '${e.subscriptionType}', description: '${escapeSingleQuotes(description)}' },`,
 		);
 	}
 
@@ -98,7 +115,7 @@ export function generateSubscriptionProperties(): void {
  * Generated at: ${new Date().toISOString()}
  */
 
-import { INodeProperties } from 'n8n-workflow';
+import type { INodeProperties } from 'n8n-workflow';
 
 export type SubscriptionType = 'message' | 'change';
 
@@ -136,10 +153,6 @@ export const triggerProperties: INodeProperties[] = [
 
 	fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
 	fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
-}
-
-function escape(str: string): string {
-	return str.replace(/'/g, "\\'");
 }
 
 if (require.main === module) {

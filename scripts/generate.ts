@@ -24,18 +24,22 @@
  *         nodes/Commercetools/generated/subscription.properties.ts
  *
  * After running: npm run build
+ *
+ * Bug fixes applied in this file:
+ *   BUG-1: collection.json loaded via JSON.parse(readFileSync) instead of
+ *           require() — require() caches the old file after a download update.
+ *   BUG-4: main() now logs the error message before process.exit(1).
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as https from 'https';
 
 import { parseCollection } from './parseCollection';
-import type { ParsedOperation, BodyField } from './parseCollection';
 import { generateAllNodeProperties } from './generateProperties';
-
 import { generateCtpEventRegistry } from './generateCtpRegistry';
 import { generateSubscriptionProperties } from './generateSubscriptionProperties';
+import { downloadFile } from './utils/download';
+import { applyManualPatches } from './utils/patches';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Configuration
@@ -110,7 +114,7 @@ const FOLDERS_TO_GENERATE = [
 	'In-store/Product-projections',
 	'In-store/Shipping-methods',
 	'In-store/Products',
-]; // For Actions;
+];
 
 const RESOURCES_TO_GENERATE = [
 	'product',
@@ -146,143 +150,7 @@ const RESOURCES_TO_GENERATE = [
 	'product-selection',
 	'recurring-order',
 	'discount-group',
-]; // For Triggers;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Download helper
-// ─────────────────────────────────────────────────────────────────────────────
-
-function downloadFile(url: string, dest: string): Promise<void> {
-	return new Promise((resolve, reject) => {
-		const file = fs.createWriteStream(dest);
-
-		https
-			.get(url, (response) => {
-				if (response.statusCode === 301 || response.statusCode === 302) {
-					file.close();
-					downloadFile(response.headers.location!, dest).then(resolve).catch(reject);
-					return;
-				}
-
-				response.pipe(file);
-				file.on('finish', () => file.close(() => resolve()));
-			})
-			.on('error', (err) => {
-				fs.unlink(dest, () => {});
-				reject(err);
-			});
-	});
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Manual patches — fixes for operations where the Postman collection
-// is missing body/action field definitions
-// ─────────────────────────────────────────────────────────────────────────────
-
-interface OperationPatch {
-	bodyFields?: BodyField[];
-	actionBodyFields?: BodyField[];
-	queryParams?: string[];
-}
-
-const MANUAL_PATCHES: Record<string, OperationPatch> = {
-	queryCustomObjects: {
-		queryParams: ['container', 'sort', 'where', 'expand', 'limit', 'offset', 'withTotal'],
-	},
-	changeAssociateMode: {
-		bodyFields: [
-			{
-				name: 'version',
-				type: 'string',
-				required: true,
-				example: 'placeholder',
-				description: 'Version',
-			},
-			{
-				name: 'actions',
-				type: 'json',
-				required: false,
-				example: [
-					{
-						action: 'changeAssociateMode',
-						associateMode: 'ExplicitAndFromParent',
-					},
-				],
-				description: 'Array of actions',
-			},
-		],
-		actionBodyFields: [
-			{
-				name: 'associateMode',
-				type: 'string',
-				required: true,
-				example: 'ExplicitAndFromParent',
-				description: 'Associate Mode',
-			},
-		],
-	},
-	changeCartPredicate: {
-		actionBodyFields: [
-			{
-				name: 'cartPredicate',
-				type: 'string',
-				required: true,
-				example: 'totalPrice.centAmount > 10000',
-				description: 'Cart Predicate',
-			},
-		],
-	},
-	changeTarget: {
-		actionBodyFields: [
-			{
-				name: 'target',
-				type: 'json',
-				required: true,
-				example: { type: 'lineItems', predicate: '1 = 1' },
-				description: 'Target',
-			},
-		],
-	},
-	setCartPredicate: {
-		actionBodyFields: [
-			{
-				name: 'cartPredicate',
-				type: 'string',
-				required: false,
-				example: 'totalPrice.centAmount > 10000',
-				description: 'Cart Predicate',
-			},
-		],
-	},
-	// Add more patches here in the future if the Postman collection
-	// is missing fields for other operations. Example:
-	// someOtherAction: {
-	//   actionBodyFields: [
-	//     { name: 'someField', type: 'string', required: true, example: '', description: '' },
-	//   ],
-	// },
-};
-
-function applyManualPatches(operations: ParsedOperation[]): void {
-	for (const op of operations) {
-		const patch = MANUAL_PATCHES[op.value];
-		if (!patch) continue;
-
-		if (patch.bodyFields !== undefined && op.bodyFields.length === 0) {
-			op.bodyFields = patch.bodyFields;
-		}
-
-		if (patch.actionBodyFields !== undefined && op.actionBodyFields.length === 0) {
-			op.actionBodyFields = patch.actionBodyFields;
-		}
-
-		if (patch.queryParams !== undefined) {
-			op.queryParams = patch.queryParams;
-		}
-
-		//console.log(`  ✔ Patched missing fields for operation: ${op.value}`);
-	}
-}
+];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STEP 1 — Postman → Node operation properties
@@ -295,10 +163,12 @@ async function generateFromCollection(): Promise<void> {
 		if (!fs.existsSync(COLLECTION_LOCAL_PATH)) {
 			throw new Error('No network and no local collection.json found.');
 		}
+		// Network failed but a local copy exists — proceed with the cached version
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const collection = require(COLLECTION_LOCAL_PATH);
+	// BUG-1: Use JSON.parse(readFileSync) instead of require() so the freshly
+	// downloaded collection is read from disk, not served from Node's module cache.
+	const collection = JSON.parse(fs.readFileSync(COLLECTION_LOCAL_PATH, 'utf8'));
 
 	const operations = parseCollection(collection, FOLDERS_TO_GENERATE);
 
@@ -353,11 +223,14 @@ async function main(): Promise<void> {
 		await generateFromCollection();
 		generateRegistry();
 		generateSubscriptions();
-	} catch {
+	} catch (err) {
+		// BUG-4: Log the error message before exiting so CI/CD logs surface it.
+		console.error('[generate] Fatal error:', err instanceof Error ? err.message : err);
 		process.exit(1);
 	}
 }
 
-main().catch(() => {
+main().catch((err) => {
+	console.error('[generate] Unhandled rejection:', err instanceof Error ? err.message : err);
 	process.exit(1);
 });
