@@ -166,7 +166,8 @@ export async function createRealAWSInfrastructure(
 		if (!queueArn) throw new Error('SQS getQueueAttributes returned no QueueArn');
 
 		// AWS-BUG-3: restrict SendMessage to CT service account, not '*'
-		const ctServiceAccountArn = `arn:aws:iam::${accountId}:root`;
+		const CT_AWS_ACCOUNT_ID = '362576667341';
+		const ctServiceAccountArn = `arn:aws:iam::${CT_AWS_ACCOUNT_ID}:root`;
 		await sqs.send(
 			new SetQueueAttributesCommand({
 				QueueUrl: queueUrl,
