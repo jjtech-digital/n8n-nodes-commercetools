@@ -67,7 +67,14 @@ exports.handler = async (event) => {
 	const projectKey = process.env.CTP_PROJECT_KEY;
 	const eventType = process.env.EVENT_TYPE;
 	const results = [];
-
+	console.log(
+		JSON.stringify({
+			message: 'Lambda invoked',
+			eventType,
+			projectKey,
+			recordCount: event.Records?.length || 0,
+		}),
+	);
 	for (const record of event.Records || []) {
 		try {
 			const messageBody = typeof record.body === 'string' ? JSON.parse(record.body) : record.body;
