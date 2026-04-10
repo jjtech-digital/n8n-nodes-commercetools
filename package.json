@@ -20,6 +20,7 @@
 	"scripts": {
 		"generate": "ts-node scripts/generate.ts",
 		"build": "n8n-node build",
+		"postbuild": "mkdir -p dist/nodes/Commercetools/lambda && cp nodes/Commercetools/lambda/*.js dist/nodes/Commercetools/lambda/",
 		"build:watch": "tsc --watch",
 		"update": "npm run generate && npm run build",
 		"dev": "n8n-node dev",
@@ -46,10 +47,14 @@
 	},
 	"dependencies": {
 		"@commercetools/platform-sdk": "^8.25.0",
+		"@aws-sdk/client-cloudwatch-logs": "^3.0.0",
+		"@aws-sdk/client-iam": "^3.0.0",
+		"@aws-sdk/client-lambda": "^3.0.0",
+		"@aws-sdk/client-sqs": "^3.0.0",
+		"@aws-sdk/client-sts": "^3.0.0",
 		"@google-cloud/pubsub": "^5.3.0",
 		"@google-cloud/storage": "^7.19.0",
 		"adm-zip": "^0.5.16",
-		"aws-sdk": "^2.1693.0",
 		"googleapis": "^171.4.0"
 	},
 	"devDependencies": {

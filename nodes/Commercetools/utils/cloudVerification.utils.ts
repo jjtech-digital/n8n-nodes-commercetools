@@ -28,29 +28,32 @@ export async function verifyAWSInfrastructure(
 	credentials: Record<string, string>,
 	infra: AWSResponse,
 ): Promise<boolean> {
-	// Lazy import — only loaded when AWS infra is in use
-	const AWS = (await import('aws-sdk')).default;
+	// Lazy imports — only loaded when AWS infra is in use
+	const { LambdaClient, GetFunctionConfigurationCommand } = await import('@aws-sdk/client-lambda');
+	const { SQSClient, GetQueueAttributesCommand } = await import('@aws-sdk/client-sqs');
 
 	const clientConfig = {
-		accessKeyId: credentials.awsAccessKeyId,
-		secretAccessKey: credentials.awsSecretAccessKey,
+		credentials: {
+			accessKeyId: credentials.awsAccessKeyId,
+			secretAccessKey: credentials.awsSecretAccessKey,
+		},
 		region: infra.region ?? 'us-east-1',
 	};
 
 	try {
-		const lambda = new AWS.Lambda(clientConfig);
-		const sqs = new AWS.SQS(clientConfig);
+		const lambda = new LambdaClient(clientConfig);
+		const sqs = new SQSClient(clientConfig);
 
-		await lambda
-			.getFunctionConfiguration({ FunctionName: infra.lambdaFunctionName as string })
-			.promise();
+		await lambda.send(
+			new GetFunctionConfigurationCommand({ FunctionName: infra.lambdaFunctionName as string }),
+		);
 
-		await sqs
-			.getQueueAttributes({
+		await sqs.send(
+			new GetQueueAttributesCommand({
 				QueueUrl: infra.queueUrl as string,
 				AttributeNames: ['ApproximateNumberOfMessages'],
-			})
-			.promise();
+			}),
+		);
 
 		return true;
 	} catch {

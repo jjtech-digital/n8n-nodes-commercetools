@@ -18,12 +18,22 @@
  *   AWS-READ-1: Lambda source moved to lambda/awsHandler.js (read from disk).
  *
  * Deletion logic moved to awsDelete.utils.ts to keep this file ≤ 300 lines.
+ * Migrated to AWS SDK for JavaScript v3.
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
-import AWS from 'aws-sdk';
+import { SQSClient, CreateQueueCommand, GetQueueAttributesCommand, SetQueueAttributesCommand } from '@aws-sdk/client-sqs';
+import {
+	LambdaClient,
+	CreateFunctionCommand,
+	CreateEventSourceMappingCommand,
+	waitUntilFunctionActive,
+} from '@aws-sdk/client-lambda';
+import type { CreateFunctionCommandInput, CreateFunctionCommandOutput } from '@aws-sdk/client-lambda';
+import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand, PutRolePolicyCommand } from '@aws-sdk/client-iam';
+import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import type { INode } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
@@ -47,8 +57,6 @@ export type AWSResponse = {
 };
 
 // ─── Lambda source — read from disk (AWS-READ-1) ──────────────────────────────
-// The handler is a standalone .js file rather than a template string so it can
-// be reviewed, linted, and tested independently.
 
 const LAMBDA_HANDLER_PATH = path.resolve(__dirname, '../lambda/awsHandler.js');
 
@@ -62,18 +70,18 @@ function buildLambdaZip(): Buffer {
 // ─── Role propagation retry ───────────────────────────────────────────────────
 
 async function createLambdaWithRoleRetry(
-	lambda: AWS.Lambda,
-	params: AWS.Lambda.CreateFunctionRequest,
-): Promise<AWS.Lambda.FunctionConfiguration> {
+	lambdaClient: LambdaClient,
+	params: CreateFunctionCommandInput,
+): Promise<CreateFunctionCommandOutput> {
 	const MAX_ATTEMPTS = 8;
 	let delay = 2000;
 	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 		try {
-			return await lambda.createFunction(params).promise();
+			return await lambdaClient.send(new CreateFunctionCommand(params));
 		} catch (err) {
-			const e = err as { code?: string; message?: string };
+			const e = err as { name?: string; message?: string };
 			if (
-				e.code === 'InvalidParameterValueException' &&
+				e.name === 'InvalidParameterValueException' &&
 				e.message?.includes('cannot be assumed') &&
 				attempt < MAX_ATTEMPTS - 1
 			) {
@@ -107,45 +115,47 @@ export async function createRealAWSInfrastructure(
 
 	try {
 		const clientConfig = {
-			accessKeyId: awsCredentials.awsAccessKeyId,
-			secretAccessKey: awsCredentials.awsSecretAccessKey,
+			credentials: {
+				accessKeyId: awsCredentials.awsAccessKeyId,
+				secretAccessKey: awsCredentials.awsSecretAccessKey,
+			},
 			region: awsCredentials.awsRegion,
 		};
-		const sqs = new AWS.SQS(clientConfig);
-		const lambda = new AWS.Lambda(clientConfig);
-		const iam = new AWS.IAM(clientConfig);
-		const sts = new AWS.STS(clientConfig);
+		const sqs = new SQSClient(clientConfig);
+		const lambda = new LambdaClient(clientConfig);
+		const iam = new IAMClient(clientConfig);
+		const sts = new STSClient(clientConfig);
 
-		const identity = await sts.getCallerIdentity().promise();
+		const identity = await sts.send(new GetCallerIdentityCommand({}));
 		const accountId = identity.Account;
 
 		// 1. CREATE SQS QUEUE
-		const queueResult = await sqs
-			.createQueue({
+		const queueResult = await sqs.send(
+			new CreateQueueCommand({
 				QueueName: queueName,
 				Attributes: {
 					VisibilityTimeout: '300',
 					MessageRetentionPeriod: '1209600',
 					ReceiveMessageWaitTimeSeconds: '20',
 				},
-			})
-			.promise();
+			}),
+		);
 
 		// AWS-BUG-1: validate queueUrl is present
 		const queueUrl = queueResult.QueueUrl;
 		if (!queueUrl) throw new Error('SQS createQueue returned no QueueUrl');
 
 		// AWS-BUG-2: fetch ARN from API instead of constructing it manually
-		const attrResult = await sqs
-			.getQueueAttributes({ QueueUrl: queueUrl, AttributeNames: ['QueueArn'] })
-			.promise();
+		const attrResult = await sqs.send(
+			new GetQueueAttributesCommand({ QueueUrl: queueUrl, AttributeNames: ['QueueArn'] }),
+		);
 		const queueArn = attrResult.Attributes?.QueueArn;
 		if (!queueArn) throw new Error('SQS getQueueAttributes returned no QueueArn');
 
 		// AWS-BUG-3: restrict SendMessage to CT service account, not '*'
 		const ctServiceAccountArn = `arn:aws:iam::${accountId}:root`;
-		await sqs
-			.setQueueAttributes({
+		await sqs.send(
+			new SetQueueAttributesCommand({
 				QueueUrl: queueUrl,
 				Attributes: {
 					Policy: JSON.stringify({
@@ -160,12 +170,12 @@ export async function createRealAWSInfrastructure(
 						],
 					}),
 				},
-			})
-			.promise();
+			}),
+		);
 
 		// 2. CREATE IAM ROLE
-		const roleResult = await iam
-			.createRole({
+		const roleResult = await iam.send(
+			new CreateRoleCommand({
 				RoleName: roleName,
 				AssumeRolePolicyDocument: JSON.stringify({
 					Version: '2012-10-17',
@@ -178,19 +188,20 @@ export async function createRealAWSInfrastructure(
 					],
 				}),
 				Description: `IAM role for CommerceTools ${eventType} Lambda processor`,
-			})
-			.promise();
-		const roleArn = roleResult.Role.Arn;
+			}),
+		);
+		const roleArn = roleResult.Role?.Arn;
+		if (!roleArn) throw new Error('IAM createRole returned no role ARN');
 
-		await iam
-			.attachRolePolicy({
+		await iam.send(
+			new AttachRolePolicyCommand({
 				RoleName: roleName,
 				PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
-			})
-			.promise();
+			}),
+		);
 
-		await iam
-			.putRolePolicy({
+		await iam.send(
+			new PutRolePolicyCommand({
 				RoleName: roleName,
 				PolicyName: `${roleName}-cloudwatch-policy`,
 				PolicyDocument: JSON.stringify({
@@ -203,11 +214,11 @@ export async function createRealAWSInfrastructure(
 						},
 					],
 				}),
-			})
-			.promise();
+			}),
+		);
 
-		await iam
-			.putRolePolicy({
+		await iam.send(
+			new PutRolePolicyCommand({
 				RoleName: roleName,
 				PolicyName: `${roleName}-sqs-policy`,
 				PolicyDocument: JSON.stringify({
@@ -225,8 +236,8 @@ export async function createRealAWSInfrastructure(
 						},
 					],
 				}),
-			})
-			.promise();
+			}),
+		);
 
 		// 3. CREATE LAMBDA FUNCTION
 		const zipBuffer = buildLambdaZip();
@@ -249,23 +260,21 @@ export async function createRealAWSInfrastructure(
 			},
 		});
 
-		await lambda
-			.waitFor('functionActive', {
-				FunctionName: lambdaName,
-				$waiter: { delay: 5, maxAttempts: 12 },
-			})
-			.promise();
+		await waitUntilFunctionActive(
+			{ client: lambda, maxWaitTime: 60, minDelay: 5 },
+			{ FunctionName: lambdaName },
+		);
 
 		// 4. CREATE EVENT SOURCE MAPPING
-		const mappingResult = await lambda
-			.createEventSourceMapping({
+		const mappingResult = await lambda.send(
+			new CreateEventSourceMappingCommand({
 				EventSourceArn: queueArn,
 				FunctionName: lambdaName,
 				BatchSize: 10,
 				MaximumBatchingWindowInSeconds: 5,
 				Enabled: true,
-			})
-			.promise();
+			}),
+		);
 
 		return {
 			queueUrl,
@@ -286,14 +295,14 @@ export async function createRealAWSInfrastructure(
 	} catch (err) {
 		// AWS-BP-1: log before re-throwing
 		console.error('[CT AWS] Failed to create infrastructure:', (err as Error).message);
-		const error = err as Record<string, unknown>;
-		if (error.code === 'InvalidUserID.NotFound' || error.code === 'SignatureDoesNotMatch') {
+		const e = err as { name?: string; message?: string };
+		if (e.name === 'InvalidClientTokenId' || e.name === 'SignatureDoesNotMatch') {
 			throw new NodeOperationError(
 				node!,
 				'AWS credentials are invalid. Check your AWS Access Key ID and Secret Access Key.',
 			);
 		}
-		if (error.code === 'AccessDenied' || error.code === 'UnauthorizedOperation') {
+		if (e.name === 'AccessDeniedException' || e.name === 'UnauthorizedOperation') {
 			throw new NodeOperationError(
 				node!,
 				'AWS permissions denied. Ensure credentials have SQS, Lambda, and IAM permissions.',

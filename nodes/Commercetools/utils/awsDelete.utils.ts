@@ -11,9 +11,18 @@
  * Extracted from awsInfra.utils.ts to keep each file under 300 lines.
  * All deletions are best-effort: an error on one resource is logged but does
  * not prevent the remaining deletions from running.
+ * Migrated to AWS SDK for JavaScript v3.
  */
 
-import AWS from 'aws-sdk';
+import { LambdaClient, DeleteFunctionCommand, DeleteEventSourceMappingCommand } from '@aws-sdk/client-lambda';
+import { SQSClient, DeleteQueueCommand } from '@aws-sdk/client-sqs';
+import {
+	IAMClient,
+	DeleteRolePolicyCommand,
+	DetachRolePolicyCommand,
+	DeleteRoleCommand,
+} from '@aws-sdk/client-iam';
+import { CloudWatchLogsClient, DeleteLogGroupCommand } from '@aws-sdk/client-cloudwatch-logs';
 import type { INode } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 import type { AWSResponse } from './awsInfra.utils';
@@ -25,20 +34,22 @@ export async function deleteAWSInfrastructure(
 ): Promise<void> {
 	try {
 		const clientConfig = {
-			accessKeyId: awsCredentials.awsAccessKeyId,
-			secretAccessKey: awsCredentials.awsSecretAccessKey,
+			credentials: {
+				accessKeyId: awsCredentials.awsAccessKeyId,
+				secretAccessKey: awsCredentials.awsSecretAccessKey,
+			},
 			region: infrastructure.region,
 		};
-		const lambda = new AWS.Lambda(clientConfig);
-		const sqs = new AWS.SQS(clientConfig);
-		const iam = new AWS.IAM(clientConfig);
+		const lambda = new LambdaClient(clientConfig);
+		const sqs = new SQSClient(clientConfig);
+		const iam = new IAMClient(clientConfig);
 
 		// 1. DELETE EVENT SOURCE MAPPING
 		if (infrastructure.eventSourceMappingUuid) {
 			try {
-				await lambda
-					.deleteEventSourceMapping({ UUID: infrastructure.eventSourceMappingUuid })
-					.promise();
+				await lambda.send(
+					new DeleteEventSourceMappingCommand({ UUID: infrastructure.eventSourceMappingUuid }),
+				);
 			} catch (err) {
 				console.warn('[CT AWS] Could not delete event source mapping:', (err as Error).message);
 			}
@@ -47,9 +58,9 @@ export async function deleteAWSInfrastructure(
 		// 2. DELETE LAMBDA FUNCTION
 		if (infrastructure.lambdaFunctionName) {
 			try {
-				await lambda
-					.deleteFunction({ FunctionName: infrastructure.lambdaFunctionName })
-					.promise();
+				await lambda.send(
+					new DeleteFunctionCommand({ FunctionName: infrastructure.lambdaFunctionName }),
+				);
 			} catch (err) {
 				console.warn('[CT AWS] Could not delete Lambda function:', (err as Error).message);
 			}
@@ -58,7 +69,7 @@ export async function deleteAWSInfrastructure(
 		// 3. DELETE SQS QUEUE
 		if (infrastructure.queueUrl) {
 			try {
-				await sqs.deleteQueue({ QueueUrl: infrastructure.queueUrl }).promise();
+				await sqs.send(new DeleteQueueCommand({ QueueUrl: infrastructure.queueUrl }));
 			} catch (err) {
 				console.warn('[CT AWS] Could not delete SQS queue:', (err as Error).message);
 			}
@@ -80,16 +91,18 @@ export async function deleteAWSInfrastructure(
 // ─── IAM role deletion helper ─────────────────────────────────────────────────
 
 async function deleteIamRole(
-	iam: AWS.IAM,
+	iam: IAMClient,
 	infrastructure: AWSResponse,
-	clientConfig: { accessKeyId: string; secretAccessKey: string; region?: string },
+	clientConfig: { credentials: { accessKeyId: string; secretAccessKey: string }; region?: string },
 ): Promise<void> {
 	const roleName = infrastructure.iamRoleName!;
 
 	// Inline policies
 	for (const suffix of ['-cloudwatch-policy', '-sqs-policy']) {
 		try {
-			await iam.deleteRolePolicy({ RoleName: roleName, PolicyName: `${roleName}${suffix}` }).promise();
+			await iam.send(
+				new DeleteRolePolicyCommand({ RoleName: roleName, PolicyName: `${roleName}${suffix}` }),
+			);
 		} catch (err) {
 			console.warn(`[CT AWS] Could not delete inline policy ${suffix}:`, (err as Error).message);
 		}
@@ -97,11 +110,13 @@ async function deleteIamRole(
 
 	// CloudWatch Logs log group
 	if (infrastructure.lambdaFunctionName) {
-		const cwl = new AWS.CloudWatchLogs(clientConfig);
+		const cwl = new CloudWatchLogsClient(clientConfig);
 		try {
-			await cwl
-				.deleteLogGroup({ logGroupName: `/aws/lambda/${infrastructure.lambdaFunctionName}` })
-				.promise();
+			await cwl.send(
+				new DeleteLogGroupCommand({
+					logGroupName: `/aws/lambda/${infrastructure.lambdaFunctionName}`,
+				}),
+			);
 		} catch (err) {
 			console.warn('[CT AWS] Could not delete CloudWatch log group:', (err as Error).message);
 		}
@@ -109,19 +124,19 @@ async function deleteIamRole(
 
 	// Managed policy detach
 	try {
-		await iam
-			.detachRolePolicy({
+		await iam.send(
+			new DetachRolePolicyCommand({
 				RoleName: roleName,
 				PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
-			})
-			.promise();
+			}),
+		);
 	} catch (err) {
 		console.warn('[CT AWS] Could not detach managed policy:', (err as Error).message);
 	}
 
 	// Delete the role
 	try {
-		await iam.deleteRole({ RoleName: roleName }).promise();
+		await iam.send(new DeleteRoleCommand({ RoleName: roleName }));
 	} catch (err) {
 		console.warn('[CT AWS] Could not delete IAM role:', (err as Error).message);
 	}
