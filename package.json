@@ -24,6 +24,7 @@
 		"build:watch": "tsc --watch",
 		"update": "npm run generate && npm run build",
 		"dev": "n8n-node dev",
+		"test": "echo \"No tests defined\" && exit 0",
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
 		"release": "git fetch --tags --prune && n8n-node release",
