@@ -62,7 +62,7 @@
 		"@types/adm-zip": "^0.5.8",
 		"@types/node": "^25.6.0",
 		"auto-changelog": "^2.5.0",
-		"eslint": "^8.57.1",
+		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.5",
 		"n8n-workflow": "^2.13.1",
