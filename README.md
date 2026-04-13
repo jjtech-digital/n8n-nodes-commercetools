@@ -269,16 +269,18 @@ A hash of `{ events, hasAWS, hasGCP }` is stored in workflow static data. When `
 When `awsAccessKeyId` and `awsSecretAccessKey` are present in the credential, the node automatically provisions:
 
 - SQS queue (14-day retention, long polling)
-- Lambda function (Node.js) with `WEBHOOK_URL` env var
+- Lambda function (Node.js 22.x) with `WEBHOOK_URL` env var
 - IAM role with SQS receive/delete and CloudWatch Logs policies
 - Event source mapping (SQS → Lambda, batch size 10)
 
 The Lambda forwards each SQS message to the n8n webhook URL as a POST request. All resources are deleted when the trigger is deactivated or its configuration changes.
 
+Uses **AWS SDK for JavaScript v3** (`@aws-sdk/client-sqs`, `@aws-sdk/client-lambda`, `@aws-sdk/client-iam`, `@aws-sdk/client-sts`, `@aws-sdk/client-cloudwatch-logs`).
+
 **Requirements:**
 
 - Publicly reachable n8n webhook URL
-- AWS credentials with permissions for: SQS, Lambda, IAM, CloudWatch Logs
+- AWS credentials with permissions for: SQS, Lambda, IAM, STS, CloudWatch Logs
 
 > ⚠️ AWS costs may apply.
 
@@ -356,7 +358,7 @@ npm run dev
 # Regenerate operations from the latest Postman collection + rebuild event registry
 npm run generate
 
-# Build
+# Build (cross-platform — also copies lambda handlers to dist/ via scripts/copyLambda.js)
 npm run build
 
 # Build and watch
@@ -365,6 +367,9 @@ npm run build:watch
 # Lint
 npm run lint
 npm run lint:fix
+
+# Run tests
+npm test
 ```
 
 ### Code generation pipeline
@@ -458,10 +463,14 @@ nodes/Commercetools/
     ├── subscription.utils.ts       Subscription CRUD + body building + event routing
     ├── webhookMethods.utils.ts     Webhook lifecycle: checkExists / create / delete
     ├── cloudVerification.utils.ts  AWS + GCP infrastructure existence checks
-    ├── awsInfra.utils.ts           AWS SQS / Lambda / IAM provisioning
-    ├── awsDelete.utils.ts          AWS infrastructure teardown
+    ├── awsInfra.utils.ts           AWS SQS / Lambda / IAM provisioning (SDK v3)
+    ├── awsDelete.utils.ts          AWS infrastructure teardown (SDK v3)
     ├── gcpInfra.utils.ts           GCP Pub/Sub / Cloud Functions provisioning
     └── gcpDelete.utils.ts          GCP infrastructure teardown
+
+scripts/
+├── copyLambda.js                   Cross-platform postbuild: copies lambda/*.js → dist/
+└── ...
 ```
 
 ---
@@ -494,8 +503,9 @@ New API endpoints and fields appear in the node automatically without manual dev
 | GCP: private key / PEM errors                              | Use the **Service Account JSON** field; paste the entire `.json` key file, not individual fields              |
 | GCP: deploy timeout on first activation                    | GCP API enablement takes time on cold projects — retry after a minute                                         |
 | GCP: `gcpRegion` missing error on activation               | Open the credential and select a GCP Region — the field is required for Cloud Functions deployment            |
-| AWS: wrong queue ARN in GovCloud / China regions           | ARN is now fetched from `GetQueueAttributes` (not constructed manually) — update to v1.0.14 to fix            |
+| AWS: wrong queue ARN in GovCloud / China regions           | ARN is fetched from `GetQueueAttributes` (not constructed manually)                                           |
 | AWS: `credentials are invalid` or `permissions denied`     | Verify the IAM user has SQS, Lambda, IAM, STS, and CloudWatch Logs permissions                               |
+| Build: `The syntax of the command is incorrect` on Windows | Ensure you are on v1.0.15+ — the postbuild script is now cross-platform (`scripts/copyLambda.js`)            |
 | Trigger: malformed webhook payload crashes execution        | Update to v1.0.14 — invalid JSON payloads are now silently dropped instead of crashing the context           |
 | Subscription: `subscriptionId is empty` error              | The subscription ID was not persisted in static data — deactivate and reactivate the workflow                 |
 | Update operation: zero value (`0`) silently dropped        | Update to v1.0.14 — `quantity: 0` and `centAmount: 0` are now sent correctly                                 |
@@ -508,14 +518,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                                                     |
 | ------- | ----------------------------------------------------------------------------------------------------------------------------|
+| v1.0.15 | Migrated AWS infrastructure to SDK v3 (`@aws-sdk/client-*`); cross-platform postbuild script (`scripts/copyLambda.js`) fixes Windows build; lambda handlers now correctly copied to `dist/`; CI workflow adds test step and npm cache; ESLint allows `console.warn`/`console.error` for infrastructure logging |
 | v1.0.14 | Two-pass refactor: modular `scripts/` and `nodes/` structure; 60+ bug fixes across AWS/GCP provisioning, subscription management, body building, SSRF guard, and error handling; all files under 300 lines |
 | v1.0.13 | Added Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes |
-| v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                                               |
-| v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                                                   |
-| v1.0.10 | Added Claude AI agents and skills for automated development assistance                                                      |
-
-
-
+| v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                 
 ---
 
 ## License
