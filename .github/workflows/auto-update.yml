@@ -2,10 +2,12 @@
 #
 # This workflow runs:
 #   1. Daily at 06:00 UTC — checks if Postman collection has changed
-#   2. On every push to main — rebuilds and publishes
+#   2. On workflow_dispatch — manual trigger from GitHub UI
 #
-# If the collection has new endpoints or fields, the node is automatically
-# regenerated, built, and published. Zero manual development needed.
+# Only SOURCE files are committed (collection.json + generated/**).
+# dist/ is intentionally excluded — it is a build artifact and must remain
+# gitignored. It is produced at publish time by prepublishOnly, which already
+# runs "npm run update" (generate + build) before any npm publish.
 
 name: Auto-Update from Postman Collection
 
@@ -13,13 +15,13 @@ on:
   schedule:
     # Run daily at 06:00 UTC
     - cron: '0 6 * * *'
-  push:
-    branches: [main]
   workflow_dispatch:
     # Allow manual trigger from GitHub UI
 
 jobs:
   check-and-update:
+    # Prevent infinite loop: skip if this push was made by the bot itself
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -57,20 +59,14 @@ jobs:
             echo "🔄 Collection has changed — regenerating node properties"
           fi
 
+      # Regenerate source files from the updated collection.
+      # No build step here — dist/ is a build artifact (gitignored) and is
+      # produced at publish time by prepublishOnly → "npm run update".
       - name: Generate node properties from collection
-        # Always regenerate on push to main; on schedule only if changed
         if: >
-          github.event_name == 'push' ||
           github.event_name == 'workflow_dispatch' ||
           steps.check_diff.outputs.changed == 'true'
         run: npm run generate
-
-      - name: Build
-        if: >
-          github.event_name == 'push' ||
-          github.event_name == 'workflow_dispatch' ||
-          steps.check_diff.outputs.changed == 'true'
-        run: npm run build
 
       - name: Show what changed
         if: steps.check_diff.outputs.changed == 'true'
@@ -81,11 +77,13 @@ jobs:
           echo "=== New/modified operations ==="
           git diff nodes/Commercetools/generated/operations.json | grep '^\+.*"name"' | head -20 || true
 
+      # Only commit generated SOURCE files — never dist/.
+      # dist/ stays gitignored; forcing it into git causes non-deterministic
+      # build output to appear as changes on every run.
       - name: Commit regenerated files
         if: >
-          steps.check_diff.outputs.changed == 'true' ||
           github.event_name == 'workflow_dispatch' ||
-          github.event_name == 'push'
+          steps.check_diff.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -95,13 +93,18 @@ jobs:
             nodes/Commercetools/generated/operations.json \
             nodes/Commercetools/generated/properties.ts \
             nodes/Commercetools/generated/subscription.properties.ts
-          git add -f dist/
-          git diff --staged --quiet || git commit -m \
-            "chore: auto-update from Postman collection [$(date -u +%Y-%m-%d)]"
-          git push
+          if git diff --staged --quiet; then
+            echo "⏭️  Nothing new to commit — skipping"
+          else
+            git commit -m \
+              "chore: auto-update from Postman collection [$(date -u +%Y-%m-%d)]"
+            git push
+          fi
 
       # ── Optional: publish to npm ──────────────────────────────────────────
-      # Uncomment and add NPM_TOKEN secret to enable automatic npm publish
+      # Uncomment and add NPM_TOKEN secret to enable automatic npm publish.
+      # prepublishOnly already runs "npm run update" (generate + build),
+      # so dist/ will be built fresh and included in the published package.
 
       # - name: Bump patch version and publish
       #   if: steps.check_diff.outputs.changed == 'true'
