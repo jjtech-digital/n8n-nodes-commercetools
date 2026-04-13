@@ -31,7 +31,10 @@ import {
 	generateMiscPostBodyFields,
 	generateSearchBodyFields,
 } from './properties/bodyFields';
-import { generateImageUploadFields, generateQueryParamProperties } from './properties/imageAndQuery';
+import {
+	generateImageUploadFields,
+	generateQueryParamProperties,
+} from './properties/imageAndQuery';
 
 // Re-export individual generators for callers that import them directly.
 export {

@@ -31,7 +31,8 @@ function extractKeyPlaceholder(urlTemplate: string): string | undefined {
 // ─── URL builder ──────────────────────────────────────────────────────────────
 
 function resolveUrlTemplate(req: PostmanItem['request']): string {
-	const rawUrl: string = typeof req?.url === 'string' ? req.url : (req?.url as PostmanUrl)?.raw ?? '';
+	const rawUrl: string =
+		typeof req?.url === 'string' ? req.url : ((req?.url as PostmanUrl)?.raw ?? '');
 	return rawUrl
 		.replace('{{host}}', '')
 		.replace(/https?:\/\/api\.[^/]+\.commercetools\.com/, '')
@@ -89,10 +90,7 @@ function detectRequiresVersion(
 	if (method === 'DELETE') return true;
 	if (!['POST', 'PUT', 'PATCH'].includes(method)) return false;
 	// BUG-12: Use the structured check first; tighten regex to avoid matching 'versionNumber'
-	return (
-		rawBodyObj?.version !== undefined ||
-		/"version"\s*:\s*\d+/.test(rawBodyRaw)
-	);
+	return rawBodyObj?.version !== undefined || /"version"\s*:\s*\d+/.test(rawBodyRaw);
 }
 
 // ─── Main walker ──────────────────────────────────────────────────────────────
@@ -119,13 +117,7 @@ export function walkItems(
 			const childIsActionFolder = isUpdateActionsSubFolder(item.name);
 			// Only propagate isActionSubFolder when the child itself is an action folder.
 			// This prevents non-action siblings from inheriting the flag via OR.
-			walkItems(
-				item.item,
-				operations,
-				parentFolder,
-				item.name,
-				childIsActionFolder,
-			);
+			walkItems(item.item, operations, parentFolder, item.name, childIsActionFolder);
 			continue;
 		}
 
@@ -172,7 +164,9 @@ export function walkItems(
 		const isImageUpload = detectIsImageUpload(method, urlTemplate);
 
 		// Detect secondary ID placeholder
-		const allIdPlaceholders = [...urlTemplate.matchAll(/\{\{([^}]*[Ii][Dd])\}\}/g)].map((m) => m[1]);
+		const allIdPlaceholders = [...urlTemplate.matchAll(/\{\{([^}]*[Ii][Dd])\}\}/g)].map(
+			(m) => m[1],
+		);
 		const uniqueIdPlaceholders = [...new Set(allIdPlaceholders)];
 		let secondaryIdPlaceholder: string | undefined;
 		if (uniqueIdPlaceholders.length >= 2) {
@@ -199,7 +193,7 @@ export function walkItems(
 		const description =
 			typeof req.description === 'string'
 				? req.description
-				: (req.description as { content?: string })?.content ?? '';
+				: ((req.description as { content?: string })?.content ?? '');
 
 		operations.push({
 			name: item.name,
