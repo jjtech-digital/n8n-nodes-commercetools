@@ -186,10 +186,7 @@ function parseFile(
  * BUG-7: `allResources` is passed in as a parameter (built once after parsing),
  * not computed inside the function on every call.
  */
-function inferResourceType(
-	message: string,
-	allResources: string[],
-): string | undefined {
+function inferResourceType(message: string, allResources: string[]): string | undefined {
 	const kebab = pascalToKebab(message);
 
 	// Longest prefix match first
@@ -227,9 +224,7 @@ export function generateCtpEventRegistry(OUTPUT_DIR: string, options: GenerateOp
 	}
 
 	// BUG-7: Build allResources once after parsing completes
-	const allResources = Array.from(
-		new Set([...messageResourceTypeIds, ...changeResourceTypeIds]),
-	);
+	const allResources = Array.from(new Set([...messageResourceTypeIds, ...changeResourceTypeIds]));
 
 	const allowed = options.allowedResources ? new Set(options.allowedResources) : undefined;
 

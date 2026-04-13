@@ -151,9 +151,7 @@ export function generateIdFields(
 		const tertiaryEntries: TertiaryEntry[] = topLevelOps
 			.map((op) => {
 				const keyMatches = [...op.urlTemplate.matchAll(/key=\{\{([^}]+)\}\}/g)].map((m) => m[1]);
-				return keyMatches.length >= 2
-					? { op, tertiaryKeyPlaceholder: keyMatches[1] }
-					: null;
+				return keyMatches.length >= 2 ? { op, tertiaryKeyPlaceholder: keyMatches[1] } : null;
 			})
 			.filter(Boolean) as TertiaryEntry[];
 

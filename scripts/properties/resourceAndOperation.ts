@@ -73,10 +73,7 @@ export function generateVersionField(
 	for (const folder of folders) {
 		const resourceValue = slugify(folder);
 		const opsNeedingVersion = (opsByFolder.get(folder) ?? [])
-			.filter(
-				(op) =>
-					!op.isUpdateAction && (isMainUpdateOp(op) || op.method === 'DELETE'),
-			)
+			.filter((op) => !op.isUpdateAction && (isMainUpdateOp(op) || op.method === 'DELETE'))
 			.map((op) => op.value);
 
 		if (opsNeedingVersion.length === 0) continue;

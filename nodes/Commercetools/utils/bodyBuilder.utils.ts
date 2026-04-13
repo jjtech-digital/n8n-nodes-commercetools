@@ -137,11 +137,7 @@ function buildMiscBody(
 
 // ─── Actions UI builder ────────────────────────────────────────────────────────
 
-export function buildActionsFromUi(
-	ctx: IExecuteFunctions,
-	i: number,
-	resource: string,
-): unknown[] {
+export function buildActionsFromUi(ctx: IExecuteFunctions, i: number, resource: string): unknown[] {
 	const uiData = safeGet<Record<string, Array<Record<string, unknown>>>>(
 		ctx,
 		`actionsUi__${resource}`,

@@ -41,10 +41,7 @@ export function isLocalizedField(field: BodyField): boolean {
 
 // ─── Type + default resolution (READ-5, GEN-BUG-2) ───────────────────────────
 
-export function resolveN8nType(
-	field: BodyField,
-	localized: boolean,
-): INodeProperties['type'] {
+export function resolveN8nType(field: BodyField, localized: boolean): INodeProperties['type'] {
 	if (localized) return 'json';
 	if (field.type === 'number') return 'number';
 	if (field.type === 'boolean') return 'boolean';
@@ -52,10 +49,7 @@ export function resolveN8nType(
 	return 'string';
 }
 
-export function resolveDefault(
-	field: BodyField,
-	localized: boolean,
-): string | number | boolean {
+export function resolveDefault(field: BodyField, localized: boolean): string | number | boolean {
 	if (localized) return '{ "en": "" }';
 	if (field.type === 'number') return 0;
 	if (field.type === 'boolean') return false;
