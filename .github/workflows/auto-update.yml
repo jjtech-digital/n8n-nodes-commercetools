@@ -94,8 +94,8 @@ jobs:
             nodes/Commercetools/generated/ctp-event-registry.json \
             nodes/Commercetools/generated/operations.json \
             nodes/Commercetools/generated/properties.ts \
-            nodes/Commercetools/generated/subscription.properties.ts \
-            dist/
+            nodes/Commercetools/generated/subscription.properties.ts
+          git add -f dist/
           git diff --staged --quiet || git commit -m \
             "chore: auto-update from Postman collection [$(date -u +%Y-%m-%d)]"
           git push
