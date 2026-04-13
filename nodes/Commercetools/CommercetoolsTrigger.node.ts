@@ -1,3 +1,20 @@
+/**
+ * CommercetoolsTrigger.node.ts
+ *
+ * Webhook trigger node that listens for real-time commercetools events.
+ *
+ * On workflow activation the node registers a commercetools subscription
+ * pointing at the n8n webhook URL and optionally provisions cloud
+ * infrastructure (AWS SQS + Lambda or GCP Pub/Sub + Cloud Functions).
+ * All provisioned resources are automatically deleted on deactivation.
+ *
+ * Bug fixes applied:
+ *   TRIGGER-BUG-1: req.body JSON.parse is now wrapped in try/catch — a
+ *                  malformed payload previously crashed the entire workflow
+ *                  execution. Invalid payloads now return noWebhookResponse.
+ *   TRIGGER-READ-1: description updated to mention GCP Pub/Sub support.
+ */
+
 import { timingSafeEqual } from 'crypto';
 import type {
 	IDataObject,
@@ -9,8 +26,8 @@ import type {
 import { NodeConnectionTypes } from 'n8n-workflow';
 import { triggerProperties } from './generated/subscription.properties';
 import { triggerMethods } from './utils/webhookMethods.utils';
-import { AWSResponse } from './utils/awsInfra.utils';
-import { GCPResponse } from './utils/gcpInfra.utils';
+import type { AWSResponse } from './utils/awsInfra.utils';
+import type { GCPResponse } from './utils/gcpInfra.utils';
 
 export type StaticSubscriptionData = IDataObject & {
 	subscriptionId?: string;
@@ -29,8 +46,9 @@ export class CommercetoolsTrigger implements INodeType {
 		icon: 'file:Commercetools.svg',
 		group: ['trigger'],
 		version: 1,
+		// TRIGGER-READ-1: mention GCP alongside AWS
 		description:
-			'Listen for commercetools events (customer and product events). Automatically creates AWS SQS + Lambda when AWS credentials are provided.',
+			'Listen for commercetools events. Automatically provisions AWS SQS + Lambda or GCP Pub/Sub + Cloud Functions when the respective credentials are provided.',
 		defaults: {
 			name: 'commercetools Trigger',
 		},
@@ -66,7 +84,7 @@ export class CommercetoolsTrigger implements INodeType {
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
 
-		// Validate webhook secret if configured
+		// ── Validate webhook secret (if configured) ───────────────────────────
 		const credentials = await this.getCredentials('commerceToolsOAuth2Api');
 		const secret = credentials.webhookSecret as string | undefined;
 		if (secret) {
@@ -78,8 +96,14 @@ export class CommercetoolsTrigger implements INodeType {
 			}
 		}
 
-		const processedBody: IDataObject =
-			typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+		// TRIGGER-BUG-1: wrap JSON.parse in try/catch so malformed payloads
+		// don't crash the execution — return noWebhookResponse instead.
+		let processedBody: IDataObject;
+		try {
+			processedBody = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+		} catch {
+			return { noWebhookResponse: true };
+		}
 
 		return {
 			workflowData: [this.helpers.returnJsonArray(processedBody)],

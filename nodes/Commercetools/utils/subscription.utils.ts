@@ -1,18 +1,28 @@
 /**
+ * nodes/Commercetools/utils/subscription.utils.ts
+ *
+ * Subscription CRUD helpers and body builder for the commercetools
+ * Trigger node.
+ *
+ * Bug fixes applied:
+ *   SUB-BUG-1: fetchSubscription / deleteSubscription guard against an empty
+ *              subscriptionId before making the API call.
+ *   SUB-BUG-2: getBaseUrl throws a NodeOperationError when the region
+ *              credential is missing instead of silently defaulting.
+ *   SUB-BP-1:  Improved error messages include field names and context.
+ *
  * Routing logic:
  *   Each event in subscriptionEvents contains:
- *
  *     subscriptionType:
  *       'message' → CT messages[]
  *       'change'  → CT changes[]
- *
  *   The generated registry is the single source of truth.
- *   No prefixes, heuristics, or string parsing are used.
  */
 
-import { IDataObject, IHookFunctions, IWebhookFunctions, NodeOperationError } from 'n8n-workflow';
-import { AWSResponse } from './awsInfra.utils';
-import { GCPResponse } from './gcpInfra.utils';
+import type { IDataObject, IHookFunctions, IWebhookFunctions } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import type { AWSResponse } from './awsInfra.utils';
+import type { GCPResponse } from './gcpInfra.utils';
 import { subscriptionEvents } from '../generated/subscription.properties';
 import type { SubscriptionEvent } from '../generated/subscription.properties';
 
@@ -20,19 +30,30 @@ import type { SubscriptionEvent } from '../generated/subscription.properties';
 // Built once at module load from the generated event list.
 
 const EVENT_MAP = new Map<string, SubscriptionEvent>();
-
 for (const e of subscriptionEvents) {
 	EVENT_MAP.set(e.value, e);
 }
+
 // ─── Base URL helper ──────────────────────────────────────────────────────────
 
 export async function getBaseUrl(this: IHookFunctions | IWebhookFunctions): Promise<string> {
 	const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as IDataObject;
 	const projectKey = credentials.projectKey as string;
-	const region = (credentials.region as string) || 'australia-southeast1.gcp';
+	const region = credentials.region as string;
 
 	if (!projectKey) {
-		throw new NodeOperationError(this.getNode(), 'Project key is missing in the credentials');
+		throw new NodeOperationError(
+			this.getNode(),
+			'commercetools credential is missing "projectKey". Check your credential configuration.',
+		);
+	}
+
+	// SUB-BUG-2: throw instead of silently defaulting to a hardcoded region
+	if (!region) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'commercetools credential is missing "region". Select a region in your credential configuration.',
+		);
 	}
 
 	return `https://api.${region}.commercetools.com/${projectKey}`;
@@ -45,6 +66,13 @@ export async function fetchSubscription(
 	baseUrl: string,
 	subscriptionId: string,
 ) {
+	// SUB-BUG-1: guard against empty subscriptionId
+	if (!subscriptionId) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Cannot fetch subscription: subscriptionId is empty.',
+		);
+	}
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 		method: 'GET',
 		url: `${baseUrl}/subscriptions/${subscriptionId}`,
@@ -57,6 +85,13 @@ export async function deleteSubscription(
 	subscriptionId: string,
 	version: number,
 ) {
+	// SUB-BUG-1: guard against empty subscriptionId
+	if (!subscriptionId) {
+		throw new NodeOperationError(
+			this.getNode(),
+			'Cannot delete subscription: subscriptionId is empty.',
+		);
+	}
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {
 		method: 'DELETE',
 		url: `${baseUrl}/subscriptions/${subscriptionId}`,
@@ -77,36 +112,21 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
 
 	for (const value of selectedValues) {
 		const event = EVENT_MAP.get(value);
-
-		if (!event) {
-			continue;
-		}
+		if (!event?.resourceTypeId) continue;
 
 		const { resourceTypeId, subscriptionType } = event;
 
-		if (!resourceTypeId) {
-			continue;
-		}
-
-		switch (subscriptionType) {
-			case 'message': {
-				const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
-				types.add(value); // ✅ dedupe automatically
-				messageTypesByResource.set(resourceTypeId, types);
-				break;
-			}
-			case 'change': {
-				changeResourceIds.add(resourceTypeId);
-				break;
-			}
+		if (subscriptionType === 'message') {
+			const types = messageTypesByResource.get(resourceTypeId) ?? new Set<string>();
+			types.add(value);
+			messageTypesByResource.set(resourceTypeId, types);
+		} else if (subscriptionType === 'change') {
+			changeResourceIds.add(resourceTypeId);
 		}
 	}
 
 	const messages: IDataObject[] = Array.from(messageTypesByResource.entries()).map(
-		([resourceTypeId, types]) => ({
-			resourceTypeId,
-			types: Array.from(types),
-		}),
+		([resourceTypeId, types]) => ({ resourceTypeId, types: Array.from(types) }),
 	);
 
 	const changes: IDataObject[] = Array.from(changeResourceIds).map((resourceTypeId) => ({
@@ -115,6 +135,7 @@ function buildSubscriptionBody(selectedValues: string[]): SubscriptionBody {
 
 	return { messages, changes };
 }
+
 // ─── Public: create subscription ─────────────────────────────────────────────
 
 export async function createSubscription(
@@ -132,13 +153,9 @@ export async function createSubscription(
 	const { baseUrl, webhookUrl, awsInfrastructure, gcpInfrastructure, events, useAWS, useGCP } =
 		params;
 
-	// Build all three CT subscription arrays from the selected event values.
-	// This replaces the old per-resource manual filtering — all routing is
-	// driven by the subscriptionType field on each generated event entry.
 	const { messages, changes } = buildSubscriptionBody(events);
 
 	// ── Destination ───────────────────────────────────────────────────────────
-
 	let destination: IDataObject;
 
 	if (useAWS && awsInfrastructure) {
@@ -155,22 +172,19 @@ export async function createSubscription(
 			topic: gcpInfrastructure.topicName,
 		};
 	} else {
-		destination = {
-			type: 'HTTP',
-			url: webhookUrl,
-		};
+		destination = { type: 'HTTP', url: webhookUrl };
 	}
 
-	// ── Assemble body ─────────────────────────────────────────────────────────
-	// Only include non-empty arrays — CT rejects empty messages/changes/events.
-
+	// ── Assemble body — empty arrays are never sent ───────────────────────────
 	const body: IDataObject = { destination };
-
 	if (messages.length > 0) body.messages = messages;
 	if (changes.length > 0) body.changes = changes;
 
 	if (!messages.length && !changes.length) {
-		throw new NodeOperationError(this.getNode(), 'No valid subscription events selected.');
+		throw new NodeOperationError(
+			this.getNode(),
+			'No valid subscription events selected. Choose at least one event from the Events dropdown.',
+		);
 	}
 
 	return this.helpers.httpRequestWithAuthentication.call(this, 'commerceToolsOAuth2Api', {

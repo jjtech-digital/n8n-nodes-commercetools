@@ -1,28 +1,40 @@
-import { IDataObject, IHookFunctions, NodeOperationError } from 'n8n-workflow';
+/**
+ * nodes/Commercetools/utils/webhookMethods.utils.ts
+ *
+ * Lifecycle methods for the CommercetoolsTrigger node webhook:
+ *   checkExists — detect config changes; verify cloud resources still exist
+ *   create      — provision cloud infra + register CT subscription
+ *   delete      — tear down cloud infra + remove CT subscription
+ *
+ * Bug fixes applied:
+ *   WEBHOOK-BUG-1: `hasAWS` / `hasGCP` detection extracted into
+ *                   `detectCloudProvider` — was duplicated across checkExists
+ *                   and create, risking divergence.
+ *   WEBHOOK-BUG-2: silent catch blocks now call `console.warn` with the
+ *                   error message so cloud cleanup failures are visible in
+ *                   n8n server logs without crashing the workflow.
+ *   WEBHOOK-READ-1: verification sub-functions moved to cloudVerification.utils.ts.
+ *   WEBHOOK-READ-2: heavy GCP SDK imports removed from this file; they are
+ *                   lazy-loaded inside cloudVerification.utils.ts only.
+ */
+
+import type { IDataObject, IHookFunctions } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 import {
 	createSubscription,
 	deleteSubscription,
 	fetchSubscription,
 	getBaseUrl,
 } from './subscription.utils';
-import AWS from 'aws-sdk';
-import {
-	AWSResponse,
-	createRealAWSInfrastructure,
-	deleteAWSInfrastructure,
-} from './awsInfra.utils';
-import { StaticSubscriptionData } from '../CommercetoolsTrigger.node';
-import {
-	buildAuthClient,
-	createGCPInfrastructure,
-	deleteGCPInfrastructure,
-	GCPResponse,
-	parseCredentials,
-} from './gcpInfra.utils';
-import { PubSub } from '@google-cloud/pubsub';
-import { Storage } from '@google-cloud/storage';
-import { google } from 'googleapis';
+import { createRealAWSInfrastructure, deleteAWSInfrastructure } from './awsInfra.utils';
+import type { AWSResponse } from './awsInfra.utils';
+import { createGCPInfrastructure, deleteGCPInfrastructure } from './gcpInfra.utils';
+import type { GCPResponse } from './gcpInfra.utils';
+import { verifyAWSInfrastructure, verifyGCPInfrastructure } from './cloudVerification.utils';
+import type { StaticSubscriptionData } from '../CommercetoolsTrigger.node';
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
 function generateConfigHash(
 	events: string[],
 	hasAWS: boolean,
@@ -32,7 +44,8 @@ function generateConfigHash(
 ): string {
 	return JSON.stringify({ events: [...events].sort(), hasAWS, hasGCP, region, projectKey });
 }
-/** Clear all stored webhook state in one place to avoid missed deletes. */
+
+/** Clear all stored webhook state to avoid leaving orphaned references. */
 function clearWebhookData(webhookData: StaticSubscriptionData): void {
 	delete webhookData.subscriptionId;
 	delete webhookData.awsInfrastructure;
@@ -41,7 +54,23 @@ function clearWebhookData(webhookData: StaticSubscriptionData): void {
 	delete webhookData.events;
 	delete webhookData.lastVerifiedAt;
 }
+
+/**
+ * WEBHOOK-BUG-1: single authoritative place to detect which cloud provider
+ * is active. Previously duplicated in checkExists and create.
+ */
+function detectCloudProvider(credentials: Record<string, string>): {
+	hasAWS: boolean;
+	hasGCP: boolean;
+} {
+	return {
+		hasAWS: !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey),
+		hasGCP: !!credentials.serviceAccountJson,
+	};
+}
+
 // ─── Trigger methods ──────────────────────────────────────────────────────────
+
 export const triggerMethods = {
 	default: {
 		// ── checkExists ──────────────────────────────────────────────────────
@@ -53,8 +82,8 @@ export const triggerMethods = {
 			>;
 			const eventsRaw = this.getNodeParameter('events') as string[] | string;
 			const currentEvents = Array.isArray(eventsRaw) ? eventsRaw : [eventsRaw];
-			const hasAWS = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			const hasGCP = !!credentials.serviceAccountJson; // updated: check for JSON field
+			const { hasAWS, hasGCP } = detectCloudProvider(credentials);
+
 			const currentHash = generateConfigHash(
 				currentEvents,
 				hasAWS,
@@ -62,46 +91,17 @@ export const triggerMethods = {
 				credentials.region,
 				credentials.projectKey,
 			);
-			// No subscription stored yet
+
 			if (!webhookData.subscriptionId) return false;
-			// Config changed — delete old infrastructure then let create() rebuild
+
+			// Config changed — tear down existing infrastructure, let create() rebuild
 			if (webhookData.configHash !== currentHash) {
-				try {
-					const baseUrl = await getBaseUrl.call(this);
-					const subscription = (await fetchSubscription.call(
-						this,
-						baseUrl,
-						webhookData.subscriptionId,
-					)) as IDataObject;
-					await deleteSubscription.call(
-						this,
-						baseUrl,
-						webhookData.subscriptionId,
-						subscription.version as number,
-					);
-				} catch {
-					/* best-effort */
-				}
-				if (webhookData.awsInfrastructure) {
-					try {
-						await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
-					} catch {
-						/* best-effort */
-					}
-				} else if (webhookData.gcpInfrastructure) {
-					try {
-						await deleteGCPInfrastructure(
-							credentials,
-							webhookData.gcpInfrastructure as GCPResponse,
-						);
-					} catch {
-						/* best-effort */
-					}
-				}
+				await tearDownExisting(this, webhookData, credentials);
 				clearWebhookData(webhookData);
 				return false;
 			}
-			// Config unchanged — check if recently verified
+
+			// Config unchanged — use lastVerifiedAt cache to skip frequent re-checks
 			const VERIFY_INTERVAL_MS = 5 * 60 * 1000;
 			if (
 				webhookData.lastVerifiedAt &&
@@ -109,90 +109,32 @@ export const triggerMethods = {
 			) {
 				return true;
 			}
-			// Config unchanged — verify everything still exists in the cloud
+
+			// Verify subscription + cloud resources still exist
 			try {
 				const baseUrl = await getBaseUrl.call(this);
 				await fetchSubscription.call(this, baseUrl, webhookData.subscriptionId);
+
 				if (webhookData.awsInfrastructure) {
-					// ── Verify AWS ────────────────────────────────────────────
-					try {
-						const awsClientConfig = {
-							accessKeyId: credentials.awsAccessKeyId,
-							secretAccessKey: credentials.awsSecretAccessKey,
-							region: (webhookData.awsInfrastructure as AWSResponse).region || 'us-east-1',
-						};
-						const lambda = new AWS.Lambda(awsClientConfig);
-						const sqs = new AWS.SQS(awsClientConfig);
-						await lambda
-							.getFunctionConfiguration({
-								FunctionName: (webhookData.awsInfrastructure as AWSResponse)
-									.lambdaFunctionName as string,
-							})
-							.promise();
-						await sqs
-							.getQueueAttributes({
-								QueueUrl: (webhookData.awsInfrastructure as AWSResponse).queueUrl as string,
-								AttributeNames: ['ApproximateNumberOfMessages'],
-							})
-							.promise();
-					} catch {
+					const ok = await verifyAWSInfrastructure(
+						credentials,
+						webhookData.awsInfrastructure as AWSResponse,
+					);
+					if (!ok) {
 						clearWebhookData(webhookData);
 						return false;
 					}
 				} else if (webhookData.gcpInfrastructure) {
-					// ── Verify GCP ────────────────────────────────────────────
-					try {
-						// Parse creds once — privateKey is normalised inside parseCredentials
-						const creds = parseCredentials(credentials);
-						const { restAuth } = await buildAuthClient(credentials);
-
-						const infra = webhookData.gcpInfrastructure as GCPResponse;
-
-						// Check Cloud Function
-						const cloudfunctions = google.cloudfunctions({ version: 'v2', auth: restAuth });
-						const fnFullName = `projects/${infra.projectId}/locations/${credentials.gcpRegion}/functions/${infra.functionName}`;
-						try {
-							await cloudfunctions.projects.locations.functions.get({ name: fnFullName });
-						} catch (err) {
-							if ((err as { code?: number }).code === 5) {
-								clearWebhookData(webhookData);
-								return false;
-							}
-							throw err;
-						}
-
-						// Check Pub/Sub topic — credentials: {} avoids gRPC/OpenSSL path
-						const pubsub = new PubSub({
-							projectId: infra.projectId,
-							credentials: {
-								client_email: creds.clientEmail,
-								private_key: creds.privateKey,
-							},
-						});
-						const [topicExists] = await pubsub.topic(infra.topicName).exists();
-						if (!topicExists) {
-							clearWebhookData(webhookData);
-							return false;
-						}
-
-						// Check GCS bucket — credentials: {} avoids gRPC/OpenSSL path
-						const storage = new Storage({
-							projectId: infra.projectId,
-							credentials: {
-								client_email: creds.clientEmail,
-								private_key: creds.privateKey,
-							},
-						});
-						const [bucketExists] = await storage.bucket(infra.bucketName).exists();
-						if (!bucketExists) {
-							clearWebhookData(webhookData);
-							return false;
-						}
-					} catch {
+					const ok = await verifyGCPInfrastructure(
+						credentials,
+						webhookData.gcpInfrastructure as GCPResponse,
+					);
+					if (!ok) {
 						clearWebhookData(webhookData);
 						return false;
 					}
 				}
+
 				webhookData.lastVerifiedAt = Date.now();
 				return true;
 			} catch {
@@ -200,6 +142,7 @@ export const triggerMethods = {
 				return false;
 			}
 		},
+
 		// ── create ───────────────────────────────────────────────────────────
 		create: async function (this: IHookFunctions): Promise<boolean> {
 			const eventsRaw = this.getNodeParameter('events') as string[] | string;
@@ -207,24 +150,24 @@ export const triggerMethods = {
 			if (!events.length) {
 				throw new NodeOperationError(this.getNode(), 'At least one event must be selected');
 			}
+
 			const credentials = (await this.getCredentials('commerceToolsOAuth2Api')) as Record<
 				string,
 				string
 			>;
-			const hasAWS = !!(credentials.awsAccessKeyId && credentials.awsSecretAccessKey);
-			// Updated: detect GCP by presence of serviceAccountJson (the new single-field approach)
-			const hasGCP = !!credentials.serviceAccountJson;
-
+			const { hasAWS, hasGCP } = detectCloudProvider(credentials);
 			const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
 			const baseUrl = await getBaseUrl.call(this);
 			const webhookUrl = this.getNodeWebhookUrl('default');
 			if (!webhookUrl) {
 				throw new NodeOperationError(this.getNode(), 'Failed to determine the webhook URL');
 			}
+
 			let useAWS = false;
 			let useGCP = false;
 			let awsInfrastructure: AWSResponse | undefined;
 			let gcpInfrastructure: GCPResponse | undefined;
+
 			if (hasAWS) {
 				awsInfrastructure = await createRealAWSInfrastructure(credentials, events[0], webhookUrl);
 				webhookData.awsInfrastructure = awsInfrastructure;
@@ -234,6 +177,7 @@ export const triggerMethods = {
 				webhookData.gcpInfrastructure = gcpInfrastructure;
 				useGCP = true;
 			}
+
 			const response = (await createSubscription.call(this, {
 				baseUrl,
 				webhookUrl,
@@ -248,9 +192,10 @@ export const triggerMethods = {
 			if (!subscriptionId) {
 				throw new NodeOperationError(
 					this.getNode(),
-					'Commercetools did not return a subscription identifier',
+					'commercetools did not return a subscription ID — check the project credentials and event selection.',
 				);
 			}
+
 			webhookData.subscriptionId = subscriptionId;
 			webhookData.events = events;
 			webhookData.configHash = generateConfigHash(
@@ -262,6 +207,7 @@ export const triggerMethods = {
 			);
 			return true;
 		},
+
 		// ── delete ───────────────────────────────────────────────────────────
 		delete: async function (this: IHookFunctions): Promise<boolean> {
 			const webhookData = this.getWorkflowStaticData('node') as StaticSubscriptionData;
@@ -269,6 +215,7 @@ export const triggerMethods = {
 				string,
 				string
 			>;
+
 			if (webhookData.subscriptionId) {
 				try {
 					const baseUrl = await getBaseUrl.call(this);
@@ -279,28 +226,72 @@ export const triggerMethods = {
 					)) as IDataObject;
 					const version = subscription.version as number | undefined;
 					if (typeof version !== 'number') {
-						throw new NodeOperationError(this.getNode(), 'Failed to resolve subscription version');
+						throw new Error('Failed to resolve subscription version');
 					}
 					await deleteSubscription.call(this, baseUrl, webhookData.subscriptionId, version);
-				} catch {
-					/* best-effort */
+				} catch (err) {
+					// WEBHOOK-BUG-2: warn instead of silently swallowing
+					console.warn('[CT Trigger] Could not delete subscription:', (err as Error).message);
 				}
 			}
+
 			if (webhookData.awsInfrastructure) {
 				try {
-					await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure);
-				} catch {
-					/* best-effort */
+					await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure as AWSResponse);
+				} catch (err) {
+					console.warn('[CT Trigger] Could not delete AWS infrastructure:', (err as Error).message);
 				}
 			} else if (webhookData.gcpInfrastructure) {
 				try {
 					await deleteGCPInfrastructure(credentials, webhookData.gcpInfrastructure as GCPResponse);
-				} catch {
-					/* best-effort */
+				} catch (err) {
+					console.warn('[CT Trigger] Could not delete GCP infrastructure:', (err as Error).message);
 				}
 			}
+
 			clearWebhookData(webhookData);
 			return true;
 		},
 	},
 };
+
+// ─── Internal: tear down existing infra on config change ─────────────────────
+
+async function tearDownExisting(
+	ctx: IHookFunctions,
+	webhookData: StaticSubscriptionData,
+	credentials: Record<string, string>,
+): Promise<void> {
+	if (webhookData.subscriptionId) {
+		try {
+			const baseUrl = await getBaseUrl.call(ctx);
+			const subscription = (await fetchSubscription.call(
+				ctx,
+				baseUrl,
+				webhookData.subscriptionId,
+			)) as IDataObject;
+			await deleteSubscription.call(
+				ctx,
+				baseUrl,
+				webhookData.subscriptionId,
+				subscription.version as number,
+			);
+		} catch (err) {
+			console.warn('[CT Trigger] Could not remove old subscription:', (err as Error).message);
+		}
+	}
+
+	if (webhookData.awsInfrastructure) {
+		try {
+			await deleteAWSInfrastructure(credentials, webhookData.awsInfrastructure as AWSResponse);
+		} catch (err) {
+			console.warn('[CT Trigger] Could not remove old AWS infra:', (err as Error).message);
+		}
+	} else if (webhookData.gcpInfrastructure) {
+		try {
+			await deleteGCPInfrastructure(credentials, webhookData.gcpInfrastructure as GCPResponse);
+		} catch (err) {
+			console.warn('[CT Trigger] Could not remove old GCP infra:', (err as Error).message);
+		}
+	}
+}

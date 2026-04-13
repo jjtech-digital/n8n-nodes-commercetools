@@ -372,7 +372,13 @@ npm run lint:fix
 ```
 scripts/generate.ts                       (entry point: npm run generate)
 │
-├── parseCollection.ts
+├── parseCollection.ts                    (thin orchestrator)
+│     ├── collection/postmanTypes.ts      PostmanItem, PostmanCollection interfaces
+│     ├── collection/types.ts             BodyField, ParsedOperation interfaces
+│     ├── collection/helpers.ts           slugify, formatLabel, isLocalizedObject
+│     ├── collection/fieldExtractors.ts   extractFields, extractActionBodyFields
+│     ├── collection/findFolder.ts        findFolder (module-level cache — PERF-5)
+│     └── collection/walkItems.ts         walkItems (top-level exported function)
 │     Downloads Postman collection.json → ParsedOperation[]
 │     Detects per operation:
 │       isSearch        POST .../search
@@ -384,7 +390,13 @@ scripts/generate.ts                       (entry point: npm run generate)
 │       bodyFields      extracted from Postman body.raw JSON
 │       actionBodyFields fields from inside actions[0]
 │
-├── generateProperties.ts
+├── generateProperties.ts                 (thin orchestrator — PERF-4: Map index built once)
+│     ├── properties/helpers.ts           Constants + shared property builders
+│     ├── properties/resourceAndOperation.ts  Resource + Operation dropdowns
+│     ├── properties/idFields.ts          ID / Key / Container / path param fields
+│     ├── properties/versionAndActions.ts Actions (JSON) + Actions (UI) fixedCollection
+│     ├── properties/bodyFields.ts        Create / Misc-POST / Search body fields
+│     └── properties/imageAndQuery.ts     Image upload fields + query-param Filters
 │     ParsedOperation[] → INodeProperties[]
 │     Emits in order:
 │       1.  Resource dropdown
@@ -408,7 +420,11 @@ scripts/generate.ts                       (entry point: npm run generate)
 │     Extracts: *MessagePayload type literals,
 │               MessageSubscriptionResourceTypeId values,
 │               ChangeSubscriptionResourceTypeId values
-│     │     Filters to allowedResources: [product, customer, cart, order, business-unit, category, channel, associate-role, inventory-entry, review, shopping-list, type, payment, quote, quote-request, staged-quote, approval-rule, approval-flow, standalone-price, store, product-tailoring, customer-group, product-selection]
+│     Filters to allowedResources: [product, customer, cart, order, business-unit,
+│       category, channel, associate-role, inventory-entry, review, shopping-list,
+│       type, payment, quote, quote-request, staged-quote, approval-rule,
+│       approval-flow, standalone-price, store, product-tailoring,
+│       customer-group, product-selection]
 │     → nodes/Commercetools/generated/ctp-event-registry.json
 │
 └── generateSubscriptionProperties.ts
@@ -420,6 +436,33 @@ scripts/generate.ts                       (entry point: npm run generate)
 ```
 
 Generated files are committed to the repository. The built node works without running `generate` unless the Postman collection or SDK has changed.
+
+### Node source layout
+
+```
+nodes/Commercetools/
+├── Commercetools.node.ts           Thin action-node orchestrator (~175 lines)
+├── CommercetoolsTrigger.node.ts    Webhook trigger — receives and routes events
+├── generated/                      Auto-generated (do not edit manually)
+│   ├── properties.ts
+│   ├── operations.json
+│   ├── ctp-event-registry.json
+│   └── subscription.properties.ts
+├── lambda/
+│   ├── awsHandler.js               Lambda: SQS → n8n webhook forwarder
+│   └── gcpHandler.js               Cloud Function: Pub/Sub → n8n webhook forwarder
+└── utils/
+    ├── urlBuilder.utils.ts         URL construction + path-param substitution
+    ├── bodyBuilder.utils.ts        Request body assembly for all operation types
+    ├── imageUpload.utils.ts        SSRF-guarded image download + CT binary POST
+    ├── subscription.utils.ts       Subscription CRUD + body building + event routing
+    ├── webhookMethods.utils.ts     Webhook lifecycle: checkExists / create / delete
+    ├── cloudVerification.utils.ts  AWS + GCP infrastructure existence checks
+    ├── awsInfra.utils.ts           AWS SQS / Lambda / IAM provisioning
+    ├── awsDelete.utils.ts          AWS infrastructure teardown
+    ├── gcpInfra.utils.ts           GCP Pub/Sub / Cloud Functions provisioning
+    └── gcpDelete.utils.ts          GCP infrastructure teardown
+```
 
 ---
 
@@ -450,6 +493,12 @@ New API endpoints and fields appear in the node automatically without manual dev
 | Business Unit Search: `Search Not Ready`                   | Business Unit Search must be activated on your project — call `PUT /{projectKey}/business-units/search/indexing-status` with `{ "activated": true }` then wait for indexing to complete |
 | GCP: private key / PEM errors                              | Use the **Service Account JSON** field; paste the entire `.json` key file, not individual fields              |
 | GCP: deploy timeout on first activation                    | GCP API enablement takes time on cold projects — retry after a minute                                         |
+| GCP: `gcpRegion` missing error on activation               | Open the credential and select a GCP Region — the field is required for Cloud Functions deployment            |
+| AWS: wrong queue ARN in GovCloud / China regions           | ARN is now fetched from `GetQueueAttributes` (not constructed manually) — update to v1.0.14 to fix            |
+| AWS: `credentials are invalid` or `permissions denied`     | Verify the IAM user has SQS, Lambda, IAM, STS, and CloudWatch Logs permissions                               |
+| Trigger: malformed webhook payload crashes execution        | Update to v1.0.14 — invalid JSON payloads are now silently dropped instead of crashing the context           |
+| Subscription: `subscriptionId is empty` error              | The subscription ID was not persisted in static data — deactivate and reactivate the workflow                 |
+| Update operation: zero value (`0`) silently dropped        | Update to v1.0.14 — `quantity: 0` and `centAmount: 0` are now sent correctly                                 |
 | Node not visible in n8n                                    | Run `npm install` then `npm run dev`                                                                          |
 | Trigger: `"A message with the name 'PaymentMethodCreated' is unknown for the TypeId 'payment'"` | CT Subscriptions API does not support `payment-method` as a resourceTypeId. Use CT API Extensions or a schedule-based polling trigger instead. |
 
@@ -459,11 +508,11 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                                                     |
 | ------- | ----------------------------------------------------------------------------------------------------------------------------|
+| v1.0.14 | Two-pass refactor: modular `scripts/` and `nodes/` structure; 60+ bug fixes across AWS/GCP provisioning, subscription management, body building, SSRF guard, and error handling; all files under 300 lines |
 | v1.0.13 | Added Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes |
 | v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                                               |
 | v1.0.11 | Added Quotes, Quote Requests, Staged Quotes, Messages, and API Extensions                                                   |
 | v1.0.10 | Added Claude AI agents and skills for automated development assistance                                                      |
-                                                                      
 
 
 
