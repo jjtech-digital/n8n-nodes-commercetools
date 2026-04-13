@@ -2,7 +2,7 @@
  * subscription.properties.ts
  *
  * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-04-13T13:18:54.368Z
+ * Generated at: 2026-04-13T13:22:14.668Z
  */
 
 import type { INodeProperties } from 'n8n-workflow';
