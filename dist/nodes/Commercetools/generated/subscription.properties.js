@@ -1,25 +1,7 @@
-/**
- * subscription.properties.ts
- *
- * AUTO-GENERATED — DO NOT EDIT MANUALLY
- * Generated at: 2026-04-13T12:57:09.459Z
- */
-
-import type { INodeProperties } from 'n8n-workflow';
-
-export type SubscriptionType = 'message' | 'change';
-
-export type SubscriptionEvent = {
-  name: string;
-  value: string;
-  resourceTypeId: string;
-  subscriptionType: SubscriptionType;
-  description: string;
-};
-
-// ─── Generated event list ─────────────────────────────────────────────────────
-
-export const subscriptionEvents: SubscriptionEvent[] = [
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.triggerProperties = exports.subscriptionEvents = void 0;
+exports.subscriptionEvents = [
     { name: 'Approval Flow Approved', value: 'ApprovalFlowApproved', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Fires when a Approval Flow Approved message is received for a approval-flow.' },
     { name: 'Approval Flow Completed', value: 'ApprovalFlowCompleted', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Fires when a Approval Flow Completed message is received for a approval-flow.' },
     { name: 'Approval Flow Created', value: 'ApprovalFlowCreated', resourceTypeId: 'approval-flow', subscriptionType: 'message', description: 'Fires when a Approval Flow Created message is received for a approval-flow.' },
@@ -308,20 +290,20 @@ export const subscriptionEvents: SubscriptionEvent[] = [
     { name: 'Store Product Selections Changed', value: 'StoreProductSelectionsChanged', resourceTypeId: 'store', subscriptionType: 'message', description: 'Fires when a Store Product Selections Changed message is received for a store.' },
     { name: 'Store Supply Channels Changed', value: 'StoreSupplyChannelsChanged', resourceTypeId: 'store', subscriptionType: 'message', description: 'Fires when a Store Supply Channels Changed message is received for a store.' },
 ];
-
-export const triggerProperties: INodeProperties[] = [
-  {
-    displayName: 'Events',
-    name: 'events',
-    type: 'multiOptions',
-    noDataExpression: true,
-    required: true,
-    options: subscriptionEvents.map(({ name, value, description }) => ({
-      name,
-      value,
-      description,
-    })),
-    default: ['ProductPublished'],
-    description: 'Select which commercetools events should trigger this workflow',
-  },
+exports.triggerProperties = [
+    {
+        displayName: 'Events',
+        name: 'events',
+        type: 'multiOptions',
+        noDataExpression: true,
+        required: true,
+        options: exports.subscriptionEvents.map(({ name, value, description }) => ({
+            name,
+            value,
+            description,
+        })),
+        default: ['ProductPublished'],
+        description: 'Select which commercetools events should trigger this workflow',
+    },
 ];
+//# sourceMappingURL=subscription.properties.js.map
