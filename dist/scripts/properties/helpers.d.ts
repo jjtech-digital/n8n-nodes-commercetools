@@ -1,0 +1,15 @@
+import type { INodeProperties } from 'n8n-workflow';
+import type { BodyField } from '../collection/types';
+import { slugify } from '../collection/helpers';
+export declare function humanize(str: string): string;
+export declare function buildDisplayName(dotPath: string): string;
+export declare function isLocalizedField(field: BodyField): boolean;
+export declare function resolveN8nType(field: BodyField, localized: boolean): INodeProperties['type'];
+export declare function resolveDefault(field: BodyField, localized: boolean): string | number | boolean;
+export declare function placeholderToLabel(placeholder: string, suffix: 'ID' | 'Key'): string;
+export declare function makeActionFieldProperty(fieldName: string, field: BodyField): INodeProperties;
+export declare function makeFieldProperty(paramName: string, field: BodyField, displayOptions?: INodeProperties['displayOptions']): INodeProperties;
+export declare const SINGULAR_MAP: Record<string, string>;
+export declare function toSingular(folderName: string): string;
+export declare const REQUIRED_QUERY_PARAMS: Set<string>;
+export { slugify };
