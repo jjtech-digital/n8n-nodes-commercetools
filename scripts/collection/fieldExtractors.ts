@@ -12,7 +12,11 @@ import { formatLabel, isLocalizedObject } from './helpers';
 // ─── Internal helper ──────────────────────────────────────────────────────────
 
 function classifyValue(value: unknown): 'json' | 'number' | 'boolean' | 'string' {
-	if (Array.isArray(value) || isLocalizedObject(value) || (value !== null && typeof value === 'object')) {
+	if (
+		Array.isArray(value) ||
+		isLocalizedObject(value) ||
+		(value !== null && typeof value === 'object')
+	) {
 		return 'json';
 	}
 	if (typeof value === 'number') return 'number';
@@ -29,11 +33,7 @@ function classifyValue(value: unknown): 'json' | 'number' | 'boolean' | 'string'
  * Fields beyond that depth are silently skipped — this is intentional because
  * deeply nested fields are not practical to expose as individual n8n UI fields.
  */
-export function extractFields(
-	obj: Record<string, unknown>,
-	prefix = '',
-	depth = 0,
-): BodyField[] {
+export function extractFields(obj: Record<string, unknown>, prefix = '', depth = 0): BodyField[] {
 	// Depth limit: deeper fields are not emitted as UI properties.
 	// Increase this constant if a commercetools payload gains needed deep nesting.
 	if (depth > 3) return [];

@@ -41,13 +41,13 @@ export function downloadFile(url: string, dest: string, redirectDepth = 0): Prom
 					const location = response.headers.location;
 					if (!location) {
 						reject(
-							new Error(
-								`Redirect ${response.statusCode} with no Location header from ${url}`,
-							),
+							new Error(`Redirect ${response.statusCode} with no Location header from ${url}`),
 						);
 						return;
 					}
-					downloadFile(location, dest, redirectDepth + 1).then(resolve).catch(reject);
+					downloadFile(location, dest, redirectDepth + 1)
+						.then(resolve)
+						.catch(reject);
 					return;
 				}
 

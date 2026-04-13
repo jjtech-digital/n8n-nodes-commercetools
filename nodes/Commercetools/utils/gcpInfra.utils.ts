@@ -46,7 +46,12 @@ export type GCPResponse = {
 type ParsedGCPCreds = { projectId: string; clientEmail: string; privateKey: string };
 
 function normalizePrivateKey(key: string): string {
-	return key.trim().replace(/\\n/g, '\n').replace(/\\r/g, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+	return key
+		.trim()
+		.replace(/\\n/g, '\n')
+		.replace(/\\r/g, '')
+		.replace(/\r\n/g, '\n')
+		.replace(/\r/g, '\n');
 }
 
 export function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
@@ -74,7 +79,9 @@ export function parseCredentials(raw: Record<string, string>): ParsedGCPCreds {
 	if (!projectId) throw new Error('GCP credential missing gcpProjectId');
 	if (!clientEmail) throw new Error('GCP credential missing clientEmail');
 	if (!privateKey || !privateKey.includes('-----BEGIN'))
-		throw new Error('GCP privateKey does not look like a PEM key. Use the Service Account JSON field.');
+		throw new Error(
+			'GCP privateKey does not look like a PEM key. Use the Service Account JSON field.',
+		);
 	return { projectId, clientEmail, privateKey };
 }
 
@@ -97,9 +104,14 @@ export async function buildAuthClient(raw: Record<string, string>) {
 const GCP_HANDLER_PATH = path.resolve(__dirname, '../lambda/gcpHandler.js');
 
 const PACKAGE_JSON = JSON.stringify(
-	{ name: 'n8n-ct-webhook', version: '1.0.0', main: 'index.js',
-	  dependencies: { '@google-cloud/functions-framework': '^3.0.0' } },
-	null, 2,
+	{
+		name: 'n8n-ct-webhook',
+		version: '1.0.0',
+		main: 'index.js',
+		dependencies: { '@google-cloud/functions-framework': '^3.0.0' },
+	},
+	null,
+	2,
 );
 
 function buildFunctionZip(): Buffer {
@@ -168,28 +180,38 @@ export async function createGCPInfrastructure(
 
 		await Promise.all([
 			// Create Pub/Sub topic + grant CT publish permission
-			pubsub.topic(topicName).get({ autoCreate: true }).then(() =>
-				pubsubApi.projects.topics.setIamPolicy({
-					resource: `projects/${projectId}/topics/${topicName}`,
-					requestBody: {
-						policy: {
-							bindings: [
-								{
-									role: 'roles/pubsub.publisher',
-									members: [
-										'serviceAccount:subscriptions@commercetools-platform.iam.gserviceaccount.com',
-									],
-								},
-							],
+			pubsub
+				.topic(topicName)
+				.get({ autoCreate: true })
+				.then(() =>
+					pubsubApi.projects.topics.setIamPolicy({
+						resource: `projects/${projectId}/topics/${topicName}`,
+						requestBody: {
+							policy: {
+								bindings: [
+									{
+										role: 'roles/pubsub.publisher',
+										members: [
+											'serviceAccount:subscriptions@commercetools-platform.iam.gserviceaccount.com',
+										],
+									},
+								],
+							},
 						},
-					},
-				}),
-			),
+					}),
+				),
 
 			// Create bucket + upload pre-built zip
-			bucket.create({ location: gcpRegion })
-				.catch((err: unknown) => { if ((err as { code?: number }).code !== 409) throw err; })
-				.then(() => bucket.file(zipObject).save(PREBUILT_ZIP, { contentType: 'application/zip', resumable: false })),
+			bucket
+				.create({ location: gcpRegion })
+				.catch((err: unknown) => {
+					if ((err as { code?: number }).code !== 409) throw err;
+				})
+				.then(() =>
+					bucket
+						.file(zipObject)
+						.save(PREBUILT_ZIP, { contentType: 'application/zip', resumable: false }),
+				),
 
 			// Enable required APIs
 			enableRequiredApis(restAuth, projectId),
@@ -259,7 +281,13 @@ async function enableRequiredApis(auth: OAuth2Client, projectId: string): Promis
 
 async function pollUntilDone(
 	getFn: () => Promise<{ data: { done?: boolean | null; error?: unknown } }>,
-	opts: { initialDelayMs: number; stepMs: number; maxDelayMs: number; backoffFactor: number; maxAttempts?: number },
+	opts: {
+		initialDelayMs: number;
+		stepMs: number;
+		maxDelayMs: number;
+		backoffFactor: number;
+		maxAttempts?: number;
+	},
 ): Promise<void> {
 	const maxAttempts = opts.maxAttempts ?? 120;
 	let delay = opts.initialDelayMs;
@@ -271,7 +299,8 @@ async function pollUntilDone(
 			return;
 		}
 		attempts++;
-		delay = delay === 0 ? opts.stepMs : Math.min(Math.ceil(delay * opts.backoffFactor), opts.maxDelayMs);
+		delay =
+			delay === 0 ? opts.stepMs : Math.min(Math.ceil(delay * opts.backoffFactor), opts.maxDelayMs);
 	}
 	throw new Error(`Deployment timed out after ${maxAttempts} polling attempts`);
 }
