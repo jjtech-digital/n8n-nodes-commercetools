@@ -518,10 +518,10 @@ New API endpoints and fields appear in the node automatically without manual dev
 
 | Version | Changes                                                                                                                     |
 | ------- | ----------------------------------------------------------------------------------------------------------------------------|
+| v1.0.16 | Readme Update                                                                                                   |  
 | v1.0.15 | Migrated AWS infrastructure to SDK v3 (`@aws-sdk/client-*`); cross-platform postbuild script (`scripts/copyLambda.js`) fixes Windows build; lambda handlers now correctly copied to `dist/`; CI workflow adds test step and npm cache; ESLint allows `console.warn`/`console.error` for infrastructure logging |
 | v1.0.14 | Added Product Discounts, Product Types, Product Projections, Tax Categories, Attribute Groups, API Clients, Recurring Orders, Recurrence Policies, Discount Groups, and In-Store Endpoints |
-| v1.0.13 | Added Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes |
-| v1.0.12 | Added Approval Rules, Approval Flows, and Associate Endpoints                                 
+| v1.0.13 | Added Standalone Prices, Stores, Product Tailoring, Customer Groups, Product Selections, Cart Discounts, and Discount Codes |                              
 ---
 
 ## License
