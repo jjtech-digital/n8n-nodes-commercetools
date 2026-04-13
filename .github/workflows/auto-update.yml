@@ -9,7 +9,7 @@
 # already runs "npm run update" (generate + build) before any npm publish.
 #
 # Flow:
-#   download → diff check → generate → BUILD VERIFY → commit sources only
+#   download → diff check → generate → BUILD VERIFY → discard dist/ → commit sources only
 
 name: Auto-Update from Postman Collection
 
@@ -69,14 +69,20 @@ jobs:
 
       # Verify the generated properties.ts / subscription.properties.ts still
       # compile correctly with Commercetools.node.ts and CommercetoolsTrigger.node.ts
-      # before touching main. dist/ is discarded after this step — never committed.
+      # before touching main.
+      #
+      # IMPORTANT: dist/ may be tracked in git from a previous force-commit.
+      # Running "npm run build" would leave modified/deleted dist/ files in the
+      # working tree and pollute the commit step. We explicitly restore dist/
+      # afterwards so only the generated source files remain dirty.
       - name: Verify build compiles cleanly
         if: >
           github.event_name == 'workflow_dispatch' ||
           steps.check_diff.outputs.changed == 'true'
         run: |
           npm run build
-          echo "✅ Build passed — generated files are safe to commit"
+          git restore dist/ 2>/dev/null || true
+          echo "✅ Build passed — dist/ discarded, generated source files are safe to commit"
 
       - name: Show what changed
         if: steps.check_diff.outputs.changed == 'true'
@@ -92,7 +98,7 @@ jobs:
             | grep '^\+.*"name"' | head -20 || true
 
       # Only commit generated SOURCE files — never dist/.
-      # dist/ stays gitignored; it was only needed for the build verify above.
+      # dist/ was already discarded by the build verify step above.
       - name: Commit regenerated files
         if: >
           github.event_name == 'workflow_dispatch' ||
