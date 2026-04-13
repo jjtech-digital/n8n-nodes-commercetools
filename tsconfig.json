@@ -18,11 +18,11 @@
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
 		"incremental": true,
-		"tsBuildInfoFile": ".tsbuildinfo",
 		"declaration": true,
 		"sourceMap": true,
 		"skipLibCheck": true,
-		"outDir": "./dist/"
+		"outDir": "./dist/",
+		"rootDir": "."
 	},
-	"include": ["credentials/**/*", "nodes/**/*", "nodes/**/*.json", "scripts/**/*", "package.json"]
+	"include": ["nodes/**/*", "credentials/**/*", "scripts/**/*"]
 }
