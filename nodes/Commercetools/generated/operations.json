@@ -6316,7 +6316,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "\nCreates a Cart in the Project.\n\nIf the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "\nCreates a Cart in the Project.\n\nIf the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match, or if the Shipping Method is not active, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nWhen using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:\n- If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.\n- If none of the Line Items can be reserved, the Cart creation fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -10213,6 +10213,54 @@
     "secondaryIdPlaceholder": "order-id",
     "storeKeyPlaceholder": "store-key"
   },
+  "setReservationExpirationInMinutes": {
+    "name": "SetReservationExpirationInMinutes",
+    "value": "setReservationExpirationInMinutes",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/carts/{{cart-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setReservationExpirationInMinutes",
+            "reservationExpirationInMinutes": 20
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "reservationExpirationInMinutes",
+        "type": "number",
+        "required": false,
+        "example": 20,
+        "description": "Reservation Expiration In Minutes"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Cart in a [Store](ctp:api:type:Store) using one or more [update actions](/../api/projects/carts#update-actions).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "folder": "In-store/Carts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "secondaryIdPlaceholder": "cart-id",
+    "storeKeyPlaceholder": "store-key"
+  },
   "setShippingAddress": {
     "name": "SetShippingAddress",
     "value": "setShippingAddress",
@@ -11956,7 +12004,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an Order from a Cart.\n\nThe Cart must have a shipping address and an active Shipping Method set.\n\nThe shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates an Order from a Cart.\n\nThe Cart must have a shipping address set.\n\nThe shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -17176,7 +17224,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an InventoryEntry in the Project.\n\nIf quantity limits are provided, existing Line Items that reference a Product Variant with an SKU that matches the Inventory Entry can be affected. For more information, see [Quantity limits](/../api/carts-orders-overview#quantity-limits).\n\nProduces the [InventoryEntryCreated](ctp:api:type:InventoryEntryCreatedMessage) Message.\n",
+    "description": "Creates an InventoryEntry in the Project. Only one InventoryEntry can be created for a combination of a SKU and a supply channel.\n\nIf quantity limits are provided, existing Line Items that reference a Product Variant with an SKU that matches the Inventory Entry can be affected. For more information, see [Quantity limits](/../api/inventory-overview#quantity-limits).\n\nProduces the [InventoryEntryCreated](ctp:api:type:InventoryEntryCreatedMessage) Message.\n",
     "folder": "Inventory",
     "subFolder": "",
     "isUpdateAction": false,
@@ -17422,6 +17470,52 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "setReorderPoint": {
+    "name": "SetReorderPoint",
+    "value": "setReorderPoint",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setReorderPoint",
+            "quantity": 100
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 100,
+        "description": "Quantity"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "setRestockableInDays": {
     "name": "SetRestockableInDays",
     "value": "setRestockableInDays",
@@ -17455,6 +17549,52 @@
         "required": false,
         "example": 7,
         "description": "Restockable In Days"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Inventory",
+    "folder": "Inventory",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setSafetyStock": {
+    "name": "SetSafetyStock",
+    "value": "setSafetyStock",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/inventory/{{inventory-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setSafetyStock",
+            "quantity": 50
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "quantity",
+        "type": "number",
+        "required": false,
+        "example": 50,
+        "description": "Quantity"
       }
     ],
     "queryParams": [
@@ -27160,7 +27300,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an Order from a [Cart](ctp:api:type:Cart) in a [BusinessUnit](ctp:api:type:BusinessUnit).\n\nThe Cart must have a shipping address and an active Shipping Method set.\n\nIf the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter, an [InvalidOperation](ctp:api:type:InvalidOperationError) is returned.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates an Order from a [Cart](ctp:api:type:Cart) in a [BusinessUnit](ctp:api:type:BusinessUnit).\n\nThe Cart must have a shipping address set.\n\nIf the Cart does not reference the same BusinessUnit as the `businessUnitKey` path parameter, an [InvalidOperation](ctp:api:type:InvalidOperationError) is returned.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "As-associate/In-business-unit/Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36002,7 +36142,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).\n\nThe `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).\n",
     "folder": "Recurrence-policies",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -36066,7 +36206,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Retrieves a Recurrence Policy with the provided `key`.\n\nThe `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Retrieves a Recurrence Policy with the provided `key`.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36083,7 +36223,7 @@
     "bodyFields": [],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Checks if a Recurrence Policy exists with the provided `key`. Returns a `200` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.\n\nThe `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Checks if a Recurrence Policy exists with the provided `key`. Returns a `200` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36130,7 +36270,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).\n\nThe `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36150,7 +36290,7 @@
       "version",
       "expand"
     ],
-    "description": "Deletes a Recurrence Policy in the Project.\n\nA Recurrence Policy can be deleted only if it is not referenced by any Embedded Price, Standalone Price, or (Custom) Line Item, otherwise a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n\nThe `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Deletes a Recurrence Policy in the Project.\n\nA Recurrence Policy can be deleted only if it is not referenced by any Embedded Price, Standalone Price, or (Custom) Line Item, otherwise a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36169,7 +36309,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Retrieves a Recurrence Policy with the provided `id`.\n\nThe `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Retrieves a Recurrence Policy with the provided `id`.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36185,7 +36325,7 @@
     "bodyFields": [],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Checks if a Recurrence Policy exists with the provided `id`. Returns a `200` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.\n\nThe `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Checks if a Recurrence Policy exists with the provided `id`. Returns a `200` status if the Recurrence Policy exists, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36231,7 +36371,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).\n\nThe `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Updates a Recurrence Policy using one or more [update actions](/../api/projects/recurrence-policies#update-actions).\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36250,7 +36390,7 @@
       "version",
       "expand"
     ],
-    "description": "Deletes a Recurrence Policy in the Project.\n\nA Recurrence Policy can be deleted only if it is not referenced by any Embedded Price, Standalone Price, or (Custom) Line Item, otherwise a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n\nThe `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Deletes a Recurrence Policy in the Project.\n\nA Recurrence Policy can be deleted only if it is not referenced by any Embedded Price, Standalone Price, or (Custom) Line Item, otherwise a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36273,7 +36413,7 @@
       "withTotal",
       "where"
     ],
-    "description": "Retrieves Recurrence Policies in the Project.\n\nThe `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Retrieves Recurrence Policies in the Project.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36291,7 +36431,7 @@
     "queryParams": [
       "where"
     ],
-    "description": "Checks if one or more Recurrence Policies exist for the provided query predicate. Returns a `200` status if any Recurrence Policies match the query predicate, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.\n\nThe `view_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `view_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Checks if one or more Recurrence Policies exist for the provided query predicate. Returns a `200` status if any Recurrence Policies match the query predicate, or a [NotFound](ctp:api:type:ResourceNotFoundError) error otherwise.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -36347,7 +36487,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates a Recurrence Policy in the Project.\n\nThe `manage_recurring_orders:{projectKey}` scope is deprecated for use on this endpoint. Update your clients to use the `manage_recurrence_policies:{projectKey}` scope instead. For more information, see the [Deprecations and removals](/api/deprecations-and-removals#recurrence-policies) list.\n",
+    "description": "Creates a Recurrence Policy in the Project.\n",
     "folder": "Recurrence-policies",
     "subFolder": "",
     "isUpdateAction": false,
@@ -38786,7 +38926,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an Order from a Cart in a [Store](ctp:api:type:Store).\nThe Cart must have a shipping address and an active Shipping Method set.\n\nThe shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n",
+    "description": "Creates an Order from a Cart in a [Store](ctp:api:type:Store).\nThe Cart must have a shipping address set.\n\nThe shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n",
     "folder": "In-store/Orders",
     "subFolder": "",
     "isUpdateAction": false,
