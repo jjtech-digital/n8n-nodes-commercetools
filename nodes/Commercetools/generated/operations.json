@@ -5925,7 +5925,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Creates a new Cart by replicating an existing Cart or Order.\n\nThe following applies to the new Cart:\n\n- It contains the same Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the originating Cart or Order.\n- If a Line Item becomes invalid, it is removed from the new Cart. A common reason for this is removed Products or Prices.\n- Line items and Custom Line Items are reset to their initial [state](/projects/carts#itemstate).\n- It contains no payments or delivery information.\n- It contains up-to-date Tax Rates, Prices, and Line Item product data.\n- The [CartState](/projects/carts#cartstate) is `Active`.\n- If using the `customerGroup` field (for a single Customer Group) and the referenced Customer switched to another Customer Group, the new Cart is automatically updated to reflect the new group and corresponding prices.\n- If using the `customerGroupAssignments` field (for multiple Customer Groups), the Cart no longer keeps a direct reference to a Customer Group. If a Customer’s group assignments change, the Cart and its Line Item prices are not updated automatically. Prices are only updated when the Cart is changed via a [direct update action](/projects/carts#update-actions).\n\nSpecific Error Codes:\n\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates a new Cart by replicating an existing Cart or Order.\n\nThe following applies to the new Cart:\n\n- It contains the same Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the originating Cart or Order.\n- If a Line Item becomes invalid, it is removed from the new Cart. A common reason for this is removed Products or Prices.\n- Line items and Custom Line Items are reset to their initial [state](/projects/carts#itemstate).\n- It contains no payments or delivery information.\n- It contains up-to-date Tax Rates, Prices, and Line Item product data.\n- The [CartState](ctp:api:type:CartState) is `Active`.\n- If using the `customerGroup` field (for a single Customer Group) and the referenced Customer switched to another Customer Group, the new Cart is automatically updated to reflect the new group and corresponding prices.\n- If using the `customerGroupAssignments` field (for multiple Customer Groups), the Cart no longer keeps a direct reference to a Customer Group. If a Customer’s group assignments change, the Cart and its Line Item prices are not updated automatically. Prices are only updated when the Cart is changed via a [direct update action](/projects/carts#update-actions).\n\nSpecific Error Codes:\n\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -11582,7 +11582,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an OrderEdit in the Project.\nYou can either create multiple Order Edits for an Order and apply them sequentially to an Order, or create multiple Order Edits parallelly (as alternatives to each other) and apply one of them to the Order.\n\nYou can only create an Order Edit if the [InventoryMode](/projects/carts#inventorymode) of the Order and its [LineItems](/projects/carts#lineitem) is `None`.\n",
+    "description": "Creates an OrderEdit in the Project.\nYou can either create multiple Order Edits for an Order and apply them sequentially to an Order, or create multiple Order Edits parallelly (as alternatives to each other) and apply one of them to the Order.\n\nYou can only create an Order Edit if the [InventoryMode](ctp:api:type:InventoryMode) of the Order and its [LineItems](/projects/carts#lineitem) is `None`.\n",
     "folder": "Orders",
     "subFolder": "Edits",
     "isUpdateAction": false,
@@ -22517,7 +22517,7 @@
       "expand",
       "sort"
     ],
-    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](/projects/zones#location).\n\nThe following applies:\n\n- ShippingMethods that have a `predicate` defined are automatically disqualified.\n- If the `currency` parameter is provided, then the ShippingMethods must also have a rate defined in the specified currency.\n- Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.\n- If the `currency` parameter is provided, exactly one ShippingRate will contain it.\n- If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
+    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location).\n\nThe following applies:\n\n- ShippingMethods that have a `predicate` defined are automatically disqualified.\n- If the `currency` parameter is provided, then the ShippingMethods must also have a rate defined in the specified currency.\n- Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.\n- If the `currency` parameter is provided, exactly one ShippingRate will contain it.\n- If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
     "folder": "Shipping-methods",
     "subFolder": "",
     "isUpdateAction": false,
@@ -37872,7 +37872,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Creates a new Cart in a [Store](ctp:api:type:Store) by replicating an existing Cart or Order.\n\nThe following applies to the new Cart:\n\n- It contains the same Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the originating Cart or Order.\n- If a Line Item becomes invalid, it is removed from the new Cart. A common reason for this is removed Products or Prices.\n- Line items and Custom Line Items are reset to their initial [state](/projects/carts#itemstate).\n- It contains no payments or delivery information.\n- It contains up-to-date Tax Rates, Prices, and Line Item product data.\n- The [CartState](/projects/carts#cartstate) is `Active`.\n- If using the `customerGroup` field (for a single Customer Group) and the referenced Customer switched to another Customer Group, the new Cart is automatically updated to reflect the new group and corresponding prices.\n- If using the `customerGroupAssignments` field (for multiple Customer Groups), the Cart no longer keeps a direct reference to a Customer Group. If a Customer’s group assignments change, the Cart and its Line Item prices are not updated automatically. Prices are only updated when the Cart is changed via a [direct update action](/projects/carts#update-actions).\n\nSpecific Error Codes:\n\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates a new Cart in a [Store](ctp:api:type:Store) by replicating an existing Cart or Order.\n\nThe following applies to the new Cart:\n\n- It contains the same Customer information, Line Items and Custom Line Items, Custom Fields, Discount Codes, and other settings of the originating Cart or Order.\n- If a Line Item becomes invalid, it is removed from the new Cart. A common reason for this is removed Products or Prices.\n- Line items and Custom Line Items are reset to their initial [state](/projects/carts#itemstate).\n- It contains no payments or delivery information.\n- It contains up-to-date Tax Rates, Prices, and Line Item product data.\n- The [CartState](ctp:api:type:CartState) is `Active`.\n- If using the `customerGroup` field (for a single Customer Group) and the referenced Customer switched to another Customer Group, the new Cart is automatically updated to reflect the new group and corresponding prices.\n- If using the `customerGroupAssignments` field (for multiple Customer Groups), the Cart no longer keeps a direct reference to a Customer Group. If a Customer’s group assignments change, the Cart and its Line Item prices are not updated automatically. Prices are only updated when the Cart is changed via a [direct update action](/projects/carts#update-actions).\n\nSpecific Error Codes:\n\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "In-store/Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39556,7 +39556,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Retrieves a ShoppingList with the provided `key` in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](/errors#404-not-found-1) error is returned.\n",
+    "description": "Retrieves a ShoppingList with the provided `key` in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n",
     "folder": "In-store/Shopping-lists",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39626,7 +39626,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/shoppingLists#update-actions).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](/errors#404-not-found-1) error is returned.\n",
+    "description": "Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/shoppingLists#update-actions).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n",
     "folder": "In-store/Shopping-lists",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39648,7 +39648,7 @@
       "dataErasure",
       "version"
     ],
-    "description": "Deletes a ShoppingList in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](/errors#404-not-found-1) error is returned.\n",
+    "description": "Deletes a ShoppingList in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n",
     "folder": "In-store/Shopping-lists",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39668,7 +39668,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Retrieves a ShoppingList with the provided `id` in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](/errors#404-not-found-1) error is returned.\n",
+    "description": "Retrieves a ShoppingList with the provided `id` in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n",
     "folder": "In-store/Shopping-lists",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39738,7 +39738,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/shoppingLists#update-actions).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](/errors#404-not-found-1) error is returned.\n",
+    "description": "Updates a ShoppingList in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/shoppingLists#update-actions).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n",
     "folder": "In-store/Shopping-lists",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39760,7 +39760,7 @@
       "dataErasure",
       "version"
     ],
-    "description": "Deletes a ShoppingList in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](/errors#404-not-found-1) error is returned.\n",
+    "description": "Deletes a ShoppingList in a [Store](ctp:api:type:Store).\nIf a ShoppingList exists in a Project but does _not_ have the `store` field, or the `store` field references a different Store,\nthe [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n",
     "folder": "In-store/Shopping-lists",
     "subFolder": "",
     "isUpdateAction": false,
