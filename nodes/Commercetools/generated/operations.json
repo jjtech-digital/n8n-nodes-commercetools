@@ -2306,6 +2306,64 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "setDefaultVariant": {
+    "name": "SetDefaultVariant",
+    "value": "setDefaultVariant",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/products/{{product-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setDefaultVariant",
+            "variant": {
+              "typeId": "variant",
+              "id": "placeholder"
+            }
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "variant",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "variant",
+          "id": "placeholder"
+        },
+        "description": "Variant"
+      }
+    ],
+    "queryParams": [
+      "priceCurrency",
+      "priceCountry",
+      "priceCustomerGroup",
+      "priceCustomerGroupAssignments",
+      "priceChannel",
+      "priceRecurrencePolicy",
+      "expand"
+    ],
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "folder": "Products",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "setDescription": {
     "name": "SetDescription",
     "value": "setDescription",
@@ -12004,7 +12062,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an Order from a Cart.\n\nThe Cart must have a shipping address set.\n\nThe shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates an Order from a Cart.\n\nThe Cart must have a shipping address set.\n\nThe shipping address is used for tax calculation for a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode).\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated instead of the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -34410,6 +34468,27 @@
     "requiresKey": false,
     "requiresVersion": false
   },
+  "getVariantAttributes": {
+    "name": "Get Variant Attributes",
+    "value": "getVariantAttributes",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/product-projections/{{product-projection-id}}/variant-attributes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "staged",
+      "localeProjection",
+      "filter[attributes]",
+      "filter[supplyChannels]"
+    ],
+    "description": "Returns a lightweight representation of all Variants for a [Product](ctp:api:type:Product), including only the requested variant-level [Attributes](ctp:api:type:Attribute) and minimal availability data.\n\nDesigned for building attribute selectors on product detail pages (PDPs) with large numbers of variants.\nOnly available for Projects with [productCatalogModel](ctp:api:type:ProductCatalogModel) set to `Modular`.\n\nProduct-level Attributes are omitted from the response.\n\nRequired access scopes:\n\n- To retrieve the current representation of published Products (published data), the `view_published_products:{projectKey}` or `view_products:{projectKey}` scope is required.\n- To retrieve the staged representation of Products (draft data), the API Client must have the `view_products:{projectKey}` scope.\n",
+    "folder": "Product-projections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": false
+  },
   "getProductProjectionByKey": {
     "name": "Get ProductProjection by Key",
     "value": "getProductProjectionByKey",
@@ -40224,6 +40303,29 @@
     "requiresId": true,
     "requiresKey": true,
     "requiresVersion": false,
+    "storeKeyPlaceholder": "store-key"
+  },
+  "getVariantAttributesInStore": {
+    "name": "Get Variant Attributes in Store",
+    "value": "getVariantAttributesInStore",
+    "method": "GET",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/product-projections/{{product-projection-id}}/variant-attributes",
+    "bodyFields": [],
+    "actionBodyFields": [],
+    "queryParams": [
+      "staged",
+      "localeProjection",
+      "filter[attributes]",
+      "filter[supplyChannels]"
+    ],
+    "description": "Returns a lightweight representation of all Variants for a [Product](ctp:api:type:Product), including only the requested variant-level [Attributes](ctp:api:type:Attribute) and minimal availability data, scoped to a specific [Store](ctp:api:type:Store).\n\nDesigned for building attribute selectors on product detail pages (PDPs) with large numbers of variants.\nOnly available for Projects with [productCatalogModel](ctp:api:type:ProductCatalogModel) set to `Modular`.\n\nProduct-level Attributes are omitted from the response.\n\nRequired access scopes:\n\n- To retrieve the current representation of published Products (published data), the `view_published_products:{projectKey}` and `view_products:{projectKey}:{storeKey}` scope is required.\n- To retrieve the staged representation of Products (draft data), the API Client must have the `view_products:{projectKey}` and `view_products:{projectKey}:{storeKey}` scope.\n",
+    "folder": "In-store/Product-projections",
+    "subFolder": "",
+    "isUpdateAction": false,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": false,
+    "secondaryIdPlaceholder": "product-projection-id",
     "storeKeyPlaceholder": "store-key"
   },
   "getProductProjectionInStoreByKey": {
