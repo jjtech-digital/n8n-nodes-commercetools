@@ -113,7 +113,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "A failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "",
     "isUpdateAction": false,
@@ -281,7 +281,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "",
     "isUpdateAction": false,
@@ -562,7 +562,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "To create a new Product, send a representation that is going to become the initial _staged_ and _current_ representation of the new Product in the catalog.\nIf [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, selected Prices will be added to the response.\nProduces the [ProductCreated](/projects/messages/product-catalog-messages#product-created) Message.\n",
+    "description": "To create a new Product, send a representation that is going to become the initial _staged_ and _current_ representation of the new Product in the catalog.\nIf [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, selected Prices will be added to the response.\nProduces the [ProductCreated](/projects/messages/product-catalog-messages#product-created) Message.\n\nA failed response can return an [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError) error.\n",
     "folder": "Products",
     "subFolder": "",
     "isUpdateAction": false,
@@ -774,7 +774,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -832,7 +832,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -1066,7 +1066,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -1192,7 +1192,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -1455,7 +1455,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -1561,7 +1561,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -1650,7 +1650,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -1702,7 +1702,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -2298,7 +2298,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -2356,7 +2356,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -2836,7 +2836,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -2888,7 +2888,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -2974,7 +2974,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -3096,7 +3096,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -3174,7 +3174,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -3234,7 +3234,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -3336,7 +3336,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -3396,7 +3396,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -3454,7 +3454,7 @@
       "priceRecurrencePolicy",
       "expand"
     ],
-    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
+    "description": "If [Product price selection query parameters](/api/pricing-and-discounts-overview#product-price-selection) are provided, the selected Prices are added to the response.\n\nA failed response can return a [DuplicatePriceScope](ctp:api:type:DuplicatePriceScopeError), [OverlappingPriceValidity](ctp:api:type:OverlappingPriceValidityError), [DuplicateVariantValues](ctp:api:type:DuplicateVariantValuesError), [DuplicateAttributeValue](ctp:api:type:DuplicateAttributeValueError), or [DuplicateAttributeValues](ctp:api:type:DuplicateAttributeValuesError) error.",
     "folder": "Products",
     "subFolder": "Update actions",
     "isUpdateAction": true,
