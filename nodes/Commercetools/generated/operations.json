@@ -6068,7 +6068,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, the anonymous Cart becomes the Customer's active Cart.\nFor more information about merge mode behaviors, merge rules, and tax recalculation, see [Merge a Cart](/api/carts-orders-overview#merge-a-cart).\n",
+    "description": "Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, the anonymous Cart becomes the Customer's active Cart.\nFor more information about merge mode behaviors, merge rules, and tax recalculation, see [Merge a Cart](/api/carts-orders-overview#merge-a-cart).\n\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n",
     "folder": "Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -6374,7 +6374,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "\nCreates a Cart in the Project.\n\nAn [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned in one of the following cases:\n  1. If the referenced Shipping Method has a predicate that does not match the Cart.\n  2. If the referenced Shipping Method is not active.\n  3. If the referenced Shipping Method is associated with a Store that is different from the Cart's Store.\n  4. If the referenced Shipping Method is associated with a Store and the Cart is not associated with any Store.\n\nWhen using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:\n- If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.\n- If none of the Line Items can be reserved, the Cart creation fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "\nCreates a Cart in the Project.\n\nWhen using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:\n- If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.\n- If none of the Line Items can be reserved, the Cart creation fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method has a predicate that does not match the Cart.\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n",
     "folder": "Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -11196,7 +11196,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "\nCreates an Order from a Quote. The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nProduces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nSpecific Error Codes:\n\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [OutOfStock](ctp:api:type:OutOfStockError)\n",
+    "description": "\nCreates an Order from a Quote. The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nProduces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nSpecific Error Codes:\n\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Store referenced by the [Quote](ctp:api:type:Quote).\n    - The referenced Shipping Method is scoped to a Store, but the [Quote](ctp:api:type:Quote) does not belong to a Store.\n- [OutOfStock](ctp:api:type:OutOfStockError)\n",
     "folder": "Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -12062,7 +12062,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates an Order from a Cart.\n\nThe Cart must have a shipping address set, regardless of the [TaxMode](ctp:api:type:TaxMode).\n\nFor a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode), the shipping address is used for tax calculation.\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated instead of the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates an Order from a Cart.\n\nThe Cart must have a shipping address set, regardless of the [TaxMode](ctp:api:type:TaxMode).\n\nFor a Cart with `Platform` [TaxMode](ctp:api:type:TaxMode), the shipping address is used for tax calculation.\n\nCreating an Order produces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message. If the Order is created from a Recurring Order schedule, the [OrderCreatedFromRecurringOrder](ctp:api:type:OrderCreatedFromRecurringOrderMessage) Message is generated instead of the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nIf a server-side problem occurs, indicated by a 500 Internal Server Error HTTP response, the Order creation may still successfully complete after the error is returned.\nIf you receive this error, you should verify the status of the Order by querying a unique identifier supplied during the creation request, such as the Order number.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [PriceChanged](ctp:api:type:PriceChangedError)\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [ShippingMethodDoesNotMatchCart](ctp:api:type:ShippingMethodDoesNotMatchCartError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
     "folder": "Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -25560,7 +25560,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates a StagedQuote in the Project.",
+    "description": "Creates a StagedQuote in the Project.\n\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Store referenced by the [Quote Request](ctp:api:type:QuoteRequest).\n    - The referenced Shipping Method is scoped to a Store, but the [Quote Request](ctp:api:type:QuoteRequest) does not belong to a Store.\n",
     "folder": "Staged-quotes",
     "subFolder": "",
     "isUpdateAction": false,
@@ -27058,7 +27058,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates a Cart in the [BusinessUnit](ctp:api:type:BusinessUnit) referenced by `businessUnitKey`. As such, the `businessUnit` field on [CartDraft](ctp:api:type:CartDraft) is ignored for this request.\nCreating a Cart can fail with an [InvalidOperation](ctp:api:type:InvalidOperationError) if the referenced [ShippingMethod](ctp:api:type:ShippingMethod) in the [CartDraft](ctp:api:type:CartDraft) has a predicate that does not match the Cart.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n",
+    "description": "Creates a Cart in the [BusinessUnit](ctp:api:type:BusinessUnit) referenced by `businessUnitKey`. As such, the `businessUnit` field on [CartDraft](ctp:api:type:CartDraft) is ignored for this request.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method has a predicate that does not match the Cart.\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n",
     "folder": "As-associate/In-business-unit/Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -37794,7 +37794,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, the anonymous Cart becomes the Customer's active Cart.\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n\nFor more information about merge mode behaviors, merge rules, and tax recalculation, see [Merge a Cart](/api/carts-orders-overview#merge-a-cart).\n",
+    "description": "Merges items from an anonymous Cart into the most recently modified active Cart of a Customer. If no active Cart exists, the anonymous Cart becomes the Customer's active Cart.\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error is returned.\n\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n\nFor more information about merge mode behaviors, merge rules, and tax recalculation, see [Merge a Cart](/api/carts-orders-overview#merge-a-cart).\n",
     "folder": "In-store/Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -38145,7 +38145,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates a Cart in a [Store](ctp:api:type:Store).\n\nAn [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned in one of the following cases:\n  1. If the referenced Shipping Method has a predicate that does not match the Cart.\n  2. If the referenced Shipping Method is not active.\n  3. If the referenced Shipping Method is associated with a Store that is different from the Cart's Store.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n",
+    "description": "Creates a Cart in a [Store](ctp:api:type:Store).\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method has a predicate that does not match the Cart.\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n",
     "folder": "In-store/Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -40296,7 +40296,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creates a StagedQuote in a [Store](ctp:api:type:Store).",
+    "description": "Creates a StagedQuote in a [Store](ctp:api:type:Store).\n\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Store referenced by the [Quote Request](ctp:api:type:QuoteRequest).\n    - The referenced Shipping Method is scoped to a Store, but the [Quote Request](ctp:api:type:QuoteRequest) does not belong to a Store.\n",
     "folder": "In-store/Staged-quotes",
     "subFolder": "",
     "isUpdateAction": false,
