@@ -15802,7 +15802,7 @@
       "version",
       "expand"
     ],
-    "description": "Returns a [ReferenceExists](ctp:api:type:ReferenceExistsError) error if other resources reference the Channel to be deleted.\n",
+    "description": "If the Channel is referenced by a resource, a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n",
     "folder": "Channels",
     "subFolder": "",
     "isUpdateAction": false,
@@ -15914,7 +15914,7 @@
       "version",
       "expand"
     ],
-    "description": "Returns a [ReferenceExists](ctp:api:type:ReferenceExistsError) error if other resources reference the Channel to be deleted.\n",
+    "description": "If the Channel is referenced by a resource, a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n",
     "folder": "Channels",
     "subFolder": "",
     "isUpdateAction": false,
@@ -29147,7 +29147,7 @@
       "version",
       "expand"
     ],
-    "description": "null",
+    "description": "If the Store is referenced by a resource, a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n\nTo avoid dependency conflicts, first delete all active and anonymous Carts that reference the Store, then delete all Orders.\n",
     "folder": "Stores",
     "subFolder": "",
     "isUpdateAction": false,
@@ -29251,7 +29251,7 @@
       "version",
       "expand"
     ],
-    "description": "null",
+    "description": "If the Store is referenced by a resource, a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n\nTo avoid dependency conflicts, first delete all active and anonymous Carts that reference the Store, then delete all Orders.\n",
     "folder": "Stores",
     "subFolder": "",
     "isUpdateAction": false,
@@ -34724,7 +34724,7 @@
       "version",
       "expand"
     ],
-    "description": "null",
+    "description": "If the TaxCategory is referenced by a resource, a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n",
     "folder": "Tax-categories",
     "subFolder": "",
     "isUpdateAction": false,
@@ -34824,7 +34824,7 @@
       "version",
       "expand"
     ],
-    "description": "null",
+    "description": "If the TaxCategory is referenced by a resource, a [ReferenceExists](ctp:api:type:ReferenceExistsError) error is returned.\n",
     "folder": "Tax-categories",
     "subFolder": "",
     "isUpdateAction": false,
