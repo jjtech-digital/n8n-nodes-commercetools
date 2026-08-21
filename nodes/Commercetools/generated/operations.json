@@ -2476,7 +2476,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -9351,6 +9351,60 @@
     "requiresKey": true,
     "requiresVersion": true,
     "secondaryIdPlaceholder": "cart-id",
+    "storeKeyPlaceholder": "store-key"
+  },
+  "setEstimatedDelivery": {
+    "name": "SetEstimatedDelivery",
+    "value": "setEstimatedDelivery",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/orders/{{order-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setEstimatedDelivery",
+            "estimatedDelivery": {
+              "from": "2026-05-25T08:00:00.000Z",
+              "until": "2026-05-27T20:00:00.000Z"
+            }
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "estimatedDelivery",
+        "type": "json",
+        "required": false,
+        "example": {
+          "from": "2026-05-25T08:00:00.000Z",
+          "until": "2026-05-27T20:00:00.000Z"
+        },
+        "description": "Estimated Delivery"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates an Order in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/orders#update-actions).\nIf the Order exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "folder": "In-store/Orders",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "secondaryIdPlaceholder": "order-id",
     "storeKeyPlaceholder": "store-key"
   },
   "setItemShippingAddressCustomField": {
@@ -22995,7 +23049,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -23210,6 +23264,52 @@
           "id": "placeholder"
         },
         "description": "Zone"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a ShippingMethod in the Project using one or more [update actions](/api/projects/shippingMethods#update-actions).",
+    "folder": "Shipping-methods",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setCarrier": {
+    "name": "SetCarrier",
+    "value": "setCarrier",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/shipping-methods/{{shipping-method-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setCarrier",
+            "carrier": "DHL"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "carrier",
+        "type": "string",
+        "required": false,
+        "example": "DHL",
+        "description": "Carrier"
       }
     ],
     "queryParams": [
@@ -28326,7 +28426,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "",
     "isUpdateAction": false,
@@ -28433,7 +28533,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "",
     "isUpdateAction": false,
@@ -28583,7 +28683,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Creating a Standalone Price produces the [StandalonePriceCreated](ctp:api:type:StandalonePriceCreatedMessage) Message.\n\n- If the Standalone Price has the same price scope as an existing Standalone Price, a [DuplicateStandalonePriceScope](ctp:api:type:DuplicateStandalonePriceScopeError) error is returned.\n- If the Standalone Price has overlapping validity periods within the same price scope, a [OverlappingStandalonePriceValidity](ctp:api:type:OverlappingStandalonePriceValidityError) error is returned. A Price without validity period does not conflict with a Price defined for a time period.\n- If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "Creating a Standalone Price produces the [StandalonePriceCreated](ctp:api:type:StandalonePriceCreatedMessage) Message.\n\n- If the Standalone Price has the same price scope as an existing Standalone Price, a [DuplicateStandalonePriceScope](ctp:api:type:DuplicateStandalonePriceScopeError) error is returned.\n- If the Standalone Price has overlapping validity periods within the same price scope, a [OverlappingStandalonePriceValidity](ctp:api:type:OverlappingStandalonePriceValidityError) error is returned. A Price without validity period does not conflict with a Price defined for a time period.\n- If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n- If a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "",
     "isUpdateAction": false,
@@ -28643,7 +28743,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -28680,7 +28780,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -28778,7 +28878,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -28815,7 +28915,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -28895,7 +28995,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) or [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
+    "description": "If a modification is already in progress for the exact combination of SKU and price scope fields, an [ExactLockConflict](ctp:api:type:ExactLockConflictError) error is returned.\n\nIf a modification is already in progress for the combination of SKU and price scope fields (but potentially different validity period), a [ValidityLockConflict](ctp:api:type:ValidityLockConflictError) error is returned.\n",
     "folder": "Standalone-prices",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -29815,6 +29915,144 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "setCheckoutUrlTemplate": {
+    "name": "SetCheckoutUrlTemplate",
+    "value": "setCheckoutUrlTemplate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setCheckoutUrlTemplate",
+            "checkoutUrlTemplate": "https://example.com/checkout/{checkoutId}"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "checkoutUrlTemplate",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/checkout/{checkoutId}",
+        "description": "Checkout Url Template"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setContactUrl": {
+    "name": "SetContactUrl",
+    "value": "setContactUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setContactUrl",
+            "contactUrl": "https://example.com/contact"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "contactUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/contact",
+        "description": "Contact Url"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setCookiePolicyUrl": {
+    "name": "SetCookiePolicyUrl",
+    "value": "setCookiePolicyUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setCookiePolicyUrl",
+            "cookiePolicyUrl": "https://example.com/cookies"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "cookiePolicyUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/cookies",
+        "description": "Cookie Policy Url"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "setCountries": {
     "name": "SetCountries",
     "value": "setCountries",
@@ -29931,6 +30169,98 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "setFaqUrl": {
+    "name": "SetFaqUrl",
+    "value": "setFaqUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setFaqUrl",
+            "faqUrl": "https://example.com/faq"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "faqUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/faq",
+        "description": "Faq Url"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setImprintUrl": {
+    "name": "SetImprintUrl",
+    "value": "setImprintUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setImprintUrl",
+            "imprintUrl": "https://example.com/imprint"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "imprintUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/imprint",
+        "description": "Imprint Url"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "setLanguages": {
     "name": "SetLanguages",
     "value": "setLanguages",
@@ -29968,6 +30298,98 @@
           "en"
         ],
         "description": "Languages"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setOrderUrlTemplate": {
+    "name": "SetOrderUrlTemplate",
+    "value": "setOrderUrlTemplate",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setOrderUrlTemplate",
+            "orderUrlTemplate": "https://example.com/orders/{orderId}"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "orderUrlTemplate",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/orders/{orderId}",
+        "description": "Order Url Template"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setPrivacyPolicyUrl": {
+    "name": "SetPrivacyPolicyUrl",
+    "value": "setPrivacyPolicyUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setPrivacyPolicyUrl",
+            "privacyPolicyUrl": "https://example.com/privacy"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "privacyPolicyUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/privacy",
+        "description": "Privacy Policy Url"
       }
     ],
     "queryParams": [
@@ -30057,6 +30479,98 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "setRefundPolicyUrl": {
+    "name": "SetRefundPolicyUrl",
+    "value": "setRefundPolicyUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setRefundPolicyUrl",
+            "refundPolicyUrl": "https://example.com/refunds"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "refundPolicyUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/refunds",
+        "description": "Refund Policy Url"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setShippingPolicyUrl": {
+    "name": "SetShippingPolicyUrl",
+    "value": "setShippingPolicyUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setShippingPolicyUrl",
+            "shippingPolicyUrl": "https://example.com/shipping"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "shippingPolicyUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/shipping",
+        "description": "Shipping Policy Url"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "setSupplyChannels": {
     "name": "SetSupplyChannels",
     "value": "setSupplyChannels",
@@ -30100,6 +30614,52 @@
           }
         ],
         "description": "Supply Channels"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Stores",
+    "folder": "Stores",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setTermsOfServiceUrl": {
+    "name": "SetTermsOfServiceUrl",
+    "value": "setTermsOfServiceUrl",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/stores/{{store-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setTermsOfServiceUrl",
+            "termsOfServiceUrl": "https://example.com/terms"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "termsOfServiceUrl",
+        "type": "string",
+        "required": false,
+        "example": "https://example.com/terms",
+        "description": "Terms Of Service Url"
       }
     ],
     "queryParams": [
