@@ -20184,6 +20184,68 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "removeEnumValues": {
+    "name": "RemoveEnumValues",
+    "value": "removeEnumValues",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-types/{{product-type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "removeEnumValues",
+            "attributeName": "your-attribute-name",
+            "keys": [
+              "enum key to remove 1",
+              "enum key to remove 2",
+              "enum key to remove 3"
+            ]
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "attributeName",
+        "type": "string",
+        "required": false,
+        "example": "your-attribute-name",
+        "description": "Attribute Name"
+      },
+      {
+        "name": "keys",
+        "type": "json",
+        "required": false,
+        "example": [
+          "enum key to remove 1",
+          "enum key to remove 2",
+          "enum key to remove 3"
+        ],
+        "description": "Keys"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductTypes",
+    "folder": "Product-types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "removeFieldDefinition": {
     "name": "RemoveFieldDefinition",
     "value": "removeFieldDefinition",
@@ -20217,6 +20279,66 @@
         "required": false,
         "example": "fieldDefinitionName",
         "description": "Field Name"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post Types",
+    "folder": "Types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeLocalizedEnumValues": {
+    "name": "RemoveLocalizedEnumValues",
+    "value": "removeLocalizedEnumValues",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/types/{{type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "removeLocalizedEnumValues",
+            "fieldName": "exampleLocalizedEnumField",
+            "keys": [
+              "enum1",
+              "enum2"
+            ]
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "fieldName",
+        "type": "string",
+        "required": false,
+        "example": "exampleLocalizedEnumField",
+        "description": "Field Name"
+      },
+      {
+        "name": "keys",
+        "type": "json",
+        "required": false,
+        "example": [
+          "enum1",
+          "enum2"
+        ],
+        "description": "Keys"
       }
     ],
     "queryParams": [
@@ -22508,7 +22630,7 @@
       "cartId",
       "expand"
     ],
-    "description": "Retrieves the active ShippingMethods that can ship to the shipping address of the provided Cart.\n\nEach ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
+    "description": "Retrieves the active ShippingMethods that can ship to the shipping address of the provided Cart.\n\nIf the Cart belongs to a [Store](ctp:api:type:Store), the results include globally scoped ShippingMethods (those with an empty `stores` field) and ShippingMethods scoped to that Store. If the Cart has no Store, only globally scoped ShippingMethods are returned.\n\nEach ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
     "folder": "Shipping-methods",
     "subFolder": "",
     "isUpdateAction": false,
@@ -22547,7 +22669,7 @@
       "cartId",
       "expand"
     ],
-    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location)\nwith a `predicate` that matches the provided Cart.\n\nEach ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
+    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location)\nwith a `predicate` that matches the provided Cart.\n\nIf the Cart belongs to a [Store](ctp:api:type:Store), the results include globally scoped ShippingMethods (those with an empty `stores` field) and ShippingMethods scoped to that Store. If the Cart has no Store, only globally scoped ShippingMethods are returned.\n\nEach ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
     "folder": "Shipping-methods",
     "subFolder": "",
     "isUpdateAction": false,
@@ -22587,7 +22709,7 @@
       "country",
       "state"
     ],
-    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n\nIf the OrderEdit preview cannot be generated, an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is returned.\n",
+    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location) for an [OrderEdit](ctp:api:type:OrderEdit).\n\nStore scoping is evaluated against the Order that results from applying the OrderEdit's staged actions. If the underlying Order belongs to a [Store](ctp:api:type:Store), the results include globally scoped ShippingMethods (those with an empty `stores` field) and ShippingMethods scoped to that Store. If the underlying Order has no Store, only globally scoped ShippingMethods are returned.\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n\nIf the OrderEdit preview cannot be generated, an [EditPreviewFailed](ctp:api:type:EditPreviewFailedError) error is returned.\n",
     "folder": "Shipping-methods",
     "subFolder": "",
     "isUpdateAction": false,
@@ -22629,7 +22751,7 @@
       "expand",
       "sort"
     ],
-    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location).\n\nThe following applies:\n\n- ShippingMethods that have a `predicate` defined are automatically disqualified.\n- If the `currency` parameter is provided, then the ShippingMethods must also have a rate defined in the specified currency.\n- Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.\n- If the `currency` parameter is provided, exactly one ShippingRate will contain it.\n- If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
+    "description": "Retrieves the active ShippingMethods that can ship to the provided [Location](ctp:api:type:Location).\n\nThe following applies:\n\n- ShippingMethods that have a `predicate` defined are included in the results, but the predicate is not evaluated because no Cart is available to evaluate it against. Results are therefore a superset of what any given Cart matches, and using [Set ShippingMethod](ctp:api:type:CartSetShippingMethodAction) with a non-matching ShippingMethod fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n- Store scoping on ShippingMethods is not applied by this endpoint. The results include all active ShippingMethods that match the location regardless of their `stores` field.\n- If the `currency` parameter is provided, then the ShippingMethods must also have a rate defined in the specified currency.\n- Each ShippingMethod contains at least one ShippingRate with the flag `isMatching` set to `true`.\n- If the `currency` parameter is provided, exactly one ShippingRate will contain it.\n- If a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
     "folder": "Shipping-methods",
     "subFolder": "",
     "isUpdateAction": false,
@@ -34832,68 +34954,6 @@
     "requiresKey": false,
     "requiresVersion": true
   },
-  "removeEnumValues": {
-    "name": "RemoveEnumValues",
-    "value": "removeEnumValues",
-    "method": "POST",
-    "urlTemplate": "/{{project-key}}/product-types/{{product-type-id}}",
-    "bodyFields": [
-      {
-        "name": "version",
-        "type": "string",
-        "required": true,
-        "example": "placeholder",
-        "description": "Version"
-      },
-      {
-        "name": "actions",
-        "type": "json",
-        "required": true,
-        "example": [
-          {
-            "action": "removeEnumValues",
-            "attributeName": "your-attribute-name",
-            "keys": [
-              "enum key to remove 1",
-              "enum key to remove 2",
-              "enum key to remove 3"
-            ]
-          }
-        ],
-        "description": "Actions"
-      }
-    ],
-    "actionBodyFields": [
-      {
-        "name": "attributeName",
-        "type": "string",
-        "required": false,
-        "example": "your-attribute-name",
-        "description": "Attribute Name"
-      },
-      {
-        "name": "keys",
-        "type": "json",
-        "required": false,
-        "example": [
-          "enum key to remove 1",
-          "enum key to remove 2",
-          "enum key to remove 3"
-        ],
-        "description": "Keys"
-      }
-    ],
-    "queryParams": [
-      "expand"
-    ],
-    "description": "post ProductTypes",
-    "folder": "Product-types",
-    "subFolder": "Update actions",
-    "isUpdateAction": true,
-    "requiresId": true,
-    "requiresKey": false,
-    "requiresVersion": true
-  },
   "setInputTip": {
     "name": "SetInputTip",
     "value": "setInputTip",
@@ -34953,80 +35013,6 @@
     "requiresId": true,
     "requiresKey": false,
     "requiresVersion": true
-  },
-  "productProjectionSearchWithPost": {
-    "name": "Product Projection Search with POST",
-    "value": "productProjectionSearchWithPost",
-    "method": "POST",
-    "urlTemplate": "/{{project-key}}/product-projections/search",
-    "bodyFields": [],
-    "actionBodyFields": [],
-    "queryParams": [],
-    "description": "For implementing funnel search on Product Listing Pages where users select multiple filters, use this POST method.\nTo avoid URL length restrictions, this method passes the same query parameters as defined in the [GET](ctp:api:endpoint:/{projectKey}/product-projections/search:GET) method, within the request body in URL-encoded format.\n",
-    "folder": "Product-projections",
-    "subFolder": "",
-    "isUpdateAction": false,
-    "requiresId": false,
-    "requiresKey": false,
-    "requiresVersion": false,
-    "isSearch": true
-  },
-  "productProjectionSearchWithGet": {
-    "name": "Product Projection Search with GET",
-    "value": "productProjectionSearchWithGet",
-    "method": "GET",
-    "urlTemplate": "/{{project-key}}/product-projections/search",
-    "bodyFields": [],
-    "actionBodyFields": [],
-    "queryParams": [
-      "markMatchingVariants",
-      "fuzzy",
-      "fuzzyLevel",
-      "filter.query",
-      "filter",
-      "facet",
-      "filter.facets",
-      "expand",
-      "sort",
-      "limit",
-      "offset",
-      "staged",
-      "priceCurrency",
-      "priceCountry",
-      "priceCustomerGroup",
-      "priceCustomerGroupAssignments",
-      "priceChannel",
-      "priceRecurrencePolicy",
-      "localeProjection",
-      "storeProjection"
-    ],
-    "description": "This method appends query parameters to the URL.\nThe maximum allowed URL length is 8192 characters.\nExceeding this limit will result in URL truncation, potentially leading to unexpected results.\nFor funnel searches on Product Listing Pages, where users select multiple filters, we recommend the [POST](ctp:api:endpoint:/{projectKey}/product-projections/search:POST) method which passes the query parameters within the request body, avoiding URL length restrictions.\n",
-    "folder": "Product-projections",
-    "subFolder": "",
-    "isUpdateAction": false,
-    "requiresId": false,
-    "requiresKey": false,
-    "requiresVersion": false
-  },
-  "querySuggestions": {
-    "name": "Query Suggestions",
-    "value": "querySuggestions",
-    "method": "GET",
-    "urlTemplate": "/{{project-key}}/product-projections/suggest",
-    "bodyFields": [],
-    "actionBodyFields": [],
-    "queryParams": [
-      "limit",
-      "fuzzy",
-      "staged"
-    ],
-    "description": "null",
-    "folder": "Product-projections",
-    "subFolder": "",
-    "isUpdateAction": false,
-    "requiresId": false,
-    "requiresKey": false,
-    "requiresVersion": false
   },
   "getVariantAttributes": {
     "name": "Get Variant Attributes",
@@ -40993,7 +40979,7 @@
       "cartId",
       "expand"
     ],
-    "description": "Retrieves the active ShippingMethods that can ship to the shipping address of the provided Cart in a [Store](ctp:api:type:Store).\n\nEach ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
+    "description": "Retrieves the active ShippingMethods that can ship to the shipping address of the provided Cart in a [Store](ctp:api:type:Store).\n\nThe Cart must belong to the Store specified in the path. If no Cart exists for the given `cartId` in the specified Store, either because the Cart does not exist in the Project or because it exists but does not belong to that Store, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nThe results include globally scoped ShippingMethods (those with an empty `stores` field) and ShippingMethods scoped to the Store specified in the path.\n\nEach ShippingMethod contains exactly one ShippingRate with the flag `isMatching` set to `true`. This ShippingRate is used when the ShippingMethod is [added to the Cart](ctp:api:type:CartSetShippingMethodAction).\n\nIf a matching ShippingMethod has `isDefault` set to `true`, it is returned as the first item in the array.\n",
     "folder": "In-store/Shipping-methods",
     "subFolder": "",
     "isUpdateAction": false,
