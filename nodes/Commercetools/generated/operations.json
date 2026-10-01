@@ -34956,6 +34956,60 @@
     "requiresKey": false,
     "requiresVersion": true
   },
+  "changeSavedToLineItem": {
+    "name": "ChangeSavedToLineItem",
+    "value": "changeSavedToLineItem",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-types/{{product-type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "changeSavedToLineItem",
+            "attributeName": "your-attribute-name",
+            "savedToLineItem": false
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "attributeName",
+        "type": "string",
+        "required": false,
+        "example": "your-attribute-name",
+        "description": "Attribute Name"
+      },
+      {
+        "name": "savedToLineItem",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Saved To Line Item"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductTypes",
+    "folder": "Product-types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "removeAttributeDefinition": {
     "name": "RemoveAttributeDefinition",
     "value": "removeAttributeDefinition",
