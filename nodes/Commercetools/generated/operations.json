@@ -15697,7 +15697,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nCreating a Category produces the [CategoryCreated](ctp:api:type:CategoryCreatedMessage) Message.\n",
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nCreating a Category with a `parent` locks that parent Category. For details, see [Category tree locking](/api/projects/categories#category-tree-locking).\n\nCreating a Category produces the [CategoryCreated](ctp:api:type:CategoryCreatedMessage) Message.\n",
     "folder": "Categories",
     "subFolder": "",
     "isUpdateAction": false,
