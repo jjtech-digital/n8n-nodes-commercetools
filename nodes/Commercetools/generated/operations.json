@@ -6934,6 +6934,92 @@
     "secondaryIdPlaceholder": "order-id",
     "storeKeyPlaceholder": "store-key"
   },
+  "addRecurringPaymentAllocation": {
+    "name": "AddRecurringPaymentAllocation",
+    "value": "addRecurringPaymentAllocation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/carts/{{cart-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "addRecurringPaymentAllocation",
+            "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+            "paymentMethod": {
+              "typeId": "payment-method",
+              "id": "9b2d4e6f-1a3c-4b5d-8e7f-0a1b2c3d4e5f"
+            },
+            "allocation": {
+              "type": "Absolute",
+              "amount": {
+                "type": "highPrecision",
+                "currencyCode": "EUR",
+                "preciseAmount": 42000000,
+                "fractionDigits": 6
+              }
+            }
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "example": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "description": "Id"
+      },
+      {
+        "name": "paymentMethod",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "payment-method",
+          "id": "9b2d4e6f-1a3c-4b5d-8e7f-0a1b2c3d4e5f"
+        },
+        "description": "Payment Method"
+      },
+      {
+        "name": "allocation",
+        "type": "json",
+        "required": false,
+        "example": {
+          "type": "Absolute",
+          "amount": {
+            "type": "highPrecision",
+            "currencyCode": "EUR",
+            "preciseAmount": 42000000,
+            "fractionDigits": 6
+          }
+        },
+        "description": "Allocation"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Cart in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/carts#update-actions).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "folder": "In-store/Carts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "secondaryIdPlaceholder": "cart-id",
+    "storeKeyPlaceholder": "store-key"
+  },
   "addShippingMethod": {
     "name": "AddShippingMethod",
     "value": "addShippingMethod",
@@ -8171,6 +8257,54 @@
     "requiresKey": true,
     "requiresVersion": true,
     "secondaryIdPlaceholder": "order-id",
+    "storeKeyPlaceholder": "store-key"
+  },
+  "removeRecurringPaymentAllocation": {
+    "name": "RemoveRecurringPaymentAllocation",
+    "value": "removeRecurringPaymentAllocation",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/carts/{{cart-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "removeRecurringPaymentAllocation",
+            "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "example": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "description": "Id"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Cart in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/carts#update-actions).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "folder": "In-store/Carts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "secondaryIdPlaceholder": "cart-id",
     "storeKeyPlaceholder": "store-key"
   },
   "removeShippingMethod": {
@@ -10371,6 +10505,132 @@
     "requiresKey": true,
     "requiresVersion": true,
     "secondaryIdPlaceholder": "order-id",
+    "storeKeyPlaceholder": "store-key"
+  },
+  "setRecurringPaymentConfiguration": {
+    "name": "SetRecurringPaymentConfiguration",
+    "value": "setRecurringPaymentConfiguration",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/carts/{{cart-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setRecurringPaymentConfiguration",
+            "recurringPaymentConfiguration": {
+              "paymentStrategy": "Checkout",
+              "paymentAllocations": [
+                {
+                  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "paymentMethod": {
+                    "typeId": "payment-method",
+                    "id": "c1f3a2b4-5d6e-4f70-8a91-2b3c4d5e6f70"
+                  },
+                  "allocation": {
+                    "type": "Relative",
+                    "percentage": 100
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "recurringPaymentConfiguration",
+        "type": "json",
+        "required": false,
+        "example": {
+          "paymentStrategy": "Checkout",
+          "paymentAllocations": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "paymentMethod": {
+                "typeId": "payment-method",
+                "id": "c1f3a2b4-5d6e-4f70-8a91-2b3c4d5e6f70"
+              },
+              "allocation": {
+                "type": "Relative",
+                "percentage": 100
+              }
+            }
+          ]
+        },
+        "description": "Recurring Payment Configuration"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Cart in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/carts#update-actions).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "folder": "In-store/Carts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "secondaryIdPlaceholder": "cart-id",
+    "storeKeyPlaceholder": "store-key"
+  },
+  "setRecurringPaymentStrategy": {
+    "name": "SetRecurringPaymentStrategy",
+    "value": "setRecurringPaymentStrategy",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/in-store/key={{store-key}}/carts/{{cart-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setRecurringPaymentStrategy",
+            "paymentStrategy": "Checkout"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "paymentStrategy",
+        "type": "string",
+        "required": false,
+        "example": "Checkout",
+        "description": "Payment Strategy"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Cart in a [Store](ctp:api:type:Store) using one or more [update actions](/api/projects/carts#update-actions).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "folder": "In-store/Carts",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": true,
+    "requiresVersion": true,
+    "secondaryIdPlaceholder": "cart-id",
     "storeKeyPlaceholder": "store-key"
   },
   "setReservationExpirationInMinutes": {
@@ -34956,60 +35216,6 @@
     "requiresKey": false,
     "requiresVersion": true
   },
-  "changeSavedToLineItem": {
-    "name": "ChangeSavedToLineItem",
-    "value": "changeSavedToLineItem",
-    "method": "POST",
-    "urlTemplate": "/{{project-key}}/product-types/{{product-type-id}}",
-    "bodyFields": [
-      {
-        "name": "version",
-        "type": "string",
-        "required": true,
-        "example": "placeholder",
-        "description": "Version"
-      },
-      {
-        "name": "actions",
-        "type": "json",
-        "required": true,
-        "example": [
-          {
-            "action": "changeSavedToLineItem",
-            "attributeName": "your-attribute-name",
-            "savedToLineItem": false
-          }
-        ],
-        "description": "Actions"
-      }
-    ],
-    "actionBodyFields": [
-      {
-        "name": "attributeName",
-        "type": "string",
-        "required": false,
-        "example": "your-attribute-name",
-        "description": "Attribute Name"
-      },
-      {
-        "name": "savedToLineItem",
-        "type": "boolean",
-        "required": false,
-        "example": false,
-        "description": "Saved To Line Item"
-      }
-    ],
-    "queryParams": [
-      "expand"
-    ],
-    "description": "post ProductTypes",
-    "folder": "Product-types",
-    "subFolder": "Update actions",
-    "isUpdateAction": true,
-    "requiresId": true,
-    "requiresKey": false,
-    "requiresVersion": true
-  },
   "removeAttributeDefinition": {
     "name": "RemoveAttributeDefinition",
     "value": "removeAttributeDefinition",
@@ -35103,6 +35309,60 @@
           "de": "New German input tip"
         },
         "description": "Input Tip"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "post ProductTypes",
+    "folder": "Product-types",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setSavedToLineItem": {
+    "name": "SetSavedToLineItem",
+    "value": "setSavedToLineItem",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/product-types/{{product-type-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setSavedToLineItem",
+            "attributeName": "your-attribute-name",
+            "savedToLineItem": false
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "attributeName",
+        "type": "string",
+        "required": false,
+        "example": "your-attribute-name",
+        "description": "Attribute Name"
+      },
+      {
+        "name": "savedToLineItem",
+        "type": "boolean",
+        "required": false,
+        "example": false,
+        "description": "Saved To Line Item"
       }
     ],
     "queryParams": [
