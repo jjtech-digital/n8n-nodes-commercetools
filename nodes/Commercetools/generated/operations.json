@@ -36929,6 +36929,52 @@
     "requiresKey": false,
     "requiresVersion": false
   },
+  "requestOrderNow": {
+    "name": "RequestOrderNow",
+    "value": "requestOrderNow",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/recurring-orders/{{recurring-order-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "requestOrderNow",
+            "reason": "customer ran out early"
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "reason",
+        "type": "string",
+        "required": false,
+        "example": "customer ran out early",
+        "description": "Reason"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Recurring Order using one or more [update actions](/api/projects/recurring-orders#update-actions).\n\nA Recurring Order can only be updated when it is not processing an Order. Otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n",
+    "folder": "Recurring-orders",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "setExpiresAt": {
     "name": "SetExpiresAt",
     "value": "setExpiresAt",
@@ -37470,6 +37516,13 @@
         "required": false,
         "example": "Days",
         "description": "Schedule › interval Unit"
+      },
+      {
+        "name": "minDaysBetweenOrders",
+        "type": "number",
+        "required": true,
+        "example": 1,
+        "description": "Min Days Between Orders"
       }
     ],
     "actionBodyFields": [],
@@ -37483,6 +37536,52 @@
     "requiresId": false,
     "requiresKey": false,
     "requiresVersion": false
+  },
+  "setMinDaysBetweenOrders": {
+    "name": "SetMinDaysBetweenOrders",
+    "value": "setMinDaysBetweenOrders",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/recurrence-policies/{{recurrence-policy-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setMinDaysBetweenOrders",
+            "minDaysBetweenOrders": 14
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "minDaysBetweenOrders",
+        "type": "number",
+        "required": false,
+        "example": 14,
+        "description": "Min Days Between Orders"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Updates a Recurrence Policy using one or more [update actions](/api/projects/recurrence-policies#update-actions).\n",
+    "folder": "Recurrence-policies",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
   },
   "getDiscountGroupByKey": {
     "name": "Get DiscountGroup by Key",
