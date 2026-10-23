@@ -1244,7 +1244,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
     "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -15734,7 +15734,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
     "folder": "Categories",
     "subFolder": "",
     "isUpdateAction": false,
@@ -15839,7 +15839,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
     "folder": "Categories",
     "subFolder": "",
     "isUpdateAction": false,
@@ -15965,6 +15965,58 @@
     "requiresKey": false,
     "requiresVersion": false
   },
+  "addStoreWithDescendants": {
+    "name": "AddStoreWithDescendants",
+    "value": "addStoreWithDescendants",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "addStoreWithDescendants",
+            "store": {
+              "typeId": "store",
+              "key": "store-a"
+            }
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "store",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "store",
+          "key": "store-a"
+        },
+        "description": "Store"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
+    "folder": "Categories",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
   "changeOrderHint": {
     "name": "ChangeOrderHint",
     "value": "changeOrderHint",
@@ -16003,7 +16055,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
     "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -16055,7 +16107,123 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n",
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
+    "folder": "Categories",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "removeStoreWithDescendants": {
+    "name": "RemoveStoreWithDescendants",
+    "value": "removeStoreWithDescendants",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "removeStoreWithDescendants",
+            "store": {
+              "typeId": "store",
+              "key": "store-a"
+            }
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "store",
+        "type": "json",
+        "required": false,
+        "example": {
+          "typeId": "store",
+          "key": "store-a"
+        },
+        "description": "Store"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
+    "folder": "Categories",
+    "subFolder": "Update actions",
+    "isUpdateAction": true,
+    "requiresId": true,
+    "requiresKey": false,
+    "requiresVersion": true
+  },
+  "setStoresWithDescendants": {
+    "name": "SetStoresWithDescendants",
+    "value": "setStoresWithDescendants",
+    "method": "POST",
+    "urlTemplate": "/{{project-key}}/categories/{{category-id}}",
+    "bodyFields": [
+      {
+        "name": "version",
+        "type": "string",
+        "required": true,
+        "example": "placeholder",
+        "description": "Version"
+      },
+      {
+        "name": "actions",
+        "type": "json",
+        "required": true,
+        "example": [
+          {
+            "action": "setStoresWithDescendants",
+            "stores": [
+              {
+                "typeId": "store",
+                "key": "store-a"
+              },
+              {
+                "typeId": "store",
+                "key": "store-b"
+              }
+            ]
+          }
+        ],
+        "description": "Actions"
+      }
+    ],
+    "actionBodyFields": [
+      {
+        "name": "stores",
+        "type": "json",
+        "required": false,
+        "example": [
+          {
+            "typeId": "store",
+            "key": "store-a"
+          },
+          {
+            "typeId": "store",
+            "key": "store-b"
+          }
+        ],
+        "description": "Stores"
+      }
+    ],
+    "queryParams": [
+      "expand"
+    ],
+    "description": "Either the [scope](/api/scopes) `manage_products:{projectKey}` or `manage_categories:{projectKey}` is required.\n\nThe response status code is `200 OK`, unless the request contains a [Set Stores with Descendants](ctp:api:type:CategorySetStoresWithDescendantsAction), [Add Store with Descendants](ctp:api:type:CategoryAddStoreWithDescendantsAction), or [Remove Store with Descendants](ctp:api:type:CategoryRemoveStoreWithDescendantsAction) update action. In that case, the API responds with `202 Accepted`, and the returned Category contains a `warnings` field with a [StoreSettingOngoing](ctp:api:type:StoreSettingOngoingWarning) Warning.\n",
     "folder": "Categories",
     "subFolder": "Update actions",
     "isUpdateAction": true,
@@ -41354,7 +41522,7 @@
       "filter[attributes]",
       "expand"
     ],
-    "description": "Retrieves the [projected](/api/projects/productProjections#projection-dimensions) representation of a [Product](ctp:api:type:Product) by its Key in the specified [Store](ctp:api:type:Store).\n\nIf the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,\nthey are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices),\nand [inventory](ctp:api:type:ProductProjectionInventoryEntries).\nIf [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/api/project-configuration-overview#products-available-in-store) in the specified Store.\nIf a [ProductTailoring](ctp:api:type:ProductTailoring) exists for the Product with the given `key` and the given Store, this endpoint returns the ProductProjection with tailored data.\n\nBy default, this endpoint returns the `current` representation of Products where the `published` flag is `true`.\nIf a Product is unpublished (`published=false`), the endpoint returns a [Not Found](/api/errors#404-not-found) error.\n\nRequired access scopes:\n\n- To retrieve the current representation of published Products (published data), the `view_published_products:{projectKey}` scope is required.\n\n- To retrieve the staged representation of Products (draft data) or access unpublished Products, the API Client must have the `view_products:{projectKey}` scope.\n",
+    "description": "Retrieves the [projected](/api/projects/productProjections#projection-dimensions) representation of a [Product](ctp:api:type:Product) by its Key in the specified [Store](ctp:api:type:Store).\n\nIf the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,\nthey are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices),\nand [inventory](ctp:api:type:ProductProjectionInventoryEntries).\nIf [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/api/project-configuration-apis-overview#products-available-in-store) in the specified Store.\nIf a [ProductTailoring](ctp:api:type:ProductTailoring) exists for the Product with the given `key` and the given Store, this endpoint returns the ProductProjection with tailored data.\n\nBy default, this endpoint returns the `current` representation of Products where the `published` flag is `true`.\nIf a Product is unpublished (`published=false`), the endpoint returns a [Not Found](/api/errors#404-not-found) error.\n\nRequired access scopes:\n\n- To retrieve the current representation of published Products (published data), the `view_published_products:{projectKey}` scope is required.\n\n- To retrieve the staged representation of Products (draft data) or access unpublished Products, the API Client must have the `view_products:{projectKey}` scope.\n",
     "folder": "In-store/Product-projections",
     "subFolder": "",
     "isUpdateAction": false,
@@ -41401,7 +41569,7 @@
       "filter[attributes]",
       "expand"
     ],
-    "description": "Retrieves the [projected](/api/projects/productProjections#projection-dimensions) representation of a [Product](ctp:api:type:Product) by its ID in the specified [Store](ctp:api:type:Store).\n\nIf the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,\nthey are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices),\nand [inventory](ctp:api:type:ProductProjectionInventoryEntries).\nIf [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/api/project-configuration-overview#products-available-in-store) in the specified Store.\nIf a [ProductTailoring](ctp:api:type:ProductTailoring) exists for the Product with the given `key` and the given Store, this endpoint returns the ProductProjection with tailored data.\n\nBy default, this endpoint returns the `current` representation of Products where the `published` flag is `true`.\nIf a Product is unpublished (`published=false`), the endpoint returns a [Not Found](/api/errors#404-not-found) error.\n\nRequired access scopes:\n\n- To retrieve the current representation of published Products (published data), the `view_published_products:{projectKey}` scope is required.\n\n- To retrieve the staged representation of Products (draft data) or access unpublished Products, the API Client must have the `view_products:{projectKey}` scope.\n",
+    "description": "Retrieves the [projected](/api/projects/productProjections#projection-dimensions) representation of a [Product](ctp:api:type:Product) by its ID in the specified [Store](ctp:api:type:Store).\n\nIf the Store has defined some languages, countries, distribution, supply Channels, and/or Product Selection,\nthey are used for projections based on [locale](ctp:api:type:ProductProjectionLocales), [price](ctp:api:type:ProductProjectionPrices),\nand [inventory](ctp:api:type:ProductProjectionInventoryEntries).\nIf [ProductSelection](ctp:api:type:ProductSelection) is used, it affects the [availability of the Product](/api/project-configuration-apis-overview#products-available-in-store) in the specified Store.\nIf a [ProductTailoring](ctp:api:type:ProductTailoring) exists for the Product with the given `key` and the given Store, this endpoint returns the ProductProjection with tailored data.\n\nBy default, this endpoint returns the `current` representation of Products where the `published` flag is `true`.\nIf a Product is unpublished (`published=false`), the endpoint returns a [Not Found](/api/errors#404-not-found) error.\n\nRequired access scopes:\n\n- To retrieve the current representation of published Products (published data), the `view_published_products:{projectKey}` scope is required.\n\n- To retrieve the staged representation of Products (draft data) or access unpublished Products, the API Client must have the `view_products:{projectKey}` scope.\n",
     "folder": "In-store/Product-projections",
     "subFolder": "",
     "isUpdateAction": false,
