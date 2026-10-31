@@ -6374,7 +6374,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "\nCreates a Cart in the Project.\n\nWhen using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:\n- If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.\n- If none of the Line Items can be reserved, the Cart creation fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method has a predicate that does not match the Cart.\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n",
+    "description": "Creates a Cart in the Project.\n\nWhen using [InventoryMode](ctp:api:type:InventoryMode) `ReserveOnCart`:\n- If only some Line Items can be reserved, the Cart creation succeeds, however, the items that could not be reserved are removed and reservation warnings are returned in the response.\n- If none of the Line Items can be reserved, the Cart creation fails with an [InvalidOperation](ctp:api:type:InvalidOperationError) error.\n\nSpecific Error Codes:\n\n- [DiscountCodeNonApplicable](ctp:api:type:DiscountCodeNonApplicableError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [MatchingPriceNotFound](ctp:api:type:MatchingPriceNotFoundError)\n- [MissingTaxRateForCountry](ctp:api:type:MissingTaxRateForCountryError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method has a predicate that does not match the Cart.\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Cart's Store.\n    - The referenced Shipping Method is scoped to a Store, but the Cart does not belong to a Store.\n",
     "folder": "Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -11558,7 +11558,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "\nCreates an Order from a Quote. The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nProduces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nSpecific Error Codes:\n\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Store referenced by the [Quote](ctp:api:type:Quote).\n    - The referenced Shipping Method is scoped to a Store, but the [Quote](ctp:api:type:Quote) does not belong to a Store.\n- [OutOfStock](ctp:api:type:OutOfStockError)\n",
+    "description": "Creates an Order from a Quote. The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nProduces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nSpecific Error Codes:\n\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError) is returned in several cases, including the following:\n    - The referenced Shipping Method is not active.\n    - The referenced Shipping Method is scoped to a Store that differs from the Store referenced by the [Quote](ctp:api:type:Quote).\n    - The referenced Shipping Method is scoped to a Store, but the [Quote](ctp:api:type:Quote) does not belong to a Store.\n- [OutOfStock](ctp:api:type:OutOfStockError)\n",
     "folder": "Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -27796,7 +27796,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "\nCreates an Order from a [Quote](ctp:api:type:Quote) in a [BusinessUnit](ctp:api:type:BusinessUnit).\n\nThe Quote must reference the same Business Unit as the `businessUnitKey` path parameter, must have the `Pending` [state](ctp:api:type:QuoteState), and must be valid (not past the `validTo` date). If these criteria are not met, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nSpecific Error Codes:\n\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [OutOfStock](ctp:api:type:OutOfStockError)\n",
+    "description": "Creates an Order from a [Quote](ctp:api:type:Quote) in a [BusinessUnit](ctp:api:type:BusinessUnit).\n\nThe Quote must reference the same Business Unit as the `businessUnitKey` path parameter, must have the `Pending` [state](ctp:api:type:QuoteState), and must be valid (not past the `validTo` date). If these criteria are not met, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nSpecific Error Codes:\n\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [OutOfStock](ctp:api:type:OutOfStockError)\n",
     "folder": "As-associate/In-business-unit/Orders",
     "subFolder": "",
     "isUpdateAction": false,
@@ -38989,7 +38989,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "\nRetrieves a Cart with the provided `key` in a [Store](ctp:api:type:Store).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nTo ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.\n",
+    "description": "Retrieves a Cart with the provided `key` in a [Store](ctp:api:type:Store).\n\nIf the Cart exists in the Project but does not have a `store` specified, or the `store` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nTo ensure the Cart is up-to-date with current values (such as Prices and Discounts), use the [Recalculate](ctp:api:type:CartRecalculateAction) update action.\n",
     "folder": "In-store/Carts",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39888,7 +39888,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "\nCreates an Order from a [Quote](ctp:api:type:Quote) in a [Store](ctp:api:type:Store). The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nProduces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n",
+    "description": "Creates an Order from a [Quote](ctp:api:type:Quote) in a [Store](ctp:api:type:Store). The referenced Quote must have the `Pending` [state](ctp:api:type:QuoteState) and must be valid (not past the `validTo` date); otherwise, an [InvalidOperation](ctp:api:type:InvalidOperationError) error is returned.\n\nProduces the [OrderCreated](ctp:api:type:OrderCreatedMessage) Message.\n\nSpecific Error Codes:\n\n- [OutOfStock](ctp:api:type:OutOfStockError)\n- [InvalidItemShippingDetails](ctp:api:type:InvalidItemShippingDetailsError)\n- [InvalidOperation](ctp:api:type:InvalidOperationError)\n- [CountryNotConfiguredInStore](ctp:api:type:CountryNotConfiguredInStoreError)\n",
     "folder": "In-store/Orders",
     "subFolder": "",
     "isUpdateAction": false,
