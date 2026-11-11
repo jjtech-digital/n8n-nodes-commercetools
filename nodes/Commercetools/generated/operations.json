@@ -3563,7 +3563,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Use this method to retrieve the details of a global Customer by using the password token during their [password reset process](/api/customers-overview#customer-password-reset).\n",
+    "description": "Use this method to retrieve the details of a global Customer by using the password token during their [password reset process](/api/customers-apis-overview#customer-password-reset).\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -3584,7 +3584,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Use this method to retrieve a global Customer's details by using the email token during their [email verification process](/api/customers-overview#customer-email-verification).\n",
+    "description": "Use this method to retrieve a global Customer's details by using the email token during their [email verification process](/api/customers-apis-overview#customer-email-verification).\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -3618,7 +3618,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to create an email token for a global Customer during their [email verification process](/api/customers-overview#customer-email-verification).\n\nCreating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
+    "description": "Use this method to create an email token for a global Customer during their [email verification process](/api/customers-apis-overview#customer-email-verification).\n\nCreating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -3642,7 +3642,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to verify a global Customer's email during their [email verification process](/api/customers-overview#customer-email-verification).\n\nVerifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.\n\nAfter the email is verified, all email tokens issued previously through the [email verification flow](/api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n",
+    "description": "Use this method to verify a global Customer's email during their [email verification process](/api/customers-apis-overview#customer-email-verification).\n\nVerifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.\n\nAfter the email is verified, all email tokens issued previously through the [email verification flow](/api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -3718,7 +3718,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to reset a global Customer's password during their [password reset process](/api/customers-overview#customer-password-reset).\n\nResetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.\n\nAfter the password is reset, all password tokens issued previously through the [password reset flow](/api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/api/authorization#password-flow) and [refresh token flow](/api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n",
+    "description": "Use this method to reset a global Customer's password during their [password reset process](/api/customers-apis-overview#customer-password-reset).\n\nResetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.\n\nAfter the password is reset, all password tokens issued previously through the [password reset flow](/api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/api/authorization#password-flow) and [refresh token flow](/api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -3742,7 +3742,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to create a password reset token for a global Customer during their [password reset process](/api/customers-overview#customer-password-reset).\n\nCreating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
+    "description": "Use this method to create a password reset token for a global Customer during their [password reset process](/api/customers-apis-overview#customer-password-reset).\n\nCreating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -4001,7 +4001,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "If the initial indexing is in progress or the feature is inactive, a [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned.\nIf inactive, you can [reactivate](/api/projects/customer-search#reactivate) it.\n",
+    "description": "If the initial indexing is in progress or the feature is inactive, a [SearchNotReady](ctp:api:type:SearchNotReadyError) error is returned.\nIf inactive, you can [reactivate](/api/customers-apis-overview#reactivate) it.\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -4122,7 +4122,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Allows converting an anonymous Cart to the active Cart of a Customer with [cart merge](/api/customers-overview#cart-merge-during-sign-in-and-sign-up).\n\nCreating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.\n",
+    "description": "Allows converting an anonymous Cart to the active Cart of a Customer with [cart merge](/api/customers-apis-overview#cart-merge-during-sign-in-and-sign-up).\n\nCreating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.\n",
     "folder": "Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39339,7 +39339,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Use this method to retrieve a Store-specific Customer's details by using the password reset token during their [password reset process](/api/customers-overview#customer-password-reset).\n\nIf the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "description": "Use this method to retrieve a Store-specific Customer's details by using the password reset token during their [password reset process](/api/customers-apis-overview#customer-password-reset).\n\nIf the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39358,7 +39358,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "Use this method to retrieve a Store-specific Customer's details by using the email token during their [email verification process](/api/customers-overview#customer-email-verification).\n\nIf the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "description": "Use this method to retrieve a Store-specific Customer's details by using the email token during their [email verification process](/api/customers-apis-overview#customer-email-verification).\n\nIf the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39390,7 +39390,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to create an email token for a Store-specific Customer during their [email verification process](/api/customers-overview#customer-email-verification).\n\nIf the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nCreating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
+    "description": "Use this method to create an email token for a Store-specific Customer during their [email verification process](/api/customers-apis-overview#customer-email-verification).\n\nIf the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nCreating an email token for the Customer produces the [CustomerEmailTokenCreated](ctp:api:type:CustomerEmailTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39415,7 +39415,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to verify a Store-specific Customer's email during their [email verification process](/api/customers-overview#customer-email-verification).\n\nVerifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.\n\nIf the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nAfter the email is verified, all email tokens issued previously through the [email verification flow](/api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n",
+    "description": "Use this method to verify a Store-specific Customer's email during their [email verification process](/api/customers-apis-overview#customer-email-verification).\n\nVerifying the email of the Customer produces the [CustomerEmailVerified](ctp:api:type:CustomerEmailVerifiedMessage) Message.\n\nIf the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nAfter the email is verified, all email tokens issued previously through the [email verification flow](/api/projects/customers#email-verification-of-customer) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39493,7 +39493,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to reset a Store-specific Customer's password during their [password reset process](/api/customers-overview#customer-password-reset).\n\nResetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.\n\nAfter the password is reset, all password tokens issued previously through the [password reset flow](/api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/api/authorization#password-flow) and [refresh token flow](/api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n\nIf the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), then this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
+    "description": "Use this method to reset a Store-specific Customer's password during their [password reset process](/api/customers-apis-overview#customer-password-reset).\n\nResetting the password of the Customer produces the [CustomerPasswordUpdated](ctp:api:type:CustomerPasswordUpdatedMessage) Message with `reset=true`.\n\nAfter the password is reset, all password tokens issued previously through the [password reset flow](/api/projects/customers#password-reset-of-customer) are invalidated. In addition, any access and refresh tokens issued previously through the [password flow](/api/authorization#password-flow) and [refresh token flow](/api/authorization#refresh-token-flow) are invalidated. This invalidation of tokens is [eventually consistent](/api/general-concepts#eventual-consistency).\n\nIf the Customer exists in the Project but the `stores` field references a different [Store](ctp:api:type:Store), then this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39518,7 +39518,7 @@
     ],
     "actionBodyFields": [],
     "queryParams": [],
-    "description": "Use this method to create a password reset token for a Store-specific Customer during their [password reset process](/api/customers-overview#customer-password-reset).\n\nIf the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nCreating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
+    "description": "Use this method to create a password reset token for a Store-specific Customer during their [password reset process](/api/customers-apis-overview#customer-password-reset).\n\nIf the Customer exists in the Project but the `stores` field references a different Store, this method returns a [ResourceNotFound](ctp:api:type:ResourceNotFoundError) error.\n\nCreating a password reset token for the Customer produces the [CustomerPasswordTokenCreated](ctp:api:type:CustomerPasswordTokenCreatedMessage) Message.\nThe Message will include the token's value, if the token's validity is 60 minutes or less.\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
@@ -39849,7 +39849,7 @@
     "queryParams": [
       "expand"
     ],
-    "description": "When using this endpoint, if omitted, the Customer `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.\n\nIf a Cart with a `store` field specified, the `store` field must reference the same [Store](ctp:api:type:Store) specified in the `{storeKey}` path parameter.\n\nAllows converting an anonymous Cart to the active Cart of a Customer with [cart merge](/api/customers-overview#cart-merge-during-sign-in-and-sign-up).\nIf the Customer has multiple active Carts, the anonymous Cart is merged into the most recently modified active Cart.\n\nCreating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.\n",
+    "description": "When using this endpoint, if omitted, the Customer `stores` field is set to the [Store](ctp:api:type:Store) specified in the path parameter.\n\nIf a Cart with a `store` field specified, the `store` field must reference the same [Store](ctp:api:type:Store) specified in the `{storeKey}` path parameter.\n\nAllows converting an anonymous Cart to the active Cart of a Customer with [cart merge](/api/customers-apis-overview#cart-merge-during-sign-in-and-sign-up).\nIf the Customer has multiple active Carts, the anonymous Cart is merged into the most recently modified active Cart.\n\nCreating a Customer produces the [CustomerCreated](ctp:api:type:CustomerCreatedMessage) Message. Simultaneously creating two Customers with the same email address can return a [LockedField](ctp:api:type:LockedFieldError) error.\n",
     "folder": "In-store/Customers",
     "subFolder": "",
     "isUpdateAction": false,
